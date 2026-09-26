@@ -65,11 +65,17 @@
         <div class="section-title"><span class="bar"></span>Ringkasan <small>{{ ucfirst($roleFilter) }}{{ !empty($dari) || !empty($sampai) ? ' • '.($dari ?? 'awal').' s/d '.($sampai ?? 'sekarang') : '' }}</small></div>
         <table class="kpi">
             <tr>
-                @if (($roleFilter ?? 'semua') === 'admin')
-                    <td style="width:25%;"><span class="lbl">Rata-rata CR</span><span class="val">{{ $pct($totals['cr'] ?? null) }}</span></td>
-                    <td style="width:25%;"><span class="lbl">Rata-rata AOV</span><span class="val">{{ $rp($totals['aov'] ?? null) }}</span></td>
-                    <td style="width:25%;"><span class="lbl">Rata-rata Rating</span><span class="val">{{ ($totals['rating'] ?? null) !== null ? number_format($totals['rating'], 1).' ★' : $nullLbl }}</span></td>
-                    <td style="width:25%;"><span class="lbl">Pesanan</span><span class="val">{{ number_format($totals['pesanan'] ?? 0, 0, ',', '.') }}</span></td>
+                @if (($roleFilter ?? 'semua') === 'owner')
+                    <td style="width:25%;"><span class="lbl">ROI</span><span class="val">{{ $pct($totals['roi'] ?? null) }}</span></td>
+                    <td style="width:25%;"><span class="lbl">Pendapatan</span><span class="val">{{ $fmt($totals['pendapatan'] ?? 0) }}</span></td>
+                    <td style="width:25%;"><span class="lbl">Investasi</span><span class="val">{{ $fmt($totals['investasi'] ?? 0) }}</span></td>
+                    <td style="width:25%;"><span class="lbl">Bersih</span><span class="val">{{ $fmt($totals['bersih'] ?? 0) }}</span></td>
+                @elseif (($roleFilter ?? 'semua') === 'admin')
+                    <td style="width:20%;"><span class="lbl">Rata-rata CR</span><span class="val">{{ $pct($totals['cr'] ?? null) }}</span></td>
+                    <td style="width:20%;"><span class="lbl">Rata-rata AOV</span><span class="val">{{ $rp($totals['aov'] ?? null) }}</span></td>
+                    <td style="width:20%;"><span class="lbl">Rata-rata LTV</span><span class="val">{{ $rp($totals['ltv'] ?? null) }}</span></td>
+                    <td style="width:20%;"><span class="lbl">Rata-rata Rating</span><span class="val">{{ ($totals['rating'] ?? null) !== null ? number_format($totals['rating'], 1).' ★' : $nullLbl }}</span></td>
+                    <td style="width:20%;"><span class="lbl">Pesanan</span><span class="val">{{ number_format($totals['pesanan'] ?? 0, 0, ',', '.') }}</span></td>
                 @elseif (($roleFilter ?? 'semua') === 'produksi')
                     <td style="width:25%;"><span class="lbl">Ditugaskan</span><span class="val">{{ number_format($totals['ditugaskan'] ?? 0, 0, ',', '.') }}</span></td>
                     <td style="width:25%;"><span class="lbl">Selesai</span><span class="val">{{ number_format($totals['selesai'] ?? 0, 0, ',', '.') }}</span></td>
@@ -91,8 +97,10 @@
                     <tr>
                         <th style="width:28px;">No</th>
                         <th>Karyawan</th>
-                        @if (($roleFilter ?? 'admin') === 'admin')
-                            <th class="r">CR</th><th class="r">AOV</th><th class="r">Rating</th><th class="r">Pesanan</th>
+                        @if (($roleFilter ?? 'admin') === 'owner')
+                            <th class="r">ROI</th><th class="r">Pendapatan</th><th class="r">Investasi</th><th class="r">Bersih</th>
+                        @elseif (($roleFilter ?? 'admin') === 'admin')
+                            <th class="r">CR</th><th class="r">AOV</th><th class="r">LTV</th><th class="r">Rating</th><th class="r">Pesanan</th>
                         @elseif (($roleFilter ?? 'admin') === 'produksi')
                             <th class="r">Ditugaskan</th><th class="r">Rata2 Unit</th><th class="r">Rata2 Durasi</th><th class="r">Berhasil</th>
                         @else
@@ -105,9 +113,15 @@
                         <tr>
                             <td class="fw" style="text-align:center;">{{ $i + 1 }}</td>
                             <td class="fw">{{ $r['nama'] }}</td>
-                            @if (($roleFilter ?? 'admin') === 'admin')
+                            @if (($roleFilter ?? 'admin') === 'owner')
+                                <td class="r fw">{{ $pct($r['roi'] ?? null) }}</td>
+                                <td class="r">{{ $fmt($r['pendapatan'] ?? 0) }}</td>
+                                <td class="r">{{ $fmt($r['investasi'] ?? 0) }}</td>
+                                <td class="r">{{ $fmt($r['bersih'] ?? 0) }}</td>
+                            @elseif (($roleFilter ?? 'admin') === 'admin')
                                 <td class="r">{{ $pct($r['cr'] ?? null) }}</td>
                                 <td class="r fw">{{ $rp($r['aov'] ?? null) }}</td>
+                                <td class="r fw">{{ $rp($r['ltv'] ?? null) }}</td>
                                 <td class="r">{{ ($r['rating'] ?? null) !== null ? number_format($r['rating'], 1).' ★ ('.$r['rating_count'].')' : $nullLbl }}</td>
                                 <td class="r">{{ number_format($r['pesanan'] ?? 0, 0, ',', '.') }}</td>
                             @elseif (($roleFilter ?? 'admin') === 'produksi')
@@ -130,9 +144,15 @@
                     <tr>
                         <td></td>
                         <td>Total</td>
-                        @if (($roleFilter ?? 'admin') === 'admin')
+                        @if (($roleFilter ?? 'admin') === 'owner')
+                            <td class="r">{{ $pct($totals['roi'] ?? null) }}</td>
+                            <td class="r">{{ $fmt($totals['pendapatan'] ?? 0) }}</td>
+                            <td class="r">{{ $fmt($totals['investasi'] ?? 0) }}</td>
+                            <td class="r">{{ $fmt($totals['bersih'] ?? 0) }}</td>
+                        @elseif (($roleFilter ?? 'admin') === 'admin')
                             <td class="r">{{ $pct($totals['cr'] ?? null) }}</td>
                             <td class="r">{{ $rp($totals['aov'] ?? null) }}</td>
+                            <td class="r">{{ $rp($totals['ltv'] ?? null) }}</td>
                             <td class="r">{{ ($totals['rating'] ?? null) !== null ? number_format($totals['rating'], 1).' ★' : $nullLbl }}</td>
                             <td class="r">{{ number_format($totals['pesanan'] ?? 0, 0, ',', '.') }}</td>
                         @elseif (($roleFilter ?? 'admin') === 'produksi')
@@ -152,8 +172,10 @@
         </div>
 
         <div class="footer">
-            @if (($roleFilter ?? 'admin') === 'admin')
-                Closing Rate = pembayaran sukses yang ditangani / seluruh pembayaran yang ditangani. Rating adalah proxy dari ulasan pada order yang diverifikasi karyawan.
+            @if (($roleFilter ?? 'admin') === 'owner')
+                ROI = laba bersih / total investasi (Modal, Investor, biaya iklan) per pemilik toko.
+            @elseif (($roleFilter ?? 'admin') === 'admin')
+                Closing Rate = pesanan selesai / seluruh order yang ditangani. LTV = pendapatan / customer unik yang ditangani. Rating adalah proxy dari ulasan pada order yang diverifikasi karyawan.
             @elseif (($roleFilter ?? 'admin') === 'produksi')
                 Metrik dihitung dari production order yang ditugaskan (assigned_to). Durasi hanya dari order selesai bertanggal valid.
             @else
