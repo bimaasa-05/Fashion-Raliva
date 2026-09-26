@@ -30,6 +30,7 @@
             data-tipe="{{ ucfirst($product->tipe_produk) }}"
             data-variants="{{ $product->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}"
             data-images='{{ json_encode($product->images->pluck('file_gambar')->values(), JSON_UNESCAPED_SLASHES) }}'
+            data-bahan='@json($product->materialRequirements->map(fn ($b) => ['nama' => $b->nama_bahan, 'jumlah' => (float) $b->jumlah_per_unit, 'satuan' => $b->satuan])->values())'
             data-produk-images='@json($fotos)'
             data-slot-total="{{ $product->slot_total }}"
             data-slot-used="{{ $product->slot_used }}"
