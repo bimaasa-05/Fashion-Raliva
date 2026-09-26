@@ -60,7 +60,6 @@ class DataProdukController extends Controller
             'varian_stok' => collect($request->input('varian_stok', []))->map(fn ($row) => is_array($row)
                 ? array_merge($row, [
                     'stok' => \App\Support\NumberParser::integerInput($row['stok'] ?? ''),
-                    'stok_minimum' => \App\Support\NumberParser::integerInput($row['stok_minimum'] ?? ''),
                 ])
                 : $row)->all(),
         ]);
@@ -74,13 +73,11 @@ class DataProdukController extends Controller
             'foto_produk' => 'required|array|min:1|max:5',
             'foto_produk.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
             'stok_awal' => 'nullable|integer|min:0',
-            'stok_minimum' => 'nullable|integer|min:0',
             'ukuran_terpilih' => 'required|string|max:1000',
             'varian_stok' => 'required|array|min:1',
             'varian_stok.*.ukuran' => 'required|string|max:255',
             'varian_stok.*.warna' => 'nullable|string|max:100',
             'varian_stok.*.stok' => 'required|integer|min:1',
-            'varian_stok.*.stok_minimum' => 'required|integer|min:0',
             'warna' => 'nullable|array',
             'warna_hex' => 'nullable|array',
         ], [
@@ -102,7 +99,6 @@ class DataProdukController extends Controller
             'varian_stok.min' => 'Isi stok untuk setiap varian.',
             'varian_stok.*.stok.required' => 'Stok tiap varian wajib diisi.',
             'varian_stok.*.stok.min' => 'Stok tiap varian minimal 1.',
-            'varian_stok.*.stok_minimum.required' => 'Ambang menipis tiap varian wajib diisi.',
         ]);
 
         // Warna satu lapis dengan validasi utama (melempar ValidationException yang sama).
@@ -114,7 +110,7 @@ class DataProdukController extends Controller
             $total = \App\Support\SlotService::totalQuota((int) $storeId);
             $used = \App\Support\SlotService::usedSlots((int) $storeId);
 
-            return back()->with('error', sprintf('Kuota slot produk penuh (%d/%d). Ajukan pembelian slot di menu Beli Slot terlebih dahulu.', $used, $total));
+            return redirect()->route('admin.slot', ['habis' => 1])->with('error', sprintf('Kuota slot produk penuh (%d/%d). Pilih ajukan slot atau beli paket di bawah.', $used, $total));
         }
 
         // Unggah foto dulu (kumpulkan path), lalu 1 transaksi untuk semua baris DB master.
@@ -229,11 +225,10 @@ class DataProdukController extends Controller
                 ]);
 
                 $stok = (int) ($detail['stok'] ?? 0);
-                $stokMin = (int) ($detail['stok_minimum'] ?? 0);
 
                 \App\Models\WarehouseStock::updateOrCreate(
                     ['warehouse_id' => $warehouse->warehouse_id, 'product_variant_id' => $variant->product_variant_id],
-                    ['jumlah_stok' => $stok, 'jumlah_direservasi' => 0, 'stok_minimum' => $stokMin]
+                    ['jumlah_stok' => $stok, 'jumlah_direservasi' => 0, 'stok_minimum' => 10]
                 );
             }
         }
@@ -252,7 +247,6 @@ class DataProdukController extends Controller
             'varian_stok' => collect($request->input('varian_stok', []))->map(fn ($row) => is_array($row)
                 ? array_merge($row, [
                     'stok' => \App\Support\NumberParser::integerInput($row['stok'] ?? ''),
-                    'stok_minimum' => \App\Support\NumberParser::integerInput($row['stok_minimum'] ?? ''),
                 ])
                 : $row)->all(),
         ]);
@@ -274,7 +268,6 @@ class DataProdukController extends Controller
             'varian_stok.*.ukuran' => 'required|string|max:255',
             'varian_stok.*.warna' => 'nullable|string|max:100',
             'varian_stok.*.stok' => 'nullable|integer|min:0',
-            'varian_stok.*.stok_minimum' => 'nullable|integer|min:0',
         ], [
             'nama_produk.required' => 'Nama produk wajib diisi.',
             'harga_dasar.required' => 'Harga dasar wajib diisi.',
