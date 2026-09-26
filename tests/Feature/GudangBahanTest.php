@@ -161,6 +161,8 @@ class GudangBahanTest extends TestCase
         $response = $this->actingAsFresh($produksi)->get(route('produksi.data-produksi'));
         $response->assertOk();
         $response->assertSee('Kancing', false);
+        $response->assertSee("modal-bahan-{$order->order_id}", false);
+        $response->assertSee('Bahan dibutuhkan (dari Gudang)', false);
     }
 
     public function test_produksi_can_add_extra_bahan_per_order(): void
@@ -185,6 +187,58 @@ class GudangBahanTest extends TestCase
             'nama_bahan' => 'Benang',
             'sumber' => ProductionOrderBahan::SUMBER_PRODUKSI,
         ]);
+    }
+
+    public function test_backfill_fills_missing_order_bahan_idempotently(): void
+    {
+        [$admin, $storeId] = $this->admin();
+        [$produksi] = $this->userWithRole(Role::PRODUKSI, $storeId);
+        [$gudang] = $this->userWithRole(Role::GUDANG, $storeId);
+        $product = $this->createProduct($admin, 'Produk Backfill');
+
+        $this->actingAsFresh($gudang)->post(
+            route('gudang.bahan-produk.store', ['product' => $product->product_id]),
+            ['bahan' => [['nama_bahan' => 'Kancing', 'jumlah' => 4, 'satuan' => 'pcs']]]
+        )->assertSessionHasNoErrors();
+
+        $variant = $product->variants()->firstOrFail();
+        $order = $this->orderDiproses($admin, $storeId, $variant, 1);
+        $this->actingAsFresh($produksi)->post(
+            route('produksi.data-produksi.accept', ['order' => $order->order_id])
+        )->assertSessionHasNoErrors();
+
+        // Simulasi order lama: hapus salinan bahan-admin.
+        ProductionOrderBahan::where('order_id', $order->order_id)
+            ->where('sumber', ProductionOrderBahan::SUMBER_ADMIN)
+            ->delete();
+
+        $page = $this->actingAsFresh($produksi)->get(route('produksi.data-produksi'));
+        $page->assertOk();
+        $page->assertSee('Lengkapi Bahan', false);
+
+        $this->actingAsFresh($produksi)->post(route('produksi.data-produksi.backfill-bahan'))
+            ->assertSessionHasNoErrors();
+        $this->assertSame(1, ProductionOrderBahan::where('order_id', $order->order_id)
+            ->where('sumber', ProductionOrderBahan::SUMBER_ADMIN)->count());
+
+        $this->actingAsFresh($produksi)->post(route('produksi.data-produksi.backfill-bahan'))
+            ->assertSessionHasNoErrors();
+        $this->assertSame(1, ProductionOrderBahan::where('order_id', $order->order_id)
+            ->where('sumber', ProductionOrderBahan::SUMBER_ADMIN)->count());
+    }
+
+    public function test_data_produksi_has_no_nested_script_include(): void
+    {
+        $src = file_get_contents(resource_path('views/Produksi/data-produksi/index.blade.php'));
+        $inc = strpos($src, "@include('partials.countdown-produksi')");
+        $lastClose = strrpos($src, '</script>');
+
+        $this->assertNotFalse($inc, 'Include countdown harus ada.');
+        $this->assertNotFalse($lastClose);
+        $this->assertTrue(
+            $inc > $lastClose,
+            'Include countdown harus di luar blok <script> agar JS halaman tidak gagal parse.'
+        );
     }
 
     private function actingAsFresh(User $user): static
@@ -278,6 +332,7 @@ class GudangBahanTest extends TestCase
 
         $this->actingAsFresh($admin)->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'offline',
+            'fulfillment' => 'ambil',
             'nama_penerima' => 'Budi Bahan',
             'nomor_telepon' => '081234567890',
             'email_pelanggan' => $email,
