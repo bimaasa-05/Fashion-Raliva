@@ -275,6 +275,7 @@
             panel.querySelector('.rdp-time').classList.remove('hidden');
             renderMonth();
             updateTimeUI();
+            if (active.display) positionPanel(active.display.getBoundingClientRect());
         } else {
             setValue(active, iso);
             closePanel();
@@ -299,15 +300,38 @@
         clampTyped('h');
         clampTyped('m');
         setValue(active, active.pendingDate + 'T' + active.timeH + ':' + active.timeM);
+        var chained = active.input.getAttribute && active.input.getAttribute('data-rdp-chain');
+        var chainedForm = active.input.form || (active.input.closest ? active.input.closest('form') : null);
+        var startDate = active.pendingDate;
         closePanel();
+        // Rangkaian: setelah tanggal mulai disimpan, langsung buka picker tanggal berakhir.
+        if (chained && chainedForm) {
+            var next = chainedForm.querySelector('[name="' + chained + '"]');
+            if (next) {
+                if (startDate) next.setAttribute('min', startDate);
+                var wrap = next.closest('.raliva-dp-wrap');
+                var disp = wrap ? wrap.querySelector('.raliva-dp-display') : null;
+                if (disp) {
+                    setTimeout(function () { disp.click(); }, 60);
+                }
+            }
+        }
     }
 
     function positionPanel(rect) {
         var pw = panel.offsetWidth || 288;
         var ph = panel.offsetHeight;
         var left = rect.left;
-        var top = rect.bottom + 8;
-        if (top + ph > window.innerHeight - 8) top = Math.max(8, rect.top - ph - 8);
+        var spaceBelow = window.innerHeight - rect.bottom - 8;
+        var spaceAbove = rect.top - 8;
+        var top;
+        if (ph <= spaceBelow) {
+            top = rect.bottom + 8;
+        } else if (ph <= spaceAbove) {
+            top = rect.top - ph - 8;
+        } else {
+            top = Math.max(8, Math.round((window.innerHeight - ph) / 2));
+        }
         if (left + pw > window.innerWidth - 8) left = Math.max(8, window.innerWidth - pw - 8);
         panel.style.left = left + 'px';
         panel.style.top = top + 'px';
