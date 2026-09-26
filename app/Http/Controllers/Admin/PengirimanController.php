@@ -22,7 +22,7 @@ class PengirimanController extends Controller
         $siapDikirim = Order::query()
             ->whereIn('store_id', $storeIds)
             ->where('status', Order::STATUS_SIAP_KIRIM)
-            ->where('tipe_pesanan', Order::TIPE_PESANAN_ONLINE)
+            ->where('metode_fulfillment', Order::FULFILLMENT_DIANTAR)
             ->whereDoesntHave('shipments')
             ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap', 'items'])
             ->orderByDesc('created_at')
@@ -31,13 +31,7 @@ class PengirimanController extends Controller
         $siapDiambil = Order::query()
             ->whereIn('store_id', $storeIds)
             ->where('status', Order::STATUS_SIAP_KIRIM)
-            ->where(function ($q) {
-                $q->where('tipe_pesanan', Order::TIPE_PESANAN_OFFLINE)
-                    ->orWhere(function ($qq) {
-                        $qq->where('tipe_pesanan', Order::TIPE_PESANAN_ONLINE)
-                            ->whereDoesntHave('shipments');
-                    });
-            })
+            ->where('metode_fulfillment', Order::FULFILLMENT_AMBIL)
             ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap', 'checkout.payment', 'items'])
             ->orderByDesc('created_at')
             ->get();
