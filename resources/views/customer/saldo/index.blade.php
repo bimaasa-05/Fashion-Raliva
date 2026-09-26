@@ -323,7 +323,7 @@
                                     @elseif($wd->status === 'dibayar') bg-emerald-100 text-emerald-800
                                     @elseif($wd->status === 'ditolak') bg-red-100 text-red-800
                                     @else bg-surface-container text-on-surface-variant @endif">
-                                    {{ $wd->status }}
+                                    {{ ['pending' => __('Pending'), 'disetujui' => __('Approved'), 'dibayar' => __('Paid'), 'ditolak' => __('Rejected'), 'dibatalkan' => __('Cancelled')][$wd->status] ?? $wd->status }}
                                 </span>
                             </a>
                         @endforeach
@@ -362,7 +362,7 @@
                                                 <span class="material-symbols-outlined text-[16px] text-on-surface-variant">
                                                     {{ $trx->jenis_transaksi === \App\Models\CustomerWalletTransaction::JENIS_TOPUP ? 'add_circle' : ($trx->jenis_transaksi === \App\Models\CustomerWalletTransaction::JENIS_REFUND_MASUK ? 'undo' : 'remove_circle') }}
                                                 </span>
-                                                <span>{{ $trx->jenis_transaksi }}</span>
+                                                <span>{{ ['topup' => __('Top Up'), 'pembayaran_keluar' => __('Order Payment'), 'refund_masuk' => __('Refund Received'), 'penyesuaian' => __('Adjustment'), 'penarikan_keluar' => __('Withdrawal Sent'), 'penarikan_masuk' => __('Withdrawal Received')][$trx->jenis_transaksi] ?? $trx->jenis_transaksi }}</span>
                                             </span>
                                         </td>
                                         <td class="py-3 pr-md font-semibold tabular-nums whitespace-nowrap
@@ -477,6 +477,17 @@
             var el = document.querySelector('[data-bars]');
             if (!el) return;
             var ranges = @json($ranges);
+            @php
+            $i18nChart = [
+                'Pemasukan' => __('Pemasukan'),
+                'Pengeluaran' => __('Pengeluaran'),
+                ' saldo per ' => __(' saldo per '),
+                'bulan' => __('bulan'),
+                'hari' => __('hari'),
+            ];
+            @endphp
+            window.RALIVA_I18N = Object.assign(window.RALIVA_I18N || {}, @json($i18nChart));
+            window.ralivaT = window.ralivaT || function (s) { var m = window.RALIVA_I18N || {}; return m[s] || s; };
             var range = '6bulan';
             var mode = 'in';
             var subline = document.getElementById('chart-subline');
@@ -535,8 +546,8 @@
 
             function updateSubline() {
                 var isBulanan = ranges[range].bulanan;
-                var kata = mode === 'in' ? 'Pemasukan' : 'Pengeluaran';
-                subline.textContent = kata + ' saldo per ' + (isBulanan ? 'bulan' : 'hari') + ' - ' + ranges[range].label;
+                var kata = mode === 'in' ? window.ralivaT('Pemasukan') : window.ralivaT('Pengeluaran');
+                subline.textContent = kata + window.ralivaT(' saldo per ') + (isBulanan ? window.ralivaT('bulan') : window.ralivaT('hari')) + ' - ' + ranges[range].label;
             }
 
             var renderTimer = null;
