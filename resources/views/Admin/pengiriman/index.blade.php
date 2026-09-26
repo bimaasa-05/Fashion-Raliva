@@ -5,7 +5,7 @@
 @section('header-title', 'Pengiriman')
 @section('header-badge', 'Kelola')
 
-@section('header-subtitle', 'Kelola pengiriman kurir dan pesanan offline yang siap diambil pelanggan.')
+@section('header-subtitle', 'Kelola pengiriman kurir dan pesanan ambil-di-toko yang siap diambil pelanggan.')
 
 @section('content')
 @include('partials.flash-toast')
@@ -15,20 +15,20 @@
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
                 <h2 class="font-title-md text-title-md text-on-surface premium-heading">Kelola Pengiriman &amp; Penyerahan</h2>
-                <p class="font-body-md text-xs text-on-surface-variant mt-1">Input resi kurir untuk pesanan online atau konfirmasi serah terima barang untuk pesanan offline.</p>
+                <p class="font-body-md text-xs text-on-surface-variant mt-1">Input resi kurir untuk pesanan diantar atau konfirmasi serah terima barang untuk pesanan ambil di toko.</p>
             </div>
             <div class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 overflow-x-auto shrink-0">
                 <button type="button" data-ship-tab="semua" class="ship-tab px-4 py-2 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">Semua</button>
-                <button type="button" data-ship-tab="online" class="ship-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Online (Kurir)</button>
-                <button type="button" data-ship-tab="offline" class="ship-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Offline (Ambil di Toko)</button>
+                <button type="button" data-ship-tab="diantar" class="ship-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Diantar (Kurir)</button>
+                <button type="button" data-ship-tab="ambil" class="ship-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Diambil di Toko</button>
             </div>
         </div>
 
         {{-- Antrian gabungan: satu list, input menyesuaikan tipe pesanan --}}
         @php
             $antrian = collect()
-                ->merge($siapDiambil->map(fn ($o) => ['tipe' => 'offline', 'order' => $o]))
-                ->merge($siapDikirim->map(fn ($o) => ['tipe' => 'online', 'order' => $o]))
+                ->merge($siapDiambil->map(fn ($o) => ['tipe' => 'ambil', 'order' => $o]))
+                ->merge($siapDikirim->map(fn ($o) => ['tipe' => 'diantar', 'order' => $o]))
                 ->sortByDesc(fn ($x) => optional($x['order']->created_at)->timestamp ?? 0)
                 ->values();
         @endphp
@@ -37,16 +37,16 @@
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">pending_actions</span>
                 <h3 class="font-title-md text-sm font-bold uppercase tracking-wider text-on-surface">Antrian Penyerahan</h3>
                 <span class="px-2 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold">{{ $antrian->count() }} Paket</span>
-                <span class="text-[11px] text-on-surface-variant">• Online = input resi kurir • Offline = konfirmasi diambil</span>
+                <span class="text-[11px] text-on-surface-variant">• Diantar = input resi kurir • Ambil = konfirmasi diambil</span>
             </div>
             @forelse ($antrian as $item)
                 @php $pesanan = $item['order']; @endphp
                 <div data-ship-type="{{ $item['tipe'] }}" class="border border-muted-border rounded-lg p-5 bg-surface-container-low/50">
-                    @if ($item['tipe'] === 'offline')
+                    @if ($item['tipe'] === 'ambil')
                     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-mono text-[10px] font-bold">OFFLINE</span>
+                                <span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-mono text-[10px] font-bold">AMBIL</span>
                                 <p class="font-mono text-sm text-on-surface-variant">{{ $pesanan->nomor_order }} &#8226; {{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</p>
                             </div>
                             <p class="font-title-md text-title-md text-on-surface mt-1">{{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->implode(', '), 60) }}</p>
@@ -67,7 +67,7 @@
                         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <span class="px-2 py-0.5 rounded bg-secondary-container/20 text-secondary font-mono text-[10px] font-bold">ONLINE</span>
+                                    <span class="px-2 py-0.5 rounded bg-secondary-container/20 text-secondary font-mono text-[10px] font-bold">DIANTAR</span>
                                     <p class="font-mono text-sm text-on-surface-variant">{{ $pesanan->nomor_order }} &#8226; {{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</p>
                                 </div>
                                 <p class="font-title-md text-title-md text-on-surface mt-1">{{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->implode(', '), 60) }}</p>
@@ -104,7 +104,7 @@
         </div>
     </div>
 
-    <section data-ship-type="online" class="space-y-gutter">
+    <section data-ship-type="diantar" class="space-y-gutter">
         <h2 class="font-title-md text-title-md text-on-surface premium-heading">Dalam Pengiriman &amp; Riwayat</h2>
         <div class="overflow-x-auto hidden md:block bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
             <table class="w-full min-w-[850px] premium-table">
@@ -327,7 +327,7 @@
 
 @push('scripts')
 <script>
-    // Tab Filter (Semua / Online / Offline)
+    // Tab Filter (Semua / Diantar / Ambil)
     document.querySelectorAll('[data-ship-tab]').forEach(tab => {
         tab.addEventListener('click', () => {
             document.querySelectorAll('[data-ship-tab]').forEach(t => {
