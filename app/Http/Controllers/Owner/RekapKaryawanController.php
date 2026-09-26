@@ -126,7 +126,7 @@ class RekapKaryawanController extends Controller
 
     private function bangunRekap(Collection $staff, array $storeIds, string $roleFilter, ?array $range): Collection
     {
-        return $staff
+        $rows = $staff
             ->map(function (StoreStaff $s) use ($storeIds, $range, $roleFilter) {
                 $user = $s->user;
                 $base = [
@@ -150,6 +150,7 @@ class RekapKaryawanController extends Controller
                         'admin' => $this->report->rekapAdmin((int) $s->user_id, $storeIds, $range),
                         'produksi' => $this->report->rekapProduksi((int) $s->user_id, $storeIds, $range),
                         'gudang' => $this->report->rekapGudang((int) $s->user_id, $storeIds, $range),
+                        'owner' => $this->metrikOwner($storeIds, $range),
                         default => [],
                     }
                 );
@@ -171,7 +172,6 @@ class RekapKaryawanController extends Controller
                 ->with('role')
                 ->get();
             $barisPemilik = $pemilik->map(function ($user) use ($storeIds, $range) {
-                $ringkasan = $this->report->ringkasanKeuangan($storeIds, $range);
                 $base = [
                     'user_id' => (int) $user->user_id,
                     'nama' => $user->nama_lengkap ?? '-',
@@ -181,18 +181,25 @@ class RekapKaryawanController extends Controller
                 ];
                 $keuangan = $this->report->rekapKaryawan((int) $user->user_id, $storeIds);
 
-                return array_merge($base, $keuangan, [
-                    'pendapatan' => (float) ($ringkasan['revenue'] ?? 0),
-                    'investasi' => (float) ($ringkasan['investasi'] ?? 0),
-                    'bersih' => (float) ($ringkasan['bersih'] ?? 0),
-                    'customers' => (int) ($ringkasan['customers'] ?? 0),
-                    'roi' => $ringkasan['roi'] ?? null,
-                ]);
+                return array_merge($base, $keuangan, $this->metrikOwner($storeIds, $range));
             });
             $rows = $rows->concat($barisPemilik)->values();
         }
 
         return $rows;
+    }
+
+    private function metrikOwner(array $storeIds, ?array $range): array
+    {
+        $ringkasan = $this->report->ringkasanKeuangan($storeIds, $range);
+
+        return [
+            'pendapatan' => (float) ($ringkasan['revenue'] ?? 0),
+            'investasi' => (float) ($ringkasan['investasi'] ?? 0),
+            'bersih' => (float) ($ringkasan['bersih'] ?? 0),
+            'customers' => (int) ($ringkasan['customers'] ?? 0),
+            'roi' => $ringkasan['roi'] ?? null,
+        ];
     }
 
     private function rekapKosong(): array
