@@ -45,7 +45,6 @@ class OrderPriorityCancelTest extends TestCase
 
         $this->actingAs($admin)->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'offline',
-            'fulfillment' => 'ambil',
             'nama_penerima' => 'Budi Batal',
             'nomor_telepon' => '081234567890',
             'email_pelanggan' => $email,
@@ -76,7 +75,6 @@ class OrderPriorityCancelTest extends TestCase
 
         $this->actingAs($admin)->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'online',
-            'fulfillment' => 'diantar',
             'user_id' => $customer->user_id,
             'items' => [
                 ['product_variant_id' => $variant->product_variant_id, 'quantity' => 1],
@@ -113,7 +111,6 @@ class OrderPriorityCancelTest extends TestCase
     {
         $this->actingAs($admin)->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'offline',
-            'fulfillment' => 'ambil',
             'nama_penerima' => 'Budi Prioritas',
             'nomor_telepon' => '081234567890',
             'email_pelanggan' => $email,
