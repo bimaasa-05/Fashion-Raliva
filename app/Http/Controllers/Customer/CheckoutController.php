@@ -18,7 +18,9 @@ use App\Models\PaymentProof;
 use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Models\Role;
+use App\Models\ShippingService;
 use App\Models\Store;
+use App\Models\StoreCourierSetting;
 use App\Models\User;
 use App\Services\NotificationService;
 use App\Support\ActivityLogger;
@@ -28,6 +30,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class CheckoutController extends Controller
 {
@@ -38,6 +41,100 @@ class CheckoutController extends Controller
         ['kode' => 'regular', 'nama' => 'Regular Delivery', 'estimasi' => '3-5 Business Days', 'ongkir' => 0],
         ['kode' => 'express', 'nama' => 'Express Delivery', 'estimasi' => '1-2 Business Days', 'ongkir' => 35000],
     ];
+
+    /**
+     * Susun opsi pengiriman dari layanan aktif toko (SA kelola kurir, Admin kelola layanan+tarif).
+     * Bertingkat: kota customer == kota toko → tarif sekota (default gratis), selain itu tarif beda kota.
+     * Efektif per toko: ongkir_override (beda kota) / tarif bawaan; sekota selalu tarif_sekota bawaan.
+     * Gabung per nama layanan (tarif = maks, estimasi = rentang), urut termurah. Fallback konstanta bila kosong.
+     */
+    protected static function shippingOptionsFor(array $storeIds, ?string $kotaCustomer = null): array
+    {
+        $storeIds = array_values(array_unique(array_filter(array_map('intval', $storeIds))));
+        $services = collect();
+        if ($storeIds !== []) {
+            $services = ShippingService::with('courier')
+                ->whereIn('store_id', $storeIds)
+                ->where('status', ShippingService::STATUS_AKTIF)
+                ->get();
+        }
+        if ($services->isEmpty()) {
+            return self::SHIPPING_OPTIONS;
+        }
+
+        $kotaCustomer = mb_strtolower(trim((string) $kotaCustomer));
+        $kotaToko = Store::whereIn('store_id', $storeIds)->pluck('kota', 'store_id');
+        $settings = StoreCourierSetting::whereIn('store_id', $storeIds)->get();
+        $grouped = [];
+        foreach ($services as $svc) {
+            $rows = $settings->where('store_id', $svc->store_id)
+                ->where('courier_id', $svc->courier_id)
+                ->where('shipping_service_id', $svc->shipping_service_id);
+            if ($rows->isNotEmpty() && ! $rows->contains(fn ($r) => (bool) $r->is_aktif)) {
+                continue;
+            }
+            $row = $rows->firstWhere('is_aktif', true) ?? $rows->first();
+            $kotaTokoNorm = mb_strtolower(trim((string) ($kotaToko[$svc->store_id] ?? '')));
+            $sekota = $kotaCustomer !== '' && $kotaTokoNorm !== '' && $kotaCustomer === $kotaTokoNorm;
+            $ongkir = $sekota
+                ? ($svc->tarif_sekota ?? 0)
+                : ($row?->ongkir_override ?? $svc->tarif ?? 0);
+            $est = $row?->estimasi_override ?? $svc->estimasi_hari ?? 1;
+            $key = mb_strtolower(trim((string) $svc->nama_layanan));
+            if (! isset($grouped[$key])) {
+                $grouped[$key] = [
+                    'kode' => Str::slug((string) $svc->nama_layanan),
+                    'nama' => $svc->nama_layanan,
+                    'ongkir' => [],
+                    'est' => [],
+                ];
+            }
+            $grouped[$key]['ongkir'][] = (int) round((float) $ongkir);
+            $grouped[$key]['est'][] = max(1, (int) $est);
+        }
+        if ($grouped === []) {
+            return self::SHIPPING_OPTIONS;
+        }
+
+        $options = [];
+        foreach ($grouped as $g) {
+            $min = min($g['est']);
+            $max = max($g['est']);
+            $options[] = [
+                'kode' => $g['kode'] !== '' ? $g['kode'] : 'layanan',
+                'nama' => $g['nama'],
+                'estimasi' => $min === $max ? "Estimasi ~{$min} hari" : "Estimasi {$min}-{$max} hari",
+                'ongkir' => max($g['ongkir']),
+            ];
+        }
+        usort($options, fn ($a, $b) => $a['ongkir'] <=> $b['ongkir']);
+
+        return $options;
+    }
+
+    /**
+     * ID toko dari keranjang/buy (untuk validasi ongkir sebelum resolveItems).
+     */
+    protected function checkoutStoreIds(int $buyId): array
+    {
+        if ($buyId > 0) {
+            $v = ProductVariant::with('product.store')->find($buyId);
+            $sid = $v?->product?->store_id;
+
+            return $sid ? [(int) $sid] : [];
+        }
+        if (! Auth::check()) {
+            return [];
+        }
+        $cart = Cart::where('user_id', Auth::id())->where('status', Cart::STATUS_AKTIF)->first();
+        if (! $cart) {
+            return [];
+        }
+
+        return $cart->items()->with('productVariant.product.store')->get()
+            ->map(fn ($ci) => $ci->productVariant?->product?->store_id)
+            ->filter()->unique()->values()->all();
+    }
 
     /**
      * Tampilkan halaman checkout (Review) — guest-friendly.
@@ -119,8 +216,9 @@ class CheckoutController extends Controller
         $count = $items->sum('quantity');
         $subtotal = $items->sum(fn ($i) => $i->quantity * $i->harga_snapshot);
 
-        $shippingOptions = self::SHIPPING_OPTIONS;
-        $shipping = 0;
+        $storeIds = $items->map(fn ($i) => $i->productVariant?->product?->store_id)->filter()->unique()->values()->all();
+        $shippingOptions = self::shippingOptionsFor($storeIds, $address?->kota);
+        $shipping = (int) min(array_column($shippingOptions, 'ongkir'));
         $tax = \App\Support\PricingService::taxFor($subtotal);
         $biayaLayanan = (int) round(\App\Support\PricingService::serviceFee());
         $total = $subtotal + $shipping + $tax + $biayaLayanan;
@@ -132,6 +230,9 @@ class CheckoutController extends Controller
         // Token idempotensi: cegah double-checkout akibat klik ganda.
         $submitToken = (string) Str::uuid();
         session()->put('checkout_submit_token', $submitToken);
+
+        $cities = \App\Models\City::orderBy('city_id')->get()->groupBy('pulau')
+            ->map(fn ($g) => $g->pluck('nama_kota')->values()->all())->all();
 
         return view('customer.checkout.index', compact(
             'address',
@@ -146,7 +247,8 @@ class CheckoutController extends Controller
             'paymentMethods',
             'buyId',
             'backProductId',
-            'submitToken'
+            'submitToken',
+            'cities'
         ));
     }
 
@@ -155,16 +257,23 @@ class CheckoutController extends Controller
      */
     public function store(Request $request)
     {
+        $allowedOngkir = array_column(
+            self::shippingOptionsFor(
+                $this->checkoutStoreIds((int) $request->input('buy', 0)),
+                $request->input('kota')
+            ),
+            'ongkir'
+        );
         $validated = $request->validate([
             'nama_penerima' => 'required|string|max:150',
             'nomor_telepon' => 'required|string|max:30',
             'email_pelanggan' => 'required|email|max:150',
             'alamat' => 'required|string|max:500',
-            'kota' => 'required|string|max:100',
+            'kota' => 'required|string|max:100|exists:cities,nama_kota',
             'provinsi' => 'required|string|max:100',
             'kode_pos' => 'required|string|max:20',
             'catatan' => 'nullable|string|max:1000',
-            'shipping' => 'required|numeric|in:0,35000',
+            'shipping' => ['required', 'numeric', Rule::in($allowedOngkir)],
             'buy' => 'nullable|integer',
         ], [
             'nama_penerima.required' => 'Nama penerima wajib diisi.',
@@ -172,6 +281,7 @@ class CheckoutController extends Controller
             'email_pelanggan.required' => 'Email wajib diisi.',
             'alamat.required' => 'Alamat wajib diisi.',
             'kota.required' => 'Kota wajib diisi.',
+            'kota.exists' => 'Pilih kota dari daftar yang tersedia.',
             'provinsi.required' => 'Provinsi wajib diisi.',
             'kode_pos.required' => 'Kode pos wajib diisi.',
             'shipping.required' => 'Pilih metode pengiriman terlebih dahulu.',

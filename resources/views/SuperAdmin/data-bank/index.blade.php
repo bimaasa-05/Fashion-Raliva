@@ -384,7 +384,7 @@
                 <div class="flex flex-col sm:flex-row gap-6 p-5 md:p-6">
                     @if ($qris->file_gambar)
                         <div class="shrink-0">
-                            <img src="{{ asset('storage/' . ltrim($qris->file_gambar, '/')) }}" alt="{{ $qris->nama }}" class="w-44 h-44 md:w-52 md:h-52 object-contain rounded-xl border border-muted-border bg-surface-container-low p-3 shadow-sm" />
+                            <img src="{{ photo_url($qris->file_gambar) }}" onerror="this.style.display='none'" alt="{{ $qris->nama }}" class="w-44 h-44 md:w-52 md:h-52 object-contain rounded-xl border border-muted-border bg-surface-container-low p-3 shadow-sm" />
                         </div>
                     @endif
                     <div class="flex-1 space-y-3 min-w-0">

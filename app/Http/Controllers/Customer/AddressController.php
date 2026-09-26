@@ -24,7 +24,10 @@ class AddressController extends Controller
      */
     public function create()
     {
-        return view('customer.address.create');
+        $cities = \App\Models\City::orderBy('city_id')->get()->groupBy('pulau')
+            ->map(fn ($g) => $g->pluck('nama_kota')->values()->all())->all();
+
+        return view('customer.address.create', compact('cities'));
     }
 
     /**
@@ -37,7 +40,7 @@ class AddressController extends Controller
             'nama_penerima' => 'required|string|max:150',
             'nomor_telepon' => 'required|string|max:30',
             'alamat' => 'required|string',
-            'kota' => 'required|string|max:100',
+            'kota' => 'required|string|max:100|exists:cities,nama_kota',
             'provinsi' => 'nullable|string|max:100',
             'kode_pos' => 'nullable|string|max:20',
             'negara' => 'nullable|string|max:100',
@@ -52,6 +55,7 @@ class AddressController extends Controller
             'alamat.required' => 'Alamat wajib diisi.',
             'kota.required' => 'Kota wajib diisi.',
             'kota.max' => 'Kota maksimal 100 karakter.',
+            'kota.exists' => 'Pilih kota dari daftar yang tersedia.',
             'provinsi.max' => 'Provinsi maksimal 100 karakter.',
             'kode_pos.max' => 'Kode pos maksimal 20 karakter.',
             'negara.max' => 'Negara maksimal 100 karakter.',
@@ -79,7 +83,10 @@ class AddressController extends Controller
     {
         $this->authorizeAddress($address);
 
-        return view('customer.address.edit', compact('address'));
+        $cities = \App\Models\City::orderBy('city_id')->get()->groupBy('pulau')
+            ->map(fn ($g) => $g->pluck('nama_kota')->values()->all())->all();
+
+        return view('customer.address.edit', compact('address', 'cities'));
     }
 
     /**
@@ -94,7 +101,7 @@ class AddressController extends Controller
             'nama_penerima' => 'required|string|max:150',
             'nomor_telepon' => 'required|string|max:30',
             'alamat' => 'required|string',
-            'kota' => 'required|string|max:100',
+            'kota' => 'required|string|max:100|exists:cities,nama_kota',
             'provinsi' => 'nullable|string|max:100',
             'kode_pos' => 'nullable|string|max:20',
             'negara' => 'nullable|string|max:100',
@@ -109,6 +116,7 @@ class AddressController extends Controller
             'alamat.required' => 'Alamat wajib diisi.',
             'kota.required' => 'Kota wajib diisi.',
             'kota.max' => 'Kota maksimal 100 karakter.',
+            'kota.exists' => 'Pilih kota dari daftar yang tersedia.',
             'provinsi.max' => 'Provinsi maksimal 100 karakter.',
             'kode_pos.max' => 'Kode pos maksimal 20 karakter.',
             'negara.max' => 'Negara maksimal 100 karakter.',

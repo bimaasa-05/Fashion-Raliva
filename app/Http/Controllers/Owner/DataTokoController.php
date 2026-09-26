@@ -11,6 +11,7 @@ use App\Models\User;
 use App\Support\ActivityLogger;
 use App\Support\OwnerContext;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class DataTokoController extends Controller
@@ -35,7 +36,10 @@ class DataTokoController extends Controller
             ->latest('store_update_request_id')
             ->first();
 
-        return view('Owner.data-toko.index', compact('store', 'rating', 'reviewCount', 'storeCategories', 'updatePending'));
+        $cities = \App\Models\City::orderBy('city_id')->get()->groupBy('pulau')
+            ->map(fn ($g) => $g->pluck('nama_kota')->values()->all())->all();
+
+        return view('Owner.data-toko.index', compact('store', 'rating', 'reviewCount', 'storeCategories', 'updatePending', 'cities'));
     }
 
     public function update(Request $request)
@@ -54,8 +58,14 @@ class DataTokoController extends Controller
             'kategori' => ['nullable', 'string', 'max:100', Rule::exists('store_categories', 'nama_kategori')->where('status', StoreCategory::STATUS_AKTIF)],
             'deskripsi' => ['nullable', 'string', 'max:1000'],
             'alamat' => ['required', 'string', 'max:500'],
+            'kota' => ['nullable', 'string', 'max:100', Rule::exists('cities', 'nama_kota')],
             'nomor_telepon' => ['required', 'string', 'max:20'],
             'email' => ['required', 'email', 'max:150', Rule::unique('users', 'email')->ignore($request->user()->user_id ?? 0, 'user_id')],
+            'logo' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:2048'],
+        ], [
+            'logo.image' => 'File harus berupa gambar.',
+            'logo.mimes' => 'Logo harus berformat JPG, JPEG, PNG, atau WebP.',
+            'logo.max' => 'Ukuran logo maksimal 2 MB.',
         ]);
 
         // Email ada di tabel users, bukan stores — langsung disimpan.
@@ -73,10 +83,29 @@ class DataTokoController extends Controller
             && ($store->kategori ?? null) === ($validated['kategori'] ?? null)
             && ($store->deskripsi ?? null) === ($validated['deskripsi'] ?? null)
             && $store->alamat === $validated['alamat']
-            && $store->nomor_telepon === $validated['nomor_telepon'];
+            && ($store->kota ?? null) === ($validated['kota'] ?? null)
+            && $store->nomor_telepon === $validated['nomor_telepon']
+            && ! $request->hasFile('logo');
 
         if ($sama) {
             return back()->with('info', 'Tidak ada perubahan data toko.');
+        }
+
+        $logoPath = null;
+        if ($request->hasFile('logo')) {
+            $logoPath = $request->file('logo')->store('store-logos/'.$store->store_id.'/pending', 'public');
+            // Bersihkan file pending yatim (tak terikat request mana pun), kecuali file baru & logo aktif.
+            $terpakai = \App\Models\StoreUpdateRequest::where('store_id', $store->store_id)
+                ->whereNotNull('logo')->pluck('logo')->all();
+            $terpakai[] = $logoPath;
+            if ($store->logo) {
+                $terpakai[] = $store->logo;
+            }
+            foreach (Storage::disk('public')->files('store-logos/'.$store->store_id.'/pending') as $f) {
+                if (! in_array($f, $terpakai, true)) {
+                    Storage::disk('public')->delete($f);
+                }
+            }
         }
 
         $permintaan = \App\Models\StoreUpdateRequest::create([
@@ -85,7 +114,9 @@ class DataTokoController extends Controller
             'kategori' => $validated['kategori'] ?? null,
             'deskripsi' => $validated['deskripsi'] ?? null,
             'alamat' => $validated['alamat'],
+            'kota' => $validated['kota'] ?? null,
             'nomor_telepon' => $validated['nomor_telepon'],
+            'logo' => $logoPath,
             'status' => \App\Models\StoreUpdateRequest::STATUS_PENDING,
         ]);
 
@@ -93,15 +124,15 @@ class DataTokoController extends Controller
             'toko.update.request',
             Store::class,
             $store->store_id,
-            $store->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon']),
-            $permintaan->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon']),
+            $store->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'kota', 'nomor_telepon', 'logo']),
+            $permintaan->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'kota', 'nomor_telepon', 'logo']),
             sprintf('Mengajukan perubahan data toko "%s".', $store->nama_toko)
         );
 
-        $sa = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
+        $saUsers = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
             ->where('status', User::STATUS_AKTIF)
-            ->first();
-        if ($sa) {
+            ->get();
+        foreach ($saUsers as $sa) {
             Notification::create([
                 'user_id' => $sa->user_id,
                 'aktor_id' => $user?->user_id,

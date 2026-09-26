@@ -365,9 +365,9 @@
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium flex overflow-x-auto hide-scrollbar gap-sm md:items-center md:justify-center md:gap-md">
-<button type="button" data-cat="All" id="home-cat-all" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('Semua') }}</button>
+<button type="button" data-cat="All" id="home-cat-all" class="home-cat-pill shrink-0 w-auto whitespace-nowrap text-center px-2.5 py-[4px] border border-secondary text-secondary text-[11px] rounded-full bg-secondary/5">{{ __('Semua') }}</button>
 @foreach ($homeCats as $homeCat)
-<button type="button" data-cat="{{ $homeCat }}" class="home-cat-pill shrink-0 w-full md:w-auto whitespace-nowrap text-center px-3 md:px-md py-xs border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ $homeCat }}</button>
+<button type="button" data-cat="{{ $homeCat }}" class="home-cat-pill shrink-0 w-auto whitespace-nowrap text-center px-2.5 py-[4px] border border-outline-variant text-on-surface-variant text-[11px] rounded-full hover:border-secondary hover:text-secondary transition-colors">{{ $homeCat }}</button>
 @endforeach
 </div>
 </div>

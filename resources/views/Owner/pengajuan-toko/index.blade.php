@@ -130,6 +130,11 @@
                     <textarea id="pt-alamat" name="alamat" rows="3" required autocomplete="street-address" placeholder="Jl. Contoh No. 123, Kota, Provinsi" class="raliva-textarea">{{ old('alamat') }}</textarea>
                     @error('alamat') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
+                <div>
+                    <label class="block raliva-label mb-2">Kota <span class="text-error">*</span></label>
+                    @include('partials.kota-combobox', ['prefix' => 'ajuan', 'cities' => $cities ?? [], 'selectedName' => old('kota', $store?->kota ?? ''), 'fieldName' => 'kota', 'placeholder' => 'Cari kota toko...'])
+                    @error('kota') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
                 <div class="md:col-span-2">
                     <label for="pt-deskripsi" class="block raliva-label mb-2">Deskripsi Toko (Opsional)</label>
                     <textarea id="pt-deskripsi" name="deskripsi" rows="2" placeholder="Deskripsi singkat toko Anda..." class="raliva-textarea">{{ old('deskripsi') }}</textarea>

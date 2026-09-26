@@ -15,7 +15,7 @@ if (! function_exists('photo_url')) {
             return $path;
         }
         $path = ltrim($path, '/');
-        if (str_starts_with($path, 'assets/')) {
+        if (str_starts_with($path, 'assets/') || str_starts_with($path, 'images/')) {
             return asset($path);
         }
 

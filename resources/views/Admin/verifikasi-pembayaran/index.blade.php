@@ -81,7 +81,7 @@
                             @endif
                         </div>
                         <div class="flex flex-col items-end gap-1.5 shrink-0">
-                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant"><span class="material-symbols-outlined text-[14px] mr-1">{{ $metodeIcon }}</span>@if($pembayaran->account?->file_gambar)<img src="{{ asset('storage/' . ltrim($pembayaran->account->file_gambar, '/')) }}" alt="{{ $pembayaran->account->nama }}" class="h-3.5 w-3.5 object-contain mr-1" />@endif{{ $pembayaran->paymentMethod?->nama_metode ?? '-' }}{{ $pembayaran->account?->nama ? ' &#8226; ' . $pembayaran->account->nama : '' }}</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant"><span class="material-symbols-outlined text-[14px] mr-1">{{ $metodeIcon }}</span>@if($pembayaran->account?->file_gambar)<img src="{{ photo_url($pembayaran->account->file_gambar) }}" onerror="this.style.display='none'" alt="{{ $pembayaran->account->nama }}" class="h-3.5 w-3.5 object-contain mr-1" />@endif{{ $pembayaran->paymentMethod?->nama_metode ?? '-' }}{{ $pembayaran->account?->nama ? ' &#8226; ' . $pembayaran->account->nama : '' }}</span>
                             <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $statusBadge['class'] }}"><span class="material-symbols-outlined text-[14px] mr-1">{{ $statusBadge['icon'] }}</span>{{ $statusBadge['label'] }}</span>
                         </div>
                     </div>
@@ -249,7 +249,7 @@
                                     <p class="raliva-label mb-2">Tujuan Pembayaran</p>
                                     <div class="flex items-center gap-3">
                                         @if ($pembayaran->account->file_gambar)
-                                            <img src="{{ asset('storage/' . ltrim($pembayaran->account->file_gambar, '/')) }}" alt="{{ $pembayaran->account->nama }}" class="w-12 h-12 object-contain rounded border border-outline-variant bg-white" />
+                                            <img src="{{ photo_url($pembayaran->account->file_gambar) }}" onerror="this.style.display='none'" alt="{{ $pembayaran->account->nama }}" class="w-12 h-12 object-contain rounded border border-outline-variant bg-white" />
                                         @endif
                                         <div class="min-w-0 text-sm">
                                             <p class="font-bold text-on-surface">{{ $pembayaran->account->nama }}</p>
