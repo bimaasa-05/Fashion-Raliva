@@ -35,7 +35,7 @@ class SlotHabisTest extends TestCase
             'foto_produk' => [UploadedFile::fake()->image('produk.jpg', 600, 800)],
             'ukuran_terpilih' => 'M',
             'varian_stok' => [
-                ['ukuran' => 'M', 'warna' => '', 'stok' => 1, 'stok_minimum' => 0],
+                ['ukuran' => 'M', 'warna' => '', 'stok' => 10],
             ],
         ]);
 
