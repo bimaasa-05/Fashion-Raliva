@@ -24,7 +24,7 @@ class AdminFulfillmentSwitchTest extends TestCase
         $checkout = $order->checkout;
         $ongkir = 50000;
         $oldGrand = (float) $order->grand_total + $ongkir;
-        $order->update(['metode_fulfillment' => Order::FULFILLMENT_DIANTAR, 'total_ongkir' => $ongkir, 'grand_total' => $oldGrand]);
+        $order->update(['metode_fulfillment' => Order::FULFILLMENT_DIANTAR, 'total_ongkir' => $ongkir, 'grand_total' => $oldGrand, 'status' => Order::STATUS_SIAP_KIRIM]);
         $checkout->update(['total_ongkir' => $ongkir, 'grand_total' => (float) $checkout->grand_total + $ongkir]);
 
         $this->actingAs($admin)->post(
@@ -51,7 +51,7 @@ class AdminFulfillmentSwitchTest extends TestCase
     {
         [$admin] = $this->admin();
         $order = $this->createOfflineOrder($admin, 'alih-off-'.Str::random(8).'@example.com');
-        $order->update(['metode_fulfillment' => Order::FULFILLMENT_AMBIL]);
+        $order->update(['metode_fulfillment' => Order::FULFILLMENT_AMBIL, 'status' => Order::STATUS_SIAP_KIRIM]);
         $oldGrand = (int) $order->grand_total;
 
         $this->actingAs($admin)->post(
@@ -85,6 +85,24 @@ class AdminFulfillmentSwitchTest extends TestCase
         $this->assertSame(Order::FULFILLMENT_DIANTAR, $order->metode_fulfillment);
         $this->assertFalse($order->isOffline());
         $this->assertTrue($order->isDiantar());
+    }
+
+    public function test_switch_rejected_when_not_siap_kirim(): void
+    {
+        [$admin] = $this->admin();
+        $order = $this->createOfflineOrder($admin, 'alih-awal-'.Str::random(8).'@example.com');
+        $order->update(['status' => Order::STATUS_DIPROSES, 'metode_fulfillment' => Order::FULFILLMENT_AMBIL]);
+
+        $this->actingAs($admin)->post(
+            route('admin.pesanan.alihFulfillment', ['pesanan' => $order->order_id]),
+            ['fulfillment' => Order::FULFILLMENT_DIANTAR]
+        )->assertStatus(302);
+
+        $this->assertSame(Order::FULFILLMENT_AMBIL, $order->fresh()->metode_fulfillment);
+
+        $response = $this->actingAs($admin)->get(route('admin.pesanan', ['status' => 'semua']));
+        $response->assertOk();
+        $response->assertDontSee("modal-alihkan-{$order->order_id}", false);
     }
 
     public function test_switch_rejected_for_dispatched_and_completed_orders(): void
@@ -127,6 +145,7 @@ class AdminFulfillmentSwitchTest extends TestCase
     {
         [$admin] = $this->admin();
         $order = $this->createOfflineOrder($admin, 'alih-inv-'.Str::random(8).'@example.com');
+        $order->update(['status' => Order::STATUS_SIAP_KIRIM]);
 
         $this->actingAs($admin)->post(
             route('admin.pesanan.alihFulfillment', ['pesanan' => $order->order_id]),
@@ -140,7 +159,7 @@ class AdminFulfillmentSwitchTest extends TestCase
     {
         [$admin] = $this->admin();
         $order = $this->createOfflineOrder($admin, 'alih-ui-'.Str::random(8).'@example.com');
-        $order->update(['status' => Order::STATUS_DIPROSES]);
+        $order->update(['status' => Order::STATUS_SIAP_KIRIM]);
 
         $response = $this->actingAs($admin)->get(route('admin.pesanan', ['status' => 'semua']));
 
