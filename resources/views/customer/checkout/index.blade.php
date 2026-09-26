@@ -353,6 +353,22 @@
     }
     .co-ship-option .ship-dot { display: none; }
     .co-ship-option.selected .ship-dot { display: block; }
+    .co-qty-btn {
+        width: 1.75rem; height: 1.75rem; border-radius: 9999px;
+        border: 1px solid var(--border-soft); display: inline-flex;
+        align-items: center; justify-content: center;
+        font-size: 1rem; line-height: 1; color: var(--chrome-accent);
+        transition: opacity .15s ease, background .15s ease;
+        flex-shrink: 0;
+    }
+    .co-qty-btn:hover:not(:disabled) { background: rgba(139, 30, 63, .07); }
+    .co-qty-btn:disabled { opacity: .3; cursor: not-allowed; }
+    .co-qty input.co-qty-input {
+        width: 2rem; height: 1.75rem; text-align: center; border: 1px solid var(--border-soft);
+        border-radius: 9999px; font-size: 0.8rem; font-weight: 600;
+        background: transparent; color: var(--on-surface); padding: 0;
+    }
+    .co-qty input.co-qty-input:focus { outline: none; border-color: #8B1E3F; --tw-ring-color: rgba(139,30,63,.22) !important; }
     .co-ship-option + .co-ship-option {
         margin-top: 0.5rem;
     }
@@ -519,6 +535,7 @@
 @if ($buyId > 0)
 <input type="hidden" name="buy" value="{{ $buyId }}"/>
 @endif
+<input type="hidden" name="buy_qty" id="co-buy-qty" value="1"/>
 <input type="hidden" name="shipping" id="co-shipping-input" value="{{ $shipping }}"/>
 <input type="hidden" name="submit_token" value="{{ $submitToken ?? '' }}"/>
 
@@ -662,6 +679,9 @@
                         $imgUrl = $img ? photo_url($img) : 'https://picsum.photos/seed/checkout/600/800';
                         $isWrapped = $idx >= 2;
                         $isThird = $idx === 2;
+                        $stok = (int) ($pv?->warehouseStocks->sum('jumlah_stok') ?? 0);
+                        $qtyAwal = max(1, (int) $i->quantity);
+                        $cartItemId = $i->cart_item_id ?? '';
                     @endphp
                     @if($isWrapped)
                         <div class="co-item-wrap{{ $isThird ? ' co-third' : '' }}" data-pos="{{ $idx }}" aria-hidden="true">
@@ -672,10 +692,17 @@
                                 <img class="w-full h-full object-cover" loading="lazy" alt="{{ $pr?->nama_produk ?? __('Produk') }}" src="{{ $imgUrl }}"/>
                             </div>
                             <div class="flex flex-col flex-1 min-w-0 gap-1 p-sm">
-                                <p class="font-body-sm text-body-sm text-on-surface font-semibold truncate">{{ $pr?->nama_produk ?? __('Produk') }}</p>
+                                <div class="flex items-start justify-between gap-2">
+                                    <p class="font-body-sm text-body-sm text-on-surface font-semibold truncate min-w-0">{{ $pr?->nama_produk ?? __('Produk') }}</p>
+                                    <div class="co-qty flex items-center gap-1 shrink-0" data-variant-id="{{ $pv?->product_variant_id ?? '' }}" data-cart-item-id="{{ $cartItemId }}" data-harga="{{ (float) $i->harga_snapshot }}" data-stok="{{ $stok }}" data-qty="{{ $qtyAwal }}">
+                                        <button type="button" class="co-qty-btn" data-qty-dec aria-label="{{ __('Kurangi') }}" @if($stok < 1) disabled @endif><span class="material-symbols-outlined text-[16px]">remove</span></button>
+                                        <input type="text" class="co-qty-input" data-qty-input value="{{ $qtyAwal }}" inputmode="numeric" autocomplete="off" aria-label="{{ __('Jumlah') }}" @if($stok < 1) disabled @endif />
+                                        <button type="button" class="co-qty-btn" data-qty-inc aria-label="{{ __('Tambah') }}" @if($stok < 1) disabled @endif><span class="material-symbols-outlined text-[16px]">add</span></button>
+                                    </div>
+                                </div>
                                 <p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ trim(($pv?->warna ?? '') . ' · ' . ($pv?->ukuran ?? ''), ' ·') }}</p>
                                 <p class="font-body-sm text-body-sm text-on-surface font-semibold mt-auto">Rp {{ number_format((float)$i->harga_snapshot, 0, ',', '.') }}</p>
-                                <p class="font-label-sm text-label-sm text-on-surface-variant">×{{ $i->quantity }}</p>
+                                <p class="font-label-sm text-label-sm {{ $stok > 0 ? 'text-on-surface-variant' : 'text-error' }}" data-stock-note>{{ $stok > 0 ? __('Stok') . ': ' . $stok : __('Stok habis') }}</p>
                             </div>
                         </div>
                     @if($idx >= 2)
@@ -1015,6 +1042,122 @@
             });
         }
         // rincian pesanan dropdown (tampil >3 produk) - lihat coToggleRincian() di script bawah
+        // Stepper qty per kartu (+ [input] -) dengan batas stok
+        window.RALIVA_I18N = Object.assign(window.RALIVA_I18N || {}, {
+            'stokHabis': "{{ __('Stok habis') }}",
+            'stokSisa': "{{ __('Stok tersisa :n') }}",
+            'qtyMin': "{{ __('Jumlah minimal 1.') }}",
+            'cartGagal': "{{ __('Gagal memperbarui keranjang.') }}",
+        });
+        function coToast(msg) {
+            var t = document.getElementById('co-qty-toast');
+            if (!t) {
+                t = document.createElement('div');
+                t.id = 'co-qty-toast';
+                t.style.cssText = 'position:fixed;left:50%;bottom:96px;transform:translateX(-50%);background:#1c1b1b;color:#fff;padding:10px 18px;border-radius:999px;font-size:13px;font-family:Manrope,sans-serif;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.25);opacity:0;transition:opacity .3s ease;max-width:calc(100vw - 2rem);text-align:center;';
+                document.body.appendChild(t);
+            }
+            t.textContent = msg;
+            t.style.opacity = '1';
+            clearTimeout(t._tm);
+            t._tm = setTimeout(function () { t.style.opacity = '0'; }, 2200);
+        }
+        function coCurrentOngkir() {
+            var sel = document.querySelector('.co-ship-option.selected');
+            if (sel) return sel.getAttribute('data-shipping-ongkir') || 0;
+            var si = document.getElementById('co-shipping-input');
+            return si ? si.value : 0;
+        }
+        function coRecalcTotals() {
+            var sum = 0;
+            document.querySelectorAll('.co-qty').forEach(function (box) {
+                sum += (parseFloat(box.getAttribute('data-harga')) || 0) * (parseInt(box.getAttribute('data-qty'), 10) || 0);
+            });
+            subtotal = sum;
+            if (subtotalEl) {
+                subtotalEl.setAttribute('data-subtotal', sum);
+                subtotalEl.textContent = rupiah(sum);
+            }
+            refreshTotal(coCurrentOngkir());
+        }
+        function coApplyQty(box, qty, opts) {
+            opts = opts || {};
+            var stok = parseInt(box.getAttribute('data-stok'), 10) || 0;
+            var input = box.querySelector('[data-qty-input]');
+            var inc = box.querySelector('[data-qty-inc]');
+            var dec = box.querySelector('[data-qty-dec]');
+            qty = Math.max(1, Math.min(qty, Math.max(stok, 1)));
+            box.setAttribute('data-qty', qty);
+            if (input && document.activeElement !== input) input.value = qty;
+            if (inc) inc.disabled = qty >= stok;
+            if (dec) dec.disabled = qty <= 1;
+            if (!opts.silent) coRecalcTotals();
+            return qty;
+        }
+        function coSyncCart(box, qty, prev) {
+            var cartItemId = box.getAttribute('data-cart-item-id');
+            if (!cartItemId) {
+                var bq = document.getElementById('co-buy-qty');
+                if (bq) bq.value = qty;
+                return;
+            }
+            fetch('{{ route('customer.cart.update', ['cartItem' => '__ID__']) }}'.replace('__ID__', cartItemId), {
+                method: 'PATCH',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: JSON.stringify({ quantity: qty })
+            }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, d: d }; }); })
+            .then(function (res) {
+                if (!res.ok || res.d.status === 'error') {
+                    coApplyQty(box, prev, { silent: true });
+                    coRecalcTotals();
+                    coToast(res.d.message || window.RALIVA_I18N.cartGagal);
+                }
+            }).catch(function () {
+                coApplyQty(box, prev, { silent: true });
+                coRecalcTotals();
+                coToast(window.RALIVA_I18N.cartGagal);
+            });
+        }
+        document.querySelectorAll('.co-qty').forEach(function (box) {
+            var stok = parseInt(box.getAttribute('data-stok'), 10) || 0;
+            var input = box.querySelector('[data-qty-input]');
+            var inc = box.querySelector('[data-qty-inc]');
+            var dec = box.querySelector('[data-qty-dec]');
+            coApplyQty(box, parseInt(box.getAttribute('data-qty'), 10) || 1, { silent: true });
+            if (inc) inc.addEventListener('click', function () {
+                var q = parseInt(box.getAttribute('data-qty'), 10) || 1;
+                if (q >= stok) { coToast(window.RALIVA_I18N.stokSisa.replace(':n', stok)); return; }
+                var prev = q;
+                coSyncCart(box, coApplyQty(box, q + 1), prev);
+            });
+            if (dec) dec.addEventListener('click', function () {
+                var q = parseInt(box.getAttribute('data-qty'), 10) || 1;
+                if (q <= 1) return;
+                var prev = q;
+                coSyncCart(box, coApplyQty(box, q - 1), prev);
+            });
+            if (input) {
+                input.addEventListener('keydown', function (ev) {
+                    if (ev.key === 'Enter') {
+                        ev.preventDefault();
+                        input.blur();
+                    }
+                });
+                input.addEventListener('change', function () {
+                    var raw = (input.value || '').replace(/\D/g, '');
+                    var q = parseInt(raw, 10);
+                    var prev = parseInt(box.getAttribute('data-qty'), 10) || 1;
+                    if (!q || q < 1) { coToast(window.RALIVA_I18N.qtyMin); coSyncCart(box, coApplyQty(box, 1), prev); return; }
+                    if (q > stok) { coToast(window.RALIVA_I18N.stokSisa.replace(':n', stok)); coSyncCart(box, coApplyQty(box, stok), prev); return; }
+                    coSyncCart(box, coApplyQty(box, q), prev);
+                });
+            }
+        });
         // Kunci tombol submit agar tidak double-checkout saat klik ganda
         var reviewForm = document.getElementById('checkout-review-form');
         if (reviewForm) {
