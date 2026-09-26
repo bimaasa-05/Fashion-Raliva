@@ -735,7 +735,7 @@
                 <div>
                     <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Pesanan</h3>
                     <p class="text-on-surface-variant text-sm mt-1">Pilih status customer (<b>Online</b> = user terdaftar,
-                        <b>Offline</b> = tamu) dan cara terima barang (<b>Diantar</b> kurir atau <b>Ambil</b> di toko).</p>
+                        <b>Offline</b> = tamu). Cara terima barang ditentukan belakangan di Pengiriman.</p>
                 </div>
                 <button type="button" data-modal-close
                     class="text-on-surface-variant hover:text-on-surface transition-colors"><span
@@ -757,25 +757,6 @@
                             <input type="radio" class="sr-only" name="tipe_pesanan" value="offline"
                                 onchange="toggleTipePesanan()" /> Offline <span
                                 class="text-[9px] normal-case font-normal opacity-70 mt-0.5">tamu / walk-in</span>
-                        </label>
-                    </div>
-                </div>
-
-                {{-- Cara terima barang: Diantar / Ambil (berlaku untuk online maupun offline) --}}
-                <div>
-                    <span class="raliva-label">Cara Terima Barang</span>
-                    <div class="grid grid-cols-2 gap-3 mt-2">
-                        <label
-                            class="flex flex-col items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
-                            <input type="radio" class="sr-only" name="fulfillment" value="diantar" checked /> Diantar
-                            <span class="text-[9px] normal-case font-normal opacity-70 mt-0.5">diantar kurir (input
-                                resi)</span>
-                        </label>
-                        <label
-                            class="flex flex-col items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
-                            <input type="radio" class="sr-only" name="fulfillment" value="ambil" /> Ambil <span
-                                class="text-[9px] normal-case font-normal opacity-70 mt-0.5">ambil sendiri di
-                                toko</span>
                         </label>
                     </div>
                 </div>
