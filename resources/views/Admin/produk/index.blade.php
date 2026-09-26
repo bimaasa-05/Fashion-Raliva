@@ -1465,8 +1465,8 @@ function parseRibuanDecimal(raw) {
         if (getSelectedUkuran().length === 0) return fail('Wajib: pilih minimal 1 ukuran.', document.getElementById('ukuran-chips'));
         const rows = Array.from(document.querySelectorAll('#varian-stok-grid [name$="[stok]"]'));
         if (!rows.length) return fail('Wajib: isi stok tiap varian (pilih ukuran dulu).', document.getElementById('varian-stok-empty'));
-        const kosong = rows.find(i => i.value === '' || window.parseRibuanInt(i.value) < 1);
-        if (kosong) return fail('Wajib: stok tiap varian minimal 1.', kosong);
+        const kosong = rows.find(i => i.value === '' || window.parseRibuanInt(i.value) < 10);
+        if (kosong) return fail('Wajib: stok tiap varian minimal 10.', kosong);
     });
 })();
 
