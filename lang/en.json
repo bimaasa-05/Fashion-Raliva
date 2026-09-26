@@ -229,7 +229,7 @@
     "Bukti transfer penyelesaian": "Settlement transfer proof",
     "Alasan pembatalan": "Cancellation reason",
     "Disiapkan": "Preparing",
-    "Dikemas": "Packing",
+    "Dikemas": "Packed",
     "Dikirim": "Shipped",
     "Diterima": "Received",
     "Konfirmasi Sudah Diambil": "Confirm Picked Up",
@@ -417,5 +417,8 @@
     "detik_u": "s",
     "Terlambat ": "Late ",
     "Sisa ": "Left ",
-    "< 1 menit": "< 1 minute"
+    "< 1 menit": "< 1 minute",
+    "Menunggu Pembayaran": "Waiting for Payment",
+    "Dibatalkan": "Cancelled",
+    "Refund": "Refund"
 }
