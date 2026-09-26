@@ -655,8 +655,7 @@
                 <div class="w-10 h-px bg-secondary-fixed-dim mt-sm lg:hidden"></div>
             </div>
             <div class="hidden lg:block">
-                <p class="font-headline-lg-mobile text-headline-lg-mobile max-w-sm"><span class="text-white">The Art
-                        of</span> <span style="color:#A32626">Everyday Dressing.</span></p>
+                <p class="font-headline-lg-mobile text-headline-lg-mobile max-w-sm"><span class="text-white">{{ __('The Art of') }}</span> <span style="color:#A32626">{{ __('Everyday Dressing.') }}</span></p>
                 <div class="w-10 h-px bg-secondary-fixed-dim mt-md"></div>
             </div>
         </div>
@@ -666,7 +665,7 @@
         class="auth-monogram flex-grow flex flex-col relative overflow-hidden bg-surface-container-low border-outline-variant lg:border-l">
         <!-- Floating Chips: Home + Theme -->
         <div class="fixed top-sm right-sm z-50 flex items-center gap-xs">
-            <a aria-label="{{ __('Back to home') }}" title="Kembali ke Home" href="{{ route('customer.home') }}"
+            <a aria-label="{{ __('Back to home') }}" title="{{ __('Kembali ke Home') }}" href="{{ route('customer.home') }}"
                 class="atl-chip w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-secondary hover:text-secondary flex items-center justify-center">
                 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
                     stroke-linecap="round" stroke-linejoin="round">
