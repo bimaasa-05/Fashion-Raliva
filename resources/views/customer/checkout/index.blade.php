@@ -711,27 +711,27 @@
                     <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('RINCIAN HARGA') }}</p>
                     <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Rincian Harga') }}</h3>
                     <div class="co-summary-row">
-                        <span>Subtotal</span>
+                        <span>{{ __('Subtotal') }}</span>
                         <span id="co-subtotal" data-subtotal="{{ $subtotal }}">Rp {{ number_format((float)$subtotal, 0, ',', '.') }}</span>
                     </div>
                     <div class="co-summary-row">
-                        <span>Shipping</span>
+                        <span>{{ __('Shipping') }}</span>
                         <span id="co-shipping">Rp {{ number_format((float)$shipping, 0, ',', '.') }}</span>
                     </div>
                     <div class="co-summary-row">
-                        <span>Tax (PPN)</span>
+                        <span>{{ __('Tax (PPN)') }}</span>
                         <span id="co-tax" data-tax="{{ $tax }}">Rp {{ number_format((float)$tax, 0, ',', '.') }}</span>
                     </div>
                     @if ($biayaLayanan > 0)
                     <div class="co-summary-row">
-                        <span>Biaya Layanan</span>
+                        <span>{{ __('Biaya Layanan') }}</span>
                         <span id="co-biaya" data-biaya="{{ $biayaLayanan }}">Rp {{ number_format((float)$biayaLayanan, 0, ',', '.') }}</span>
                     </div>
                     @else
                     <div id="co-biaya" data-biaya="{{ $biayaLayanan }}" class="hidden"></div>
                     @endif
                     <div class="co-summary-row total">
-                        <span>Total Payment</span>
+                        <span>{{ __('Total Payment') }}</span>
                         <span id="co-total">Rp {{ number_format((float)$total, 0, ',', '.') }}</span>
                     </div>
                     @if($isGuest)
