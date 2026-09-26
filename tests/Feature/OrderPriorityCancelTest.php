@@ -7,6 +7,9 @@ use App\Models\Role;
 use App\Models\StoreStaff;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Tests\TestCase;
 
@@ -37,7 +40,7 @@ class OrderPriorityCancelTest extends TestCase
         );
     }
 
-    public function test_verified_cash_order_cannot_be_cancelled(): void
+    public function test_verified_cash_order_has_no_cancel_route(): void
     {
         [$admin] = $this->admin();
         $email = 'batal-'.Str::random(8).'@example.com';
@@ -58,41 +61,43 @@ class OrderPriorityCancelTest extends TestCase
         $order = Order::whereHas('checkout', fn ($q) => $q->where('email_pelanggan', $email))->firstOrFail();
         $this->assertTrue($order->isPaymentVerified());
 
-        $response = $this->actingAs($admin)->post(route('admin.pesanan.batalkan', ['pesanan' => $order->order_id]), [
-            'alasan' => 'Alasan pembatalan yang cukup panjang.',
-        ]);
-
-        $response->assertStatus(302);
+        $this->assertFalse(Route::has('admin.pesanan.batalkan'));
         $this->assertSame(Order::STATUS_DIBAYAR, $order->fresh()->status);
     }
 
-    public function test_unverified_pending_order_can_still_be_cancelled(): void
+    public function test_rejected_transfer_keeps_order_pending_for_reupload(): void
     {
+        Storage::fake('public');
         [$admin] = $this->admin();
         $email = 'batal-ok-'.Str::random(8).'@example.com';
-        $customer = User::whereHas('role', fn ($q) => $q->where('nama_role', Role::CUSTOMER))->firstOrFail();
         $variant = $this->variant();
+        $rekening = \App\Models\PlatformBankAccount::where('status', \App\Models\PlatformBankAccount::STATUS_AKTIF)->firstOrFail();
 
         $this->actingAs($admin)->post(route('admin.pesanan.store'), [
-            'tipe_pesanan' => 'online',
-            'user_id' => $customer->user_id,
+            'tipe_pesanan' => 'offline',
+            'nama_penerima' => 'Budi Tolak',
+            'nomor_telepon' => '081234567890',
+            'email_pelanggan' => $email,
+            'alamat' => 'Jl. Merdeka No.1, Jakarta',
+            'metode_bayar' => 'transfer',
+            'payment_account_id' => $rekening->platform_bank_account_id,
+            'bukti' => UploadedFile::fake()->image('bukti.jpg', 600, 800),
             'items' => [
                 ['product_variant_id' => $variant->product_variant_id, 'quantity' => 1],
             ],
         ])->assertSessionHasNoErrors();
 
-        $order = Order::whereHas('checkout', fn ($q) => $q->where('email_pelanggan', $email)->orWhere('user_id', $customer->user_id))
-            ->where('status', Order::STATUS_PENDING_PAYMENT)
-            ->orderByDesc('order_id')
-            ->firstOrFail();
-        $this->assertFalse($order->isPaymentVerified());
+        $order = Order::whereHas('checkout', fn ($q) => $q->where('email_pelanggan', $email))->firstOrFail();
+        $payment = $order->checkout->payment;
+        $this->assertSame(\App\Models\Payment::STATUS_MENUNGGU_VERIFIKASI, $payment->status);
 
-        $response = $this->actingAs($admin)->post(route('admin.pesanan.batalkan', ['pesanan' => $order->order_id]), [
-            'alasan' => 'Alasan pembatalan yang cukup panjang.',
-        ]);
+        $this->actingAs($admin)->post(
+            route('admin.verifikasi-pembayaran.tolak', ['pembayaran' => $payment->payment_id]),
+            ['alasan' => 'Bukti pembayaran tidak valid untuk pengujian.']
+        )->assertSessionHasNoErrors();
 
-        $response->assertStatus(302);
-        $this->assertSame(Order::STATUS_DIBATALKAN, $order->fresh()->status);
+        $this->assertSame(\App\Models\Payment::STATUS_DITOLAK, $payment->fresh()->status);
+        $this->assertSame(Order::STATUS_PENDING_PAYMENT, $order->fresh()->status);
     }
 
     private function admin(): array
