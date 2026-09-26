@@ -1427,6 +1427,23 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
         });
     </script>
     <script>
+    @php
+    $i18nPay2 = [
+        'Saldo Akun + ' => __('Saldo Akun + '),
+        'Metode terpilih: Saldo Akun + ' => __('Metode terpilih: Saldo Akun + '),
+        'Metode terpilih: ' => __('Metode terpilih: '),
+        'Pilih metode pembayaran kedua terlebih dahulu.' => __('Pilih metode pembayaran kedua terlebih dahulu.'),
+        'Pilih akun/tujuan pembayaran sisa terlebih dahulu.' => __('Pilih akun/tujuan pembayaran sisa terlebih dahulu.'),
+        'Saldo Akun' => __('Saldo Akun'),
+        'E-Wallet' => __('E-Wallet'),
+        'Bank Transfer' => __('Bank Transfer'),
+        'QRIS' => __('QRIS'),
+    ];
+    @endphp
+    window.RALIVA_I18N = Object.assign(window.RALIVA_I18N || {}, @json($i18nPay2));
+    window.ralivaT = window.ralivaT || function (s) { var m = window.RALIVA_I18N || {}; return m[s] || s; };
+    </script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             var input = document.getElementById('input-payment-method');
             var accountInput = document.getElementById('input-account-id');
@@ -1462,9 +1479,9 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                 var nama = el.getAttribute('data-nama') || '';
                 if (input) input.value = el.getAttribute('data-id');
                 if (accountInput) accountInput.value = '';
-                if (rincian) rincian.textContent = 'Saldo Akun + ' + nama;
+                if (rincian) rincian.textContent = window.ralivaT('Saldo Akun + ') + nama;
                 if (rincianAkun) rincianAkun.textContent = '';
-                if (hint) hint.textContent = 'Metode terpilih: Saldo Akun + ' + nama;
+                if (hint) hint.textContent = window.ralivaT('Metode terpilih: Saldo Akun + ') + nama;
                 splitAccountId = null;
                 if (splitDetail) {
                     splitDetail.querySelectorAll('.split-account-grid').forEach(function(g) { g.classList.add('hidden'); });
@@ -1666,13 +1683,13 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                     var v = input ? input.value : '';
                     if (!v) {
                         e.preventDefault();
-                        alert('Pilih metode pembayaran kedua terlebih dahulu.');
+                        alert(window.ralivaT('Pilih metode pembayaran kedua terlebih dahulu.'));
                         if (splitPayGrid) splitPayGrid.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         return;
                     }
                     if ((splitKode === 'ewallet' || splitKode === 'bank_transfer') && accountInput && !accountInput.value) {
                         e.preventDefault();
-                        alert('Pilih akun/tujuan pembayaran sisa terlebih dahulu.');
+                            alert(window.ralivaT('Pilih akun/tujuan pembayaran sisa terlebih dahulu.'));
                         return;
                     }
                 });
