@@ -20,22 +20,97 @@
         }, 2800);
     };
 
+    let ralivaScrollY = 0;
+    let ralivaScrollLocked = false;
+    let ralivaStickyEls = [];
+
+    const ralivaCollectRootSticky = () => {
+        const found = [];
+        document.body.querySelectorAll('*').forEach((el) => {
+            if (getComputedStyle(el).position !== 'sticky') return;
+            let p = el.parentElement;
+            let scoped = false;
+            while (p && p !== document.body) {
+                const ov = getComputedStyle(p).overflowY;
+                if (ov === 'auto' || ov === 'scroll') { scoped = true; break; }
+                p = p.parentElement;
+            }
+            if (!scoped) found.push(el);
+        });
+        return found;
+    };
+
     const ralivaLockScroll = () => {
+        if (ralivaScrollLocked) return;
+        ralivaScrollLocked = true;
+        ralivaScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
         const w = window.innerWidth - document.documentElement.clientWidth;
         if (w > 0) {
             document.body.style.paddingRight = w + 'px';
             document.documentElement.style.paddingRight = w + 'px';
         }
+        // Bekukan elemen sticky yang scrollport-nya root (sidebar, header dsb) BERDASARKAN
+        // rect saat ini, DIPANGGIL SEBELUM body di-posisikan:fixed. Tanpa ini, scroll-lock
+        // menghentikan root scroller dan sticky jatuh ke posisi statisnya ("geser ke atas").
+        // Ukur dulu, baru ubah, agar satu reflow & tanpa animasi (transition-all).
+        const stickyNow = ralivaCollectRootSticky();
+        const rects = stickyNow.map((el) => el.getBoundingClientRect());
+        const prevStyles = stickyNow.map((el) => ({
+            position: el.style.position,
+            top: el.style.top,
+            left: el.style.left,
+            width: el.style.width,
+            height: el.style.height,
+            transition: el.style.transition,
+        }));
+        stickyNow.forEach((el, i) => {
+            const r = rects[i];
+            el.style.transition = 'none';
+            el.style.position = 'fixed';
+            el.style.top = r.top + 'px';
+            el.style.left = r.left + 'px';
+            el.style.width = r.width + 'px';
+            el.style.height = r.height + 'px';
+        });
+        ralivaStickyEls = stickyNow.map((el, i) => ({ el, prev: prevStyles[i] }));
+        document.body.style.position = 'fixed';
+        document.body.style.top = '-' + ralivaScrollY + 'px';
+        document.body.style.left = '0';
+        document.body.style.right = '0';
+        document.body.style.width = '100%';
         document.body.style.overflow = 'hidden';
         document.documentElement.style.overflow = 'hidden';
     };
 
     const ralivaUnlockScroll = () => {
         if (document.querySelector('[data-modal]:not(.hidden)')) return;
+        if (!ralivaScrollLocked) {
+            document.body.style.overflow = '';
+            document.body.style.paddingRight = '';
+            document.documentElement.style.overflow = '';
+            document.documentElement.style.paddingRight = '';
+            return;
+        }
+        ralivaScrollLocked = false;
+        document.body.style.position = '';
+        document.body.style.top = '';
+        document.body.style.left = '';
+        document.body.style.right = '';
+        document.body.style.width = '';
         document.body.style.overflow = '';
         document.body.style.paddingRight = '';
         document.documentElement.style.overflow = '';
         document.documentElement.style.paddingRight = '';
+        ralivaStickyEls.forEach(({ el, prev }) => {
+            el.style.position = prev.position;
+            el.style.top = prev.top;
+            el.style.left = prev.left;
+            el.style.width = prev.width;
+            el.style.height = prev.height;
+            el.style.transition = prev.transition;
+        });
+        ralivaStickyEls = [];
+        window.scrollTo(0, ralivaScrollY);
     };
 
     window.ralivaOpenModal = (modal) => {
@@ -69,11 +144,8 @@
             overlay.classList.add('opacity-0');
             setTimeout(() => overlay.classList.add('hidden'), 300);
         }
-        document.body.style.overflow = '';
-        document.body.style.paddingRight = '';
-        document.documentElement.style.overflow = '';
-        document.documentElement.style.paddingRight = '';
         document.querySelectorAll('[data-cs-menu]').forEach((m) => m.classList.add('hidden'));
+        ralivaUnlockScroll();
     };
 
     document.querySelectorAll('[data-modal-open]').forEach((btn) => {
@@ -126,8 +198,7 @@
             if (res.ok) {
                 window.showRalivaToast(d?.message || '{{ __('Alamat berhasil disimpan.') }}', 'task_alt');
                 const modal = document.getElementById('modal-add-address');
-                if (modal) modal.classList.add('hidden');
-                document.body.style.overflow = '';
+                if (modal) window.ralivaCloseModal(modal);
                 setTimeout(() => location.reload(), 600);
             } else {
                 if (d?.errors) {
@@ -158,8 +229,7 @@
                     slot.textContent = attr.value;
                 });
             });
-            modal.classList.remove('hidden');
-            document.body.style.overflow = 'hidden';
+            window.ralivaOpenModal(modal);
         });
     });
 
@@ -243,8 +313,8 @@
         form.addEventListener('submit', (e) => {
             e.preventDefault();
             window.showRalivaToast(form.getAttribute('data-toast-message'));
-            form.closest('[data-modal]')?.classList.add('hidden');
-            document.body.style.overflow = '';
+            const modal = form.closest('[data-modal]');
+            if (modal) window.ralivaCloseModal(modal);
             form.reset();
         });
     });
