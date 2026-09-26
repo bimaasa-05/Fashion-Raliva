@@ -91,10 +91,10 @@ class OrderTrackingController extends Controller
         // Disiapkan ✓ saat Produksi klik Selesai (menunggu_qc),
         // Dikemas ✓ saat Produksi klik Selesai QC+PACKING (siap_kirim),
         // Dikirim ✓ saat Admin klik Tandai Dikirim (dikirim);
-        // Siap Diambil ✓ saat pesanan offline mencapai siap_kirim;
+        // Siap Diambil ✓ saat pesanan ambil-di-toko mencapai siap_kirim;
         // Diterima / Selesai Diambil ✓ saat Customer klik Konfirmasi atau Admin tandai Selesai (selesai).
-        // Pesanan offline (ambil di toko) memakai cabang pickup: tanpa resi/kurir.
-        $isPickup = $selected->isOffline();
+        // Pesanan ambil-di-toko memakai cabang pickup: tanpa resi/kurir.
+        $isPickup = $selected->isAmbil();
         $hasResi = ! $isPickup && $selected->shipments->contains(fn ($s) => ! empty($s->nomor_resi));
         $timelineStatus = $selected->status;
         $timeline = [
