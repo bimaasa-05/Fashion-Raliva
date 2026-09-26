@@ -123,7 +123,7 @@
             </div>
             <div>
                 <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Jumlah Lulus QC *</label>
-                <input type="number" name="jumlah_lulus" required min="0" max="{{ $o->items->sum('quantity') }}" value="{{ $o->jumlah_berhasil ?? 0 }}" class="raliva-input w-full" />
+                <input type="number" name="jumlah_lulus" required min="0" max="{{ $o->items->sum('quantity') }}" value="{{ $o->items->sum('quantity') }}" class="raliva-input w-full" />
                 <p class="text-[11px] text-on-surface-variant mt-1">Gagal dihitung otomatis (total − lulus). Kekurangan lulus diambil dari Gudang.</p>
             </div>
             <div>
