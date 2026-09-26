@@ -50,6 +50,7 @@ class DataPesananOrderStoreTest extends TestCase
 
         $res = $this->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'offline',
+            'fulfillment' => 'ambil',
             'user_id' => '',
             'nama_penerima' => 'Budi Offline',
             'nomor_telepon' => '081234567890',
@@ -79,6 +80,7 @@ class DataPesananOrderStoreTest extends TestCase
 
         $res = $this->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'online',
+            'fulfillment' => 'diantar',
             'user_id' => $customer->user_id,
             'nama_penerima' => '',
             'items' => [
@@ -103,6 +105,7 @@ class DataPesananOrderStoreTest extends TestCase
 
         $res = $this->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'online',
+            'fulfillment' => 'diantar',
             'items' => [
                 ['product_variant_id' => $this->fixture['variant']->product_variant_id, 'quantity' => 1],
             ],
@@ -119,6 +122,7 @@ class DataPesananOrderStoreTest extends TestCase
 
         $res = $this->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'offline',
+            'fulfillment' => 'ambil',
             'user_id' => '',
             'nama_penerima' => 'Budi Cash',
             'nomor_telepon' => '081298765432',
@@ -148,6 +152,7 @@ class DataPesananOrderStoreTest extends TestCase
 
         $this->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'offline',
+            'fulfillment' => 'ambil',
             'user_id' => '',
             'nama_penerima' => 'Budi Proses',
             'nomor_telepon' => '081277788899',
@@ -185,6 +190,7 @@ class DataPesananOrderStoreTest extends TestCase
 
         $this->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'offline',
+            'fulfillment' => 'ambil',
             'user_id' => '',
             'nama_penerima' => 'Budi Tipe',
             'nomor_telepon' => '081222233344',
@@ -211,6 +217,7 @@ class DataPesananOrderStoreTest extends TestCase
 
         $this->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'online',
+            'fulfillment' => 'diantar',
             'user_id' => $customer->user_id,
             'email_pelanggan' => $email,
             'nama_penerima' => '',
@@ -230,6 +237,7 @@ class DataPesananOrderStoreTest extends TestCase
     {
         $this->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'offline',
+            'fulfillment' => 'ambil',
             'user_id' => '',
             'nama_penerima' => 'Budi Selesai',
             'nomor_telepon' => '081299988877',
@@ -278,6 +286,7 @@ class DataPesananOrderStoreTest extends TestCase
 
         $this->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'online',
+            'fulfillment' => 'diantar',
             'user_id' => $customer->user_id,
             'email_pelanggan' => $email,
             'nama_penerima' => '',
