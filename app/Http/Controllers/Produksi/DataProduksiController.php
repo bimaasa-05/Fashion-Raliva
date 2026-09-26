@@ -45,7 +45,14 @@ class DataProduksiController extends Controller
                 ->count(),
         ];
 
-        return view('Produksi.data-produksi.index', compact('orders', 'bahanList', 'stats'));
+        $perluBackfill = Order::whereIn('store_id', $storeIds)
+            ->where('status', Order::STATUS_DIPROSES)
+            ->whereNotNull('produksi_dimulai_pada')
+            ->whereDoesntHave('bahanList', fn ($q) => $q->where('sumber', ProductionOrderBahan::SUMBER_ADMIN))
+            ->whereHas('items.productVariant.product.materialRequirements')
+            ->exists();
+
+        return view('Produksi.data-produksi.index', compact('orders', 'bahanList', 'stats', 'perluBackfill'));
     }
 
     public function accept(Request $request, Order $order)
@@ -69,25 +76,7 @@ class DataProduksiController extends Controller
             $order->update(['produksi_dimulai_pada' => now()]);
 
             // Salin resep produk (diisi Gudang) menjadi bahan order (idempoten).
-            if (! $order->bahanList()->where('sumber', ProductionOrderBahan::SUMBER_ADMIN)->exists()) {
-                $order->loadMissing(['items.productVariant.product.materialRequirements']);
-                foreach ($order->items as $item) {
-                    $recipe = $item->productVariant?->product?->materialRequirements ?? collect();
-                    foreach ($recipe as $row) {
-                        ProductionOrderBahan::create([
-                            'order_id' => $order->order_id,
-                            'bahan_id' => $row->material_id,
-                            'nama_bahan' => $row->nama_bahan,
-                            'jumlah' => (float) $row->jumlah_per_unit * (int) $item->quantity,
-                            'satuan' => $row->satuan,
-                            'catatan' => null,
-                            'sumber' => ProductionOrderBahan::SUMBER_ADMIN,
-                            'dibuat_oleh_role' => 'Sistem',
-                            'created_by' => ActivityLogger::resolveActorId(),
-                        ]);
-                    }
-                }
-            }
+            $this->salinResepKeOrder($order);
         });
 
         ActivityLogger::log('produksi.order.accept', Order::class, $order->order_id, $lama,
@@ -101,6 +90,76 @@ class DataProduksiController extends Controller
             route('admin.pesanan'));
 
         return back()->with('toast', ['message' => "Pesanan {$order->nomor_order} diterima, produksi dimulai.", 'icon' => 'task_alt']);
+    }
+
+    /**
+     * Salin resep produk (diisi Gudang) menjadi bahan order (sumber=admin).
+     * Idempoten: dilewati bila order sudah punya bahan admin.
+     *
+     * @return int jumlah baris dibuat
+     */
+    private function salinResepKeOrder(Order $order): int
+    {
+        if ($order->bahanList()->where('sumber', ProductionOrderBahan::SUMBER_ADMIN)->exists()) {
+            return 0;
+        }
+
+        $dibuat = 0;
+        $order->loadMissing(['items.productVariant.product.materialRequirements']);
+        foreach ($order->items as $item) {
+            $recipe = $item->productVariant?->product?->materialRequirements ?? collect();
+            foreach ($recipe as $row) {
+                ProductionOrderBahan::create([
+                    'order_id' => $order->order_id,
+                    'bahan_id' => $row->material_id,
+                    'nama_bahan' => $row->nama_bahan,
+                    'jumlah' => (float) $row->jumlah_per_unit * (int) $item->quantity,
+                    'satuan' => $row->satuan,
+                    'catatan' => null,
+                    'sumber' => ProductionOrderBahan::SUMBER_ADMIN,
+                    'dibuat_oleh_role' => 'Sistem',
+                    'created_by' => ActivityLogger::resolveActorId(),
+                ]);
+                $dibuat++;
+            }
+        }
+
+        return $dibuat;
+    }
+
+    public function backfillBahan(Request $request)
+    {
+        $storeIds = StoreStaff::where('user_id', auth()->id())->where('status', 'aktif')->pluck('store_id')->all();
+
+        $orders = Order::whereIn('store_id', $storeIds)
+            ->where('status', Order::STATUS_DIPROSES)
+            ->whereNotNull('produksi_dimulai_pada')
+            ->whereDoesntHave('bahanList', fn ($q) => $q->where('sumber', ProductionOrderBahan::SUMBER_ADMIN))
+            ->whereHas('items.productVariant.product.materialRequirements')
+            ->get();
+
+        $totalBaris = 0;
+        $totalOrder = 0;
+        DB::transaction(function () use ($orders, &$totalBaris, &$totalOrder) {
+            foreach ($orders as $order) {
+                $dibuat = $this->salinResepKeOrder($order);
+                if ($dibuat > 0) {
+                    $totalBaris += $dibuat;
+                    $totalOrder++;
+                }
+            }
+        });
+
+        ActivityLogger::log('produksi.bahan.backfill', Order::class, null, null,
+            ['order_count' => $totalOrder, 'row_count' => $totalBaris],
+            sprintf('Backfill bahan untuk %d pesanan (%d baris).', $totalOrder, $totalBaris));
+
+        return back()->with('toast', [
+            'message' => $totalOrder > 0
+                ? "Bahan dilengkapi untuk {$totalOrder} pesanan ({$totalBaris} baris)."
+                : 'Tidak ada pesanan yang perlu dilengkapi bahannya.',
+            'icon' => 'task_alt',
+        ]);
     }
 
     public function reject(Request $request, Order $order)
