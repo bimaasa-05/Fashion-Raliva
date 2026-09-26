@@ -20,7 +20,7 @@
     $ainit = strtoupper(mb_substr($ai,0,2)) ?: '?';
 @endphp
 
-<div class="w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
+<div class="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
 
     <!-- Kolom kiri: Hero Profil & Ringkasan -->
     <div class="lg:col-span-5 space-y-8">
@@ -285,7 +285,7 @@
 </div>
 
 <!-- Toko yang Ditugaskan -->
-<section class="rise rise-d3 w-full max-w-6xl mx-auto mt-8 lg:mt-10">
+<section class="rise rise-d3 w-full mt-8 lg:mt-10">
     <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium profil-card p-6 md:p-8 relative overflow-hidden">
         <span class="card-watermark material-symbols-outlined fill absolute -right-5 -bottom-7 text-[120px] text-gold-accent/[0.05]" aria-hidden="true">storefront</span>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
