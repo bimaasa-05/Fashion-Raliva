@@ -198,10 +198,10 @@
 <main class="flex-grow flex flex-col justify-center w-full max-w-md mx-auto px-container-margin py-xl">
 <!-- Floating Chips: Home + Theme -->
 <div class="fixed top-sm right-sm z-50 flex items-center gap-xs">
-<a aria-label="{{ __('Back to home') }}" title="Kembali ke Home" href="{{ route('customer.home') }}" class="w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-primary hover:text-secondary transition-colors flex items-center justify-center">
+<a aria-label="{{ __('Back to home') }}" title="{{ __('Kembali ke Home') }}" href="{{ route('customer.home') }}" class="w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-primary hover:text-secondary transition-colors flex items-center justify-center">
 <span class="material-symbols-outlined text-[20px]">home</span>
 </a>
-<button aria-label="Toggle theme" title="Ganti tema" type="button" onclick="toggleTheme()" class="w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-primary hover:text-secondary transition-colors flex items-center justify-center">
+<button aria-label="Toggle theme" title="{{ __('Ganti tema') }}" type="button" onclick="toggleTheme()" class="w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-primary hover:text-secondary transition-colors flex items-center justify-center">
 <span class="material-symbols-outlined text-[20px]" id="auth-theme-icon">dark_mode</span>
 </button>
 </div>
@@ -210,7 +210,7 @@
 <!-- Logo -->
 <div class="text-center mb-xl">
 <h1 class="font-display-lg text-headline-lg tracking-widest text-on-surface">RALIVA</h1>
-<p class="font-label-sm text-label-sm text-on-surface-variant tracking-wide mt-1">The Art of Everyday Dressing</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant tracking-wide mt-1">{{ __('The Art of Everyday Dressing') }}</p>
 </div>
 <!-- Heading -->
 <div class="mb-lg">
