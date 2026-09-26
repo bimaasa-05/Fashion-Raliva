@@ -41,7 +41,7 @@ class ModerasiProdukController extends Controller
     private function produkList(string $status)
     {
         $products = Product::query()
-            ->with(['store:owner_id,store_id,nama_toko', 'category', 'images', 'variants'])
+            ->with(['store:owner_id,store_id,nama_toko', 'category', 'images', 'variants', 'materialRequirements'])
             ->whereIn('status', [Product::STATUS_PENDING, Product::STATUS_DITOLAK])
             ->when(
                 in_array($status, [Product::STATUS_PENDING, Product::STATUS_DITOLAK], true),
