@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\Role;
+use App\Models\StoreStaff;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Http\UploadedFile;
@@ -98,6 +99,16 @@ class ProductRecipeTest extends TestCase
         $admin = User::whereHas('role', fn ($query) => $query->where('nama_role', Role::ADMIN))
             ->whereHas('storeAssignments', fn ($query) => $query->where('status', 'aktif'))
             ->firstOrFail();
+        $storeId = StoreStaff::where('user_id', $admin->user_id)->where('status', 'aktif')->value('store_id');
+        if (! \App\Support\SlotService::canAdd($storeId)) {
+            \App\Models\SlotGrant::create([
+                'store_id' => $storeId,
+                'jumlah_slot' => 50,
+                'tipe' => \App\Models\SlotGrant::TIPE_MANUAL,
+                'keterangan' => 'Slot uji otomatis.',
+                'created_by' => $admin->user_id,
+            ]);
+        }
 
         $payload = $this->masterPayload($name);
 
