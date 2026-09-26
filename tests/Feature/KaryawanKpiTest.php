@@ -8,6 +8,8 @@ use App\Services\KaryawanReportService;
 use App\Models\StoreStaff;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 use Tests\TestCase;
 
 class KaryawanKpiTest extends TestCase
@@ -142,14 +144,70 @@ class KaryawanKpiTest extends TestCase
 
     public function test_rekap_owner_row_carries_roi_keys(): void
     {
-        $owner = User::whereHas('role', fn ($q) => $q->where('nama_role', Role::OWNER))->firstOrFail();
+        $pemilik = User::whereHas('role', fn ($q) => $q->where('nama_role', Role::OWNER))
+            ->whereHas('ownedStores')
+            ->first();
+        if (! $pemilik) {
+            $this->markTestSkipped('Tidak ada pemilik toko untuk uji baris owner.');
+        }
         $this->flushSession();
 
-        $response = $this->actingAs($owner)->get(route('owner.rekap-karyawan', ['role' => 'owner']));
+        $response = $this->actingAs($pemilik)->get(route('owner.rekap-karyawan', ['role' => 'owner']));
 
         $response->assertOk();
         $response->assertSee('ROI', false);
         $response->assertSee('Investasi', false);
+        $response->assertSee($pemilik->nama_lengkap, false);
+    }
+
+    public function test_owner_tanpa_toko_dengan_assignment_bisa_akses_rekap(): void
+    {
+        $roleId = Role::where('nama_role', Role::OWNER)->value('role_id');
+        $storeId = \App\Models\Store::where('status', 'aktif')->value('store_id');
+        $this->assertNotNull($storeId, 'Butuh 1 toko aktif untuk uji co-access.');
+
+        $coowner = User::create([
+            'nama_lengkap' => 'Co Owner Uji',
+            'email' => 'coowner-uji-'.Str::random(6).'@example.com',
+            'password' => Hash::make('Raliva123'),
+            'role_id' => $roleId,
+            'status' => User::STATUS_AKTIF,
+        ]);
+        \App\Models\StoreStaff::create([
+            'store_id' => $storeId,
+            'user_id' => $coowner->user_id,
+            'tanggal_penugasan' => now(),
+            'status' => 'aktif',
+        ]);
+
+        $this->assertSame([], $coowner->ownedStores()->pluck('store_id')->all());
+
+        $response = $this->actingAs($coowner)->get(route('owner.rekap-karyawan'));
+        $response->assertOk();
+        $response->assertSee('Owner', false);
+
+        $excel = $this->actingAs($coowner)->get(route('owner.rekap-karyawan.export-excel', ['role' => 'owner']));
+        $excel->assertOk();
+    }
+
+    public function test_owner_tanpa_toko_tanpa_assignment_tetap_terkunci_sopan(): void
+    {
+        $roleId = Role::where('nama_role', Role::OWNER)->value('role_id');
+
+        $yatim = User::create([
+            'nama_lengkap' => 'Owner Yatim Uji',
+            'email' => 'yatim-uji-'.Str::random(6).'@example.com',
+            'password' => Hash::make('Raliva123'),
+            'role_id' => $roleId,
+            'status' => User::STATUS_AKTIF,
+        ]);
+
+        $response = $this->actingAs($yatim)->get(route('owner.rekap-karyawan'));
+        $response->assertOk();
+        $response->assertSee('Belum punya toko', false);
+
+        $excel = $this->actingAs($yatim)->get(route('owner.rekap-karyawan.export-excel'));
+        $excel->assertStatus(302);
     }
 
     public function test_semua_rows_carry_finance_keys_for_every_role(): void
