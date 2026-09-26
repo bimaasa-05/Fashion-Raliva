@@ -255,47 +255,6 @@ class SlotProdukController extends Controller
         ]);
     }
 
-    public function verifikasiPembayaran(Request $request, SlotPurchaseRequest $rmt)
-    {
-        if ($rmt->status !== SlotPurchaseRequest::STATUS_PENDING) {
-            return back()->with('toast', [
-                'message' => 'Permintaan sudah diproses.',
-                'icon' => 'gpp_maybe',
-            ]);
-        }
-
-        if ($rmt->payment_status === SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI) {
-            return back()->with('toast', [
-                'message' => 'Pembayaran permintaan ini sudah terverifikasi.',
-                'icon' => 'info',
-            ]);
-        }
-
-        $lama = $rmt->only(['payment_status']);
-        $rmt->update([
-            'payment_status' => SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI,
-            'paid_at' => now(),
-            'handled_by' => Auth::id(),
-        ]);
-
-        ActivityLogger::log(
-            'slot.purchase.verify',
-            SlotPurchaseRequest::class,
-            $rmt->slot_purchase_id,
-            $lama,
-            $rmt->only(['payment_status', 'paid_at', 'handled_by']),
-            sprintf('Memverifikasi pembayaran %d slot (Rp %s) untuk toko %s.', $rmt->jumlah_slot, number_format((float) $rmt->total_harga, 0, ',', '.'), $rmt->store->nama_toko ?? '-')
-        );
-
-        $this->notifyOwner($rmt->store, 'Pembayaran Slot Terverifikasi', sprintf('Pembayaran %d slot senilai Rp %s untuk toko "%s" telah diverifikasi. Menunggu persetujuan penambahan slot.', $rmt->jumlah_slot, number_format((float) $rmt->total_harga, 0, ',', '.'), $rmt->store->nama_toko ?? '-'));
-        Notification::fireSelf(Notification::TIPE_SISTEM, 'Pembayaran Slot Terverifikasi', sprintf('Pembayaran %d slot (Rp %s) terverifikasi.', $rmt->jumlah_slot, number_format((float) $rmt->total_harga, 0, ',', '.')), route('superadmin.slot-produk'));
-
-        return back()->with('toast', [
-            'message' => sprintf('Pembayaran %d slot (Rp %s) berhasil diverifikasi.', $rmt->jumlah_slot, number_format((float) $rmt->total_harga, 0, ',', '.')),
-            'icon' => 'task_alt',
-        ]);
-    }
-
     public function approvePurchase(Request $request, SlotPurchaseRequest $rmt)
     {
         if ($rmt->status !== SlotPurchaseRequest::STATUS_PENDING) {
