@@ -18,7 +18,7 @@ class OrderTrackingPickupTest extends TestCase
     public function test_pickup_order_shows_takeaway_branch_without_courier(): void
     {
         [$admin, $storeId, $customer] = $this->actors();
-        $order = $this->makeOrder($admin, $storeId, $customer, Order::TIPE_PESANAN_OFFLINE, Order::FULFILLMENT_AMBIL);
+        $order = $this->makeOrder($admin, $storeId, $customer, Order::TIPE_PESANAN_OFFLINE);
 
         $response = $this->actingAsFresh($customer)
             ->get(route('customer.order-tracking', ['order' => $order->order_id]));
@@ -33,7 +33,7 @@ class OrderTrackingPickupTest extends TestCase
     public function test_delivery_order_keeps_courier_branch(): void
     {
         [$admin, $storeId, $customer] = $this->actors();
-        $order = $this->makeOrder($admin, $storeId, $customer, Order::TIPE_PESANAN_ONLINE, Order::FULFILLMENT_DIANTAR);
+        $order = $this->makeOrder($admin, $storeId, $customer, Order::TIPE_PESANAN_ONLINE);
 
         $response = $this->actingAsFresh($customer)
             ->get(route('customer.order-tracking', ['order' => $order->order_id]));
@@ -71,7 +71,7 @@ class OrderTrackingPickupTest extends TestCase
         return [$admin, $storeId, $customer];
     }
 
-    private function makeOrder(User $admin, int $storeId, User $customer, string $tipe, string $fulfillment): Order
+    private function makeOrder(User $admin, int $storeId, User $customer, string $tipe): Order
     {
         $variant = \App\Models\ProductVariant::with('warehouseStocks')
             ->whereHas('product', fn ($q) => $q->where('store_id', $storeId))
@@ -81,7 +81,6 @@ class OrderTrackingPickupTest extends TestCase
 
         $payload = [
             'tipe_pesanan' => $tipe,
-            'fulfillment' => $fulfillment,
             'items' => [
                 ['product_variant_id' => $variant->product_variant_id, 'quantity' => 1],
             ],
