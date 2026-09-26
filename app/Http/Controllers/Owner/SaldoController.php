@@ -142,6 +142,27 @@ class SaldoController extends Controller
         $katExpList = StoreExpense::where('store_id', $store->store_id)
             ->select('kategori')->distinct()->pluck('kategori')->filter()->values()->all();
 
+        $filterKatIn = trim((string) $request->input('kat_in', ''));
+        $pemasukanList = $wallet->transactions()
+            ->whereIn('jenis_transaksi', [
+                WalletTransaction::JENIS_PENJUALAN_MASUK,
+                WalletTransaction::JENIS_KOMISI_MASUK,
+                WalletTransaction::JENIS_PEMASUKAN,
+            ])
+            ->when($filterKatIn !== '', fn ($q) => $q->where('kategori', $filterKatIn))
+            ->orderByDesc('created_at')
+            ->get();
+        $katInList = $wallet->transactions()
+            ->whereIn('jenis_transaksi', [
+                WalletTransaction::JENIS_PENJUALAN_MASUK,
+                WalletTransaction::JENIS_KOMISI_MASUK,
+                WalletTransaction::JENIS_PEMASUKAN,
+            ])
+            ->select('kategori')->distinct()->pluck('kategori')->filter()->values()->all();
+        foreach (['Penjualan', 'Investor', 'Modal', 'Komisi', 'Lainnya'] as $wajib) {
+            if (! in_array($wajib, $katInList, true)) $katInList[] = $wajib;
+        }
+
         // Estimasi margin (asumsi HPP 60% revenue, pajak 25% laba, tanpa D&A/bunga).
         $revenue = $pemasukan;
         $hpp = $revenue * 0.60;
@@ -166,7 +187,8 @@ class SaldoController extends Controller
             'mutations', 'withdrawals', 'refunds', 'summary', 'chart',
             'expenses', 'margin', 'store', 'period',
             'kategoriList', 'jenisList', 'filterKategori', 'filterJenis',
-            'katExpList', 'filterKatExp', 'grafik'
+            'katExpList', 'filterKatExp', 'grafik',
+            'pemasukanList', 'katInList', 'filterKatIn'
         ));
     }
 
@@ -235,19 +257,29 @@ class SaldoController extends Controller
         if (! $wallet) {
             $wallet = Wallet::create(['store_id' => $store->store_id, 'saldo_tersedia' => 0, 'saldo_tertahan' => 0]);
         }
-        $wallet->increment('saldo_tersedia', $validated['nominal']);
-        WalletTransaction::create([
-            'wallet_id' => $wallet->wallet_id,
-            'jenis_transaksi' => \App\Models\WalletTransaction::JENIS_PEMASUKAN,
-            'kategori' => $validated['kategori'],
-            'jumlah' => $validated['nominal'],
-            'saldo_sebelum' => (float) $wallet->saldo_tersedia - (float) $validated['nominal'],
-            'saldo_sesudah' => (float) $wallet->saldo_tersedia,
-            'keterangan' => 'Pemasukan: '.$validated['sumber'],
-        ]);
+
+        // Investor/Modal = omzet saja, tidak masuk saldo tarik. Penjualan/Komisi/Lainnya tetap ke saldo.
+        $omzetSaja = in_array($validated['kategori'], ['Investor', 'Modal'], true);
+        DB::transaction(function () use ($wallet, $validated, $omzetSaja) {
+            $saldoSekarang = (float) $wallet->saldo_tersedia;
+            if (! $omzetSaja) {
+                $wallet->increment('saldo_tersedia', $validated['nominal']);
+            }
+            WalletTransaction::create([
+                'wallet_id' => $wallet->wallet_id,
+                'jenis_transaksi' => \App\Models\WalletTransaction::JENIS_PEMASUKAN,
+                'kategori' => $validated['kategori'],
+                'jumlah' => $validated['nominal'],
+                'saldo_sebelum' => $saldoSekarang,
+                'saldo_sesudah' => $saldoSekarang + ($omzetSaja ? 0 : (float) $validated['nominal']),
+                'keterangan' => 'Pemasukan: '.$validated['sumber'],
+            ]);
+        });
         Notification::fireSelf(Notification::TIPE_WALLET, 'Pemasukan Dicatat', sprintf('Pemasukan dari %s senilai Rp %s dicatat.', $validated['sumber'], number_format((float) $validated['nominal'], 0, ',', '.')), route('owner.keuangan'));
 
-        return redirect()->route('owner.keuangan')->with('success', 'Pemasukan berhasil dicatat.');
+        return redirect()->route('owner.keuangan')->with('success', $omzetSaja
+            ? 'Pemasukan omzet dicatat (tidak masuk saldo tarik).'
+            : 'Pemasukan berhasil dicatat.');
     }
 
     public function storePencairan(Request $request)
