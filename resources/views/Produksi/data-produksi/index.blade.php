@@ -61,6 +61,12 @@
                     <option value="menunggu_qc">Menunggu QC</option>
                     <option value="siap_kirim">Siap Kirim</option>
                 </select>
+                @if ($perluBackfill ?? false)
+                    <form method="POST" action="{{ route('produksi.data-produksi.backfill-bahan') }}" onsubmit="return confirm('Salin bahan Gudang ke semua pesanan yang belum ada bahannya?');">
+                        @csrf
+                        <button type="submit" class="px-4 py-2.5 rounded-lg bg-gold-accent/10 border border-gold-accent/40 text-gold-accent text-xs font-bold uppercase hover:bg-gold-accent/20 transition-colors whitespace-nowrap">Lengkapi Bahan</button>
+                    </form>
+                @endif
             </div>
         </div>
 
@@ -348,6 +354,15 @@
                 <button type="button" onclick="closeModalBahan('{{ $o->order_id }}')" class="text-on-surface-variant"><span class="material-symbols-outlined">close</span></button>
             </div>
             <div class="p-6 space-y-3">
+                @php $bahanButuh = $o->bahanList->reject(fn ($b) => $b->isDariProduksi())->values(); @endphp
+                <div class="rounded-lg border border-gold-accent/25 bg-gold-accent/5 p-3">
+                    <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-bold mb-1.5">Bahan dibutuhkan (dari Gudang)</p>
+                    @forelse ($bahanButuh as $butuh)
+                        <p class="text-xs text-on-surface">{{ $butuh->nama_bahan }}: <b>{{ $butuh->jumlah }} {{ $butuh->satuan }}</b></p>
+                    @empty
+                        <p class="text-xs text-on-surface-variant">Belum ada bahan dari Gudang — tambah manual di bawah.</p>
+                    @endforelse
+                </div>
                 <p class="text-xs text-on-surface-variant">Tambah bahan yang belum diinput Admin. Pilih dari katalog atau ketik manual.</p>
                 <div id="bahan-container-produksi-{{ $o->order_id }}" class="space-y-3"></div>
                 <button type="button" onclick="addBahanProduksiRow('{{ $o->order_id }}')" class="w-full py-2.5 border border-dashed border-outline-variant rounded-lg text-xs font-semibold text-on-surface-variant hover:border-gold-accent hover:text-gold-accent transition-colors flex items-center justify-center gap-1.5">
@@ -492,7 +507,8 @@
         const row = select.closest('[data-bahan-row]');
         if (!row) return;
         if (opt.value) {
-            row.querySelector('input[name*="[nama_bahan]"]').value = opt.dataset.nama;
+            const namaInput = row.querySelector('input[name*="[nama_bahan]"]');
+            if (namaInput) namaInput.value = opt.dataset.nama;
             const sat = row.querySelector('[name*="[satuan]"]');
             if (sat && sat.querySelector(`option[value="${opt.dataset.satuan}"]`)) sat.value = opt.dataset.satuan;
         }
@@ -518,8 +534,8 @@
             if (searchInput) searchInput.dispatchEvent(new Event('input'));
         });
     });
-    // === COUNTDOWN TIMER REAL-TIME ===
-    @include('partials.countdown-produksi')
+    // === COUNTDOWN TIMER REAL-TIME (kode di partial terpisah, di luar blok script) ===
 </script>
+@include('partials.countdown-produksi')
 @endpush
 @endsection
