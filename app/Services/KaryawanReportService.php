@@ -97,6 +97,28 @@ class KaryawanReportService
         $pesanan = (clone $orderQuery)->count();
         $pendapatan = (float) (clone $orderQuery)->sum('grand_total');
 
+        // Prospek = order berbeda yang pernah diverifikasi admin ini (terima/tolak).
+        $prospekQuery = Order::whereIn('store_id', $storeIds)
+            ->whereHas('checkout.payment.verifications', function ($q) use ($userId, $range) {
+                $q->where('verifier_id', $userId);
+                if ($range) {
+                    [$mulai, $akhir] = $range;
+                    if ($mulai) {
+                        $q->where('diverifikasi_pada', '>=', $mulai);
+                    }
+                    if ($akhir) {
+                        $q->where('diverifikasi_pada', '<=', $akhir);
+                    }
+                }
+            });
+        $prospek = (clone $prospekQuery)->distinct()->count('orders.order_id');
+
+        // LTV = pendapatan / customer unik yang ditangani admin ini.
+        $checkoutIds = (clone $orderQuery)->pluck('orders.checkout_id')->unique()->values();
+        $customers = $checkoutIds->isNotEmpty()
+            ? \App\Models\Checkout::whereIn('checkout_id', $checkoutIds)->distinct()->count('user_id')
+            : 0;
+
         $reviewQuery = $this->dalamRentang(
             Review::whereIn('store_id', $storeIds)
                 ->where('status', Review::STATUS_AKTIF)
@@ -111,10 +133,13 @@ class KaryawanReportService
         return [
             'diverifikasi' => $diterima,
             'ditolak' => $ditolak,
-            'cr' => $ditangani > 0 ? round($diterima / $ditangani * 100, 2) : null,
+            'prospek' => $prospek,
+            'cr' => $prospek > 0 ? round($pesanan / $prospek * 100, 2) : null,
             'pesanan' => $pesanan,
             'pendapatan' => $pendapatan,
             'aov' => $pesanan > 0 ? round($pendapatan / $pesanan, 2) : null,
+            'customers' => $customers,
+            'ltv' => $customers > 0 ? round($pendapatan / $customers, 2) : null,
             'rating' => $rating,
             'rating_count' => $ratingCount,
         ];
