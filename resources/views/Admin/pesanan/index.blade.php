@@ -723,8 +723,6 @@
             </div>
         @endif
     @endforeach
-    @endif
-@endforeach
 
     {{-- Modal Tambah Pesanan --}}
     <div id="modal-tambah-pesanan" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
