@@ -159,19 +159,27 @@
                             </td>
                             <td class="p-6 text-on-surface-variant text-xs">{{ $refund->diajukan_pada ? \Carbon\Carbon::parse($refund->diajukan_pada)->locale('id')->diffForHumans() : '-' }}</td>
                             <td class="p-6 text-right whitespace-nowrap">
+                                @if ($refund->file_bukti)
+                                    <div class="mb-1">
+                                        <a href="{{ asset('storage/' . ltrim($refund->file_bukti, '/')) }}" target="_blank" rel="noopener"
+                                            class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600 hover:underline">
+                                            <span class="material-symbols-outlined text-[13px]">receipt_long</span>Bukti Transfer
+                                        </a>
+                                    </div>
+                                @endif
                                 @if ($refund->status === 'requested')
                                     <button type="button" onclick="openRejectRefund(this.closest('tr'))"
                                         class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase tracking-wider rounded-full shadow-sm hover:bg-error/20 hover:shadow hover:-translate-y-px transition-all duration-200">
                                         <span class="material-symbols-outlined text-[14px] leading-none">block</span>
                                         Tolak
                                     </button>
-                                    <button type="button" data-modal-open="modal-setujui-{{ $refund->refund_id }}"
+                                    <button type="button" onclick="openRefundConfirm({{ $refund->refund_id }})"
                                         class="ml-1 inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
                                         <span class="material-symbols-outlined text-[14px] leading-none">task_alt</span>
                                         Setujui
                                     </button>
                                 @elseif ($refund->status === 'disetujui')
-                                    <button type="button" data-modal-open="modal-selesaikan-{{ $refund->refund_id }}"
+                                    <button type="button" onclick="openRefundConfirm({{ $refund->refund_id }})"
                                         class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
                                         <span class="material-symbols-outlined text-[14px] leading-none">payments</span>
                                         Selesaikan
@@ -240,18 +248,25 @@
                         </div>
                     </dl>
 
+                    @if ($refund->file_bukti)
+                        <a href="{{ asset('storage/' . ltrim($refund->file_bukti, '/')) }}" target="_blank" rel="noopener"
+                            class="mb-2 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600 hover:underline">
+                            <span class="material-symbols-outlined text-[13px]">receipt_long</span>Bukti Transfer
+                        </a>
+                    @endif
+
                     <div class="flex gap-gutter">
                         @if ($refund->status === 'requested')
                             <button type="button" onclick="openRejectRefund(this.closest('article'))" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase tracking-wider rounded-full shadow-sm hover:bg-error/20 hover:shadow hover:-translate-y-px transition-all duration-200">
                                 <span class="material-symbols-outlined text-[16px] leading-none">block</span>
                                 Tolak
                             </button>
-                            <button type="button" data-modal-open="modal-setujui-{{ $refund->refund_id }}" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
+                            <button type="button" onclick="openRefundConfirm({{ $refund->refund_id }})" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
                                 <span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>
                                 Setujui
                             </button>
                         @elseif ($refund->status === 'disetujui')
-                            <button type="button" data-modal-open="modal-selesaikan-{{ $refund->refund_id }}" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
+                            <button type="button" onclick="openRefundConfirm({{ $refund->refund_id }})" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
                                 <span class="material-symbols-outlined text-[16px] leading-none">payments</span>
                                 Selesaikan
                             </button>
@@ -275,31 +290,62 @@
 @foreach ($refunds as $refund)
     @php
         $kodeRefund = 'REF-' . str_pad((string) $refund->refund_id, 10, '0', STR_PAD_LEFT);
+        $isSaldoAkunRefund = optional($refund->order?->checkout?->payment?->paymentMethod?->kode_metode) === \App\Models\PaymentMethod::KODE_SALDO_AKUN;
+        $metodeAsalRefund = $refund->order?->checkout?->payment?->paymentMethod?->nama_metode ?? '-';
+        $namaPelangganRefund = $refund->requester?->nama_lengkap ?? $refund->requester?->email ?? '-';
     @endphp
     @if ($refund->status === 'requested')
     @component('SuperAdmin.partials.premium-confirm', [
         'id' => 'modal-setujui-' . $refund->refund_id,
-        'dataModal' => true,
+        'close' => 'closeRefundConfirm',
         'icon' => 'task_alt',
         'iconBox' => 'bg-white/10 border-white/20',
         'iconColor' => 'text-white',
     ])
-        <form method="POST" action="{{ route('superadmin.pengembalian-dana.setujui', $refund->refund_id) }}" id="setujui-form-{{ $refund->refund_id }}" class="p-6 space-y-4">
+        <form method="POST" action="{{ route('superadmin.pengembalian-dana.setujui', $refund->refund_id) }}" id="setujui-form-{{ $refund->refund_id }}" enctype="multipart/form-data" class="p-6 space-y-4">
             @csrf
             <div class="text-center">
                 <h3 class="font-title-md text-title-md text-on-surface">Setujui Refund?</h3>
-                <p class="text-sm text-on-surface-variant mt-2">Refund <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> sebesar <span class="font-bold text-on-surface">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</span> untuk pesanan {{ $refund->order?->nomor_order ?? '-' }} akan disetujui.</p>
+                <p class="text-sm text-on-surface-variant mt-2 mb-4">Refund <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> sebesar <span class="font-bold text-on-surface">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</span> untuk pesanan {{ $refund->order?->nomor_order ?? '-' }} akan disetujui dan ditandai selesai.</p>
+            </div>
+            @if ($isSaldoAkunRefund)
+                <div class="rounded-xl border border-emerald-500/25 bg-emerald-500/10 p-4">
+                    <p class="font-label-sm text-[10px] uppercase tracking-widest text-emerald-600">Detail Pengembalian</p>
+                    <p class="text-sm text-on-surface mt-2">Nama Pelanggan: <span class="font-bold text-on-surface">{{ $namaPelangganRefund }}</span></p>
+                    <p class="text-sm text-on-surface mt-1">Nama Bank / Metode Tujuan: <span class="font-bold text-on-surface">Saldo Akun</span></p>
+                    <p class="text-xs text-on-surface-variant mt-1 inline-flex items-start gap-1"><span class="material-symbols-outlined text-[14px] shrink-0">verified_user</span>Dana dikembalikan otomatis ke saldo akun customer — bukti transfer tidak wajib.</p>
+                </div>
+            @else
+                <div class="rounded-xl border border-muted-border bg-surface-container-low p-4">
+                    <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Detail Pengembalian</p>
+                    <p class="text-sm text-on-surface mt-2">Nama Pelanggan: <span class="font-bold text-on-surface">{{ $namaPelangganRefund }}</span></p>
+                    <p class="text-sm text-on-surface mt-1">Nama Bank / Metode Tujuan: <span class="font-bold text-on-surface">{{ $metodeAsalRefund }}</span></p>
+                    <p class="text-xs text-on-surface-variant mt-1 inline-flex items-start gap-1"><span class="material-symbols-outlined text-[14px] shrink-0">info</span>Kembalikan dana via metode pembayaran asal. Koordinasi dengan customer untuk nomor tujuan.</p>
+                </div>
+            @endif
+            <div class="space-y-4 text-left">
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1.5">Bukti Transfer @if (!$isSaldoAkunRefund)<span class="text-error">*</span>@endif</label>
+                    <input type="file" name="file_bukti" id="setujui-file-{{ $refund->refund_id }}" @if (!$isSaldoAkunRefund) required @endif accept=".jpg,.jpeg,.png,.pdf"
+                        @if (!$isSaldoAkunRefund) onchange="document.getElementById('setujui-submit-{{ $refund->refund_id }}').disabled = !this.files.length" @endif
+                        class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:font-label-sm file:uppercase file:tracking-widest file:cursor-pointer border border-muted-border rounded-lg p-1 focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent" />
+                    <p class="text-[11px] text-on-surface-variant mt-1">@if ($isSaldoAkunRefund)Opsional — dana dikembalikan otomatis ke saldo akun.@else Wajib dilampirkan sebagai bukti transparansi (JPG, PNG, atau PDF, maks 5MB).@endif</p>
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1.5">Deskripsi Bukti</label>
+                    <input type="text" name="deskripsi_bukti" id="setujui-deskripsi-{{ $refund->refund_id }}" maxlength="1000" placeholder="Contoh: Transfer BCA dari rekening platform Raliva" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent placeholder-on-surface-variant/50" />
+                </div>
             </div>
         </form>
         @slot('footer')
             <div class="flex gap-3">
-                <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1">
+                <button type="button" onclick="closeRefundConfirm()" class="btn-modal btn-modal-ghost flex-1">
                     <span class="material-symbols-outlined text-[16px] leading-none">close</span>
                     Batal
                 </button>
-                <button type="submit" form="setujui-form-{{ $refund->refund_id }}" class="btn-modal btn-modal-primary flex-1">
+                <button type="submit" form="setujui-form-{{ $refund->refund_id }}" id="setujui-submit-{{ $refund->refund_id }}" @if (!$isSaldoAkunRefund) disabled data-proof-required @endif class="btn-modal btn-modal-primary flex-1 disabled:opacity-40 disabled:cursor-not-allowed">
                     <span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>
-                    Ya, Setujui
+                    Ya, Setujui &amp; Selesai
                 </button>
             </div>
         @endslot
@@ -307,7 +353,7 @@
     @elseif ($refund->status === 'disetujui')
     @component('SuperAdmin.partials.premium-confirm', [
         'id' => 'modal-selesaikan-' . $refund->refund_id,
-        'dataModal' => true,
+        'close' => 'closeRefundConfirm',
         'icon' => 'payments',
         'iconBox' => 'bg-white/10 border-white/20',
         'iconColor' => 'text-white',
@@ -338,7 +384,7 @@
         </form>
         @slot('footer')
             <div class="flex gap-3">
-                <button type="button" data-modal-close class="btn-modal btn-modal-ghost flex-1">
+                <button type="button" onclick="closeRefundConfirm()" class="btn-modal btn-modal-ghost flex-1">
                     <span class="material-symbols-outlined text-[16px] leading-none">close</span>
                     Batal
                 </button>
@@ -398,8 +444,46 @@
         document.body.style.overflow = '';
     }
 
+    /* Modal Setujui / Selesaikan — pola sama seperti modal premium SA lain:
+       buka/tutup in-place, kunci scroll cukup di body (tanpa portal & tanpa
+       sentuh <html>) agar sidebar sticky tidak meloncat ke atas. */
+    let openRefundConfirmModalId = null;
+
+    function openRefundConfirm(id) {
+        const modal = document.getElementById('modal-setujui-' + id) || document.getElementById('modal-selesaikan-' + id);
+        if (!modal) return;
+        openRefundConfirmModalId = modal.id;
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+
+        ['setujui', 'selesaikan'].forEach((prefix) => {
+            const file = document.getElementById(prefix + '-file-' + id);
+            const desc = document.getElementById(prefix + '-deskripsi-' + id);
+            const submit = document.getElementById(prefix + '-submit-' + id);
+            if (file) file.value = '';
+            if (desc) desc.value = '';
+            if (submit && submit.dataset.proofRequired) submit.disabled = true;
+        });
+    }
+
+    function closeRefundConfirm() {
+        if (openRefundConfirmModalId) {
+            const modal = document.getElementById(openRefundConfirmModalId);
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            }
+        }
+        openRefundConfirmModalId = null;
+        document.body.style.overflow = '';
+    }
+
     document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeRejectRefund();
+        if (e.key === 'Escape') {
+            closeRejectRefund();
+            closeRefundConfirm();
+        }
     });
 
     document.addEventListener('DOMContentLoaded', () => {

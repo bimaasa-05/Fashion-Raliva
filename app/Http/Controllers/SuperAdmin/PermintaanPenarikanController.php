@@ -9,6 +9,7 @@ use App\Models\Withdrawal;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PermintaanPenarikanController extends Controller
 {
@@ -44,32 +45,64 @@ class PermintaanPenarikanController extends Controller
             ]);
         }
 
+        $data = $request->validate([
+            'file_bukti' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+            'deskripsi_bukti' => ['nullable', 'string', 'max:1000'],
+        ], [
+            'file_bukti.required' => 'Bukti transfer wajib dilampirkan.',
+            'file_bukti.mimes' => 'Bukti transfer harus berupa JPG, PNG, atau PDF.',
+            'file_bukti.max' => 'Ukuran bukti transfer maksimal 5 MB.',
+            'deskripsi_bukti.max' => 'Deskripsi bukti maksimal 1000 karakter.',
+        ]);
+
+        $path = $request->file('file_bukti')->store('bukti-penarikan/'.$penarikan->withdrawal_id, 'public');
+
         $lama = $penarikan->only(['status', 'reviewed_by']);
 
-        DB::transaction(function () use ($penarikan) {
-            $wallet = $penarikan->wallet()->lockForUpdate()->firstOrFail();
+        try {
+            DB::transaction(function () use ($penarikan, $path, $data) {
+                $wallet = $penarikan->wallet()->lockForUpdate()->firstOrFail();
 
-            if ((float) $wallet->saldo_tersedia < (float) $penarikan->jumlah) {
-                throw new \RuntimeException('Saldo tersedia tidak mencukupi untuk pencairan ini.');
-            }
+                if ((float) $wallet->saldo_tersedia < (float) $penarikan->jumlah) {
+                    throw new \RuntimeException('Saldo tersedia tidak mencukupi untuk pencairan ini.');
+                }
 
-            $wallet->decrement('saldo_tersedia', $penarikan->jumlah);
-            $wallet->increment('saldo_tertahan', $penarikan->jumlah);
+                $saldoSebelum = (float) $wallet->saldo_tersedia;
 
-            $penarikan->update([
-                'status' => Withdrawal::STATUS_DISETUJUI,
-                'reviewed_by' => ActivityLogger::resolveActorId(),
-                'ditinjau_pada' => now(),
-            ]);
-        });
+                $wallet->decrement('saldo_tersedia', $penarikan->jumlah);
+
+                WalletTransaction::create([
+                    'wallet_id' => $wallet->wallet_id,
+                    'withdrawal_id' => $penarikan->withdrawal_id,
+                    'jenis_transaksi' => WalletTransaction::JENIS_WITHDRAWAL,
+                    'jumlah' => $penarikan->jumlah,
+                    'saldo_sebelum' => $saldoSebelum,
+                    'saldo_sesudah' => $saldoSebelum - (float) $penarikan->jumlah,
+                    'keterangan' => sprintf('Pencairan dana ke %s (%s).', $penarikan->tujuan_nomor ?: '-', $penarikan->tujuan_penyedia ?: '-'),
+                ]);
+
+                $penarikan->update([
+                    'status' => Withdrawal::STATUS_DIBAYAR,
+                    'reviewed_by' => ActivityLogger::resolveActorId(),
+                    'ditinjau_pada' => now(),
+                    'dibayar_pada' => now(),
+                    'file_bukti' => $path,
+                    'deskripsi_bukti' => $data['deskripsi_bukti'] ?? null,
+                    'bukti_diupload_pada' => now(),
+                ]);
+            });
+        } catch (\Throwable $e) {
+            Storage::disk('public')->delete($path);
+            throw $e;
+        }
 
         ActivityLogger::log(
             'withdrawal.approve',
             Withdrawal::class,
             $penarikan->withdrawal_id,
             $lama,
-            ['status' => Withdrawal::STATUS_DISETUJUI],
-            sprintf('Menyetujui pencairan Rp %s untuk toko "%s" (dana dikunci).', number_format((float) $penarikan->jumlah, 0, ',', '.'), $penarikan->store->nama_toko ?? '-')
+            ['status' => Withdrawal::STATUS_DIBAYAR, 'file_bukti' => $path],
+            sprintf('Menyetujui pencairan Rp %s untuk toko "%s" dan ditandai dibayar.', number_format((float) $penarikan->jumlah, 0, ',', '.'), $penarikan->store->nama_toko ?? '-')
         );
 
         if ($penarikan->store) {
@@ -77,15 +110,15 @@ class PermintaanPenarikanController extends Controller
                 'user_id' => $penarikan->store->owner_id,
                 'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => Notification::TIPE_WALLET,
-                'judul' => 'Pencairan Disetujui',
-                'pesan' => sprintf('Pencairan sebesar Rp %s telah disetujui dan sedang diproses.', number_format((float) $penarikan->jumlah, 0, ',', '.')),
+                'judul' => 'Pencairan Dibayar',
+                'pesan' => sprintf('Dana pencairan sebesar Rp %s telah dikirim ke rekening Anda.', number_format((float) $penarikan->jumlah, 0, ',', '.')),
                 'url' => route('owner.pencairan-dana'),
             ]);
         }
-        Notification::fireSelf(Notification::TIPE_WALLET, 'Pencairan Disetujui', sprintf('Pencairan Rp %s disetujui.', number_format((float) $penarikan->jumlah, 0, ',', '.')), route('superadmin.permintaan-penarikan'));
+        Notification::fireSelf(Notification::TIPE_WALLET, 'Pencairan Disetujui dan Dibayar', sprintf('Pencairan Rp %s disetujui dan ditandai dibayar.', number_format((float) $penarikan->jumlah, 0, ',', '.')), route('superadmin.permintaan-penarikan'));
 
         return back()->with('toast', [
-            'message' => sprintf('Pencairan Rp %s disetujui dan dana dikunci untuk diproses.', number_format((float) $penarikan->jumlah, 0, ',', '.')),
+            'message' => sprintf('Pencairan Rp %s disetujui dan ditandai sudah dibayar.', number_format((float) $penarikan->jumlah, 0, ',', '.')),
             'icon' => 'task_alt',
         ]);
     }

@@ -155,6 +155,8 @@ class KurirController extends Controller
             'courier_id' => 'required|integer|exists:couriers,courier_id',
             'nama_layanan' => 'required|string|max:100',
             'estimasi_hari' => 'required|integer|min:1|max:60',
+            'tarif' => 'nullable|numeric|min:0|max:999999999',
+            'tarif_sekota' => 'nullable|numeric|min:0|max:999999999',
         ]);
 
         if (! in_array((int) $data['store_id'], $storeIds, true)) {
@@ -171,6 +173,8 @@ class KurirController extends Controller
             'courier_id' => $courier->courier_id,
             'nama_layanan' => $data['nama_layanan'],
             'estimasi_hari' => $data['estimasi_hari'],
+            'tarif' => $data['tarif'] ?? 0,
+            'tarif_sekota' => $data['tarif_sekota'] ?? 0,
             'status' => \App\Models\ShippingService::STATUS_AKTIF,
         ]);
 
@@ -189,8 +193,13 @@ class KurirController extends Controller
         $data = $request->validate([
             'nama_layanan' => 'required|string|max:100',
             'estimasi_hari' => 'required|integer|min:1|max:60',
+            'tarif' => 'nullable|numeric|min:0|max:999999999',
+            'tarif_sekota' => 'nullable|numeric|min:0|max:999999999',
             'status' => 'required|in:aktif,nonaktif',
         ]);
+
+        $data['tarif'] = $data['tarif'] ?? 0;
+        $data['tarif_sekota'] = $data['tarif_sekota'] ?? 0;
 
         $layanan->update($data);
 

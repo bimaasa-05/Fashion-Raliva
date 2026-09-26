@@ -37,6 +37,9 @@ class CustomerWithdrawal extends Model
         'diajukan_pada',
         'diproses_pada',
         'catatan_admin',
+        'file_bukti',
+        'deskripsi_bukti',
+        'bukti_diupload_pada',
     ];
 
     protected function casts(): array
@@ -47,6 +50,7 @@ class CustomerWithdrawal extends Model
             'jumlah_bersih' => 'decimal:2',
             'diajukan_pada' => 'datetime',
             'diproses_pada' => 'datetime',
+            'bukti_diupload_pada' => 'datetime',
         ];
     }
 

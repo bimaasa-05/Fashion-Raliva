@@ -12,6 +12,7 @@ use App\Support\ActivityLogger;
 use App\Support\SlotService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class ManajemenTokoController extends Controller
 {
@@ -488,16 +489,25 @@ class ManajemenTokoController extends Controller
             return back()->with('toast', ['message' => 'Pengajuan tidak valid.', 'icon' => 'gpp_maybe']);
         }
 
-        $lama = $toko->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon']);
+        $lama = $toko->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'kota', 'nomor_telepon', 'logo']);
 
-        DB::transaction(function () use ($toko, $permintaan) {
+        DB::transaction(function () use ($toko, $permintaan, $lama) {
             $toko->update([
                 'nama_toko' => $permintaan->nama_toko,
                 'kategori' => $permintaan->kategori,
                 'deskripsi' => $permintaan->deskripsi,
                 'alamat' => $permintaan->alamat,
+                'kota' => $permintaan->kota,
                 'nomor_telepon' => $permintaan->nomor_telepon,
             ]);
+
+            if ($permintaan->logo) {
+                $logoLama = $toko->logo;
+                $toko->update(['logo' => $permintaan->logo]);
+                if ($logoLama && ! filter_var($logoLama, FILTER_VALIDATE_URL) && ! str_starts_with(ltrim($logoLama, '/'), 'assets/')) {
+                    Storage::disk('public')->delete($logoLama);
+                }
+            }
 
             $permintaan->update([
                 'status' => \App\Models\StoreUpdateRequest::STATUS_DISETUJUI,
@@ -509,7 +519,7 @@ class ManajemenTokoController extends Controller
                 Store::class,
                 $toko->store_id,
                 $lama,
-                $permintaan->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'nomor_telepon']),
+                $permintaan->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'kota', 'nomor_telepon', 'logo']),
                 sprintf('Menyetujui perubahan data toko "%s".', $toko->nama_toko)
             );
         });
@@ -545,6 +555,10 @@ class ManajemenTokoController extends Controller
             'alasan_penolakan' => $data['alasan'],
             'reviewed_by' => ActivityLogger::resolveActorId(),
         ]);
+
+        if ($permintaan->logo) {
+            Storage::disk('public')->delete($permintaan->logo);
+        }
 
         ActivityLogger::log(
             'store.update.reject',

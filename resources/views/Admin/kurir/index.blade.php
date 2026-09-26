@@ -74,6 +74,14 @@
                             <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Estimasi (hari) *</label>
                             <input type="number" name="estimasi_hari" required min="1" max="60" value="2" class="raliva-input w-full text-sm" />
                         </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Tarif (Rp)</label>
+                            <input type="number" name="tarif" min="0" max="999999999" value="0" placeholder="0 = gratis" class="raliva-input w-full text-sm" />
+                        </div>
+                        <div>
+                            <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Tarif Sekota (Rp)</label>
+                            <input type="number" name="tarif_sekota" min="0" max="999999999" value="0" placeholder="0 = gratis" class="raliva-input w-full text-sm" />
+                        </div>
                     </div>
                     <button type="submit" class="mt-4 px-5 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium">Tambah Layanan</button>
                 </form>
@@ -104,7 +112,7 @@
                                     <div class="grid grid-cols-1 sm:grid-cols-[1fr_140px_140px] gap-2.5 items-end bg-surface-container-lowest border border-muted-border rounded-lg p-3">
                                         <label class="flex items-center gap-2.5 cursor-pointer min-w-0">
                                             <input type="hidden" name="pengaturan[{{ $courier->courier_id }}|{{ $service->shipping_service_id }}][is_aktif]" value="0" /><input type="checkbox" name="pengaturan[{{ $courier->courier_id }}|{{ $service->shipping_service_id }}][is_aktif]" value="1" @checked($set?->is_aktif ?? true) class="w-4 h-4 accent-[#8B1E3F] shrink-0" />
-                                            <span class="text-sm text-on-surface truncate">{{ $service->nama_layanan }} <span class="text-on-surface-variant">(~{{ $service->estimasi_hari }} hari)</span></span>
+                                            <span class="text-sm text-on-surface truncate">{{ $service->nama_layanan }} <span class="text-on-surface-variant">(~{{ $service->estimasi_hari }} hari • Rp{{ number_format((float) ($service->tarif ?? 0), 0, ',', '.') }})</span></span>
                                         </label>
                                         <div>
                                             <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Ongkir (Rp)</label>
@@ -219,6 +227,14 @@
                     <div>
                         <label class="block raliva-label mb-2">Estimasi (hari) *</label>
                         <input type="number" name="estimasi_hari" value="{{ $service->estimasi_hari }}" required min="1" max="60" class="raliva-input w-full" />
+                    </div>
+                    <div>
+                        <label class="block raliva-label mb-2">Tarif (Rp)</label>
+                        <input type="number" name="tarif" value="{{ $service->tarif ?? 0 }}" min="0" max="999999999" placeholder="0 = gratis" class="raliva-input w-full" />
+                    </div>
+                    <div>
+                        <label class="block raliva-label mb-2">Tarif Sekota (Rp)</label>
+                        <input type="number" name="tarif_sekota" value="{{ $service->tarif_sekota ?? 0 }}" min="0" max="999999999" placeholder="0 = gratis" class="raliva-input w-full" />
                     </div>
                     <div>
                         <label class="block raliva-label mb-2">Status *</label>

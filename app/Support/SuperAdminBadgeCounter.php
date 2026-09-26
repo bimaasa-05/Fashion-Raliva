@@ -13,6 +13,7 @@ use App\Models\Refund;
 use App\Models\Role;
 use App\Models\SlotPurchaseRequest;
 use App\Models\Store;
+use App\Models\StoreUpdateRequest;
 use App\Models\Withdrawal;
 
 class SuperAdminBadgeCounter
@@ -24,7 +25,8 @@ class SuperAdminBadgeCounter
             ->count();
 
         return [
-            'toko' => Store::where('status', Store::STATUS_PENDING)->count(),
+            'toko' => Store::where('status', Store::STATUS_PENDING)->count()
+                + StoreUpdateRequest::where('status', StoreUpdateRequest::STATUS_PENDING)->count(),
             'produk' => Product::where('status', Product::STATUS_PENDING)->count(),
             'perubahan_produk' => ProductUpdateRequest::where('status', ProductUpdateRequest::STATUS_PENDING)->count(),
             'slot' => SlotPurchaseRequest::where('status', SlotPurchaseRequest::STATUS_PENDING)->count(),

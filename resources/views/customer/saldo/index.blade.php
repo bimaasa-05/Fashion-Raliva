@@ -92,16 +92,20 @@
         .tp-pending { background: var(--surface-ivory); border-color: rgba(139,30,63,.35); }
         .tp-verif { background: #EFF6FF; border-color: #93C5FD; }
         .tp-ditolak { background: #FEF2F2; border-color: #FCA5A5; }
+        .tp-kadaluarsa { background: #F3F4F6; border-color: #D1D5DB; }
         html.theme-dark .tp-pending { background: var(--surface-ivory); border-color: rgba(139,30,63,.55); }
         html.theme-dark .tp-verif { background: rgba(59,130,246,.12); border-color: rgba(59,130,246,.4); }
         html.theme-dark .tp-ditolak { background: rgba(239,68,68,.12); border-color: rgba(239,68,68,.4); }
+        html.theme-dark .tp-kadaluarsa { background: rgba(107,114,128,.12); border-color: rgba(107,114,128,.4); }
         .tp-icon { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 9999px; }
         .tp-icon.ic-pending { background: rgba(139,30,63,.1); color: #8B1E3F; }
         .tp-icon.ic-verif { background: rgba(147,197,253,.32); color: #2563EB; }
         .tp-icon.ic-ditolak { background: rgba(252,165,165,.32); color: #DC2626; }
+        .tp-icon.ic-kadaluarsa { background: rgba(107,114,128,.16); color: #6B7280; }
         html.theme-dark .tp-icon.ic-pending { color: #F4B4BE; }
         html.theme-dark .tp-icon.ic-verif { color: #93C5FD; }
         html.theme-dark .tp-icon.ic-ditolak { color: #FCA5A5; }
+        html.theme-dark .tp-icon.ic-kadaluarsa { color: #9CA3AF; }
         .tp-pulse { animation: tp-pulse 2s ease-in-out infinite; }
         @keyframes tp-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(59,130,246,.35); } 50% { box-shadow: 0 0 0 10px rgba(59,130,246,0); } }
         .tp-shake { animation: tp-shake 1.6s ease-in-out infinite; }
@@ -218,20 +222,23 @@
 
             @if ($activeTopups->isNotEmpty())
                 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
-                    <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Top Up Berjalan') }}</h3>
+                    <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-md">{{ __('Top Up Saldo') }}</h3>
                     <div class="space-y-sm">
                         @foreach ($activeTopups as $tp)
                             <div class="flex flex-col md:flex-row md:items-center justify-between gap-sm rounded-xl p-md border-l-4
                                     @if($tp->status === \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI) tp-verif border-blue-500
                                     @elseif($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK) tp-ditolak border-red-500
+                                    @elseif($tp->status === \App\Models\CustomerTopup::STATUS_DIBATALKAN) tp-ditolak border-red-500
+                                    @elseif($tp->status === \App\Models\CustomerTopup::STATUS_KADALUARSA) tp-kadaluarsa border-gray-300
                                     @else tp-pending border-secondary @endif">
                                 <div class="flex items-center gap-md">
                                     <span class="tp-icon
                                         @if($tp->status === \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI) ic-verif tp-pulse
-                                        @elseif($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK) ic-ditolak tp-shake
+                                        @elseif($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK || $tp->status === \App\Models\CustomerTopup::STATUS_DIBATALKAN) ic-ditolak tp-shake
+                                        @elseif($tp->status === \App\Models\CustomerTopup::STATUS_KADALUARSA) ic-kadaluarsa
                                         @else ic-pending tp-breathe @endif">
                                         <span class="material-symbols-outlined text-[26px]">
-                                            {{ $tp->status === \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI ? 'hourglass_top' : ($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK ? 'error' : 'schedule') }}
+                                            {{ $tp->status === \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI ? 'hourglass_top' : ($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK ? 'error' : ($tp->status === \App\Models\CustomerTopup::STATUS_DIBATALKAN ? 'cancel' : ($tp->status === \App\Models\CustomerTopup::STATUS_KADALUARSA ? 'timer_off' : 'schedule'))) }}
                                         </span>
                                     </span>
                                     <div class="min-w-0">
@@ -242,10 +249,13 @@
                                 <div class="flex flex-col items-start md:items-end gap-sm">
                                     <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold
                                         @if($tp->status === \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI) bg-blue-100 text-blue-800
-                                        @elseif($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK) bg-red-100 text-red-800
+                                        @elseif($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK || $tp->status === \App\Models\CustomerTopup::STATUS_DIBATALKAN) bg-red-100 text-red-800
+                                        @elseif($tp->status === \App\Models\CustomerTopup::STATUS_KADALUARSA) bg-surface-container text-on-surface-variant
                                         @else bg-secondary/10 text-secondary @endif">
                                         @if($tp->status === \App\Models\CustomerTopup::STATUS_MENUNGGU_VERIFIKASI) {{ __('Menunggu Verifikasi') }}
                                         @elseif($tp->status === \App\Models\CustomerTopup::STATUS_DITOLAK) {{ __('Ditolak') }}
+                                        @elseif($tp->status === \App\Models\CustomerTopup::STATUS_DIBATALKAN) {{ __('Dibatalkan') }}
+                                        @elseif($tp->status === \App\Models\CustomerTopup::STATUS_KADALUARSA) {{ __('Kadaluarsa') }}
                                         @else {{ __('Menunggu Pembayaran') }} @endif
                                     </span>
                                     @if (in_array($tp->status, [\App\Models\CustomerTopup::STATUS_PENDING, \App\Models\CustomerTopup::STATUS_DITOLAK], true))
@@ -266,6 +276,14 @@
                                                     <span>{{ __('Batalkan') }}</span>
                                                 </button>
                                             </form>
+                                        </div>
+                                    @elseif (in_array($tp->status, [\App\Models\CustomerTopup::STATUS_KADALUARSA, \App\Models\CustomerTopup::STATUS_DIBATALKAN], true))
+                                        <div class="flex items-center gap-sm">
+                                            <a href="{{ route('customer.saldo.isi') }}"
+                                                class="btn-gold inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-full font-label-caps text-label-caps uppercase tracking-widest whitespace-nowrap">
+                                                <span class="material-symbols-outlined text-[16px]">add_card</span>
+                                                <span>{{ __('Buat Top Up Baru') }}</span>
+                                            </a>
                                         </div>
                                     @endif
                                 </div>
