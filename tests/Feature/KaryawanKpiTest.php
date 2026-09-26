@@ -16,10 +16,11 @@ class KaryawanKpiTest extends TestCase
 
     public function test_role_key_uses_role_names_not_ids(): void
     {
+        $this->assertSame('owner', RekapKaryawanController::roleKey(999, Role::OWNER));
         $this->assertSame('admin', RekapKaryawanController::roleKey(999, Role::ADMIN));
         $this->assertSame('produksi', RekapKaryawanController::roleKey(999, Role::PRODUKSI));
         $this->assertSame('gudang', RekapKaryawanController::roleKey(999, Role::GUDANG));
-        $this->assertSame('lainnya', RekapKaryawanController::roleKey(999, 'Owner'));
+        $this->assertSame('lainnya', RekapKaryawanController::roleKey(999, 'Supervisor'));
         $this->assertSame('lainnya', RekapKaryawanController::roleKey(null, null));
     }
 
@@ -43,13 +44,28 @@ class KaryawanKpiTest extends TestCase
 
         $r = $report->rekapAdmin($userId, $storeIds);
 
-        foreach (['diverifikasi', 'ditolak', 'pesanan', 'rating_count'] as $k) {
+        foreach (['diverifikasi', 'ditolak', 'pesanan', 'rating_count', 'prospek', 'customers'] as $k) {
             $this->assertGreaterThanOrEqual(0, $r[$k]);
         }
         $this->assertGreaterThanOrEqual(0, $r['pendapatan']);
         $this->assertTrue($r['cr'] === null || ($r['cr'] >= 0 && $r['cr'] <= 100));
         $this->assertTrue($r['aov'] === null || $r['aov'] >= 0);
+        $this->assertTrue($r['ltv'] === null || $r['ltv'] >= 0);
         $this->assertTrue($r['rating'] === null || ($r['rating'] >= 0 && $r['rating'] <= 5));
+    }
+
+    public function test_rekap_admin_ltv_uses_unique_customers(): void
+    {
+        [$userId, $storeIds] = $this->staffFixture();
+        $report = new KaryawanReportService();
+
+        $r = $report->rekapAdmin($userId, $storeIds);
+
+        if ($r['customers'] > 0) {
+            $this->assertEqualsWithDelta($r['pendapatan'] / $r['customers'], $r['ltv'], 0.01);
+        } else {
+            $this->assertNull($r['ltv']);
+        }
     }
 
     public function test_rekap_produksi_returns_bounded_metrics(): void
@@ -114,14 +130,26 @@ class KaryawanKpiTest extends TestCase
         $owner = User::whereHas('role', fn ($q) => $q->where('nama_role', Role::OWNER))->firstOrFail();
         $this->flushSession();
 
-        foreach (['admin', 'produksi', 'gudang'] as $role) {
+        foreach (['owner', 'admin', 'produksi', 'gudang'] as $role) {
             $response = $this->actingAs($owner)->get(route('owner.rekap-karyawan', ['role' => $role]));
             $response->assertOk();
         }
 
         $default = $this->actingAs($owner)->get(route('owner.rekap-karyawan'));
         $default->assertOk();
-        $default->assertSee('<option value="admin" selected', false);
+        $default->assertSee('<option value="owner" selected', false);
+    }
+
+    public function test_rekap_owner_row_carries_roi_keys(): void
+    {
+        $owner = User::whereHas('role', fn ($q) => $q->where('nama_role', Role::OWNER))->firstOrFail();
+        $this->flushSession();
+
+        $response = $this->actingAs($owner)->get(route('owner.rekap-karyawan', ['role' => 'owner']));
+
+        $response->assertOk();
+        $response->assertSee('ROI', false);
+        $response->assertSee('Investasi', false);
     }
 
     public function test_semua_rows_carry_finance_keys_for_every_role(): void
@@ -133,7 +161,7 @@ class KaryawanKpiTest extends TestCase
         $method = new \ReflectionMethod($controller, 'bangunRekap');
         $method->setAccessible(true);
 
-        foreach (['admin', 'produksi', 'gudang'] as $filter) {
+        foreach (['owner', 'admin', 'produksi', 'gudang'] as $filter) {
             $rows = $method->invoke($controller, $staff, [(int) $staff->first()->store_id], $filter, null);
             foreach ($rows as $r) {
                 foreach (['pesanan', 'pendapatan', 'pengeluaran', 'bersih'] as $key) {
