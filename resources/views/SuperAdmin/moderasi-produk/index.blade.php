@@ -83,8 +83,20 @@
         tolak: (id) => '{{ route('superadmin.moderasi-produk.tolak', ':id:') }}'.replace(':id:', id)
     };
 
-    function openDetailModal(card) {
-        activeProductCard = card;
+    function switchModTab(tab) {
+        document.querySelectorAll('[data-mod-tab]').forEach((b) => {
+            const active = b.getAttribute('data-mod-tab') === tab;
+            b.classList.toggle('bg-deep-onyx', active);
+            b.classList.toggle('text-on-primary', active);
+            b.classList.toggle('border', !active);
+            b.classList.toggle('border-muted-border', !active);
+            b.classList.toggle('text-on-surface-variant', !active);
+        });
+        document.querySelector('[data-mod-panel="produk"]').classList.toggle('hidden', tab !== 'produk');
+        document.querySelector('[data-mod-panel="bahan"]').classList.toggle('hidden', tab !== 'bahan');
+    }
+
+    function openDetailModal(card) {        activeProductCard = card;
         const d = card.dataset;
         document.getElementById('mod-name').textContent = d.name;
         document.getElementById('mod-store').textContent = d.store.toUpperCase();
@@ -162,6 +174,40 @@
         document.getElementById('mod-action-approve').classList.toggle('hidden', !canDecide || slotFull);
         document.getElementById('mod-action-note').classList.toggle('hidden', canDecide && !slotFull);
         document.getElementById('mod-action-slotfull').classList.toggle('hidden', !(canDecide && slotFull));
+
+        let bahanRows = [];
+        try { bahanRows = JSON.parse(card.getAttribute('data-bahan') || '[]'); } catch(e) { bahanRows = []; }
+        const bahanBody = document.getElementById('mod-bahan-rows');
+        const bahanEmpty = document.getElementById('mod-bahan-empty');
+        bahanBody.innerHTML = '';
+        bahanRows.forEach((row) => {
+            const tr = document.createElement('tr');
+            tr.className = 'border-t border-muted-border';
+            const tdNama = document.createElement('td');
+            tdNama.className = 'py-1 pr-2 text-on-surface font-semibold';
+            tdNama.textContent = row.nama || '-';
+            const tdJumlah = document.createElement('td');
+            tdJumlah.className = 'py-1 pr-2 text-right text-on-surface';
+            tdJumlah.textContent = row.jumlah ?? '-';
+            const tdSatuan = document.createElement('td');
+            tdSatuan.className = 'py-1 pr-2 text-on-surface-variant';
+            tdSatuan.textContent = row.satuan || '-';
+            tr.appendChild(tdNama);
+            tr.appendChild(tdJumlah);
+            tr.appendChild(tdSatuan);
+            bahanBody.appendChild(tr);
+        });
+        bahanEmpty.classList.toggle('hidden', bahanRows.length > 0);
+
+        document.querySelectorAll('[data-mod-tab]').forEach((btn) => {
+            const tab = btn.getAttribute('data-mod-tab');
+            if (tab === 'produk') {
+                btn.onclick = () => switchModTab('produk');
+            } else {
+                btn.onclick = () => switchModTab('bahan');
+            }
+        });
+        switchModTab('produk');
         document.getElementById('approve-product-form').action = productActionUrls.setujui(d.id);
 
         document.getElementById('mod-reject-store').textContent = d.store;
@@ -408,6 +454,11 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>
                 </div>
             </div>
+            <div class="flex gap-2 px-6 pt-4">
+                <button type="button" data-mod-tab="produk" class="mod-tab-btn px-4 py-2 rounded-lg font-label-sm text-[11px] uppercase tracking-wider transition-colors bg-deep-onyx text-on-primary">Informasi Produk</button>
+                <button type="button" data-mod-tab="bahan" class="mod-tab-btn px-4 py-2 rounded-lg font-label-sm text-[11px] uppercase tracking-wider transition-colors border border-muted-border text-on-surface-variant hover:text-on-surface">Informasi Bahan</button>
+            </div>
+            <div data-mod-panel="produk">
             <div class="grid md:grid-cols-2 gap-0">
                 <div class="bg-surface-container-low min-h-[220px] p-3 flex flex-col gap-3">
                     <div class="flex items-center justify-between">
@@ -423,6 +474,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Varian (Warna & Ukuran)</span><span id="mod-variants" class="font-body-md text-body-md text-on-surface">-</span></div>
                     <div id="mod-slot-box"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Kuota Slot Toko</span><span id="mod-slot" class="font-body-md text-body-md text-on-surface">-</span></div>
                     <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Deskripsi</span><p id="mod-desc" class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-sm">-</p></div>
+                </div>
+            </div>
+            </div>
+            <div data-mod-panel="bahan" class="hidden p-6">
+                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mb-3">Bahan produksi (diinput Gudang)</p>
+                <div class="overflow-x-auto">
+                    <table class="w-full min-w-[420px] text-sm">
+                        <thead>
+                            <tr class="text-left text-[10px] uppercase tracking-widest text-on-surface-variant">
+                                <th class="py-1 pr-2">Bahan</th>
+                                <th class="py-1 pr-2 text-right">Jumlah / unit</th>
+                                <th class="py-1 pr-2">Satuan</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mod-bahan-rows"></tbody>
+                    </table>
+                    <p id="mod-bahan-empty" class="hidden text-sm text-on-surface-variant py-4 text-center">Belum ada bahan untuk produk ini.</p>
                 </div>
             </div>
         </div>
