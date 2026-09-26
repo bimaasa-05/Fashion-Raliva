@@ -329,7 +329,7 @@
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
-<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">ADDRESS BOOK</p>
+<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('ADDRESS BOOK') }}</p>
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('Add New Address') }}</h2>
 
 <form method="POST" action="{{ route('customer.address.store') }}" class="space-y-md">
@@ -409,7 +409,7 @@
 </div>
 <div>
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('Country') }}</label>
-<input type="text" name="negara" id="address_negara" maxlength="100" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none" value="Indonesia"/>
+<input type="text" name="negara" id="address_negara" maxlength="100" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none" value="{{ __('Indonesia') }}"/>
 </div>
 </div>
 <div class="flex items-center gap-sm">
