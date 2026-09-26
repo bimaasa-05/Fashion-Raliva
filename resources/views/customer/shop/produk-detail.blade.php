@@ -494,7 +494,7 @@
                         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium" data-variants="{{ $allVariants->map(fn($v) => ['id' => $v->product_variant_id, 'warna' => $v->warna, 'ukuran' => $v->ukuran, 'harga' => (float)$v->harga, 'stok' => (int) $v->warehouseStocks->sum('jumlah_stok'), 'hex' => (\App\Support\WarnaPalet::resolve($v->warna_hex, $v->warna) ?? '')])->toJson(JSON_UNESCAPED_UNICODE) }}">
                             <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('PRODUCT DETAILS') }}</p>
                             <nav class="flex items-center gap-1.5 flex-wrap mb-xs font-label-sm text-label-sm text-on-surface-variant">
-                                <a href="{{ route('customer.shop') }}" class="hover:text-[var(--chrome-accent)] transition-colors">Shop</a>
+                                <a href="{{ route('customer.shop') }}" class="hover:text-[var(--chrome-accent)] transition-colors">{{ __('Shop') }}</a>
                                 <span class="material-symbols-outlined text-[14px]">chevron_right</span>
                                 @if ($product->category)
                                     <span><a href="{{ route('customer.shop') }}" class="hover:text-[var(--chrome-accent)] transition-colors">{{ $product->category->nama_kategori }}</a></span>
@@ -510,7 +510,7 @@
                                 <span class="font-label-sm text-label-sm text-on-surface-variant">{{ number_format($averageRating ?: 0, 1) }} ({{ $reviewCount }} {{ __('reviews') }})</span>
                                 <span class="text-on-surface-variant/40">·</span>
                                 <a href="{{ route('customer.shop.store', $product->store_id) }}" class="font-label-sm text-label-sm text-[var(--chrome-accent)] hover:underline">
-                                    <span class="material-symbols-outlined text-[14px] align-[-2px]">storefront</span> {{ $product->store?->nama_toko ?? 'Toko' }}
+                                    <span class="material-symbols-outlined text-[14px] align-[-2px]">storefront</span> {{ $product->store?->nama_toko ?? __('Toko') }}
                                 </a>
                                 </div>
                             @if ($produkSku)
@@ -556,17 +556,17 @@
                                     <table class="w-full text-left text-sm">
                                         <thead>
                                             <tr class="text-[10px] uppercase tracking-wider text-on-surface-variant">
-                                                <th class="py-1 pr-3 font-semibold">Singkatan</th>
-                                                <th class="py-1 pr-3 font-semibold">Keterangan</th>
-                                                <th class="py-1 font-semibold text-right">Contoh</th>
+                                                <th class="py-1 pr-3 font-semibold">{{ __('Singkatan') }}</th>
+                                                <th class="py-1 pr-3 font-semibold">{{ __('Keterangan') }}</th>
+                                                <th class="py-1 font-semibold text-right">{{ __('Contoh') }}</th>
                                             </tr>
                                         </thead>
                                         <tbody class="text-on-surface">
-                                            <tr class="border-t border-outline-variant"><td class="py-1 pr-3 font-bold">LD</td><td class="py-1 pr-3">Lingkar Dada</td><td class="py-1 text-right">96</td></tr>
-                                            <tr class="border-t border-outline-variant"><td class="py-1 pr-3 font-bold">PB</td><td class="py-1 pr-3">Panjang Baju</td><td class="py-1 text-right">62</td></tr>
-                                            <tr class="border-t border-outline-variant"><td class="py-1 pr-3 font-bold">LB</td><td class="py-1 pr-3">Lingkar Bawah</td><td class="py-1 text-right">92</td></tr>
-                                            <tr class="border-t border-outline-variant"><td class="py-1 pr-3 font-bold">LT</td><td class="py-1 pr-3">Lingkar Tangan</td><td class="py-1 text-right">38</td></tr>
-                                            <tr class="border-t border-outline-variant"><td class="py-1 pr-3 font-bold">PL</td><td class="py-1 pr-3">Panjang Lengan</td><td class="py-1 text-right">48</td></tr>
+                                            <tr class="border-t border-outline-variant"><td class="py-1 pr-3 font-bold">LD</td><td class="py-1 pr-3">{{ __('Lingkar Dada') }}</td><td class="py-1 text-right">96</td></tr>
+                                            <tr class="border-t border-outline-variant"><td class="py-1 pr-3 font-bold">PB</td><td class="py-1 pr-3">{{ __('Panjang Baju') }}</td><td class="py-1 text-right">62</td></tr>
+                                            <tr class="border-t border-outline-variant"><td class="py-1 pr-3 font-bold">LB</td><td class="py-1 pr-3">{{ __('Lingkar Bawah') }}</td><td class="py-1 text-right">92</td></tr>
+                                            <tr class="border-t border-outline-variant"><td class="py-1 pr-3 font-bold">LT</td><td class="py-1 pr-3">{{ __('Lingkar Tangan') }}</td><td class="py-1 text-right">38</td></tr>
+                                            <tr class="border-t border-outline-variant"><td class="py-1 pr-3 font-bold">PL</td><td class="py-1 pr-3">{{ __('Panjang Lengan') }}</td><td class="py-1 text-right">48</td></tr>
                                         </tbody>
                                     </table>
                                     <p class="text-[10px] text-on-surface-variant mt-2">{{ __('Angka pada ukuran produk adalah ukuran sebenarnya dalam cm.') }}</p>
@@ -594,7 +594,7 @@
                                         </summary>
                                     <div class="px-container-margin md:px-[64px] pb-sm">
                                         <ul class="font-body-sm text-body-sm text-on-surface-variant list-disc list-inside space-y-1">
-                                            <li>100% Linen</li>
+                                            <li>{{ __('100% Linen') }}</li>
                                             <li>{{ __('Machine wash cold with like colors') }}</li>
                                             <li>{{ __('Do not bleach') }}</li>
                                             <li>{{ __('Tumble dry low or hang to dry') }}</li>
@@ -651,9 +651,6 @@
                                                 <span class="material-symbols-outlined text-[18px]">more_vert</span>
                                                 </button>
                                             <div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl overflow-hidden" id="rv-menu-{{ $ri }}">
-                                                <button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors text-left" onclick="toggleReviewMenu(event, 'rv-menu-{{ $ri }}')" type="button">
-                                                    <span class="material-symbols-outlined text-[18px] text-on-surface-variant">translate</span>{{ __('Translate') }}
-                                                    </button>
                                                 <button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-error hover:bg-surface-container-low transition-colors text-left" onclick="openReport()" type="button">
                                                     <span class="material-symbols-outlined text-[18px]">flag</span>{{ __('Report review') }}
                                                     </button>
@@ -781,6 +778,14 @@
                 return 'Rp ' + n.toLocaleString('id-ID');
             }
 
+            @php
+            $i18nStok = [
+                'Sisa stok: ' => __('Sisa stok: '),
+                'Stok habis' => __('Stok habis'),
+            ];
+            @endphp
+            window.RALIVA_I18N = Object.assign(window.RALIVA_I18N || {}, @json($i18nStok));
+            window.ralivaT = window.ralivaT || function (s) { var m = window.RALIVA_I18N || {}; return m[s] || s; };
             function applySelection() {
                 var match = variants.find(function (v) {
                     return v.warna === selectedColor && v.ukuran === selectedSize;
@@ -810,7 +815,7 @@
                 var stok = match ? (Number(match.stok) || 0) : 0;
                 var stockEl = document.getElementById('pd-stock');
                 if (stockEl) {
-                    stockEl.textContent = stok > 0 ? 'Sisa stok: ' + stok.toLocaleString('id-ID') : 'Stok habis';
+                    stockEl.textContent = stok > 0 ? window.ralivaT('Sisa stok: ') + stok.toLocaleString('id-ID') : window.ralivaT('Stok habis');
                     stockEl.classList.toggle('text-error', stok === 0);
                 }
                 var kosong = !match || stok < 1;
@@ -857,21 +862,6 @@
         document.addEventListener('click', function () {
             document.querySelectorAll('[id^="rv-menu-"]').forEach(function (m) { m.classList.add('hidden'); });
         });
-        function translateReview(id, btn) {
-            var p = document.getElementById(id);
-            var label = btn.querySelector('.rv-label');
-            if (p.dataset.state !== 'translated') {
-                p.textContent = p.dataset.translated;
-                p.dataset.state = 'translated';
-                label.textContent = label.dataset.a;
-                label.dataset.state = 'a';
-            } else {
-                p.textContent = p.dataset.original;
-                p.dataset.state = 'original';
-                label.textContent = label.dataset.b;
-                label.dataset.state = 'b';
-            }
-        }
         function openReport() {
             document.querySelectorAll('[id^="rv-menu-"]').forEach(function (m) { m.classList.add('hidden'); });
             document.getElementById('report-modal').classList.remove('hidden');
