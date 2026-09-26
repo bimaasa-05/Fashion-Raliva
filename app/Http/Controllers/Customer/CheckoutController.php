@@ -175,6 +175,7 @@ class CheckoutController extends Controller
                     'store:store_id,nama_toko,logo',
                     'images' => fn ($img) => $img->orderBy('urutan'),
                 ]),
+                'warehouseStocks',
             ])->find($buyId);
 
             if ($variant) {
@@ -201,6 +202,7 @@ class CheckoutController extends Controller
                             'store:store_id,nama_toko,logo',
                             'images' => fn ($img) => $img->orderBy('urutan'),
                         ]),
+                        'warehouseStocks',
                     ]),
                 ])
                 ->orderBy('created_at', 'desc')
@@ -275,6 +277,7 @@ class CheckoutController extends Controller
             'catatan' => 'nullable|string|max:1000',
             'shipping' => ['required', 'numeric', Rule::in($allowedOngkir)],
             'buy' => 'nullable|integer',
+            'buy_qty' => 'nullable|integer|min:1|max:99',
         ], [
             'nama_penerima.required' => 'Nama penerima wajib diisi.',
             'nomor_telepon.required' => 'Nomor telepon wajib diisi.',
@@ -366,7 +369,27 @@ class CheckoutController extends Controller
         /** @var \App\Models\User $actor */
         $actor = Auth::user();
 
-        [$items, $fromCart] = $this->resolveItems((int) ($validated['buy'] ?? 0));
+        [$items, $fromCart] = $this->resolveItems((int) ($validated['buy'] ?? 0), (int) ($validated['buy_qty'] ?? 1));
+
+        // Tolak tegas qty buy melebihi stok (sebelum clamp).
+        if ((int) ($validated['buy'] ?? 0) > 0) {
+            $vPre = ProductVariant::find((int) $validated['buy']);
+            $stokPre = $vPre ? (int) $vPre->warehouseStocks()->sum('jumlah_stok') : 0;
+            if ((int) ($validated['buy_qty'] ?? 1) > $stokPre) {
+                return back()->with('toast', ['message' => 'Stok tersisa ' . $stokPre . '.', 'icon' => 'gpp_maybe'])->withInput();
+            }
+        }
+
+        // Validasi stok akhir di server (cegah manipulasi qty).
+        foreach ($items as $item) {
+            $variantId = is_array($item) ? ($item['variant_id'] ?? 0) : ($item->product_variant_id ?? 0);
+            $qty = is_array($item) ? ($item['quantity'] ?? 0) : ($item->quantity ?? 0);
+            $variant = ProductVariant::find($variantId);
+            $stok = $variant ? (int) $variant->warehouseStocks()->sum('jumlah_stok') : 0;
+            if ($qty < 1 || $qty > $stok) {
+                return back()->with('toast', ['message' => 'Stok ' . ($item['nama_produk'] ?? 'produk') . ' tersisa ' . $stok . '.', 'icon' => 'gpp_maybe'])->withInput();
+            }
+        }
 
         if ($items->isEmpty()) {
             return back()->with('toast', ['message' => 'Tidak ada item untuk dipesan. Keranjang kosong.', 'icon' => 'gpp_maybe']);
@@ -888,7 +911,7 @@ return view('customer.checkout.selesai', [
      *
      * @return array{0: \Illuminate\Support\Collection, 1: bool}
      */
-    protected function resolveItems(int $buyId = 0): array
+    protected function resolveItems(int $buyId = 0, int $buyQty = 1): array
     {
         if ($buyId > 0) {
             $variant = ProductVariant::with([
@@ -900,13 +923,16 @@ return view('customer.checkout.selesai', [
                 return [collect(), false];
             }
 
+            $stok = (int) $variant->warehouseStocks()->sum('jumlah_stok');
+            $qty = max(1, min($buyQty, max($stok, 1)));
+
             return [collect([
                 [
                     'variant_id' => $variant->product_variant_id,
                     'store_id' => $variant->product->store_id,
                     'nama_produk' => $variant->product->nama_produk,
                     'harga' => (float) $variant->harga,
-                    'quantity' => 1,
+                    'quantity' => $qty,
                 ],
             ]), false];
         }
