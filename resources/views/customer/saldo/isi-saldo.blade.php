@@ -144,7 +144,7 @@
                         <div class="relative flex-1">
                             <span class="absolute left-4 top-1/2 -translate-y-1/2 font-body-sm text-body-sm font-semibold text-secondary pointer-events-none">Rp</span>
                             <input type="text" inputmode="numeric" autocomplete="off" name="nominal" id="input-nominal" min="{{ $minNominal }}" max="{{ $maxNominal }}"
-                                placeholder="Nominal topup (min {{ number_format($minNominal, 0, ',', '.') }})"
+                                placeholder="{{ __('Nominal topup (min :min)', ['min' => number_format($minNominal, 0, ',', '.')]) }}"
                                 class="w-full border border-outline-variant rounded-xl pl-11 pr-md py-3 bg-surface-container-low text-on-surface outline-none focus:border-secondary focus:ring-2 focus:ring-secondary/30 transition-colors"
                                 value="{{ old('nominal') ? number_format((int) preg_replace('/\D/', '', (string) old('nominal')), 0, ',', '.') : '' }}" />
                         </div>
@@ -157,7 +157,7 @@
                     @error('nominal')
                         <p class="font-label-sm text-label-sm text-error">{{ $message }}</p>
                     @enderror
-                    <button type="button" id="btn-batal-nominal" class="hidden font-label-sm text-label-sm text-on-surface-variant hover:underline">Bersihkan nominal</button>
+                    <button type="button" id="btn-batal-nominal" class="hidden font-label-sm text-label-sm text-on-surface-variant hover:underline">{{ __('Bersihkan nominal') }}</button>
                     <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed pt-sm">{{ __('Transfer sesuai nominal di atas, lalu unggah bukti untuk diverifikasi Super Admin.') }}</p>
                 </form>
             </div>
