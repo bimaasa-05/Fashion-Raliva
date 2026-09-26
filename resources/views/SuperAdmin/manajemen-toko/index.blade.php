@@ -15,6 +15,13 @@
         \App\Models\Store::STATUS_NONAKTIF => 'Ditangguhkan',
         \App\Models\Store::STATUS_DITOLAK => 'Ditolak',
     ];
+
+    $badgeMap = [
+        \App\Models\Store::STATUS_AKTIF => ['label' => 'Aktif', 'class' => \App\Support\StatusStyle::badgeClass('aktif')],
+        \App\Models\Store::STATUS_PENDING => ['label' => 'Menunggu', 'class' => \App\Support\StatusStyle::badgeClass('pending')],
+        \App\Models\Store::STATUS_NONAKTIF => ['label' => 'Ditangguhkan', 'class' => \App\Support\StatusStyle::badgeClass('nonaktif')],
+        \App\Models\Store::STATUS_DITOLAK => ['label' => 'Ditolak', 'class' => \App\Support\StatusStyle::badgeClass('ditolak')],
+    ];
 @endphp
 
 @push('styles')
