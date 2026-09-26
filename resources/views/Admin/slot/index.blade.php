@@ -7,6 +7,12 @@
 
 @section('content')
 @include('partials.flash-toast')
+@if (request('habis'))
+    <div class="bg-error/10 border border-error/30 rounded-lg px-4 py-3 mb-6 flex items-center gap-3">
+        <span class="material-symbols-outlined text-error">warning</span>
+        <p class="text-sm text-on-surface"><b>Slot produk habis.</b> Pilih salah satu cara di bawah untuk menambah kuota lalu kembali tambah produk.</p>
+    </div>
+@endif
 @if (session('success'))
     <div class="bg-secondary-container/15 border border-secondary/30 text-secondary rounded-lg px-4 py-3 text-sm font-body-md">{{ session('success') }}</div>
 @endif
@@ -73,6 +79,44 @@
                     </button>
                 </div>
             </form>
+        </section>
+    @endif
+
+    @if (($packages ?? collect())->isNotEmpty())
+        <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading">Beli Paket Slot (langsung aktif)</h2>
+            <p class="text-on-surface-variant font-body-md text-xs mt-1">Paket menambah kuota seketika tanpa menunggu persetujuan.</p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                @foreach ($packages as $paket)
+                    <form method="POST" action="{{ route('admin.slot.paket.beli', $paket) }}" enctype="multipart/form-data" class="border border-gold-accent/30 rounded-lg p-5 bg-gold-accent/5 space-y-3">
+                        @csrf
+                        <p class="font-bold text-on-surface">{{ $paket->nama_paket }}</p>
+                        <p class="text-sm text-on-surface-variant">{{ $paket->jumlah_slot }} slot • {{ $paket->durasi_hari }} hari • <b class="text-gold-accent">Rp {{ number_format((float) $paket->harga, 0, ',', '.') }}</b></p>
+                        <div>
+                            <label class="block raliva-label mb-2">Toko *</label>
+                            <select name="store_id" required class="raliva-select">
+                                @foreach ($stores as $st)
+                                    <option value="{{ $st->store_id }}">{{ $st->nama_toko }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block raliva-label mb-2">Metode Pembayaran *</label>
+                            <select name="metode_pembayaran" required class="raliva-select">
+                                <option value="" disabled selected>Pilih metode...</option>
+                                @foreach ($metode ?? [] as $m)
+                                    <option value="{{ $m->payment_method_id }}">{{ $m->nama_metode }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block raliva-label mb-2">Bukti Pembayaran *</label>
+                            <input name="file_bukti" type="file" accept=".jpg,.jpeg,.png,.pdf" required class="raliva-input" />
+                        </div>
+                        <button type="submit" class="w-full py-3 bg-gold-accent/90 text-deep-onyx text-sm font-semibold rounded btn-premium">Beli Paket Ini</button>
+                    </form>
+                @endforeach
+            </div>
         </section>
     @endif
 </div>
