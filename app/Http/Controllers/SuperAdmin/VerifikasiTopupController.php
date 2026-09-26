@@ -29,6 +29,7 @@ class VerifikasiTopupController extends Controller
             'terverifikasi' => $topups->where('status', CustomerTopup::STATUS_TERVERIFIKASI)->count(),
             'total_terverifikasi' => (float) $topups->where('status', CustomerTopup::STATUS_TERVERIFIKASI)->sum('jumlah'),
             'ditolak' => $topups->where('status', CustomerTopup::STATUS_DITOLAK)->count(),
+            'dibatalkan' => $topups->where('status', CustomerTopup::STATUS_DIBATALKAN)->count(),
         ];
 
         return view('SuperAdmin.verifikasi-topup.index', compact('topups', 'stats'));
