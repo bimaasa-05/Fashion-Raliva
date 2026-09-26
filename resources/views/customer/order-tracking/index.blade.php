@@ -363,9 +363,10 @@
 @php
     $step = $selectedStep;
     $isPickup = $isPickup ?? false;
-    $statusLabel = \App\Http\Controllers\Customer\OrderTrackingController::STATUS_LABELS[$selected->status] ?? ucfirst(str_replace('_', ' ', $selected->status));
+    $statusLabel = __(\App\Http\Controllers\Customer\OrderTrackingController::STATUS_LABELS[$selected->status] ?? ucfirst(str_replace('_', ' ', $selected->status)));
     if ($isPickup && $selected->status === \App\Models\Order::STATUS_SIAP_KIRIM) $statusLabel = __('Siap Diambil');
     if ($isPickup && $selected->status === \App\Models\Order::STATUS_SELESAI) $statusLabel = __('Selesai Diambil');
+    $statusColor = \App\Http\Controllers\Customer\OrderTrackingController::STATUS_COLORS[$selected->status] ?? ['bg-secondary/10 border-secondary/15', 'bg-secondary'];
     $isCancelled = $step === null;
     $isRefund = $selected->status === \App\Models\Order::STATUS_REFUND;
     $shipment = $selected->shipments->first();
@@ -443,9 +444,9 @@
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">{{ $selected->created_at->format('M j, Y') }} • {{ $itemsCount }} {{ __('items') }}</p>
 </div>
 <div class="text-left md:text-right">
-<div class="inline-flex items-center gap-xs px-sm py-1 rounded-full border {{ $isCancelled ? 'bg-error/10 border-error/15' : 'bg-secondary/10 border-secondary/15' }}">
-<span class="w-2 h-2 rounded-full {{ $isCancelled ? 'bg-error' : 'bg-secondary' }} animate-pulse"></span>
-<span class="font-label-sm text-label-sm {{ $isCancelled ? 'text-error' : 'text-secondary' }} uppercase tracking-wider font-semibold">{{ $statusLabel }}</span>
+<div class="inline-flex items-center gap-xs px-sm py-1 rounded-full border {{ $statusColor[0] }}">
+<span class="w-2 h-2 rounded-full {{ $statusColor[1] }} animate-pulse"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold">{{ $statusLabel }}</span>
 </div>
 @if ($selected->status === \App\Models\Order::STATUS_REFUND && $refundMeta)
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ $refundMeta }}</p>
