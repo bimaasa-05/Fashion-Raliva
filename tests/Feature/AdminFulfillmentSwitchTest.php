@@ -65,26 +65,26 @@ class AdminFulfillmentSwitchTest extends TestCase
         $this->assertSame($oldGrand, (int) $order->grand_total);
     }
 
-    public function test_offline_customer_can_choose_delivery_at_creation(): void
+    public function test_offline_customer_defaults_to_pickup(): void
     {
         [$admin] = $this->admin();
-        $order = $this->createOfflineOrder($admin, 'alih-mix-'.Str::random(8).'@example.com', Order::FULFILLMENT_DIANTAR);
+        $order = $this->createOfflineOrder($admin, 'alih-mix-'.Str::random(8).'@example.com');
 
         $this->assertSame(Order::TIPE_PESANAN_OFFLINE, $order->tipe_pesanan);
-        $this->assertSame(Order::FULFILLMENT_DIANTAR, $order->metode_fulfillment);
+        $this->assertSame(Order::FULFILLMENT_AMBIL, $order->metode_fulfillment);
         $this->assertTrue($order->isOffline());
-        $this->assertTrue($order->isDiantar());
+        $this->assertTrue($order->isAmbil());
     }
 
-    public function test_online_customer_can_choose_pickup_at_creation(): void
+    public function test_online_customer_defaults_to_delivery(): void
     {
         [$admin] = $this->admin();
-        $order = $this->createOnlineOrder($admin, Order::FULFILLMENT_AMBIL);
+        $order = $this->createOnlineOrder($admin);
 
         $this->assertSame(Order::TIPE_PESANAN_ONLINE, $order->tipe_pesanan);
-        $this->assertSame(Order::FULFILLMENT_AMBIL, $order->metode_fulfillment);
+        $this->assertSame(Order::FULFILLMENT_DIANTAR, $order->metode_fulfillment);
         $this->assertFalse($order->isOffline());
-        $this->assertTrue($order->isAmbil());
+        $this->assertTrue($order->isDiantar());
     }
 
     public function test_switch_rejected_for_dispatched_and_completed_orders(): void
@@ -172,11 +172,10 @@ class AdminFulfillmentSwitchTest extends TestCase
             ?? \App\Models\ProductVariant::whereHas('product', fn ($q) => $q->where('store_id', $storeId))->firstOrFail();
     }
 
-    private function createOfflineOrder(User $admin, string $email, string $fulfillment = Order::FULFILLMENT_AMBIL): Order
+    private function createOfflineOrder(User $admin, string $email): Order
     {
         $this->actingAs($admin)->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'offline',
-            'fulfillment' => $fulfillment,
             'nama_penerima' => 'Budi Alih',
             'nomor_telepon' => '081234567890',
             'email_pelanggan' => $email,
@@ -190,14 +189,13 @@ class AdminFulfillmentSwitchTest extends TestCase
         return Order::whereHas('checkout', fn ($q) => $q->where('email_pelanggan', $email))->firstOrFail();
     }
 
-    private function createOnlineOrder(User $admin, string $fulfillment = Order::FULFILLMENT_DIANTAR): Order
+    private function createOnlineOrder(User $admin): Order
     {
         $customer = User::whereHas('role', fn ($q) => $q->where('nama_role', Role::CUSTOMER))->firstOrFail();
         $maxId = (int) Order::max('order_id');
 
         $this->actingAs($admin)->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'online',
-            'fulfillment' => $fulfillment,
             'user_id' => $customer->user_id,
             'items' => [
                 ['product_variant_id' => $this->variant()->product_variant_id, 'quantity' => 1],
