@@ -202,7 +202,6 @@ class AdminQcTanggapanTest extends TestCase
 
         $this->actingAs($admin)->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'offline',
-            'fulfillment' => 'ambil',
             'nama_penerima' => 'Budi QC',
             'nomor_telepon' => '081234567890',
             'email_pelanggan' => $email,
