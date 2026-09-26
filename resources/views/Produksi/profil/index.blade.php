@@ -265,18 +265,33 @@
                     @method('PUT')
                     <div>
                         <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="password-lama">Password Lama</label>
-                        <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="password-lama" name="password_lama" type="password" placeholder="Masukkan password lama" required />
+                        <div class="relative">
+                            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 pr-12 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="password-lama" name="password_lama" type="password" placeholder="Masukkan password lama" required />
+                            <button type="button" data-pw-toggle="password-lama" aria-label="Lihat password" class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">visibility</span>
+                            </button>
+                        </div>
                         @error('password_lama')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                     </div>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="password-baru">Password Baru</label>
-                            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="password-baru" name="password_baru" type="password" placeholder="Minimal 8 karakter" required />
+                            <div class="relative">
+                                <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 pr-12 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="password-baru" name="password_baru" type="password" placeholder="Minimal 8 karakter" required />
+                                <button type="button" data-pw-toggle="password-baru" aria-label="Lihat password" class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent transition-colors">
+                                    <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                </button>
+                            </div>
                             @error('password_baru')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                         </div>
                         <div>
                             <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="password-konfirmasi">Konfirmasi Password</label>
-                            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="password-konfirmasi" name="password_baru_confirmation" type="password" placeholder="Ulangi password baru" required />
+                            <div class="relative">
+                                <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 pr-12 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 profil-input" id="password-konfirmasi" name="password_baru_confirmation" type="password" placeholder="Ulangi password baru" required />
+                                <button type="button" data-pw-toggle="password-konfirmasi" aria-label="Lihat password" class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent transition-colors">
+                                    <span class="material-symbols-outlined text-[20px]">visibility</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
                     <div class="flex justify-end pt-4 border-t border-muted-border">
