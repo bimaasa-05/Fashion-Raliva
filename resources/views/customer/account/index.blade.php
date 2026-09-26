@@ -335,7 +335,7 @@
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.settings') }}">
 <div class="flex items-center gap-sm">
 <span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors" data-icon="settings">settings</span>
-<span class="font-body-lg text-body-lg text-on-surface">Settings</span>
+<span class="font-body-lg text-body-lg text-on-surface">{{ __('Settings') }}</span>
 </div>
 <span class="material-symbols-outlined text-outline-variant group-hover:text-secondary transition-colors" data-icon="chevron_right">chevron_right</span>
 </a>

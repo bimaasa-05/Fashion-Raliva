@@ -247,7 +247,7 @@
             <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Ringkasan performa dan aktivitas toko Anda.')</p>
         </div>
 
-        <div class="px-container-margin pt-8 pb-section-gap flex flex-col gap-section-gap max-w-[1500px] mx-auto w-full">
+        <div class="px-container-margin pt-8 pb-section-gap flex flex-col gap-section-gap w-full">
             @yield('content')
         </div>
     </main>

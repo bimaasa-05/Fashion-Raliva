@@ -15,8 +15,9 @@ class AddressController extends Controller
     public function index()
     {
         $addresses = Auth::user()->addresses()->orderBy('is_default', 'desc')->orderBy('updated_at', 'desc')->get();
+        $backUrl = $this->backUrl(request());
 
-        return view('customer.address.index', compact('addresses'));
+        return view('customer.address.index', compact('addresses', 'backUrl'));
     }
 
     /**
@@ -26,8 +27,9 @@ class AddressController extends Controller
     {
         $cities = \App\Models\City::orderBy('city_id')->get()->groupBy('pulau')
             ->map(fn ($g) => $g->pluck('nama_kota')->values()->all())->all();
+        $backUrl = $this->backUrl(request());
 
-        return view('customer.address.create', compact('cities'));
+        return view('customer.address.create', compact('cities', 'backUrl'));
     }
 
     /**
@@ -70,7 +72,7 @@ class AddressController extends Controller
 
         Address::create($validated);
 
-        return redirect()->route('customer.address.index')->with('toast', [
+        return $this->redirectBack($request, 'customer.address.index')->with('toast', [
             'message' => 'Alamat berhasil ditambahkan.',
             'icon' => 'task_alt',
         ]);
@@ -85,8 +87,9 @@ class AddressController extends Controller
 
         $cities = \App\Models\City::orderBy('city_id')->get()->groupBy('pulau')
             ->map(fn ($g) => $g->pluck('nama_kota')->values()->all())->all();
+        $backUrl = $this->backUrl(request());
 
-        return view('customer.address.edit', compact('address', 'cities'));
+        return view('customer.address.edit', compact('address', 'cities', 'backUrl'));
     }
 
     /**
@@ -128,7 +131,7 @@ class AddressController extends Controller
 
         $address->update($validated);
 
-        return redirect()->route('customer.address.index')->with('toast', [
+        return $this->redirectBack($request, 'customer.address.index')->with('toast', [
             'message' => 'Alamat berhasil diperbarui.',
             'icon' => 'task_alt',
         ]);
@@ -173,5 +176,25 @@ class AddressController extends Controller
         if ($address->user_id !== Auth::id()) {
             abort(403, 'Alamat tidak ditemukan.');
         }
+    }
+
+    /**
+     * URL kembali: ke checkout bila datang dari sana, selain itu null (fallback view ke akun).
+     */
+    protected function backUrl(Request $request): ?string
+    {
+        $back = $request->input('back', $request->query('back'));
+        if ($back !== 'checkout') {
+            return null;
+        }
+        $buy = (int) $request->input('buy', $request->query('buy', 0));
+        $params = $buy > 0 ? ['buy' => $buy] : [];
+
+        return route('customer.checkout', $params);
+    }
+
+    protected function redirectBack(Request $request, string $fallback)
+    {
+        return redirect()->to($this->backUrl($request) ?? route($fallback));
     }
 }

@@ -318,7 +318,7 @@
 <body class="bg-background text-on-background font-body-sm min-h-screen flex flex-col antialiased selection:bg-secondary-container selection:text-on-secondary-container pb-[calc(72px+env(safe-area-inset-bottom))] lg:pl-72">
 <!-- Top App Bar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-<a aria-label="{{ __('Go back') }}" href="{{ route('customer.address.index') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+<a aria-label="{{ __('Go back') }}" href="{{ $backUrl ?? route('customer.address.index') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('ADD ADDRESS') }}</h1>
@@ -329,11 +329,15 @@
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
-<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">ADDRESS BOOK</p>
+<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('ADDRESS BOOK') }}</p>
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('Add New Address') }}</h2>
 
 <form method="POST" action="{{ route('customer.address.store') }}" class="space-y-md">
 @csrf
+@if(request('back') === 'checkout')
+<input type="hidden" name="back" value="checkout"/>
+@if(request('buy'))<input type="hidden" name="buy" value="{{ request('buy') }}"/>@endif
+@endif
 <div class="space-y-md">
 <div>
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('Label') }}</label>
@@ -409,7 +413,7 @@
 </div>
 <div>
 <label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider block mb-xs">{{ __('Country') }}</label>
-<input type="text" name="negara" id="address_negara" maxlength="100" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none" value="Indonesia"/>
+<input type="text" name="negara" id="address_negara" maxlength="100" class="w-full bg-surface border border-outline-variant rounded-lg px-sm py-2.5 text-on-surface font-body-sm focus:border-secondary focus:outline-none" value="{{ __('Indonesia') }}"/>
 </div>
 </div>
 <div class="flex items-center gap-sm">

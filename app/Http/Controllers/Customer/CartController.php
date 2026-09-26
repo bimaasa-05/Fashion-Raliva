@@ -113,6 +113,11 @@ class CartController extends Controller
             return response()->json(['status' => 'error', 'message' => 'Tidak diizinkan.'], 403);
         }
 
+        $stok = (int) $cartItem->productVariant->warehouseStocks()->sum('jumlah_stok');
+        if ($validated['quantity'] > $stok) {
+            return response()->json(['status' => 'error', 'message' => 'Stok tersisa ' . $stok . '.'], 422);
+        }
+
         $cartItem->update(['quantity' => $validated['quantity']]);
 
         $totals = $this->cartTotals();

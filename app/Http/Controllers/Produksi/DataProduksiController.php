@@ -292,6 +292,7 @@ class DataProduksiController extends Controller
             'status' => Order::STATUS_MENUNGGU_QC,
             'jumlah_berhasil' => $data['jumlah_berhasil'],
             'jumlah_gagal' => $gagal,
+            'produksi_selesai_pada' => now(),
         ]);
 
         ActivityLogger::log('produksi.order.complete', Order::class, $order->order_id, $lama,

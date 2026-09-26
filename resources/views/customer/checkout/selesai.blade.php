@@ -169,11 +169,11 @@
             $isVerified = $payStatus === \App\Models\Payment::STATUS_TERVERIFIKASI;
             $isRejected = in_array($payStatus, [\App\Models\Payment::STATUS_DITOLAK, \App\Models\Payment::STATUS_KADALUARSA], true);
             $statusLabels = [
-                \App\Models\Payment::STATUS_PENDING => ['Menunggu Pembayaran', 'bg-amber-100 text-amber-800'],
-                \App\Models\Payment::STATUS_MENUNGGU_VERIFIKASI => ['Menunggu Verifikasi', 'bg-blue-100 text-blue-800'],
-                \App\Models\Payment::STATUS_TERVERIFIKASI => ['Terverifikasi', 'bg-emerald-100 text-emerald-800'],
-                \App\Models\Payment::STATUS_DITOLAK => ['Ditolak', 'bg-red-100 text-red-800'],
-                \App\Models\Payment::STATUS_KADALUARSA => ['Kadaluarsa', 'bg-surface-container text-on-surface-variant'],
+                \App\Models\Payment::STATUS_PENDING => [__('Menunggu Pembayaran'), 'bg-amber-100 text-amber-800'],
+                \App\Models\Payment::STATUS_MENUNGGU_VERIFIKASI => [__('Menunggu Verifikasi'), 'bg-blue-100 text-blue-800'],
+                \App\Models\Payment::STATUS_TERVERIFIKASI => [__('Terverifikasi'), 'bg-emerald-100 text-emerald-800'],
+                \App\Models\Payment::STATUS_DITOLAK => [__('Ditolak'), 'bg-red-100 text-red-800'],
+                \App\Models\Payment::STATUS_KADALUARSA => [__('Kadaluarsa'), 'bg-surface-container text-on-surface-variant'],
             ];
             $statusLabel = $statusLabels[$payStatus][0] ?? ucfirst((string) $payStatus);
             $statusClass = $statusLabels[$payStatus][1] ?? 'bg-surface-container text-on-surface-variant';
@@ -496,6 +496,19 @@
     });
 </script>
 <script>
+@php
+$i18nBadge = [
+    'Menunggu Pembayaran' => __('Menunggu Pembayaran'),
+    'Menunggu Verifikasi' => __('Menunggu Verifikasi'),
+    'Terverifikasi' => __('Terverifikasi'),
+    'Ditolak' => __('Ditolak'),
+    'Kadaluarsa' => __('Kadaluarsa'),
+];
+@endphp
+window.RALIVA_I18N = Object.assign(window.RALIVA_I18N || {}, @json($i18nBadge));
+window.ralivaT = window.ralivaT || function (s) { var m = window.RALIVA_I18N || {}; return m[s] || s; };
+</script>
+<script>
     document.addEventListener('DOMContentLoaded', function () {
         var isVerified = @json($isVerified);
         var isRejected = @json($isRejected);
@@ -518,11 +531,11 @@
             '<span class="material-symbols-outlined text-[26px] text-error">gpp_bad</span></div>';
 
         var badgeMap = {
-            'pending': ['Menunggu Pembayaran', 'bg-amber-100 text-amber-800'],
-            'menunggu_verifikasi': ['Menunggu Verifikasi', 'bg-blue-100 text-blue-800'],
-            'terverifikasi': ['Terverifikasi', 'bg-emerald-100 text-emerald-800'],
-            'ditolak': ['Ditolak', 'bg-red-100 text-red-800'],
-            'kadaluarsa': ['Kadaluarsa', 'bg-surface-container text-on-surface-variant']
+            'pending': [window.ralivaT('Menunggu Pembayaran'), 'bg-amber-100 text-amber-800'],
+            'menunggu_verifikasi': [window.ralivaT('Menunggu Verifikasi'), 'bg-blue-100 text-blue-800'],
+            'terverifikasi': [window.ralivaT('Terverifikasi'), 'bg-emerald-100 text-emerald-800'],
+            'ditolak': [window.ralivaT('Ditolak'), 'bg-red-100 text-red-800'],
+            'kadaluarsa': [window.ralivaT('Kadaluarsa'), 'bg-surface-container text-on-surface-variant']
         };
 
         function setUi(mode, statusKey) {

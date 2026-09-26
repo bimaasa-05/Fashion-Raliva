@@ -44,6 +44,22 @@ class OrderTrackingController extends Controller
     ];
 
     /**
+     * Warna pill per status: [kelas pill, kelas dot]. Merah khusus tolak/batal.
+     */
+    public const STATUS_COLORS = [
+        Order::STATUS_PENDING_PAYMENT => ['bg-amber-100 text-amber-800 border-amber-500/30', 'bg-amber-500'],
+        Order::STATUS_DIBAYAR => ['bg-blue-100 text-blue-800 border-blue-500/30', 'bg-blue-500'],
+        Order::STATUS_MENUNGGU_PRODUKSI => ['bg-blue-100 text-blue-800 border-blue-500/30', 'bg-blue-500'],
+        Order::STATUS_DIPROSES => ['bg-blue-100 text-blue-800 border-blue-500/30', 'bg-blue-500'],
+        Order::STATUS_MENUNGGU_QC => ['bg-blue-100 text-blue-800 border-blue-500/30', 'bg-blue-500'],
+        Order::STATUS_SIAP_KIRIM => ['bg-purple-100 text-purple-800 border-purple-500/30', 'bg-purple-500'],
+        Order::STATUS_DIKIRIM => ['bg-sky-100 text-sky-800 border-sky-500/30', 'bg-sky-500'],
+        Order::STATUS_SELESAI => ['bg-emerald-100 text-emerald-800 border-emerald-500/30', 'bg-emerald-500'],
+        Order::STATUS_DIBATALKAN => ['bg-red-100 text-red-800 border-red-500/30', 'bg-red-500'],
+        Order::STATUS_REFUND => ['bg-orange-100 text-orange-800 border-orange-500/30', 'bg-orange-500'],
+    ];
+
+    /**
      * Halaman order tracking: menampilkan pesanan milik user dari data nyata.
      */
     public function index(Request $request)

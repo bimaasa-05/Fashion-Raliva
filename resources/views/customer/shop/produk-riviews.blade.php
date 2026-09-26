@@ -344,9 +344,6 @@
 <span class="material-symbols-outlined text-[18px]">more_vert</span>
 </button>
 <div class="hidden absolute right-0 top-9 z-20 w-44 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-xl overflow-hidden" id="rv-menu-{{ $ri }}">
-<button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors text-left" onclick="translateReview('rv-text-{{ $ri }}', this)" type="button">
-<span class="material-symbols-outlined text-[18px] text-on-surface-variant">translate</span><span class="rv-label" data-state="b" data-a="{{ __('See original') }}" data-b="{{ __('Translate') }}">{{ __('Translate') }}</span>
-</button>
 <button class="w-full flex items-center gap-sm px-md py-sm font-body-sm text-body-sm text-error hover:bg-surface-container-low transition-colors text-left" onclick="openReport()" type="button">
 <span class="material-symbols-outlined text-[18px]">flag</span>{{ __('Report review') }}
 </button>
@@ -360,7 +357,7 @@
 @endfor
 </div>
 </div>
-<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm" data-state="original" data-original="{{ $review->ulasan }}" data-translated="{{ $review->ulasan }}" id="rv-text-{{ $ri }}">
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-sm">
 {{ $review->ulasan }}
 </p>
 @if ($review->foto)
@@ -422,21 +419,6 @@
         document.addEventListener('click', function () {
             document.querySelectorAll('[id^="rv-menu-"]').forEach(function (m) { m.classList.add('hidden'); });
         });
-        function translateReview(id, btn) {
-            var p = document.getElementById(id);
-            var label = btn.querySelector('.rv-label');
-            if (p.dataset.state !== 'translated') {
-                p.textContent = p.dataset.translated;
-                p.dataset.state = 'translated';
-                label.textContent = label.dataset.a;
-                label.dataset.state = 'a';
-            } else {
-                p.textContent = p.dataset.original;
-                p.dataset.state = 'original';
-                label.textContent = label.dataset.b;
-                label.dataset.state = 'b';
-            }
-        }
         function openReport() {
             document.querySelectorAll('[id^="rv-menu-"]').forEach(function (m) { m.classList.add('hidden'); });
             document.getElementById('report-modal').classList.remove('hidden');

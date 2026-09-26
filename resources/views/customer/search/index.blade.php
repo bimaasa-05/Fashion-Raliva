@@ -272,7 +272,7 @@
 <div id="search-results">
 <div class="flex justify-between items-center mb-xs">
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ $q !== '' ? __('Search Results') : __('Trending Now') }}</h2>
-<a href="{{ route('customer.shop') }}" class="font-label-caps text-label-caps text-secondary uppercase tracking-widest hover:opacity-80 transition-opacity">View All</a>
+<a href="{{ route('customer.shop') }}" class="font-label-caps text-label-caps text-secondary uppercase tracking-widest hover:opacity-80 transition-opacity">{{ __('View All') }}</a>
 </div>
 @if (count($ads))
 <!-- Sponsored Ads -->

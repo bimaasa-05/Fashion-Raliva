@@ -24,6 +24,12 @@ class ManajemenTokoController extends Controller
             ? $status
             : 'semua';
 
+        if ($request->boolean('partial')) {
+            return view('SuperAdmin.manajemen-toko.partials.store-list', [
+                'stores' => $this->paginatedStores($validStatus, $request),
+            ]);
+        }
+
         $stats = [
             'semua' => Store::count(),
             Store::STATUS_PENDING => Store::where('status', Store::STATUS_PENDING)->count(),
@@ -31,12 +37,6 @@ class ManajemenTokoController extends Controller
             Store::STATUS_NONAKTIF => Store::where('status', Store::STATUS_NONAKTIF)->count(),
             Store::STATUS_DITOLAK => Store::where('status', Store::STATUS_DITOLAK)->count(),
         ];
-
-        if ($request->boolean('partial')) {
-            return view('SuperAdmin.manajemen-toko.partials.store-list', [
-                'stores' => $this->paginatedStores($validStatus, $request),
-            ]);
-        }
 
         return view('SuperAdmin.manajemen-toko.index', [
             'stores' => $this->paginatedStores($validStatus, $request),
@@ -47,12 +47,6 @@ class ManajemenTokoController extends Controller
 
     private function paginatedStores(string $status, Request $request)
     {
-        $ratings = Review::query()
-            ->selectRaw('store_id, ROUND(AVG(rating), 1) as rating_rata')
-            ->where('status', Review::STATUS_AKTIF)
-            ->groupBy('store_id')
-            ->pluck('rating_rata', 'store_id');
-
         $storesQuery = Store::query()
             ->with('owner:user_id,nama_lengkap,email')
             ->withCount(['products', 'orders'])
@@ -62,7 +56,16 @@ class ManajemenTokoController extends Controller
 
         $paginated = $storesQuery->paginate(20)->withQueryString();
 
-        $pendingUpdates = \App\Models\StoreUpdateRequest::whereIn('store_id', collect($paginated->items())->pluck('store_id'))
+        $storeIds = collect($paginated->items())->pluck('store_id');
+
+        $ratings = Review::query()
+            ->selectRaw('store_id, ROUND(AVG(rating), 1) as rating_rata')
+            ->where('status', Review::STATUS_AKTIF)
+            ->whereIn('store_id', $storeIds)
+            ->groupBy('store_id')
+            ->pluck('rating_rata', 'store_id');
+
+        $pendingUpdates = \App\Models\StoreUpdateRequest::whereIn('store_id', $storeIds)
             ->where('status', \App\Models\StoreUpdateRequest::STATUS_PENDING)
             ->orderByDesc('store_update_request_id')
             ->get()

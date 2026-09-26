@@ -447,6 +447,22 @@
     @include('customer._partials.drawer')
 
     <script>
+    @php
+    $i18nPay = [
+        'Klik lagi untuk mengganti metode pembayaran.' => __('Klik lagi untuk mengganti metode pembayaran.'),
+        'Metode terpilih: ' => __('Metode terpilih: '),
+        'Pilih metode pembayaran terlebih dahulu.' => __('Pilih metode pembayaran terlebih dahulu.'),
+        'Pilih akun/tujuan pembayaran terlebih dahulu.' => __('Pilih akun/tujuan pembayaran terlebih dahulu.'),
+        'Saldo Akun' => __('Saldo Akun'),
+        'E-Wallet' => __('E-Wallet'),
+        'Bank Transfer' => __('Bank Transfer'),
+        'QRIS' => __('QRIS'),
+    ];
+    @endphp
+    window.RALIVA_I18N = Object.assign(window.RALIVA_I18N || {}, @json($i18nPay));
+    window.ralivaT = window.ralivaT || function (s) { var m = window.RALIVA_I18N || {}; return m[s] || s; };
+    </script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             var grid = document.getElementById('pay-grid');
             var input = document.getElementById('input-payment-method');
@@ -510,8 +526,8 @@
                 grid.querySelectorAll('.pay-method').forEach(function(o) { o.classList.remove('selected'); });
                 el.classList.add('selected');
                 input.value = el.getAttribute('data-id');
-                if (rincian) rincian.textContent = el.getAttribute('data-nama') || '—';
-                if (hint) hint.textContent = 'Metode terpilih: ' + (el.getAttribute('data-nama') || '');
+                if (rincian) rincian.textContent = window.ralivaT(el.getAttribute('data-nama')) || '—';
+                if (hint) hint.textContent = window.ralivaT('Metode terpilih: ') + (window.ralivaT(el.getAttribute('data-nama')) || '');
                 var autoAcc = el.getAttribute('data-account-id');
                 if (autoAcc && accountInput) accountInput.value = autoAcc;
                 currentKode = el.getAttribute('data-kode');
@@ -554,7 +570,7 @@
                 syncBukti();
                 if (kodeMet && !toastShown[kodeMet]) {
                     toastShown[kodeMet] = true;
-                    showToast('Klik lagi untuk mengganti metode pembayaran.', 5000);
+                    showToast(window.ralivaT('Klik lagi untuk mengganti metode pembayaran.'), 5000);
                 }
             };
 
@@ -608,7 +624,7 @@
                     var v = input.value;
                     if (!v) {
                         e.preventDefault();
-                        alert('Pilih metode pembayaran terlebih dahulu.');
+                        alert(window.ralivaT('Pilih metode pembayaran terlebih dahulu.'));
                         if (grid) grid.scrollIntoView({ behavior: 'smooth', block: 'center' });
                         return;
                     }
@@ -617,7 +633,7 @@
                         var kodeM = selM.getAttribute('data-kode');
                         if ((kodeM === 'ewallet' || kodeM === 'bank_transfer') && accountInput && !accountInput.value) {
                             e.preventDefault();
-                            alert('Pilih akun/tujuan pembayaran terlebih dahulu.');
+                            alert(window.ralivaT('Pilih akun/tujuan pembayaran terlebih dahulu.'));
                         }
                     }
                 });

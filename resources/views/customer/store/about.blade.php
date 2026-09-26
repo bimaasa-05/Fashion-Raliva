@@ -351,21 +351,21 @@
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-accent)]" style="font-variation-settings: 'FILL' 1;">local_shipping</span>
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-on-surface">{{ __('Shipping') }}</span>
 </div>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Free shipping for orders over Rp 500.000. Delivery nationwide within 2–5 business days.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Free shipping for orders over Rp 500.000. Delivery nationwide within 2–5 business days.') }}</p>
 </div>
 <div class="border border-outline-variant rounded-lg p-md">
 <div class="flex items-center gap-sm mb-sm">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-accent)]" style="font-variation-settings: 'FILL' 1;">assignment_return</span>
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-on-surface">{{ __('Returns') }}</span>
 </div>
-<p class="font-body-sm text-body-sm text-on-surface-variant">Hassle-free returns within 14 days of delivery. Items must be unworn with tags attached.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Hassle-free returns within 14 days of delivery. Items must be unworn with tags attached.') }}</p>
 </div>
 <div class="border border-outline-variant rounded-lg p-md">
 <div class="flex items-center gap-sm mb-sm">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-accent)]" style="font-variation-settings: 'FILL' 1;">verified</span>
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-on-surface">{{ __('Authenticity') }}</span>
 </div>
-<p class="font-body-sm text-body-sm text-on-surface-variant">All products are 100% authentic and sourced directly from our in-house atelier.</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ __('All products are 100% authentic and sourced directly from our in-house atelier.') }}</p>
 </div>
 </div>
 </div>

@@ -47,7 +47,7 @@
                     <div class="flex items-center gap-4 min-w-0">
                         <div class="w-14 h-14 rounded-2xl overflow-hidden ring-2 ring-gold-accent/25 flex-shrink-0 {{ $isSuspended ? 'bg-surface-container-high ring-error/25 grayscale flex items-center justify-center' : ($store->logo ? '' : 'bg-surface-container-high ring-gold-accent/25 flex items-center justify-center') }}">
                             @if ($store->logo)
-                                <img class="w-full h-full object-cover" alt="Logo {{ $store->nama_toko }}" src="{{ asset($store->logo) }}" />
+                                <img class="w-full h-full object-cover" alt="Logo {{ $store->nama_toko }}" src="{{ photo_url($store->logo) }}" onerror="this.style.display='none'" />
                             @else
                                 <span class="font-title-md text-on-surface-variant">{{ $item->initial }}</span>
                             @endif
@@ -150,7 +150,7 @@
                             <div class="flex items-center gap-3 min-w-0">
                                 <div class="w-10 h-10 rounded-xl overflow-hidden ring-2 ring-gold-accent/25 flex-shrink-0 {{ $isSuspended ? 'bg-surface-container-high ring-error/25 grayscale flex items-center justify-center' : ($store->logo ? '' : 'bg-surface-container-high ring-gold-accent/25 flex items-center justify-center') }}">
                                     @if ($store->logo)
-                                        <img class="w-full h-full object-cover" alt="Logo {{ $store->nama_toko }}" src="{{ asset($store->logo) }}" />
+                                        <img class="w-full h-full object-cover" alt="Logo {{ $store->nama_toko }}" src="{{ photo_url($store->logo) }}" onerror="this.style.display='none'" />
                                     @else
                                         <span class="font-title-md text-on-surface-variant text-sm">{{ $item->initial }}</span>
                                     @endif

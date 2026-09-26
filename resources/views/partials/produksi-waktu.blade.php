@@ -18,7 +18,8 @@
     <div class="min-w-[150px]">
         <p class="text-xs text-on-surface-variant whitespace-nowrap">{{ $cMulai->translatedFormat('d M H:i') }} &rarr; {{ $cSelesai->translatedFormat('d M H:i') }}</p>
         <div class="mt-1.5 h-1 w-full bg-surface-container-high rounded-full overflow-hidden">
-            <div class="h-full rounded-full transition-[width] duration-300 {{ ($cSelesaiAktual && $cSelesaiTepat) ? 'bg-secondary' : ($cLambat ? 'bg-error' : ($cBelum ? 'bg-surface-container-high' : 'bg-gold-accent')) }}" style="width: {{ $cPct }}%"></div>
+            <div class="h-full rounded-full transition-[width] duration-300 {{ ($cSelesaiAktual && $cSelesaiTepat) ? 'bg-secondary' : ($cLambat ? 'bg-error' : ($cBelum ? 'bg-surface-container-high' : 'bg-gold-accent')) }}" style="width: {{ $cPct }}%"
+                @if (!$cSelesaiAktual) data-countdown-bar data-countdown-bar-start="{{ $cStartTs }}" data-countdown-bar-end="{{ $cEndTs }}" @endif></div>
         </div>
         @if ($cSelesaiAktual)
             @if ($cSelesaiTepat)
