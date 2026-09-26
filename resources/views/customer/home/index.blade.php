@@ -530,10 +530,10 @@
 </div>
 <div class="md:col-span-3 flex flex-col gap-sm">
 <h5 class="font-label-caps text-label-caps text-on-surface uppercase mb-xs">{{ __('Shop') }}</h5>
-<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">Women</a>
-<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">Men</a>
-<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">New Arrivals</a>
-<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">Designers</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">{{ __('Women') }}</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">{{ __('Men') }}</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">{{ __('New Arrivals') }}</a>
+<a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="{{ route('customer.shop') }}">{{ __('Designers') }}</a>
 </div>
 <div class="md:col-span-3 flex flex-col gap-sm">
 <h5 class="font-label-caps text-label-caps text-on-surface uppercase mb-xs">{{ __('Support') }}</h5>
@@ -543,7 +543,7 @@
 </div>
 </div>
 <div class="border-t border-outline-variant pt-md flex flex-col md:flex-row justify-between items-center gap-sm">
-<span class="font-body-sm text-body-sm text-on-surface-variant">© {{ date('Y') }} RALIVA. All rights reserved.</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">© {{ date('Y') }} RALIVA. {{ __('All rights reserved.') }}</span>
 <div class="flex gap-md">
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Privacy Policy') }}</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Terms of Service') }}</a>
