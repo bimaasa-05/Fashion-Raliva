@@ -16,7 +16,6 @@
 
 @section('content')
 @include('partials.flash-toast')
-@include('partials.produksi-durasi')
 
 <div class="space-y-section-gap">
     {{-- Stats --}}
@@ -102,16 +101,6 @@
                             }
                             $accepted = (bool) $o->produksi_dimulai_pada;
                             $rejectedNote = $o->produksi_catatan_tolak;
-                            $isProduksiSelesai = in_array($o->status, [
-                                \App\Models\Order::STATUS_MENUNGGU_QC,
-                                \App\Models\Order::STATUS_SIAP_KIRIM,
-                                \App\Models\Order::STATUS_DIKIRIM,
-                                \App\Models\Order::STATUS_SELESAI,
-                            ], true);
-                            $selesaiTepat = $isProduksiSelesai && $accepted
-                                && $o->produksi_selesai_pada
-                                && $o->tgl_berakhir_produksi
-                                && $o->produksi_selesai_pada->lessThanOrEqualTo($o->tgl_berakhir_produksi);
                         @endphp
                         <tr data-table-row data-status-produksi="{{ $o->status }}" class="border-b border-muted-border last:border-0 align-top">
                             <td class="py-3.5 px-4">
@@ -156,16 +145,10 @@
                                 @if ($hasDates)
                                     <p class="text-xs font-bold text-on-surface">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
                                     <div class="progress-track mt-1.5">
-                                        <div class="progress-bar-fill {{ $isBelumMulai ? 'bg-surface-container-high' : ($isProduksiSelesai ? ($selesaiTepat ? 'bg-secondary' : 'bg-error') : ($isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent'))) }}" style="width: {{ $progressPct }}%"></div>
+                                        <div class="progress-bar-fill {{ $isBelumMulai ? 'bg-surface-container-high' : ($isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent')) }}" style="width: {{ $progressPct }}%"></div>
                                     </div>
-                                    @if ($isProduksiSelesai)
-                                        @if ($selesaiTepat)
-                                            <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai tepat waktu</p>
-                                        @elseif ($o->produksi_selesai_pada)
-                                            <p class="text-xs mt-1 countdown-badge text-error font-bold">Terlambat {{ produksiFmtDetik((int) $o->produksi_selesai_pada->timestamp - (int) $o->tgl_berakhir_produksi->timestamp) }}</p>
-                                        @else
-                                            <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai</p>
-                                        @endif
+                                    @if ($progressPct >= 100)
+                                        <p class="text-xs font-bold mt-1 countdown-badge text-on-surface">Selesai tepat waktu</p>
                                     @else
                                         <p class="text-xs mt-1 countdown-badge {{ $isBelumMulai ? 'text-secondary' : ($isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant') }}"
                                            data-countdown-start="{{ $o->tgl_mulai_produksi->timestamp }}"
@@ -247,16 +230,6 @@
                     }
                     $accepted = (bool) $o->produksi_dimulai_pada;
                     $rejectedNote = $o->produksi_catatan_tolak;
-                    $isProduksiSelesai = in_array($o->status, [
-                        \App\Models\Order::STATUS_MENUNGGU_QC,
-                        \App\Models\Order::STATUS_SIAP_KIRIM,
-                        \App\Models\Order::STATUS_DIKIRIM,
-                        \App\Models\Order::STATUS_SELESAI,
-                    ], true);
-                    $selesaiTepat = $isProduksiSelesai && $accepted
-                        && $o->produksi_selesai_pada
-                        && $o->tgl_berakhir_produksi
-                        && $o->produksi_selesai_pada->lessThanOrEqualTo($o->tgl_berakhir_produksi);
                 @endphp
                 <article data-table-row data-status-produksi="{{ $o->status }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
                     <div class="flex items-start justify-between gap-2">
@@ -294,16 +267,10 @@
                         <div class="mt-3">
                             <p class="text-xs font-bold text-on-surface">{{ $o->tgl_mulai_produksi?->translatedFormat('d M H:i') }} → {{ $o->tgl_berakhir_produksi?->translatedFormat('d M H:i') }}</p>
                             <div class="progress-track mt-1.5">
-                                <div class="progress-bar-fill {{ $isBelumMulai ? 'bg-surface-container-high' : ($isProduksiSelesai ? ($selesaiTepat ? 'bg-secondary' : 'bg-error') : ($isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent'))) }}" style="width: {{ $progressPct }}%"></div>
+                                <div class="progress-bar-fill {{ $isBelumMulai ? 'bg-surface-container-high' : ($isTerlambat ? 'bg-error' : ($progressPct >= 100 ? 'bg-secondary' : 'bg-gold-accent')) }}" style="width: {{ $progressPct }}%"></div>
                             </div>
-                            @if ($isProduksiSelesai)
-                                @if ($selesaiTepat)
-                                    <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai tepat waktu</p>
-                                @elseif ($o->produksi_selesai_pada)
-                                    <p class="text-xs mt-1 countdown-badge text-error font-bold">Terlambat {{ produksiFmtDetik((int) $o->produksi_selesai_pada->timestamp - (int) $o->tgl_berakhir_produksi->timestamp) }}</p>
-                                @else
-                                    <p class="text-xs mt-1 countdown-badge text-on-surface-variant">Selesai</p>
-                                @endif
+                            @if ($progressPct >= 100)
+                                <p class="text-xs font-bold mt-1 countdown-badge text-on-surface">Selesai tepat waktu</p>
                             @else
                                 <p class="text-xs mt-1 countdown-badge {{ $isBelumMulai ? 'text-secondary' : ($isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant') }}"
                                    data-countdown-start="{{ $o->tgl_mulai_produksi->timestamp }}"
@@ -551,7 +518,8 @@
             if (searchInput) searchInput.dispatchEvent(new Event('input'));
         });
     });
+    // === COUNTDOWN TIMER REAL-TIME ===
+    @include('partials.countdown-produksi')
 </script>
-@include('partials.countdown-produksi')
 @endpush
 @endsection
