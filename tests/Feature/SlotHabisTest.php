@@ -106,6 +106,89 @@ class SlotHabisTest extends TestCase
         $response->assertStatus(403);
     }
 
+    public function test_slot_request_approve_grants_and_reject_grants_nothing(): void
+    {
+        [$admin, $storeId] = $this->admin();
+        $superAdmin = $this->superAdmin();
+        $sebelum = SlotService::totalQuota($storeId);
+
+        $rmt = \App\Models\SlotPurchaseRequest::create([
+            'store_id' => $storeId,
+            'jumlah_slot' => 10,
+            'harga_per_slot' => 2000,
+            'total_harga' => 20000,
+            'payment_status' => \App\Models\SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI,
+            'status' => \App\Models\SlotPurchaseRequest::STATUS_PENDING,
+            'diajukan_pada' => now(),
+        ]);
+
+        $this->actingAsFresh($superAdmin)->post(
+            route('superadmin.slot-produk.permintaan.setujui', ['rmt' => $rmt->slot_purchase_id])
+        )->assertSessionHasNoErrors();
+
+        $this->assertSame(\App\Models\SlotPurchaseRequest::STATUS_DISETUJUI, $rmt->fresh()->status);
+        $this->assertSame($sebelum + 10, SlotService::totalQuota($storeId));
+
+        $rmt2 = \App\Models\SlotPurchaseRequest::create([
+            'store_id' => $storeId,
+            'jumlah_slot' => 10,
+            'harga_per_slot' => 2000,
+            'total_harga' => 20000,
+            'payment_status' => \App\Models\SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI,
+            'status' => \App\Models\SlotPurchaseRequest::STATUS_PENDING,
+            'diajukan_pada' => now(),
+        ]);
+
+        $this->actingAsFresh($superAdmin)->post(
+            route('superadmin.slot-produk.permintaan.tolak', ['rmt' => $rmt2->slot_purchase_id]),
+            ['alasan' => 'Bukti pembayaran tidak valid untuk pengujian.']
+        )->assertSessionHasNoErrors();
+
+        $this->assertSame(\App\Models\SlotPurchaseRequest::STATUS_DITOLAK, $rmt2->fresh()->status);
+        $this->assertSame($sebelum + 10, SlotService::totalQuota($storeId));
+    }
+
+    public function test_slot_approve_is_idempotent(): void
+    {
+        [$admin, $storeId] = $this->admin();
+        $superAdmin = $this->superAdmin();
+        $sebelum = SlotService::totalQuota($storeId);
+
+        $rmt = \App\Models\SlotPurchaseRequest::create([
+            'store_id' => $storeId,
+            'jumlah_slot' => 7,
+            'harga_per_slot' => 2000,
+            'total_harga' => 14000,
+            'payment_status' => \App\Models\SlotPurchaseRequest::PEMBAYARAN_TERVERIFIKASI,
+            'status' => \App\Models\SlotPurchaseRequest::STATUS_PENDING,
+            'diajukan_pada' => now(),
+        ]);
+        $url = route('superadmin.slot-produk.permintaan.setujui', ['rmt' => $rmt->slot_purchase_id]);
+
+        $this->actingAsFresh($superAdmin)->post($url)->assertSessionHasNoErrors();
+        $this->actingAsFresh($superAdmin)->post($url)->assertSessionHasNoErrors();
+
+        $this->assertSame($sebelum + 7, SlotService::totalQuota($storeId));
+    }
+
+    private function actingAsFresh(User $user): static
+    {
+        $this->flushSession();
+
+        return $this->actingAs($user);
+    }
+
+    private function superAdmin(): User
+    {
+        $superAdmin = User::whereHas('role', fn ($q) => $q->where('nama_role', Role::SUPER_ADMIN))
+            ->where('status', User::STATUS_AKTIF)
+            ->firstOrFail();
+
+        $this->flushSession();
+
+        return $superAdmin;
+    }
+
     private function admin(): array
     {
         $admin = User::whereHas('role', fn ($q) => $q->where('nama_role', Role::ADMIN))
