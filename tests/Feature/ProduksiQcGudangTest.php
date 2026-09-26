@@ -226,6 +226,7 @@ class ProduksiQcGudangTest extends TestCase
 
         $this->actingAsFresh($admin)->post(route('admin.pesanan.store'), [
             'tipe_pesanan' => 'offline',
+            'fulfillment' => 'ambil',
             'nama_penerima' => 'Budi Produksi',
             'nomor_telepon' => '081234567890',
             'email_pelanggan' => $email,
