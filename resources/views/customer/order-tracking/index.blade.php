@@ -363,9 +363,10 @@
 @php
     $step = $selectedStep;
     $isPickup = $isPickup ?? false;
-    $statusLabel = \App\Http\Controllers\Customer\OrderTrackingController::STATUS_LABELS[$selected->status] ?? ucfirst(str_replace('_', ' ', $selected->status));
+    $statusLabel = __(\App\Http\Controllers\Customer\OrderTrackingController::STATUS_LABELS[$selected->status] ?? ucfirst(str_replace('_', ' ', $selected->status)));
     if ($isPickup && $selected->status === \App\Models\Order::STATUS_SIAP_KIRIM) $statusLabel = __('Siap Diambil');
     if ($isPickup && $selected->status === \App\Models\Order::STATUS_SELESAI) $statusLabel = __('Selesai Diambil');
+    $statusColor = \App\Http\Controllers\Customer\OrderTrackingController::STATUS_COLORS[$selected->status] ?? ['bg-secondary/10 border-secondary/15', 'bg-secondary'];
     $isCancelled = $step === null;
     $isRefund = $selected->status === \App\Models\Order::STATUS_REFUND;
     $shipment = $selected->shipments->first();
@@ -443,9 +444,9 @@
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1">{{ $selected->created_at->format('M j, Y') }} • {{ $itemsCount }} {{ __('items') }}</p>
 </div>
 <div class="text-left md:text-right">
-<div class="inline-flex items-center gap-xs px-sm py-1 rounded-full border {{ $isCancelled ? 'bg-error/10 border-error/15' : 'bg-secondary/10 border-secondary/15' }}">
-<span class="w-2 h-2 rounded-full {{ $isCancelled ? 'bg-error' : 'bg-secondary' }} animate-pulse"></span>
-<span class="font-label-sm text-label-sm {{ $isCancelled ? 'text-error' : 'text-secondary' }} uppercase tracking-wider font-semibold">{{ $statusLabel }}</span>
+<div class="inline-flex items-center gap-xs px-sm py-1 rounded-full border {{ $statusColor[0] }}">
+<span class="w-2 h-2 rounded-full {{ $statusColor[1] }} animate-pulse"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold">{{ $statusLabel }}</span>
 </div>
 @if ($selected->status === \App\Models\Order::STATUS_REFUND && $refundMeta)
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 md:text-right">{{ $refundMeta }}</p>
@@ -529,7 +530,7 @@
             <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2">{{ __('Total') }}</p>
             <p class="font-title-md text-title-md text-on-surface font-semibold">Rp {{ number_format((float) $payInfo->jumlah, 0, ',', '.') }}</p>
             @if ($payInfo->status === \App\Models\Payment::STATUS_PENDING && $payInfo->batas_waktu)
-                <p class="font-label-sm text-label-sm text-on-surface-variant mt-sm">Batas pembayaran: {{ $payInfo->batas_waktu->translatedFormat('d M Y, H:i') }}</p>
+                <p class="font-label-sm text-label-sm text-on-surface-variant mt-sm">{{ __('Batas pembayaran:') }} {{ $payInfo->batas_waktu->translatedFormat('d M Y, H:i') }}</p>
             @endif
         </div>
     </div>
@@ -874,6 +875,19 @@ $ukuran = $v?->ukuran;
         els.forEach(function (e) { io.observe(e); });
     })();
     // === LIVE PRODUCTION TIMERS ===
+    @php
+    $i18nDur = [
+        'hari_u' => __('hari_u'),
+        'jam_u' => __('jam_u'),
+        'menit_u' => __('menit_u'),
+        'detik_u' => __('detik_u'),
+        'Terlambat ' => __('Terlambat '),
+        'Sisa ' => __('Sisa '),
+        '< 1 menit' => __('< 1 menit'),
+    ];
+    @endphp
+    window.RALIVA_I18N = Object.assign(window.RALIVA_I18N || {}, @json($i18nDur));
+    window.ralivaT = window.ralivaT || function (s) { var m = window.RALIVA_I18N || {}; return m[s] || s; };
     function customerDurFmt(totalSec) {
         if (totalSec === null || isNaN(totalSec) || totalSec < 0) totalSec = 0;
         const h = Math.floor(totalSec / 86400);
@@ -881,11 +895,11 @@ $ukuran = $v?->ukuran;
         const m = Math.floor((totalSec % 3600) / 60);
         const s = Math.floor(totalSec % 60);
         const parts = [];
-        if (h > 0) parts.push(h + 'h');
-        if (j > 0) parts.push(j + 'j');
-        if (m > 0) parts.push(m + 'm');
-        if (s > 0) parts.push(s + 'd');
-        return parts.length ? parts.join(' ') : '< 1 menit';
+        if (h > 0) parts.push(h + window.ralivaT('hari_u'));
+        if (j > 0) parts.push(j + window.ralivaT('jam_u'));
+        if (m > 0) parts.push(m + window.ralivaT('menit_u'));
+        if (s > 0) parts.push(s + window.ralivaT('detik_u'));
+        return parts.length ? parts.join(' ') : window.ralivaT('< 1 menit');
     }
 
     function tickCustomerTimers() {
@@ -894,9 +908,9 @@ $ukuran = $v?->ukuran;
             const end = parseInt(el.dataset.customerCountdownEnd, 10) * 1000;
             const diff = Math.floor((end - now) / 1000);
             if (diff < 0) {
-                el.innerHTML = '<span class="text-error font-semibold">Terlambat ' + customerDurFmt(Math.abs(diff)) + '</span>';
+                el.innerHTML = '<span class="text-error font-semibold">' + window.ralivaT('Terlambat ') + customerDurFmt(Math.abs(diff)) + '</span>';
             } else {
-                el.innerHTML = '<span class="text-on-surface-variant">Sisa ' + customerDurFmt(diff) + '</span>';
+                el.innerHTML = '<span class="text-on-surface-variant">' + window.ralivaT('Sisa ') + customerDurFmt(diff) + '</span>';
             }
         });
         document.querySelectorAll('[data-customer-elapsed-start]').forEach(function (el) {

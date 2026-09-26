@@ -570,7 +570,7 @@
 <div id="load-more-wrap" class="flex justify-center py-xl mt-md" data-total="{{ $totalProducts }}">
 <button id="load-more-btn" class="border border-[var(--chrome-accent)] text-[var(--chrome-accent)] bg-transparent font-label-caps text-label-caps px-xl py-sm hover:bg-surface-container-low transition-colors w-full md:w-auto rounded-lg flex items-center justify-center gap-2 uppercase tracking-widest" type="button" onclick="loadMoreProducts()" style="display:none;">
 <span class="spinner" style="display:none;"></span>
-<span id="load-more-txt">Load More</span>
+<span id="load-more-txt">{{ __('Load More') }}</span>
 </button>
 </div>
 </div>
@@ -637,6 +637,15 @@
 </div>
 </div>
     <script>
+    @php
+    $i18nShop = [
+        'Applied' => __('Applied'),
+        'Loading' => __('Loading'),
+        'Load More' => __('Load More'),
+    ];
+    @endphp
+    window.RALIVA_I18N = Object.assign(window.RALIVA_I18N || {}, @json($i18nShop));
+    window.ralivaT = window.ralivaT || function (s) { var m = window.RALIVA_I18N || {}; return m[s] || s; };
         var activeFilters = { category: [], size: [], color: [], price: { min: null, max: null } };
         var currentSort = 'Newest';
         var revealedCount = 6;
@@ -842,7 +851,7 @@
         }
         function updateAppliedLabel() {
             var n = countActive();
-            document.getElementById('applied-count').textContent = n > 0 ? '· ' + n + ' Applied' : '';
+            document.getElementById('applied-count').textContent = n > 0 ? '· ' + n + ' ' + window.ralivaT('Applied') : '';
         }
         function applyGridFilter() {
             var countEl = document.getElementById('result-count');
@@ -904,12 +913,12 @@
             btn.setAttribute('disabled', 'disabled');
             var spinner = btn.querySelector('.spinner');
             var txt = document.getElementById('load-more-txt');
-            if (txt) txt.textContent = 'Loading';
+            if (txt) txt.textContent = window.ralivaT('Loading');
             if (spinner) spinner.style.display = 'inline-block';
             if (btn.classList) btn.classList.add('flashing');
             setTimeout(function () {
                 revealedCount += 6;
-                if (txt) txt.textContent = 'Load More';
+                if (txt) txt.textContent = window.ralivaT('Load More');
                 if (spinner) spinner.style.display = 'none';
                 if (btn.classList) btn.classList.remove('flashing');
                 btn.removeAttribute('disabled');

@@ -297,8 +297,8 @@
 <div class="mx-auto max-w-[1400px] px-container-margin space-y-md">
 @foreach ($orders as $order)
 @php
-    $statusLabel = \App\Http\Controllers\Customer\OrderTrackingController::STATUS_LABELS[$order->status] ?? ucfirst(str_replace('_', ' ', $order->status));
-    $isBad = in_array($order->status, [\App\Models\Order::STATUS_DIBATALKAN, \App\Models\Order::STATUS_REFUND], true);
+    $statusLabel = __(\App\Http\Controllers\Customer\OrderTrackingController::STATUS_LABELS[$order->status] ?? ucfirst(str_replace('_', ' ', $order->status)));
+    $statusColor = \App\Http\Controllers\Customer\OrderTrackingController::STATUS_COLORS[$order->status] ?? ['bg-secondary/10 border-secondary/15', 'bg-secondary'];
     $shipment = $order->shipments->first();
     $itemsCount = $order->items->count();
 @endphp
@@ -309,9 +309,9 @@
 <span class="font-title-md text-title-md font-semibold text-on-surface">#{{ $order->nomor_order }}</span>
 <span class="font-label-sm text-label-sm text-on-surface-variant">{{ $order->created_at->format('M j, Y') }} • {{ $itemsCount }} {{ __('items') }}</span>
 </div>
-<span class="inline-flex items-center gap-xs px-sm py-1 rounded-full border {{ $isBad ? 'bg-error/10 border-error/15' : 'bg-secondary/10 border-secondary/15' }}">
-<span class="w-2 h-2 rounded-full {{ $isBad ? 'bg-error' : 'bg-secondary' }}"></span>
-<span class="font-label-sm text-label-sm {{ $isBad ? 'text-error' : 'text-secondary' }} uppercase tracking-wider font-semibold">{{ $statusLabel }}</span>
+<span class="inline-flex items-center gap-xs px-sm py-1 rounded-full border {{ $statusColor[0] }}">
+<span class="w-2 h-2 rounded-full {{ $statusColor[1] }}"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold">{{ $statusLabel }}</span>
 </span>
 </div>
 @if ($order->status === \App\Models\Order::STATUS_DIBATALKAN && ! empty($cancelReasons[$order->order_id] ?? null))

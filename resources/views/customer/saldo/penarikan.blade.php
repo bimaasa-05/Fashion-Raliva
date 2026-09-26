@@ -203,7 +203,7 @@
                         @elseif ($st === 'dibayar') bg-emerald-100 text-emerald-800
                         @elseif ($st === 'ditolak') bg-red-100 text-red-800
                         @else bg-surface-container text-on-surface-variant @endif
-                    ">{{ $st }}</span>
+                    ">{{ ['pending' => __('Pending'), 'disetujui' => __('Approved'), 'dibayar' => __('Paid'), 'ditolak' => __('Rejected'), 'dibatalkan' => __('Cancelled')][$st] ?? $st }}</span>
                 </div>
 
                 @if ($st === 'pending')

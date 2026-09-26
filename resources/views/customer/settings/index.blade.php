@@ -283,8 +283,8 @@
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
-<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">PREFERENCES</p>
-<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">Settings</h2>
+<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('PREFERENCES') }}</p>
+<h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('Settings') }}</h2>
 <div class="flex flex-col gap-sm">
 <!-- Notifications Preferences -->
 <section class="px-container-margin py-lg border-b border-outline-variant">
@@ -323,12 +323,12 @@
 <label class="flex items-center justify-center py-sm border-2 {{ app()->getLocale() === 'en' ? 'border-secondary' : 'border-outline-variant' }} rounded-xl bg-surface-container-low cursor-pointer hover:border-secondary transition-colors">
 <input {{ app()->getLocale() === 'en' ? 'checked' : '' }} class="sr-only" name="locale" type="radio" value="en" onchange="document.getElementById('language-form').submit()"/>
 <span class="material-symbols-outlined text-[20px] mr-xs">language</span>
-<span class="font-body-sm text-body-sm {{ app()->getLocale() === 'en' ? 'font-semibold' : '' }}">English</span>
+<span class="font-body-sm text-body-sm {{ app()->getLocale() === 'en' ? 'font-semibold' : '' }}">{{ __('English') }}</span>
 </label>
 <label class="flex items-center justify-center py-sm border-2 {{ app()->getLocale() === 'id' ? 'border-secondary' : 'border-outline-variant' }} rounded-xl bg-surface-container-low cursor-pointer hover:border-secondary transition-colors">
 <input {{ app()->getLocale() === 'id' ? 'checked' : '' }} class="sr-only" name="locale" type="radio" value="id" onchange="document.getElementById('language-form').submit()"/>
 <span class="material-symbols-outlined text-[20px] mr-xs">translate</span>
-<span class="font-body-sm text-body-sm {{ app()->getLocale() === 'id' ? 'font-semibold' : '' }}">Bahasa Indonesia</span>
+<span class="font-body-sm text-body-sm {{ app()->getLocale() === 'id' ? 'font-semibold' : '' }}">{{ __('Bahasa Indonesia') }}</span>
 </label>
 </div>
 </form>

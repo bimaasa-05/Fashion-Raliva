@@ -530,7 +530,7 @@ f<!DOCTYPE html>
                     <button type="button" onclick="exitSelectMessages()" id="chat-sel-close" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Keluar seleksi') }}" aria-label="{{ __('Keluar seleksi') }}">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
-                    <span id="chat-sel-count" class="font-body-md text-body-md text-on-surface-variant shrink-0 whitespace-nowrap">0 selected</span>
+                    <span id="chat-sel-count" class="font-body-md text-body-md text-on-surface-variant shrink-0 whitespace-nowrap">{{ __(':count selected', ['count' => 0]) }}</span>
                     <div class="flex-1 min-w-0"></div>
                     <button type="button" onclick="copySelectedMessages()" id="chat-sel-copy" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Salin') }}" aria-label="{{ __('Salin') }}">
                         <span class="material-symbols-outlined text-[20px]">content_copy</span>
@@ -563,7 +563,7 @@ f<!DOCTYPE html>
     </div>
     <div id="chat-sel-delete-dialog" class="hidden fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeSelDeleteDialog();}">
         <div class="w-full sm:max-w-sm bg-surface-container-low rounded-t-3xl sm:rounded-2xl p-2 sm:p-4 border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shadow-2xl" onclick="event.stopPropagation()">
-            <p class="font-title-sm text-title-sm text-on-surface px-4 pt-3 pb-2">Hapus <span id="chat-sel-del-count" class="text-on-surface">-</span>?</p>
+            <p class="font-title-sm text-title-sm text-on-surface px-4 pt-3 pb-2">{{ __('Hapus') }} <span id="chat-sel-del-count" class="text-on-surface">-</span>?</p>
             <p class="font-body-sm text-body-sm text-on-surface-variant px-4 pb-2">{{ __('Pesan hanya dihapus dari akun Anda.') }}</p>
             <button type="button" data-sel-del-ok onclick="deleteSelectedMessages()" class="w-full text-left px-4 py-3 mt-1 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
                 <span class="font-body-sm text-body-sm text-on-surface">{{ __('Hapus untuk diri sendiri') }}</span>
@@ -761,7 +761,7 @@ f<!DOCTYPE html>
         const el = document.getElementById('chat-messages');
         el.innerHTML = '<div class="text-center py-8">' +
             '<p class="text-on-surface-variant text-sm">' + escapeHtml(message) + '</p>' +
-            '<p class="text-xs text-on-surface-variant/60 mt-1">Coba muat ulang halaman.</p>' +
+            '<p class="text-xs text-on-surface-variant/60 mt-1">' + window.ralivaT('Coba muat ulang halaman.') + '</p>' +
             '</div>';
         el.scrollTop = el.scrollHeight;
     }
@@ -781,7 +781,7 @@ f<!DOCTYPE html>
         if (!messages || messages.length === 0) {
             el.innerHTML = '<div class="text-center py-10">' +
                 '<span class="material-symbols-outlined text-[38px] text-outline-variant inline-block mb-2">chat_bubble_outline</span>' +
-                '<p class="font-body-sm text-body-sm text-on-surface-variant">' + escapeHtml('Belum ada pesan. Mulai percakapan dengan toko.') + '</p>' +
+                '<p class="font-body-sm text-body-sm text-on-surface-variant">' + escapeHtml(window.ralivaT('Belum ada pesan. Mulai percakapan dengan toko.')) + '</p>' +
                 '</div>';
             el.scrollTop = el.scrollHeight;
             return;
@@ -789,7 +789,7 @@ f<!DOCTYPE html>
 
         el.innerHTML = messages.map(function (m) {
             const mine = String(m.sender_id) === String(myId);
-            const sender = mine ? 'Anda' : (m.sender ? m.sender.nama_lengkap : 'Toko');
+            const sender = mine ? window.ralivaT('Anda') : (m.sender ? m.sender.nama_lengkap : window.ralivaT('Toko'));
             const roleTag = (function () {
                 if (mine) return '';
                 const r = m.sender ? m.sender.role : null;
@@ -802,7 +802,7 @@ f<!DOCTYPE html>
             const time = mine ? 'text-white/40' : 'text-on-surface-variant/50';
             const bubble = mine ? 'bg-secondary text-white' : 'bg-surface-container-low';
             const meta = mine ? 'text-white/60' : 'text-on-surface-variant';
-            const edited = m.edited_at ? ' <span class="italic">(' + escapeHtml('diedit') + ')</span>' : '';
+            const edited = m.edited_at ? ' <span class="italic">(' + escapeHtml(window.ralivaT('diedit')) + ')</span>' : '';
             const actionsOn = !currentChat.done;
             const selBox = '<span class="chat-sel-box" data-sel-box="' + m.complaint_message_id + '" onclick="event.stopPropagation();toggleSelectMessage(' + m.complaint_message_id + ')" aria-hidden="true"><span class="material-symbols-outlined">check_box_outline_blank</span></span>';
             const rowClass = 'flex items-center gap-2 ' + (mine ? (chatSelMode ? 'justify-between' : 'justify-end') : 'justify-start') + ' group chat-msg';
@@ -816,14 +816,14 @@ f<!DOCTYPE html>
                 let delMenu = '';
                 if (actionsOn) {
                     delMenu = chatMenuMarkup(m.complaint_message_id, delBtn) +
-                        '<button type="button" onclick="event.stopPropagation();openDeleteDialog(' + m.complaint_message_id + ',true)" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>' +
+                        '<button type="button" onclick="event.stopPropagation();openDeleteDialog(' + m.complaint_message_id + ',true)" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml(window.ralivaT('Hapus pesan')) + '</button>' +
                         '</span></span>';
                 }
                 return '<div class="' + rowClass + '" data-mid="' + m.complaint_message_id + '">' +
                     selFirst +
                     '<div class="max-w-[82%] lg:max-w-[72%] rounded-2xl px-3.5 lg:px-4 pt-2.5 pb-5 relative ' + delBubble + ' shadow-sm" data-bubble>' +
                     '<div class="flex items-center justify-between gap-2">' +
-                    '<p class="font-body-sm text-body-sm italic flex items-center gap-1.5 ' + delText + '"><span class="material-symbols-outlined text-[16px] leading-none shrink-0">block</span>' + escapeHtml('Pesan ini telah dihapus') + '</p>' +
+                    '<p class="font-body-sm text-body-sm italic flex items-center gap-1.5 ' + delText + '"><span class="material-symbols-outlined text-[16px] leading-none shrink-0">block</span>' + escapeHtml(window.ralivaT('Pesan ini telah dihapus')) + '</p>' +
                     delMenu +
                     '</div>' +
                     '<span class="absolute bottom-1.5 right-2.5 text-[10px] leading-none ' + time + '">' + formatTime(m.created_at) + '</span>' +
@@ -836,9 +836,9 @@ f<!DOCTYPE html>
                 const canEdit = mine && chatEditAllowed(m.created_at);
                 let items = '';
                 if (canEdit) {
-                    items += '<button type="button" onclick="event.stopPropagation();openEditDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">edit</span>' + escapeHtml('Edit pesan') + '</button>';
+                    items += '<button type="button" onclick="event.stopPropagation();openEditDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">edit</span>' + escapeHtml(window.ralivaT('Edit pesan')) + '</button>';
                 }
-                items += '<button type="button" onclick="event.stopPropagation();openDeleteDialog(' + m.complaint_message_id + ',' + (canAll ? 'false' : 'true') + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>';
+                items += '<button type="button" onclick="event.stopPropagation();openDeleteDialog(' + m.complaint_message_id + ',' + (canAll ? 'false' : 'true') + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml(window.ralivaT('Hapus pesan')) + '</button>';
                 menu = chatMenuMarkup(m.complaint_message_id, mine ? 'text-white/60 hover:text-white' : 'text-on-surface-variant hover:text-on-surface') + items + '</span></span>';
             }
 
@@ -1014,7 +1014,7 @@ f<!DOCTYPE html>
 
         if (badge) {
             if (o && o.refundLabel) {
-                badge.textContent = 'Refund: ' + o.refundLabel;
+                badge.textContent = window.ralivaT('Refund: ') + o.refundLabel;
                 badge.classList.remove('hidden');
             } else {
                 badge.classList.add('hidden');
@@ -1087,7 +1087,7 @@ f<!DOCTYPE html>
                 noResults = document.createElement('p');
                 noResults.id = 'chat-search-noresults';
                 noResults.className = 'hidden text-center font-body-sm text-body-sm text-on-surface-variant py-8';
-                noResults.textContent = 'Tidak ada pesan yang cocok.';
+                noResults.textContent = window.ralivaT('Tidak ada pesan yang cocok.');
                 el.appendChild(noResults);
             }
             noResults.classList.toggle('hidden', shown > 0 || rows.length === 0 || !q);
@@ -1103,6 +1103,33 @@ f<!DOCTYPE html>
         });
     })();
 
+    @php
+    $i18nChat = [
+        'Tidak ada pesan yang cocok.' => __('Tidak ada pesan yang cocok.'),
+        'Wallpaper direset ke default.' => __('Wallpaper direset ke default.'),
+        'Wallpaper diperbarui.' => __('Wallpaper diperbarui.'),
+        'Pesan komplain yang sudah selesai tidak dapat dipilih.' => __('Pesan komplain yang sudah selesai tidak dapat dipilih.'),
+        'Pilih minimal satu pesan.' => __('Pilih minimal satu pesan.'),
+        'Pesan tersalin ke clipboard.' => __('Pesan tersalin ke clipboard.'),
+        'Batas 3 balasan tercapai, menunggu balasan toko.' => __('Batas 3 balasan tercapai, menunggu balasan toko.'),
+        'Coba muat ulang halaman.' => __('Coba muat ulang halaman.'),
+        'Belum ada pesan. Mulai percakapan dengan toko.' => __('Belum ada pesan. Mulai percakapan dengan toko.'),
+        'Anda' => __('Anda'),
+        'Toko' => __('Toko'),
+        'diedit' => __('diedit'),
+        'Hapus pesan' => __('Hapus pesan'),
+        'Edit pesan' => __('Edit pesan'),
+        'Pesan ini telah dihapus' => __('Pesan ini telah dihapus'),
+        ' pesan dihapus untuk diri sendiri.' => __(' pesan dihapus untuk diri sendiri.'),
+        ' pesan gagal dihapus.' => __(' pesan gagal dihapus.'),
+        'Gagal menyimpan perubahan' => __('Gagal menyimpan perubahan'),
+        'Gagal menghapus pesan' => __('Gagal menghapus pesan'),
+        'Gagal mengirim pesan' => __('Gagal mengirim pesan'),
+        'Refund: ' => __('Refund: '),
+    ];
+    @endphp
+    window.RALIVA_I18N = Object.assign(window.RALIVA_I18N || {}, @json($i18nChat));
+    window.ralivaT = window.ralivaT || function (s) { var m = window.RALIVA_I18N || {}; return m[s] || s; };
     function showChatToast(message) {
         var existing = document.getElementById('chat-toast');
         if (existing) existing.remove();
@@ -1148,7 +1175,7 @@ f<!DOCTYPE html>
 
     function resetWallpaper() {
         applyWallpaper('', true);
-        showChatToast('Wallpaper direset ke default.');
+        showChatToast(window.ralivaT('Wallpaper direset ke default.'));
     }
 
     function initWallpaper() {
@@ -1165,7 +1192,7 @@ f<!DOCTYPE html>
         const reader = new FileReader();
         reader.onload = function () {
             applyWallpaper(reader.result, true);
-            showChatToast('Wallpaper diperbarui.');
+            showChatToast(window.ralivaT('Wallpaper diperbarui.'));
         };
         reader.readAsDataURL(file);
     });
@@ -1175,7 +1202,7 @@ f<!DOCTYPE html>
         closeChatSearch();
         closeChatMenu();
         if (currentChat.done) {
-            showChatToast('Pesan komplain yang sudah selesai tidak dapat dipilih.');
+            showChatToast(window.ralivaT('Pesan komplain yang sudah selesai tidak dapat dipilih.'));
             return;
         }
         chatSelMode = true;
@@ -1233,17 +1260,17 @@ f<!DOCTYPE html>
     }
 
     function copySelectedMessages() {
-        if (chatSelIds.size === 0) { showChatToast('Pilih minimal satu pesan.'); return; }
+        if (chatSelIds.size === 0) { showChatToast(window.ralivaT('Pilih minimal satu pesan.')); return; }
         const rows = chatMessages.filter(function (m) {
             return chatSelIds.has(parseInt(m.complaint_message_id, 10)) && m.pesan;
         });
         const text = rows.map(function (m) {
-            const sender = (String(m.sender_id) === String(myId)) ? 'Anda' : (m.sender ? m.sender.nama_lengkap : 'Toko');
+            const sender = (String(m.sender_id) === String(myId)) ? window.ralivaT('Anda') : (m.sender ? m.sender.nama_lengkap : window.ralivaT('Toko'));
             return '[' + sender + '] ' + new Date(m.created_at).toLocaleString('id-ID', { day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) + '\n' + m.pesan;
         }).join('\n\n');
         if (navigator.clipboard && navigator.clipboard.writeText) {
             navigator.clipboard.writeText(text).then(function () {
-                showChatToast('Pesan tersalin ke clipboard.');
+                showChatToast(window.ralivaT('Pesan tersalin ke clipboard.'));
             });
         } else {
             const ta = document.createElement('textarea');
@@ -1252,13 +1279,13 @@ f<!DOCTYPE html>
             ta.style.opacity = '0';
             document.body.appendChild(ta);
             ta.select();
-            try { document.execCommand('copy'); showChatToast('Pesan tersalin ke clipboard.'); } catch (_) {}
+            try { document.execCommand('copy'); showChatToast(window.ralivaT('Pesan tersalin ke clipboard.')); } catch (_) {}
             ta.remove();
         }
     }
 
     function confirmDeleteSelected() {
-        if (chatSelIds.size === 0) { showChatToast('Pilih minimal satu pesan.'); return; }
+        if (chatSelIds.size === 0) { showChatToast(window.ralivaT('Pilih minimal satu pesan.')); return; }
         const el = document.getElementById('chat-sel-delete-dialog');
         document.getElementById('chat-sel-del-count').textContent = chatSelIds.size + ' pesan';
         el.classList.remove('hidden');
@@ -1294,8 +1321,8 @@ f<!DOCTYPE html>
         if (btn) btn.disabled = false;
         exitSelectMessages();
         loadMessages();
-        if (failed === 0) showChatToast(ids.length + ' pesan dihapus untuk diri sendiri.');
-        else showChatToast(failed + ' pesan gagal dihapus.');
+        if (failed === 0) showChatToast(ids.length + window.ralivaT(' pesan dihapus untuk diri sendiri.'));
+        else showChatToast(failed + window.ralivaT(' pesan gagal dihapus.'));
     }
 
     function openEditDialog(id) {
@@ -1354,7 +1381,7 @@ f<!DOCTYPE html>
                 closeEditDialog();
                 await loadMessages();
             } else {
-                let msg = 'Gagal menyimpan perubahan';
+                let msg = window.ralivaT('Gagal menyimpan perubahan');
                 try {
                     const data = await resp.json();
                     if (data && data.message) msg = data.message;
@@ -1407,7 +1434,7 @@ f<!DOCTYPE html>
             if (resp.ok) {
                 await loadMessages();
             } else {
-                let msg = 'Gagal menghapus pesan';
+                let msg = window.ralivaT('Gagal menghapus pesan');
                 try {
                     const data = await resp.json();
                     if (data && data.message) msg = data.message;
@@ -1591,7 +1618,7 @@ f<!DOCTYPE html>
     async function sendMessage() {
         const composer = document.getElementById('chat-composer');
         if (composer.classList.contains('hidden')) return;
-        if (syncChatLimitUI()) { showChatToast('Batas 3 balasan tercapai, menunggu balasan toko.'); return; }
+        if (syncChatLimitUI()) { showChatToast(window.ralivaT('Batas 3 balasan tercapai, menunggu balasan toko.')); return; }
         const input = document.getElementById('chat-input');
         const pesan = input.value.trim();
         if (!pesan || !currentChat.id) return;
@@ -1622,7 +1649,7 @@ f<!DOCTYPE html>
             } else {
                 input.value = pesan;
                 if (window.autoGrowChatInput) requestAnimationFrame(function () { autoGrowChatInput(input); });
-                let msg = 'Gagal mengirim pesan';
+                let msg = window.ralivaT('Gagal mengirim pesan');
                 try {
                     const data = await resp.json();
                     if (data && data.errors) msg = Object.values(data.errors).flat().join('\n');

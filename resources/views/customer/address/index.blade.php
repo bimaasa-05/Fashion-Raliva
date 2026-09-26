@@ -337,7 +337,7 @@
 <body class="bg-background text-on-background font-body-sm min-h-screen flex flex-col antialiased selection:bg-secondary-container selection:text-on-secondary-container pb-[calc(72px+env(safe-area-inset-bottom))] lg:pl-72">
 <!-- Top App Bar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-<a aria-label="{{ __('Go back') }}" href="{{ auth()->check() ? route('customer.account') : route('login', ['redirect' => route('customer.account')]) }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+<a aria-label="{{ __('Go back') }}" href="{{ $backUrl ?? (auth()->check() ? route('customer.account') : route('login', ['redirect' => route('customer.account')])) }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
 <span class="material-symbols-outlined text-[24px]">arrow_back</span>
 </a>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('MY ADDRESSES') }}</h1>
@@ -348,7 +348,7 @@
 <section class="py-xl reveal-up">
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
-<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">ADDRESS BOOK</p>
+<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('ADDRESS BOOK') }}</p>
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface mb-md">{{ __('My Addresses') }}</h2>
 
 <!-- Empty State -->
@@ -357,7 +357,7 @@
 <span class="material-symbols-outlined text-6xl text-outline-variant mb-md">location_on</span>
 <p class="font-body-lg text-body-lg text-on-surface-variant mb-sm">{{ __('No addresses yet.') }}</p>
 <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">{{ __('Add your first address to get started.') }}</p>
-<a href="{{ route('customer.address.create') }}" class="btn-gold inline-flex items-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest shadow-lg">
+<a href="{{ route('customer.address.create', request()->only(['back', 'buy'])) }}" class="btn-gold inline-flex items-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest shadow-lg">
 <span class="material-symbols-outlined text-[20px]">add</span>
 {{ __('Add New Address') }}
 </a>
@@ -419,11 +419,11 @@
 <!-- Fixed Bottom Toolbar (mirrors customer/shop toolbar card style) -->
 <div class="fixed bottom-0 left-0 right-0 lg:left-72 z-50 px-container-margin py-sm pb-safe">
 <div class="flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm shadow-[0_-4px_24px_-12px_rgba(0,0,0,0.18)]">
-<a href="{{ route('customer.address.create') }}" class="btn-gold flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+<a href="{{ route('customer.address.create', request()->only(['back', 'buy'])) }}" class="btn-gold flex-1 min-w-0 flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
 <span class="material-symbols-outlined text-[20px]">add</span>
 <span class="truncate">{{ __('Add New Address') }}</span>
 </a>
-<a aria-label="{{ __('Add') }}" href="{{ route('customer.address.create') }}" class="address-action-btn relative border border-outline-variant hover:text-secondary hover:border-secondary transition-colors shrink-0">
+<a aria-label="{{ __('Add') }}" href="{{ route('customer.address.create', request()->only(['back', 'buy'])) }}" class="address-action-btn relative border border-outline-variant hover:text-secondary hover:border-secondary transition-colors shrink-0">
 <span class="material-symbols-outlined text-[22px]">add</span>
 <span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">{{ $addresses->count() }}</span>
 </a>
@@ -453,7 +453,7 @@ document.addEventListener('DOMContentLoaded', function () {
         btn.addEventListener('click', function () {
             const id = this.getAttribute('data-edit-id');
             if (!id) return;
-            window.location.href = '/customer/address/' + encodeURIComponent(id) + '/edit';
+            window.location.href = '/customer/address/' + encodeURIComponent(id) + '/edit' + window.location.search;
         });
     });
 

@@ -227,7 +227,7 @@
 <a href="{{ route('customer.account') }}" aria-label="Back" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase flex-1 text-center truncate max-w-[240px]">Help Center</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase flex-1 text-center truncate max-w-[240px]">{{ __('Help Center') }}</h1>
 <div class="w-10"></div> <!-- Spacer for centering -->
 </header>
 <!-- Main Content -->
@@ -237,7 +237,7 @@
 <div class="mx-auto max-w-[1400px] px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="max-w-3xl mx-auto text-center">
-                <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">SUPPORT</p>
+                <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs">{{ __('SUPPORT') }}</p>
                 <h2 class="premium-heading font-headline-lg text-headline-lg text-on-surface mb-sm">{{ $hero['title'] }}</h2>
                 <p class="font-body-lg text-body-lg text-on-surface-variant mb-lg">{{ $hero['subtitle'] }}</p>
                 <form class="relative max-w-xl mx-auto" onsubmit="return false;">
@@ -246,7 +246,7 @@
                 </form>
 </div>
 <div class="mt-xl pt-xl border-t border-[var(--border-soft)]">
-<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-md text-center">BROWSE BY CATEGORY</p>
+<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-md text-center">{{ __('BROWSE BY CATEGORY') }}</p>
 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
 @forelse ($categories as $cat)
 <a href="#faq" class="flex flex-col items-center text-center gap-xs p-md border border-outline-variant rounded-lg bg-surface hover:border-secondary hover:bg-surface-container-low transition-colors group">
@@ -278,7 +278,7 @@
 {{ $group['category']->judul }}
 </p>
 @else
-<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mt-md">Umum</p>
+<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mt-md">{{ __('Umum') }}</p>
 @endif
 @foreach ($group['faqs'] as $faq)
 <details class="group bg-surface-container-low rounded-lg border border-outline-variant px-md">

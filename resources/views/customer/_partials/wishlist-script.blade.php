@@ -1,4 +1,13 @@
 {{-- GLOBAL WISHLIST AJAX HANDLER (used on all customer pages) --}}
+@php
+$i18nWish = [
+    'Anda belum login.' => __('Anda belum login.'),
+];
+@endphp
+<script>
+window.RALIVA_I18N = Object.assign(window.RALIVA_I18N || {}, @json($i18nWish));
+window.ralivaT = window.ralivaT || function (s) { var m = window.RALIVA_I18N || {}; return m[s] || s; };
+</script>
 <style>
     /* Wishlist icon active state (burgundy) — overrides hover/text defaults */
     [data-wishlist-toggle].wishlisted-active,
@@ -23,7 +32,7 @@
         e.stopPropagation();
 
         if (!AUTHD) {
-            showWlToast('Anda belum login.');
+                showWlToast(window.ralivaT('Anda belum login.'));
             return;
         }
 

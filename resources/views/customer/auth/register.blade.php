@@ -344,7 +344,7 @@
 <div class="w-10 h-px bg-secondary-fixed-dim mt-sm lg:hidden"></div>
 </div>
 <div class="hidden lg:block">
-<p class="font-headline-lg-mobile text-headline-lg-mobile max-w-sm"><span class="text-white">Discover your style,</span> <span style="color:#A32626">curated for you.</span></p>
+<p class="font-headline-lg-mobile text-headline-lg-mobile max-w-sm"><span class="text-white">{{ __('Discover your style,') }}</span> <span style="color:#A32626">{{ __('curated for you.') }}</span></p>
 <div class="w-10 h-px bg-secondary-fixed-dim mt-md"></div>
 </div>
 </div>
@@ -371,7 +371,7 @@
 <!-- Floating Chips: Home + Theme -->
     <div class="fixed top-sm right-sm z-50 flex items-center gap-xs">
 
-<a aria-label="{{ __('Back to home') }}" title="Kembali ke Home" href="{{ route('customer.home') }}" class="atl-chip w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-secondary hover:text-secondary flex items-center justify-center">
+<a aria-label="{{ __('Back to home') }}" title="{{ __('Kembali ke Home') }}" href="{{ route('customer.home') }}" class="atl-chip w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-secondary hover:text-secondary flex items-center justify-center">
 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4.5l8 7"/><path d="M6.5 10.2V19h11v-8.8"/><path d="M10.7 19v-4.4h2.6V19"/></svg>
 </a>
 <button id="theme-toggle-btn" aria-label="Toggle theme" title="Mode gelap" type="button" onclick="toggleTheme()" class="atl-chip w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-secondary hover:text-secondary flex items-center justify-center">
@@ -389,8 +389,8 @@
 <p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Raliva Account') }}</p>
 <!-- Account Type -->
 <div id="role-switch" class="flex shrink-0 items-center gap-0.5 rounded-full border border-secondary p-0.5 frame-gold" data-initial-role="{{ old('role', 'owner') }}">
-    <button type="button" id="pill-customer" data-role="customer" class="role-pill cursor-pointer rounded-full px-3 py-0.5 font-label-caps text-[11px] uppercase tracking-wider text-on-surface transition-all{{ old('role', 'owner') === 'customer' ? ' active' : '' }}">Pelanggan</button>
-    <button type="button" id="pill-owner" data-role="owner" class="role-pill cursor-pointer rounded-full px-3 py-0.5 font-label-caps text-[11px] uppercase tracking-wider text-on-surface transition-all{{ old('role', 'owner') === 'owner' ? ' active' : '' }}">Pemilik Brand</button>
+    <button type="button" id="pill-customer" data-role="customer" class="role-pill cursor-pointer rounded-full px-3 py-0.5 font-label-caps text-[11px] uppercase tracking-wider text-on-surface transition-all{{ old('role', 'owner') === 'customer' ? ' active' : '' }}">{{ __('Pelanggan') }}</button>
+    <button type="button" id="pill-owner" data-role="owner" class="role-pill cursor-pointer rounded-full px-3 py-0.5 font-label-caps text-[11px] uppercase tracking-wider text-on-surface transition-all{{ old('role', 'owner') === 'owner' ? ' active' : '' }}">{{ __('Pemilik Brand') }}</button>
 </div>
 </div>
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Create Your Account') }}</h2>
@@ -455,10 +455,10 @@
 <label class="flex items-start gap-sm cursor-pointer mb-sm">
 <input class="terms-checkbox mt-1 w-4 h-4 shrink-0" id="terms" name="terms" type="checkbox"/>
                 <span class="font-body-sm text-body-sm text-on-surface-variant">
-            Saya menyetujui <button type="button" data-open-doc="syarat" class="text-secondary underline underline-offset-4 hover:opacity-80 transition-opacity">Syarat &amp; Ketentuan</button> dan <button type="button" data-open-doc="kebijakan" class="text-secondary underline underline-offset-4 hover:opacity-80 transition-opacity">Kebijakan Privasi</button>
+            {{ __('Saya menyetujui') }} <button type="button" data-open-doc="syarat" class="text-secondary underline underline-offset-4 hover:opacity-80 transition-opacity">{{ __('Syarat & Ketentuan') }}</button> {{ __('dan') }} <button type="button" data-open-doc="kebijakan" class="text-secondary underline underline-offset-4 hover:opacity-80 transition-opacity">{{ __('Kebijakan Privasi') }}</button>
         </span>
 </label>
-<p class="hidden font-label-sm text-label-sm text-error -mt-sm mb-sm" id="terms-error">Silakan setujui Syarat &amp; Ketentuan dan Kebijakan Privasi.</p>
+<p class="hidden font-label-sm text-label-sm text-error -mt-sm mb-sm" id="terms-error">{{ __('Silakan setujui Syarat & Ketentuan dan Kebijakan Privasi.') }}</p>
 <!-- Submit -->
 <button class="w-full h-14 btn-gold rounded-xl font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="register-btn" type="submit">
 <span id="register-btn-text">{{ __('REGISTER') }}</span>
@@ -519,10 +519,10 @@
     <label class="flex items-start gap-sm cursor-pointer mb-sm">
         <input class="terms-checkbox mt-1 w-4 h-4 shrink-0" id="owner-terms" name="terms" type="checkbox"/>
         <span class="font-body-sm text-body-sm text-on-surface-variant">
-            Saya menyetujui <button type="button" data-open-doc="syarat" class="text-secondary underline underline-offset-4 hover:opacity-80 transition-opacity">Syarat &amp; Ketentuan</button> dan <button type="button" data-open-doc="kebijakan" class="text-secondary underline underline-offset-4 hover:opacity-80 transition-opacity">Kebijakan Privasi</button>
+            {{ __('Saya menyetujui') }} <button type="button" data-open-doc="syarat" class="text-secondary underline underline-offset-4 hover:opacity-80 transition-opacity">{{ __('Syarat & Ketentuan') }}</button> {{ __('dan') }} <button type="button" data-open-doc="kebijakan" class="text-secondary underline underline-offset-4 hover:opacity-80 transition-opacity">{{ __('Kebijakan Privasi') }}</button>
         </span>
     </label>
-    <p class="hidden font-label-sm text-label-sm text-error -mt-sm mb-sm" id="owner-terms-error">Silakan setujui Syarat &amp; Ketentuan dan Kebijakan Privasi.</p>
+    <p class="hidden font-label-sm text-label-sm text-error -mt-sm mb-sm" id="owner-terms-error">{{ __('Silakan setujui Syarat & Ketentuan dan Kebijakan Privasi.') }}</p>
     <!-- Submit -->
     <button class="w-full h-14 btn-gold rounded-xl font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="owner-register-btn" type="submit">
         <span id="owner-register-btn-text">{{ __('REGISTER') }}</span>
@@ -601,6 +601,21 @@
         bindPwToggle('owner-password-toggle', 'owner-password');
         bindPwToggle('owner-confirm-toggle', 'owner-confirm');
 
+        @php
+        $i18nAuth = [
+            'Lemah' => __('Lemah'),
+            'Bagus' => __('Bagus'),
+            'Aman' => __('Aman'),
+            'Password: ' => __('Password: '),
+            'Syarat & Ketentuan' => __('Syarat & Ketentuan'),
+            'Kebijakan Privasi' => __('Kebijakan Privasi'),
+            'Konten belum tersedia.' => __('Konten belum tersedia.'),
+            'Dokumen' => __('Dokumen'),
+        ];
+        @endphp
+        window.RALIVA_I18N = Object.assign(window.RALIVA_I18N || {}, @json($i18nAuth));
+        window.ralivaT = window.ralivaT || function (s) { var m = window.RALIVA_I18N || {}; return m[s] || s; };
+
         var pwInput = document.getElementById('password');
         var pwStrengthWrap = document.getElementById('pw-strength');
         var pwSegs = [document.getElementById('pw-seg-1'), document.getElementById('pw-seg-2'), document.getElementById('pw-seg-3'), document.getElementById('pw-seg-4')];
@@ -621,17 +636,17 @@
             if (v.length >= 12) s++;
             var filled, text, color;
             if (v.length < 8 || s <= 1) {
-                filled = 1; text = 'Lemah'; color = '#ba1a1a';
+                filled = 1; text = window.ralivaT('Lemah'); color = '#ba1a1a';
             } else if (s <= 3) {
-                filled = Math.min(s, 3); text = 'Bagus';
+                filled = Math.min(s, 3); text = window.ralivaT('Bagus');
                 color = document.documentElement.classList.contains('theme-dark') ? '#f59e0b' : '#d97706';
             } else {
-                filled = 4; text = 'Aman'; color = '#2e7d32';
+                filled = 4; text = window.ralivaT('Aman'); color = '#2e7d32';
             }
             pwSegs.forEach(function (seg, i) {
                 seg.style.background = i < filled ? color : '';
             });
-            pwLabel.textContent = 'Password: ' + text;
+            pwLabel.textContent = window.ralivaT('Password: ') + text;
             pwLabel.style.color = color;
         }
 
@@ -657,17 +672,17 @@
             if (v.length >= 12) s++;
             var filled, text, color;
             if (v.length < 8 || s <= 1) {
-                filled = 1; text = 'Lemah'; color = '#ba1a1a';
+                filled = 1; text = window.ralivaT('Lemah'); color = '#ba1a1a';
             } else if (s <= 3) {
-                filled = Math.min(s, 3); text = 'Bagus';
+                filled = Math.min(s, 3); text = window.ralivaT('Bagus');
                 color = document.documentElement.classList.contains('theme-dark') ? '#f59e0b' : '#d97706';
             } else {
-                filled = 4; text = 'Aman'; color = '#2e7d32';
+                filled = 4; text = window.ralivaT('Aman'); color = '#2e7d32';
             }
             ownerPwSegs.forEach(function (seg, i) {
                 seg.style.background = i < filled ? color : '';
             });
-            ownerPwLabel.textContent = 'Password: ' + text;
+            ownerPwLabel.textContent = window.ralivaT('Password: ') + text;
             ownerPwLabel.style.color = color;
         }
 
@@ -805,11 +820,11 @@
             if (!modal) return;
             var titleEl = document.getElementById('doc-modal-title');
             var bodyEl = document.getElementById('doc-modal-body');
-            var titles = { syarat: 'Syarat & Ketentuan', kebijakan: 'Kebijakan Privasi' };
-            var empty = 'Konten belum tersedia.';
+            var titles = { syarat: window.ralivaT('Syarat & Ketentuan'), kebijakan: window.ralivaT('Kebijakan Privasi') };
+            var empty = window.ralivaT('Konten belum tersedia.');
 
             function openDoc(key) {
-                var label = titles[key] || 'Dokumen';
+                var label = titles[key] || window.ralivaT('Dokumen');
                 var tpl = document.getElementById('doc-' + key);
                 var text = tpl ? (tpl.content.textContent || '').trim() : '';
                 titleEl.textContent = label;
