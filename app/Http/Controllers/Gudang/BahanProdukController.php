@@ -20,8 +20,8 @@ class BahanProdukController extends Controller
         $products = Product::whereIn('store_id', $storeIds)
             ->with(['store:store_id,nama_toko', 'materialRequirements'])
             ->withCount('materialRequirements as bahan_count')
-            ->orderBy('bahan_count')
             ->orderByDesc('created_at')
+            ->orderByDesc('product_id')
             ->paginate(15);
 
         return view('Gudang.bahan-produk.index', [
