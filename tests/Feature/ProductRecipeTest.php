@@ -26,6 +26,19 @@ class ProductRecipeTest extends TestCase
         $response->assertSessionHasErrors('hpp');
     }
 
+    public function test_master_rejects_stock_below_minimum(): void
+    {
+        $payload = $this->masterPayload();
+        $payload['varian_stok'] = [
+            ['ukuran' => 'M', 'warna' => 'Merah', 'stok' => 9],
+        ];
+
+        $response = $this->postMaster($payload);
+
+        $response->assertStatus(302);
+        $response->assertSessionHasErrors('varian_stok.0.stok');
+    }
+
     public function test_master_stores_hpp_without_bahan(): void
     {
         [$admin, $product] = $this->createMaster('Produk Uji HPP');
@@ -121,7 +134,7 @@ class ProductRecipeTest extends TestCase
             'warna' => ['Merah'],
             'warna_hex' => ['#c62828'],
             'varian_stok' => [
-                ['ukuran' => 'M', 'warna' => 'Merah', 'stok' => 1, 'stok_minimum' => 0],
+                ['ukuran' => 'M', 'warna' => 'Merah', 'stok' => 10],
             ],
         ];
     }
