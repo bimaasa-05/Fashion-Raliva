@@ -36,10 +36,11 @@ class CartController extends Controller
 
         $count = $items->sum('quantity');
         $subtotal = $items->sum(fn ($i) => $i->quantity * $i->harga_snapshot);
-        $shipping = 18000;
-        $total = $subtotal + $shipping;
+        // Ongkir & pajak dihitung saat checkout (tergantung destinasi),
+        // bukan nilai fiktif — footer hanya menampilkan Subtotal.
+        $total = $subtotal;
 
-        return view('customer.chart.index', compact('items', 'count', 'subtotal', 'shipping', 'total'));
+        return view('customer.chart.index', compact('items', 'count', 'subtotal', 'total'));
     }
 
     /**
@@ -184,13 +185,12 @@ class CartController extends Controller
         $items = $cart->items()->get();
         $count = $items->sum('quantity');
         $subtotal = $items->sum(fn ($i) => $i->quantity * $i->harga_snapshot);
-        $shipping = 18000;
 
         return [
             'count' => $count,
             'subtotal' => $subtotal,
-            'shipping' => $shipping,
-            'total' => $subtotal + $shipping,
+            'shipping' => 0,
+            'total' => $subtotal,
         ];
     }
 
