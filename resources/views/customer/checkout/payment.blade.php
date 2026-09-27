@@ -918,9 +918,19 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             : 0.0;
     @endphp
 
+    @php
+        $payBackUrl = request('from') === 'orders'
+            ? route('customer.orders')
+            : (request('from') === 'tracking'
+                ? route('customer.order-tracking', ['order' => request('order')])
+                : (request('from') === 'selesai'
+                    ? route('customer.checkout.selesai', ['checkout' => $checkout->checkout_id])
+                    : route('customer.checkout', request()->query('buy') ? ['buy' => request()->query('buy')] : [])));
+    @endphp
+
     <header
         class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-        <a href="{{ route('customer.checkout', request()->query('buy') ? ['buy' => request()->query('buy')] : []) }}"
+        <a href="{{ $payBackUrl }}"
             aria-label="Back" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
             <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
         </a>
@@ -936,7 +946,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             <div
                 class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center reveal-up">
                 <div class="co-stepper">
-                    <a href="{{ route('customer.checkout', request()->query('buy') ? ['buy' => request()->query('buy')] : []) }}"
+                    <a href="{{ $payBackUrl }}"
                         class="co-step done"><span class="num"><span
                                 class="material-symbols-outlined text-[14px]">check</span></span>
                         {{ __('Review') }}</a>
@@ -957,7 +967,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                             <strong>Raliva123</strong></p>
                         <p class="font-label-sm text-label-sm mt-xs opacity-80">
                             {{ __('Simpan kredensial ini. Ubah password di') }} <a
-                                href="{{ route('customer.account.password') }}"
+                                href="{{ route('customer.account.password', ['from' => 'payment', 'checkout' => $checkout->checkout_id]) }}"
                                 class="underline underline-offset-2 font-semibold">{{ __('My Account → Ganti Password') }}</a>.
                         </p>
                     </div>
@@ -1307,7 +1317,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                                                     Rp {{ number_format($sisaBayar, 0, ',', '.') }}</p>
                                                             </div>
                                                         </div>
-                                                        <a href="{{ route('customer.checkout.payment.metode-kedua', $checkout->checkout_id) }}"
+                                                        <a href="{{ route('customer.checkout.payment.metode-kedua', array_merge(['checkout' => $checkout->checkout_id], request()->only(['buy', 'from', 'order']))) }}"
                                                             class="btn-gold relative mt-md w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
                                                             <span>{{ __('Pilih Metode Kedua') }}</span>
                                                             <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
