@@ -376,7 +376,7 @@
 </div>
 <div class="flex flex-wrap gap-sm">
 @if ($order->status === \App\Models\Order::STATUS_PENDING_PAYMENT && $order->checkout && $order->checkout->status === \App\Models\Checkout::STATUS_PENDING && in_array($order->checkout->payment?->status, [\App\Models\Payment::STATUS_PENDING, \App\Models\Payment::STATUS_DITOLAK], true))
-<a href="{{ route('customer.checkout.payment', $order->checkout->checkout_id) }}" class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-sm rounded-full uppercase tracking-widest">
+<a href="{{ route('customer.checkout.payment', ['checkout' => $order->checkout->checkout_id, 'from' => 'orders']) }}" class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-sm rounded-full uppercase tracking-widest">
 <span class="material-symbols-outlined text-[16px]">payments</span>{{ $order->checkout->payment->status === \App\Models\Payment::STATUS_DITOLAK ? __('Unggah Ulang') : __('Bayar') }}
 </a>
 @endif
