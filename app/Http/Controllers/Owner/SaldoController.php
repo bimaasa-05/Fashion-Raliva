@@ -11,6 +11,7 @@ use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Models\Withdrawal;
 use App\Services\NotificationService;
+use App\Support\OwnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -20,7 +21,7 @@ class SaldoController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $store = $user->ownedStores()->first();
+        $store = OwnerContext::currentStore($user);
 
         $period = (int) $request->input('period', 30);
         if (! in_array($period, [7, 30, 90, 365])) {
@@ -182,20 +183,24 @@ class SaldoController extends Controller
             'net' => $netProfit,
         ];
 
+        $roiKeuangan = (new \App\Services\KaryawanReportService())
+            ->ringkasanKeuangan([$store->store_id])['roi'] ?? null;
+
         return view('Owner.keuangan.index', compact(
             'wallet', 'bankAccounts', 'totalDicairkan',
             'mutations', 'withdrawals', 'refunds', 'summary', 'chart',
             'expenses', 'margin', 'store', 'period',
             'kategoriList', 'jenisList', 'filterKategori', 'filterJenis',
             'katExpList', 'filterKatExp', 'grafik',
-            'pemasukanList', 'katInList', 'filterKatIn'
+            'pemasukanList', 'katInList', 'filterKatIn',
+            'roiKeuangan'
         ));
     }
 
     public function storePengeluaran(Request $request)
     {
         $user = $request->user();
-        $store = $user->ownedStores()->first();
+        $store = OwnerContext::currentStore($user);
         if (! $store) {
             return back()->with('error', 'Toko tidak ditemukan.');
         }
@@ -243,7 +248,7 @@ class SaldoController extends Controller
     public function storePemasukan(Request $request)
     {
         $user = $request->user();
-        $store = $user->ownedStores()->first();
+        $store = OwnerContext::currentStore($user);
         if (! $store) {
             return back()->with('error', 'Toko tidak ditemukan.');
         }
@@ -291,7 +296,7 @@ class SaldoController extends Controller
         ]);
 
         $user = $request->user();
-        $store = $user->ownedStores()->first();
+        $store = OwnerContext::currentStore($user);
         $wallet = $store?->wallet;
 
         if (! $wallet) {

@@ -107,6 +107,12 @@
                                 class="normal-case text-[10px] italic text-gold-accent/70">Net Profit</span></span>
                         <span class="raliva-figure text-[24px] text-gold-accent">{{ $fmt($margin['net']) }}</span>
                     </div>
+                    <div data-reveal
+                        class="bg-surface-container-low p-5 rounded-lg flex flex-col gap-3 relative overflow-hidden">
+                        <span class="text-on-surface-variant font-label-sm text-[12px] uppercase">ROI <span
+                                class="normal-case text-[10px] italic text-gold-accent/70">Return on Investment</span></span>
+                        <span class="raliva-figure text-[24px] text-on-surface">{{ ($roiKeuangan ?? null) === null ? '-' : number_format($roiKeuangan, 2, ',', '.') . '%' }}</span>
+                    </div>
                 </div>
             </section>
 

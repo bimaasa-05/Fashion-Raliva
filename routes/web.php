@@ -381,7 +381,6 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/slot-produk/toko/{store}/tambah', [SlotProdukController::class, 'grantManual'])->name('slot-produk.tambah-manual');
     Route::post('/slot-produk/paket', [SlotProdukController::class, 'storePackage'])->name('slot-produk.paket.store');
     Route::post('/slot-produk/paket/{paket}/toggle', [SlotProdukController::class, 'togglePackage'])->name('slot-produk.paket.toggle');
-    Route::post('/slot-produk/permintaan/{rmt}/verifikasi', [SlotProdukController::class, 'verifikasiPembayaran'])->name('slot-produk.permintaan.verifikasi');
     Route::post('/slot-produk/permintaan/{rmt}/setujui', [SlotProdukController::class, 'approvePurchase'])->name('slot-produk.permintaan.setujui');
     Route::post('/slot-produk/permintaan/{rmt}/tolak', [SlotProdukController::class, 'rejectPurchase'])->name('slot-produk.permintaan.tolak');
 });
@@ -392,7 +391,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::get('/pesanan', [AdminDataPesananController::class, 'index'])->name('pesanan');
     Route::post('/pesanan', [AdminDataPesananController::class, 'store'])->name('pesanan.store');
     Route::post('/pesanan/{pesanan}/proses', [AdminDataPesananController::class, 'proses'])->name('pesanan.proses');
-    Route::post('/pesanan/{pesanan}/batalkan', [AdminDataPesananController::class, 'batalkan'])->name('pesanan.batalkan');
     Route::post('/pesanan/{pesanan}/selesai', [AdminDataPesananController::class, 'selesai'])->name('pesanan.selesai');
     Route::post('/pesanan/{pesanan}/alih-fulfillment', [AdminDataPesananController::class, 'alihFulfillment'])->name('pesanan.alihFulfillment');
     Route::post('/pesanan/{pesanan}/qc-tanggapan', [AdminDataPesananController::class, 'qcTanggapan'])->name('pesanan.qcTanggapan');

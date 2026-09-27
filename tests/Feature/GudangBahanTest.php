@@ -319,6 +319,8 @@ class GudangBahanTest extends TestCase
     private function createProduct(User $admin, ?string $name = null): Product
     {
         Storage::fake('public');
+        $storeId = StoreStaff::where('user_id', $admin->user_id)->where('status', 'aktif')->value('store_id');
+        $this->ensureQuota($storeId, $admin->user_id);
         $payload = [
             'nama_produk' => $name ?? 'Produk Uji Bahan Gudang',
             'harga_dasar' => '150000',
@@ -336,6 +338,20 @@ class GudangBahanTest extends TestCase
         $this->actingAsFresh($admin)->post(route('admin.produk.store'), $payload)->assertSessionHasNoErrors();
 
         return Product::where('nama_produk', $payload['nama_produk'])->firstOrFail();
+    }
+
+    private function ensureQuota(int $storeId, int $adminId): void
+    {
+        if (\App\Support\SlotService::canAdd($storeId)) {
+            return;
+        }
+        \App\Models\SlotGrant::create([
+            'store_id' => $storeId,
+            'jumlah_slot' => 50,
+            'tipe' => \App\Models\SlotGrant::TIPE_MANUAL,
+            'keterangan' => 'Slot uji otomatis.',
+            'created_by' => $adminId,
+        ]);
     }
 
     private function orderDiproses(User $admin, int $storeId, $variant, int $qty): Order

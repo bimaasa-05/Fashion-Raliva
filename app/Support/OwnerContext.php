@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\Role;
 use App\Models\Store;
+use App\Models\StoreStaff;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
@@ -39,7 +40,26 @@ class OwnerContext
             return [];
         }
 
-        return $owner->ownedStores()->pluck('store_id')->all();
+        $owned = $owner->ownedStores()->pluck('store_id')->all();
+        if ($owned !== []) {
+            return $owned;
+        }
+
+        // Co-access: pemilik tanpa toko memakai penugasan aktifnya (pola Admin).
+        // Pengajuan toko tetap memakai ownedStores() langsung (kepemilikan murni).
+        return StoreStaff::query()
+            ->where('user_id', $owner->user_id)
+            ->where('status', 'aktif')
+            ->pluck('store_id')
+            ->all();
+    }
+
+    /**
+     * @return int[]
+     */
+    public static function assignedStoreIds(?User $owner = null): array
+    {
+        return static::ownedStoreIds($owner);
     }
 
     public static function firstStoreId(?User $owner = null): ?int

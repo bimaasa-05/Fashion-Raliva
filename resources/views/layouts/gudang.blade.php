@@ -259,7 +259,7 @@
             <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Pantau persediaan dan aktivitas gudang Anda.')</p>
         </div>
 
-        <div class="page-enter px-container-margin pt-8 pb-section-gap flex flex-col gap-6 max-w-7xl mx-auto w-full">
+        <div class="page-enter px-container-margin pt-8 pb-section-gap flex flex-col gap-6 w-full">
             @yield('content')
         </div>
     </main>

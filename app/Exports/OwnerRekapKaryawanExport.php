@@ -26,6 +26,7 @@ class OwnerRekapKaryawanExport implements FromCollection, WithHeadings, WithMapp
         protected array $totals = [],
     ) {
         $judul = match ($this->role) {
+            'owner' => 'REKAP KARYAWAN — OWNER',
             'admin' => 'REKAP KARYAWAN — ADMIN',
             'produksi' => 'REKAP KARYAWAN — PRODUKSI',
             default => 'REKAP KARYAWAN — GUDANG',
@@ -33,8 +34,12 @@ class OwnerRekapKaryawanExport implements FromCollection, WithHeadings, WithMapp
         $this->judulSheet = $judul;
         $this->subtitleSheet = 'Peran & KPI per Karyawan — ' . $this->storeName;
         $this->barisHeaderSheet = 3;
-        $this->lebarKolomSheet = [8, 26, 30, 14, 14, 14, 14];
-        $this->kolomUangSheet = $this->role === 'admin' ? [5] : [];
+        $this->lebarKolomSheet = $this->role === 'admin' ? [8, 26, 30, 14, 14, 14, 14, 14] : [8, 26, 30, 14, 14, 14, 14];
+        $this->kolomUangSheet = match ($this->role) {
+            'admin' => [5, 6],
+            'owner' => [4, 5, 6],
+            default => [],
+        };
     }
 
     public function collection(): Collection
@@ -55,7 +60,8 @@ class OwnerRekapKaryawanExport implements FromCollection, WithHeadings, WithMapp
     public function headings(): array
     {
         return match ($this->role) {
-            'admin' => ['No.', 'Nama', 'Email', 'CR (%)', 'AOV', 'Rating', 'Pesanan'],
+            'owner' => ['No.', 'Nama', 'Email', 'ROI (%)', 'Pendapatan', 'Investasi', 'Bersih'],
+            'admin' => ['No.', 'Nama', 'Email', 'CR (%)', 'AOV', 'LTV', 'Rating', 'Pesanan'],
             'produksi' => ['No.', 'Nama', 'Email', 'Ditugaskan', 'Rata2 Unit', 'Rata2 Durasi (jam)', 'Berhasil (%)'],
             default => ['No.', 'Nama', 'Email', 'Transfer', 'Rata2 Putaran (jam)', 'Akurasi (%)', 'Rusak (qty)'],
         };
@@ -75,6 +81,7 @@ class OwnerRekapKaryawanExport implements FromCollection, WithHeadings, WithMapp
             $row['kolom2'],
             $row['kolom3'],
             $row['kolom4'],
+            $row['kolom5'] ?? null,
         ];
     }
 
@@ -90,13 +97,22 @@ class OwnerRekapKaryawanExport implements FromCollection, WithHeadings, WithMapp
     private function petakanBaris(array $r): array
     {
         return match ($this->role) {
+            'owner' => [
+                'nama' => $r['nama'],
+                'email' => $r['email'],
+                'kolom1' => $r['roi'],
+                'kolom2' => $r['pendapatan'],
+                'kolom3' => $r['investasi'],
+                'kolom4' => $r['bersih'],
+            ],
             'admin' => [
                 'nama' => $r['nama'],
                 'email' => $r['email'],
                 'kolom1' => $r['cr'],
                 'kolom2' => $r['aov'],
-                'kolom3' => $r['rating'],
-                'kolom4' => $r['pesanan'],
+                'kolom3' => $r['ltv'],
+                'kolom4' => $r['rating'],
+                'kolom5' => $r['pesanan'],
             ],
             'produksi' => [
                 'nama' => $r['nama'],
@@ -125,13 +141,22 @@ class OwnerRekapKaryawanExport implements FromCollection, WithHeadings, WithMapp
         $t = $this->totals;
 
         return match ($this->role) {
+            'owner' => [
+                'nama' => 'Total',
+                'email' => '',
+                'kolom1' => $t['roi'] ?? null,
+                'kolom2' => $t['pendapatan'] ?? 0,
+                'kolom3' => $t['investasi'] ?? 0,
+                'kolom4' => $t['bersih'] ?? 0,
+            ],
             'admin' => [
                 'nama' => 'Total',
                 'email' => '',
                 'kolom1' => $t['cr'] ?? null,
                 'kolom2' => $t['aov'] ?? null,
-                'kolom3' => $t['rating'] ?? null,
-                'kolom4' => $t['pesanan'] ?? 0,
+                'kolom3' => $t['ltv'] ?? null,
+                'kolom4' => $t['rating'] ?? null,
+                'kolom5' => $t['pesanan'] ?? 0,
             ],
             'produksi' => [
                 'nama' => 'Total',

@@ -366,99 +366,6 @@ class DataPesananController extends Controller
         ]);
     }
 
-    public function batalkan(Request $request, Order $pesanan)
-    {
-        if (! AdminContext::canAccessStore($pesanan->store_id)) {
-            return back()->with('toast', [
-                'message' => 'Pesanan ini di luar scope toko yang Anda tugaskan.',
-                'icon' => 'gpp_maybe',
-            ]);
-        }
-
-        if (! in_array($pesanan->status, [Order::STATUS_PENDING_PAYMENT, Order::STATUS_DIBAYAR, Order::STATUS_MENUNGGU_PRODUKSI, Order::STATUS_DIPROSES], true)) {
-            return back()->with('toast', [
-                'message' => 'Pesanan yang sudah dikirim tidak dapat dibatalkan.',
-                'icon' => 'gpp_maybe',
-            ]);
-        }
-
-        $pesanan->loadMissing('checkout.payment');
-        if ($pesanan->isPaymentVerified()) {
-            return back()->with('toast', [
-                'message' => 'Pembayaran pesanan ini sudah terverifikasi sehingga tidak dapat dibatalkan langsung. Selesaikan lewat alur Admin/Owner.',
-                'icon' => 'gpp_maybe',
-            ]);
-        }
-
-        $data = $request->validate([
-            'alasan' => 'required|string|min:10|max:1000',
-        ], [
-            'alasan.required' => 'Alasan pembatalan wajib diisi.',
-            'alasan.min' => 'Alasan pembatalan minimal 10 karakter.',
-        ]);
-
-        $lama = $pesanan->only(['status']);
-
-        $isSaldoRefund = false;
-
-        DB::transaction(function () use ($pesanan, $data, &$isSaldoRefund) {
-            $order = Order::with(['checkout.payment.paymentMethod'])
-                ->where('order_id', $pesanan->order_id)
-                ->lockForUpdate()
-                ->firstOrFail();
-
-            $order->update(['status' => Order::STATUS_DIBATALKAN]);
-
-            $payment = $order->checkout?->payment;
-
-            if (
-                $payment
-                && $payment->status === Payment::STATUS_TERVERIFIKASI
-                && $payment->paymentMethod?->kode_metode === PaymentMethod::KODE_SALDO_AKUN
-                && $order->checkout?->user
-            ) {
-                try {
-                    CustomerWalletService::refundToWallet(
-                        $order,
-                        (float) $order->grand_total,
-                        'Refund otomatis pembatalan pesanan '.$order->nomor_order.' (saldo akun)'
-                    );
-                    $isSaldoRefund = true;
-                } catch (\RuntimeException $e) {
-                    \Illuminate\Support\Facades\Log::warning('Refund saldo dibatalkan: '.$e->getMessage());
-                }
-            }
-        });
-
-        ActivityLogger::log(
-            'admin.order.cancel',
-            Order::class,
-            $pesanan->order_id,
-            $lama,
-            ['status' => Order::STATUS_DIBATALKAN, 'alasan' => $data['alasan']],
-            sprintf('Membatalkan pesanan %s dengan alasan: %s', $pesanan->nomor_order, $data['alasan'])
-        );
-
-        $this->notifyCustomer($pesanan, 'Pesanan Dibatalkan', sprintf('Pesanan %s dibatalkan. Alasan: %s', $pesanan->nomor_order, $data['alasan']));
-
-        Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Dibatalkan', sprintf('Pesanan %s dibatalkan.', $pesanan->nomor_order), route('admin.pesanan'));
-
-        if ($isSaldoRefund && $pesanan->checkout?->user) {
-            Notification::create([
-                'user_id' => $pesanan->checkout->user->user_id,
-                'aktor_id' => ActivityLogger::resolveActorId(),
-                'tipe' => Notification::TIPE_WALLET,
-                'judul' => 'Dana Dikembalikan ke Saldo',
-                'pesan' => sprintf('Pembatalan pesanan %s. Dana Rp %s dikembalikan ke saldo akun Anda.', $pesanan->nomor_order, number_format((float) $pesanan->grand_total, 0, ',', '.')),
-                'url' => route('customer.saldo'),
-            ]);
-        }
-
-        return back()->with('toast', [
-            'message' => "Pesanan {$pesanan->nomor_order} dibatalkan.".($isSaldoRefund ? ' Dana dikembalikan ke saldo customer.' : ''),
-            'icon' => 'block',
-        ]);
-    }
 
     public function selesai(Request $request, Order $pesanan)
     {
@@ -543,11 +450,10 @@ class DataPesananController extends Controller
         ]);
 
         $target = $data['fulfillment'];
-        $blocked = [Order::STATUS_DIKIRIM, Order::STATUS_SELESAI, Order::STATUS_DIBATALKAN, Order::STATUS_REFUND];
 
-        if (in_array($pesanan->status, $blocked, true)) {
+        if ($pesanan->status !== Order::STATUS_SIAP_KIRIM) {
             return back()->with('toast', [
-                'message' => 'Pesanan sudah dikirim, selesai, atau dibatalkan — fulfillment tidak dapat diubah.',
+                'message' => 'Fulfillment hanya dapat diubah saat pesanan Siap Kirim.',
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -572,9 +478,8 @@ class DataPesananController extends Controller
         try {
             DB::transaction(function () use ($pesanan, $target, &$ongkirDibatalkan) {
                 $order = Order::whereKey($pesanan->order_id)->lockForUpdate()->firstOrFail();
-                $blocked = [Order::STATUS_DIKIRIM, Order::STATUS_SELESAI, Order::STATUS_DIBATALKAN, Order::STATUS_REFUND];
 
-                if (in_array($order->status, $blocked, true)) {
+                if ($order->status !== Order::STATUS_SIAP_KIRIM) {
                     throw new \RuntimeException('Status pesanan berubah, fulfillment tidak dapat diubah.');
                 }
                 if ($target === ($order->metode_fulfillment ?? Order::FULFILLMENT_DIANTAR)) {

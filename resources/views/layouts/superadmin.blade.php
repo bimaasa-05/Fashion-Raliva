@@ -330,13 +330,16 @@
     </div>
 
     <!-- Bottom Nav Bar (Mobile) -->
-    @include('partials.bottom-nav', ['items' => [
-        ['route' => 'superadmin.dashboard', 'icon' => 'dashboard', 'label' => 'Beranda'],
-        ['route' => 'superadmin.data-pesanan', 'icon' => 'shopping_cart', 'label' => 'Pesanan'],
-        ['route' => 'superadmin.moderasi-produk', 'icon' => 'inventory_2', 'label' => 'Moderasi'],
-        ['route' => 'superadmin.laporan', 'icon' => 'bar_chart', 'label' => 'Laporan'],
-        ['route' => 'superadmin.profil', 'icon' => 'person', 'label' => 'Profil'],
-    ]])
+    @include('partials.bottom-nav', [
+        'items' => [
+            ['route' => 'superadmin.dashboard', 'icon' => 'dashboard', 'label' => 'Beranda'],
+            ['route' => 'superadmin.manajemen-toko', 'icon' => 'storefront', 'label' => 'Data Toko', 'badge' => 'toko'],
+            ['route' => 'superadmin.moderasi-produk', 'icon' => 'inventory_2', 'label' => 'Moderasi', 'badge' => 'produk'],
+            ['route' => 'superadmin.perubahan-produk', 'icon' => 'edit_note', 'label' => 'Perubahan Produk', 'badge' => 'perubahan_produk'],
+            ['route' => 'superadmin.profil', 'icon' => 'person', 'label' => 'Profil'],
+        ],
+        'badgeCounts' => \App\Support\SuperAdminBadgeCounter::counts(),
+    ])
 
     @stack('modals')
     @include('partials.notification-popup')

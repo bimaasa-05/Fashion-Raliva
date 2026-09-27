@@ -57,13 +57,7 @@ class ProductColorValidationTest extends TestCase
             ->firstOrFail();
         $storeId = StoreStaff::where('user_id', $admin->user_id)->where('status', 'aktif')->value('store_id');
         $category = Category::where('status', 'aktif')->firstOrFail();
-        SlotGrant::create([
-            'store_id' => $storeId,
-            'jumlah_slot' => 5,
-            'tipe' => SlotGrant::TIPE_MANUAL,
-            'keterangan' => 'Slot uji produk tanpa warna.',
-            'created_by' => $admin->user_id,
-        ]);
+        $this->ensureQuota($storeId, $admin->user_id);
         $name = 'Produk Tanpa Warna '.Str::random(8);
 
         $response = $this->actingAs($admin)->post(route('admin.produk.store'), [
@@ -87,6 +81,20 @@ class ProductColorValidationTest extends TestCase
         $this->assertSame(65000.0, (float) $product->modal_produksi);
     }
 
+    private function ensureQuota(int $storeId, int $adminId): void
+    {
+        if (\App\Support\SlotService::canAdd($storeId)) {
+            return;
+        }
+        \App\Models\SlotGrant::create([
+            'store_id' => $storeId,
+            'jumlah_slot' => 50,
+            'tipe' => \App\Models\SlotGrant::TIPE_MANUAL,
+            'keterangan' => 'Slot uji otomatis.',
+            'created_by' => $adminId,
+        ]);
+    }
+
     private function postProduct(array $colors)
     {
         Storage::fake('public');
@@ -95,6 +103,8 @@ class ProductColorValidationTest extends TestCase
             ->firstOrFail();
         StoreStaff::where('user_id', $admin->user_id)->where('status', 'aktif')->firstOrFail();
         $category = Category::where('status', 'aktif')->firstOrFail();
+        $storeId = StoreStaff::where('user_id', $admin->user_id)->where('status', 'aktif')->value('store_id');
+        $this->ensureQuota($storeId, $admin->user_id);
 
         return $this->actingAs($admin)->post(route('admin.produk.store'), array_merge([
             'nama_produk' => 'Produk Uji Warna Regression',

@@ -17,7 +17,8 @@ class PengajuanTokoController extends Controller
 {
     public function index(Request $request)
     {
-        $store = OwnerContext::currentStore();
+        // Kepemilikan murni: co-access tidak boleh mengajukan atas toko orang lain.
+        $store = $request->user()?->ownedStores()->first();
         $documents = $store
             ? StoreDocument::where('store_id', $store->store_id)->get()
             : collect();
@@ -33,7 +34,7 @@ class PengajuanTokoController extends Controller
     public function store(Request $request)
     {
         $user = $request->user();
-        $store = OwnerContext::currentStore();
+        $store = $user?->ownedStores()->first();
 
         // Jalur yang diizinkan: belum punya toko atau ditolak.
         // Status pending terkunci (menunggu verifikasi Super Admin).
@@ -153,7 +154,7 @@ class PengajuanTokoController extends Controller
     public function reupload(Request $request)
     {
         $user = $request->user();
-        $store = OwnerContext::currentStore();
+        $store = $user?->ownedStores()->first();
         if (! $store || $store->status !== Store::STATUS_AKTIF) {
             return back()->with('error', 'Unggah ulang hanya untuk toko aktif.');
         }

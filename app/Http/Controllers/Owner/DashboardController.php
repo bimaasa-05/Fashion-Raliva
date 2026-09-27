@@ -75,6 +75,11 @@ class DashboardController extends Controller
 
         $aktivitas = $this->buildAktivitas($storeId);
 
+        $roi = null;
+        if ($storeId) {
+            $roi = (new \App\Services\KaryawanReportService())->ringkasanKeuangan([$storeId])['roi'] ?? null;
+        }
+
         return view('Owner.dashboard.index', compact(
             'store',
             'penjualanHariIni',
@@ -90,6 +95,7 @@ class DashboardController extends Controller
             'ulasanTerbaru',
             'chart',
             'aktivitas',
+            'roi',
         ))->with([
             'storeSuspended' => \App\Support\StoreGate::isLocked(),
             'suspendedStores' => \App\Support\StoreGate::suspendedStoreNames(),

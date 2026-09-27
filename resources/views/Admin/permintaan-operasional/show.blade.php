@@ -27,7 +27,7 @@
     };
 @endphp
 
-<div class="space-y-section-gap max-w-4xl">
+<div class="space-y-section-gap">
     {{-- Header Card --}}
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4 mb-5">
