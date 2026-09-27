@@ -412,7 +412,7 @@
             <button type="button" data-wishlist-toggle data-product-id="{{ $product->product_id }}" aria-label="Wishlist" class="p-2 hover:opacity-70 transition-all duration-200 flex{{ $isWl ? ' wishlisted-active' : '' }}">
                 <span class="material-symbols-outlined text-[24px]">favorite{{ $isWl ? '' : '_border' }}</span>
                 </button>
-            <a aria-label="Cart" href="{{ route('customer.chart') }}" class="relative p-2 hover:opacity-70 transition-all duration-200 flex">
+            <a aria-label="Cart" href="{{ route('customer.chart', ['from' => 'product', 'product' => $product->product_id]) }}" class="relative p-2 hover:opacity-70 transition-all duration-200 flex">
                 <span class="material-symbols-outlined text-[24px]">shopping_cart</span>
                 <span class="cart-badge absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
                 </a>
