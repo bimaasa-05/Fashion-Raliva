@@ -11,6 +11,7 @@ use App\Models\Review;
 use App\Models\Role;
 use App\Models\Store;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class ShopController extends Controller
 {
@@ -24,12 +25,23 @@ class ShopController extends Controller
             ->whereHas('store', fn ($q) => $q->where('status', Store::STATUS_AKTIF))
             ->with([
                 'store:store_id,nama_toko,logo',
-                'category:category_id,nama_kategori',
+                'category:category_id,nama_kategori,parent_id',
+                'category.parent:category_id,nama_kategori',
                 'images' => fn ($q) => $q->orderBy('urutan'),
                 'variants' => fn ($q) => $q->where('status', 'aktif'),
             ])
             ->latest()
             ->get();
+
+        $popularCounts = DB::table('order_items')
+            ->join('product_variants as pv', 'pv.product_variant_id', '=', 'order_items.product_variant_id')
+            ->join('orders', 'orders.order_id', '=', 'order_items.order_id')
+            ->whereIn('orders.status', Order::STATUS_PENDAPATAN)
+            ->groupBy('pv.product_id')
+            ->selectRaw('pv.product_id, SUM(order_items.quantity) as popular_count')
+            ->pluck('popular_count', 'product_id');
+
+        $products->each(fn ($p) => $p->popular_count = (int) ($popularCounts[$p->product_id] ?? 0));
 
         $totalProducts = $products->count();
 
