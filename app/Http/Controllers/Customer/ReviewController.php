@@ -233,16 +233,31 @@ class ReviewController extends Controller
 
     /**
      * Ambil order item milik user yang berhak di-review.
+     *
+     * Tolak bila item sudah punya review ATAU user sudah menilai produk
+     * yang sama lewat item lain (cukup satu ulasan per produk).
      */
     protected function resolveEligibleOrderItem(int $orderItemId): ?OrderItem
     {
         $user = Auth::user();
 
-        return OrderItem::query()
+        $orderItem = OrderItem::query()
             ->where('order_item_id', $orderItemId)
             ->whereHas('order.checkout', fn ($q) => $q->where('user_id', $user->user_id))
             ->whereHas('order', fn ($q) => $q->where('status', Order::STATUS_SELESAI))
+            ->whereDoesntHave('review')
             ->with(['order.store', 'productVariant.product.images'])
             ->first();
+
+        if (! $orderItem) {
+            return null;
+        }
+
+        $productId = $orderItem->productVariant?->product_id;
+        $sudahDinilai = $productId && Review::where('user_id', $user->user_id)
+            ->where('product_id', $productId)
+            ->exists();
+
+        return $sudahDinilai ? null : $orderItem;
     }
 }
