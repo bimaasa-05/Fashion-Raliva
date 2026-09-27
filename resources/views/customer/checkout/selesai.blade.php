@@ -221,7 +221,7 @@
             </p>
             @if($isRejected)
             <div class="mt-md flex justify-center">
-                <a href="{{ route('customer.checkout.payment', $checkout->checkout_id) }}" class="btn-gold inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+                <a href="{{ route('customer.checkout.payment', ['checkout' => $checkout->checkout_id, 'from' => 'selesai']) }}" class="btn-gold inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
                     <span class="material-symbols-outlined text-[18px]">payments</span> {{ __('Bayar Ulang') }}
                 </a>
             </div>
@@ -379,7 +379,7 @@
             <div>
                 <p class="font-body-sm text-body-sm font-semibold text-emerald-800">{{ __('Akun berhasil dibuat') }}</p>
                 <p class="font-body-sm text-body-sm text-emerald-700 mt-xs">{{ __('Email') }}: <strong>{{ $akunBaru }}</strong> • {{ __('Password') }}: <strong>Raliva123</strong></p>
-                <p class="font-label-sm text-label-sm text-emerald-700/80 mt-xs">{{ __('Segera ganti password untuk keamanan.') }} <a href="{{ route('customer.account.password') }}" class="underline font-semibold">{{ __('Ganti Password') }}</a></p>
+                <p class="font-label-sm text-label-sm text-emerald-700/80 mt-xs">{{ __('Segera ganti password untuk keamanan.') }} <a href="{{ route('customer.account.password', ['from' => 'selesai', 'checkout' => $checkout->checkout_id]) }}" class="underline font-semibold">{{ __('Ganti Password') }}</a></p>
             </div>
         </div>
         @endif

@@ -15,6 +15,10 @@ class OrderController extends Controller
      */
     public function index(Request $request)
     {
+        // Konsisten dengan halaman pembayaran: expire payment lewat batas
+        // sebelum render (order pending_payment kadaluarsa → dibatalkan).
+        \App\Support\PaymentExpiry::expireOverdue();
+
         $orders = Auth::user()->orders()
             ->with([
                 'store',

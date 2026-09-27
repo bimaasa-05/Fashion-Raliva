@@ -952,9 +952,20 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
         $sisaBayar = isset($sisaBayar) ? (float) $sisaBayar : max(0, (float) $payment->jumlah - $saldoCust);
     @endphp
 
+    @php
+        $payBackUrl = request('from') === 'orders'
+            ? route('customer.orders')
+            : (request('from') === 'tracking'
+                ? route('customer.order-tracking', ['order' => request('order')])
+                : (request('from') === 'selesai'
+                    ? route('customer.checkout.selesai', ['checkout' => $checkout->checkout_id])
+                    : route('customer.checkout', request()->query('buy') ? ['buy' => request()->query('buy')] : [])));
+        $backToPaymentUrl = route('customer.checkout.payment', array_merge(['checkout' => $checkout->checkout_id], request()->only(['buy', 'from', 'order'])));
+    @endphp
+
     <header
         class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-        <a href="{{ route('customer.checkout.payment', $checkout->checkout_id) }}"
+        <a href="{{ $backToPaymentUrl }}"
             aria-label="Back" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
             <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
         </a>
@@ -970,7 +981,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
             <div
                 class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center reveal-up">
                 <div class="co-stepper">
-                    <a href="{{ route('customer.checkout', request()->query('buy') ? ['buy' => request()->query('buy')] : []) }}"
+                    <a href="{{ $payBackUrl }}"
                         class="co-step done"><span class="num"><span
                                 class="material-symbols-outlined text-[14px]">check</span></span>
                         {{ __('Review') }}</a>
@@ -1262,7 +1273,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                     </div>
                                 </div>
                             </form>
-                            <a href="{{ route('customer.checkout.payment', $checkout->checkout_id) }}"
+                            <a href="{{ $backToPaymentUrl }}"
                                 class="mt-lg inline-flex items-center gap-2 font-label-sm text-label-sm uppercase tracking-wider text-secondary hover:underline">
                                 <span class="material-symbols-outlined text-[18px]">arrow_back</span>
                                 <span>{{ __('Kembali ke pilihan metode') }}</span>
@@ -1373,7 +1384,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                         </div>
                         <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-lg">
                             {{ __('Menunggu verifikasi admin. Kamu akan mendapat notifikasi bila disetujui.') }}</p>
-                        <a href="{{ route('customer.checkout.payment', $checkout->checkout_id) }}"
+                        <a href="{{ $backToPaymentUrl }}"
                             class="mt-md inline-flex items-center gap-2 font-label-sm text-label-sm uppercase tracking-wider text-secondary hover:underline">
                             <span class="material-symbols-outlined text-[18px]">arrow_back</span>
                             <span>{{ __('Kembali') }}</span>

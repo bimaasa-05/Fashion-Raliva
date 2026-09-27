@@ -231,7 +231,7 @@
 </a>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
 <div class="flex items-center gap-sm">
-<a href="{{ route('customer.chart') }}" aria-label="Cart" class="relative hover:opacity-80 transition-opacity flex">
+<a href="{{ route('customer.chart', ['from' => 'search']) }}" aria-label="Cart" class="relative hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
 <span class="cart-badge absolute -top-1 -right-1 bg-secondary text-on-secondary text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
 </a>

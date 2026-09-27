@@ -16,15 +16,45 @@ class KomplainController extends Controller
 {
     /**
      * Daftar komplain milik customer.
+     *
+     * ?open={complaint_id} / ?order={order_id} → pastikan thread ada di
+     * halaman hasil ($openId dipakai view untuk auto-open; page dihitung
+     * dari posisi komplain pada urutan yang sama dengan paginate).
      */
-    public function index()
+    public function index(Request $request)
     {
+        $openId = (int) $request->query('open', 0);
+
+        // Sumber link lain: order-tracking "Lihat Komplain" memakai ?order=.
+        $orderId = (int) $request->query('order', 0);
+        if ($openId <= 0 && $orderId > 0) {
+            $openId = (int) (Auth::user()->complaints()
+                ->where('order_id', $orderId)
+                ->orderByDesc('complaint_id')
+                ->value('complaint_id') ?? 0);
+        }
+
+        $page = 1;
+        if ($openId > 0) {
+            $ids = Auth::user()->complaints()
+                ->orderByDesc('dibuat_pada')
+                ->orderByDesc('complaint_id')
+                ->pluck('complaint_id');
+            $index = $ids->search($openId);
+            if ($index === false) {
+                $openId = 0;
+            } else {
+                $page = intdiv((int) $index, 10) + 1;
+            }
+        }
+
         $complaints = Auth::user()->complaints()
             ->with(['order.store', 'order.refunds', 'order.checkout.payment', 'messages.sender'])
             ->orderByDesc('dibuat_pada')
-            ->paginate(10);
+            ->orderByDesc('complaint_id')
+            ->paginate(10, ['*'], 'page', $page);
 
-        return view('customer.komplain.index', compact('complaints'));
+        return view('customer.komplain.index', compact('complaints', 'openId'));
     }
 
     /**

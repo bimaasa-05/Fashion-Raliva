@@ -229,7 +229,15 @@
 <body class="bg-surface text-on-surface antialiased font-body-lg lg:pl-72">
 <!-- TopAppBar -->
 <header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
-<a href="{{ route('customer.account.edit') }}" aria-label="{{ __('Back') }}" class="hover:opacity-80 transition-opacity flex">
+@php
+    $pwdBack = route('customer.account.edit');
+    if (request('from') === 'payment' && request('checkout')) {
+        $pwdBack = route('customer.checkout.payment', ['checkout' => request('checkout')]);
+    } elseif (request('from') === 'selesai' && request('checkout')) {
+        $pwdBack = route('customer.checkout.selesai', ['checkout' => request('checkout')]);
+    }
+@endphp
+<a href="{{ $pwdBack }}" aria-label="{{ __('Back') }}" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase flex-1 text-center truncate max-w-[240px]">{{ __('Change Password') }}</h1>
@@ -325,7 +333,7 @@
 
             {{-- ========== ACTION BUTTONS ========== --}}
             <div class="mt-lg flex flex-col sm:flex-row gap-sm pt-sm border-t border-[var(--border-soft)]">
-                <a href="{{ route('customer.account') }}" class="flex-1 flex items-center justify-center gap-2 py-3 rounded-full border border-outline-variant text-on-surface-variant font-label-caps text-label-caps uppercase tracking-widest hover:bg-surface-container-low hover:border-secondary hover:text-secondary transition-all duration-200">
+                <a href="{{ $pwdBack }}" class="flex-1 flex items-center justify-center gap-2 py-3 rounded-full border border-outline-variant text-on-surface-variant font-label-caps text-label-caps uppercase tracking-widest hover:bg-surface-container-low hover:border-secondary hover:text-secondary transition-all duration-200">
                     <span class="material-symbols-outlined text-[18px]">close</span>{{ __('Cancel') }}</a>
                 <button type="submit" form="password-form" class="btn-gold flex-1 flex items-center justify-center gap-2 py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest shadow-lg">
                     <span class="material-symbols-outlined text-[18px]">lock</span>{{ __('Update Password') }}</button>

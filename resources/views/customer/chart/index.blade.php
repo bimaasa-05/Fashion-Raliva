@@ -253,7 +253,13 @@
   </head>
 <body class="bg-background text-on-background min-h-screen flex flex-col font-body-lg lg:pl-72">
 <!-- TopAppBar (Small Center Aligned) -->
-@php $chartBackUrl = request('from') === 'wishlist' ? route('customer.wishlist') : route('customer.shop'); @endphp
+@php
+    $chartFrom = request('from');
+    $chartBackUrl = $chartFrom === 'wishlist' ? route('customer.wishlist')
+        : ($chartFrom === 'search' ? route('customer.search')
+        : ($chartFrom === 'home' ? route('customer.home')
+        : ($chartFrom === 'product' && request('product') ? route('customer.shop.produk-detail', (int) request('product')) : route('customer.shop'))));
+@endphp
 <header class="bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 pt-safe border-b border-[var(--chrome-border)] sticky top-0 z-40">
 <a href="{{ $chartBackUrl }}" class="w-10 h-10 flex items-center justify-center -ml-2 hover:opacity-80 transition-opacity">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back_ios_new</span>
@@ -333,6 +339,7 @@
 <div class="flex-1 min-w-0 leading-tight">
 <p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ __('Subtotal') }}</p>
 <p id="cart-total" class="font-title-md text-title-md text-[var(--chrome-accent)] truncate">{{ 'Rp ' . number_format($total, 0, ',', '.') }}</p>
+<p class="text-[10px] leading-tight text-on-surface-variant truncate">{{ __('Belum termasuk ongkir & pajak') }}</p>
 </div>
 <a href="{{ route('customer.checkout') }}" class="btn-gold shrink-0 font-label-caps text-label-caps h-14 px-xl flex items-center justify-center rounded-lg uppercase tracking-widest">
 {{ __('Checkout') }}

@@ -540,7 +540,7 @@
             && in_array($payInfo->status, [\App\Models\Payment::STATUS_PENDING, \App\Models\Payment::STATUS_DITOLAK], true);
     @endphp
     @if ($canResumePay)
-        <a href="{{ route('customer.checkout.payment', $selected->checkout->checkout_id) }}" class="btn-gold mt-md w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
+        <a href="{{ route('customer.checkout.payment', ['checkout' => $selected->checkout->checkout_id, 'from' => 'tracking', 'order' => $selected->order_id]) }}" class="btn-gold mt-md w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
             <span class="material-symbols-outlined text-[20px]">{{ $payInfo->status === \App\Models\Payment::STATUS_DITOLAK ? 'upload_file' : 'payments' }}</span>
             <span>{{ $payInfo->status === \App\Models\Payment::STATUS_DITOLAK ? __('Unggah Ulang Bukti') : __('Lanjutkan Pembayaran') }}</span>
         </a>

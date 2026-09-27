@@ -59,8 +59,17 @@ class LoginController extends Controller
         }
 
         $intended = $request->input('redirect');
-        if (is_string($intended) && Str::startsWith($intended, '/') && ! Str::contains($intended, '//')) {
-            return redirect($intended);
+        if (is_string($intended) && $intended !== '') {
+            // Path relatif (aman dari open redirect)...
+            if (Str::startsWith($intended, '/') && ! Str::contains($intended, '//')) {
+                return redirect($intended);
+            }
+            // ...atau URL absolut same-origin (banyak pemanggil memakai route()).
+            $base = rtrim(url('/'), '/');
+            if (Str::startsWith($intended, $base)
+                && (strlen($intended) === strlen($base) || $intended[strlen($base)] === '/')) {
+                return redirect($intended);
+            }
         }
 
         return redirect()->intended(route(EnsureRole::homeRouteFor($user->role?->nama_role)));

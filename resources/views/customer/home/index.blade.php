@@ -337,7 +337,7 @@
 <a href="{{ route('customer.search') }}" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="search">search</span>
 </a>
-<a href="{{ route('customer.chart') }}" class="relative hover:opacity-80 transition-opacity hidden md:flex">
+<a href="{{ route('customer.chart', ['from' => 'home']) }}" class="relative hover:opacity-80 transition-opacity hidden md:flex">
 <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
 <span class="cart-badge absolute -top-1 -right-1 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
 </a>

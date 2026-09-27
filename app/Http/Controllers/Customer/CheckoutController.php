@@ -300,7 +300,7 @@ class CheckoutController extends Controller
                     ->when(Auth::check(), fn ($q) => $q->where('user_id', Auth::id()))
                     ->first();
                 if ($existing) {
-                    return redirect()->route('customer.checkout.payment', $existing->checkout_id)
+                    return redirect()->route('customer.checkout.payment', array_filter(['checkout' => $existing->checkout_id, 'buy' => request()->query('buy')]))
                         ->with('toast', ['message' => 'Pesanan sudah dibuat sebelumnya. Silakan selesaikan pembayaran.', 'icon' => 'task_alt']);
                 }
             }
@@ -530,7 +530,7 @@ class CheckoutController extends Controller
             session()->put('checkout_token_'.$submitToken, $checkout->checkout_id);
         }
 
-        $redirect = redirect()->route('customer.checkout.payment', $checkout->checkout_id)
+        $redirect = redirect()->route('customer.checkout.payment', array_filter(['checkout' => $checkout->checkout_id, 'buy' => request()->query('buy')]))
             ->with('toast', ['message' => 'Pesanan berhasil dibuat. Silakan selesaikan pembayaran.', 'icon' => 'task_alt']);
 
         if ($isNewAccount && $flashEmail) {

@@ -770,6 +770,9 @@
                 @endif
                 <form id="login-form" novalidate method="POST" action="{{ route('login') }}">
                     @csrf
+                    @if (request()->query('redirect'))
+                        <input type="hidden" name="redirect" value="{{ request()->query('redirect') }}" />
+                    @endif
                     <!-- Email -->
                     <div class="mb-sm">
                         <label class="font-label-sm text-label-sm text-on-surface block mb-xs"

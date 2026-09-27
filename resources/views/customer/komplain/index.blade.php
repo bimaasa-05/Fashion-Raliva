@@ -1377,11 +1377,20 @@ f<!DOCTYPE html>
     document.addEventListener('DOMContentLoaded', function () {
         var _drawer = document.getElementById('drawer-panel');
         if (_drawer) { _drawer.style.filter = ''; _drawer.style.pointerEvents = ''; _drawer.style.opacity = ''; }
-        // Bersihkan ?open= lama agar tidak membuka modal otomatis.
+        // Auto-open thread dari ?open= / ?order= sebelum param dibersihkan.
+        try {
+            var openId = '{{ $openId ?? 0 }}';
+            if (openId && openId !== '0') {
+                var targetCard = document.querySelector('[data-complaint-card][data-open-id="' + openId + '"]');
+                if (targetCard) { openChatFromCard(targetCard); }
+            }
+        } catch (_) {}
+        // Bersihkan ?open= & ?order= agar tidak membuka modal otomatis saat refresh/back.
         try {
             var cleanUrl = new URL(window.location.href);
-            if (cleanUrl.searchParams.has('open')) {
+            if (cleanUrl.searchParams.has('open') || cleanUrl.searchParams.has('order')) {
                 cleanUrl.searchParams.delete('open');
+                cleanUrl.searchParams.delete('order');
                 window.history.replaceState(null, '', cleanUrl.toString());
             }
         } catch (_) {}

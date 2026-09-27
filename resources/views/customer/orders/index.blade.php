@@ -375,9 +375,13 @@
 <p class="font-headline-md text-headline-md text-on-surface">Rp {{ number_format((float) $order->grand_total, 0, ',', '.') }}</p>
 </div>
 <div class="flex flex-wrap gap-sm">
-@if ($order->status === \App\Models\Order::STATUS_PENDING_PAYMENT && $order->checkout && $order->checkout->status === \App\Models\Checkout::STATUS_PENDING && in_array($order->checkout->payment?->status, [\App\Models\Payment::STATUS_PENDING, \App\Models\Payment::STATUS_DITOLAK], true))
-<a href="{{ route('customer.checkout.payment', $order->checkout->checkout_id) }}" class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-sm rounded-full uppercase tracking-widest">
-<span class="material-symbols-outlined text-[16px]">payments</span>{{ $order->checkout->payment->status === \App\Models\Payment::STATUS_DITOLAK ? __('Unggah Ulang') : __('Bayar') }}
+@if ($order->status === \App\Models\Order::STATUS_PENDING_PAYMENT && $order->checkout && in_array($order->checkout->status, [\App\Models\Checkout::STATUS_PENDING, \App\Models\Checkout::STATUS_KADALUARSA], true) && in_array($order->checkout->payment?->status, [\App\Models\Payment::STATUS_PENDING, \App\Models\Payment::STATUS_DITOLAK, \App\Models\Payment::STATUS_MENUNGGU_VERIFIKASI, \App\Models\Payment::STATUS_KADALUARSA], true))
+<a href="{{ route('customer.checkout.payment', ['checkout' => $order->checkout->checkout_id, 'from' => 'orders']) }}" class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-sm rounded-full uppercase tracking-widest">
+<span class="material-symbols-outlined text-[16px]">payments</span>{{ match (true) {
+    $order->checkout->payment->status === \App\Models\Payment::STATUS_DITOLAK => __('Unggah Ulang'),
+    in_array($order->checkout->payment->status, [\App\Models\Payment::STATUS_MENUNGGU_VERIFIKASI, \App\Models\Payment::STATUS_KADALUARSA], true) => __('Lihat Status Bayar'),
+    default => __('Bayar'),
+} }}
 </a>
 @endif
 @if (! in_array($order->status, [\App\Models\Order::STATUS_PENDING_PAYMENT, \App\Models\Order::STATUS_DIBATALKAN, \App\Models\Order::STATUS_REFUND], true))

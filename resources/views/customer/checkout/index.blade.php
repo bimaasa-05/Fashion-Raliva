@@ -530,7 +530,7 @@
     <div class="w-10"></div>
 </header>
 
-<form id="checkout-review-form" method="POST" action="{{ route('customer.checkout.store') }}" class="flex flex-col flex-1 min-h-0">
+<form id="checkout-review-form" method="POST" action="{{ route('customer.checkout.store', request()->query('buy') ? ['buy' => request()->query('buy')] : []) }}" class="flex flex-col flex-1 min-h-0">
 @csrf
 @if ($buyId > 0)
 <input type="hidden" name="buy" value="{{ $buyId }}"/>

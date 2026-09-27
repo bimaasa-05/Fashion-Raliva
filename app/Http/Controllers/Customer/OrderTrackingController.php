@@ -149,7 +149,9 @@ class OrderTrackingController extends Controller
         return view('customer.order-tracking.index', [
             'orders' => $orders,
             'selected' => $selected,
-            'selectedStep' => self::STATUS_STEPS[$selected->status] ?? 1,
+            'selectedStep' => array_key_exists($selected->status, self::STATUS_STEPS)
+                ? self::STATUS_STEPS[$selected->status]
+                : 1,
             'alasanPembatalan' => $alasanPembatalan,
             'timeline' => $timeline,
             'hasResi' => $hasResi,
