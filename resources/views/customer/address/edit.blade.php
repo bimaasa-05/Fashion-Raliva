@@ -429,7 +429,7 @@ $selectedIcon = $labelIcons[$selectedLabel] ?? 'location_on';
 </div>
 </div>
 <div class="flex flex-col sm:flex-row gap-sm pt-sm">
-<a href="{{ route('customer.address.index') }}" class="flex-1 flex items-center justify-center gap-2 py-3 rounded-full border border-outline-variant text-on-surface-variant font-label-caps text-label-caps uppercase tracking-widest hover:bg-surface-container-low hover:border-secondary hover:text-secondary transition-all duration-200">
+<a href="{{ route('customer.address.index', request()->only(['back', 'buy'])) }}" class="flex-1 flex items-center justify-center gap-2 py-3 rounded-full border border-outline-variant text-on-surface-variant font-label-caps text-label-caps uppercase tracking-widest hover:bg-surface-container-low hover:border-secondary hover:text-secondary transition-all duration-200">
 <span class="material-symbols-outlined text-[18px]">close</span>{{ __('Cancel') }}</a>
 <button type="submit" class="btn-gold flex-1 flex items-center justify-center gap-2 py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest shadow-lg">
 <span class="material-symbols-outlined text-[18px]">check</span>{{ __('Update Address') }}</button>
