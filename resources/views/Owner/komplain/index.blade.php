@@ -429,6 +429,7 @@ document.addEventListener('DOMContentLoaded', function(){
             });
         }
 
+        chatMessages = [];
         loadMessages();
         if (currentChat.polling) clearInterval(currentChat.polling);
         currentChat.polling = setInterval(loadMessages, 5000);
