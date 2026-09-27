@@ -425,5 +425,9 @@
     "Stok": "Stock",
     "Stok tersisa :n": "Only :n left in stock",
     "Jumlah minimal 1.": "Minimum quantity is 1.",
-    "Gagal memperbarui keranjang.": "Failed to update cart."
+    "Gagal memperbarui keranjang.": "Failed to update cart.",
+    "Lihat Status Bayar": "View Payment Status",
+    "Belum termasuk ongkir & pajak": "Excludes shipping & taxes",
+    "Pembayaran telah melewati batas waktu dan pesanan dibatalkan otomatis.": "The payment has passed its deadline and the order was cancelled automatically.",
+    "Belanja Lagi": "Shop Again"
 }
