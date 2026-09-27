@@ -276,7 +276,7 @@
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Pesanan') }}</span>
 </div>
 <h2 class="premium-heading font-headline-md text-headline-md text-on-surface">{{ __('Pesanan Saya') }}</h2>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-sm max-w-xl">{{ __('Semua pesanan yang pernah Anda buat. Klik "Lacak Pengiriman" untuk melihat sejauh mana pesanan Anda sampai.') }}</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-sm max-w-xl">{{ __('Semua pesanan yang pernah Anda buat. Klik "Lacak Pesanan" untuk melihat sejauh mana pesanan Anda sampai.') }}</p>
 </div>
 </section>
 
@@ -380,14 +380,9 @@
 <span class="material-symbols-outlined text-[16px]">payments</span>{{ $order->checkout->payment->status === \App\Models\Payment::STATUS_DITOLAK ? __('Unggah Ulang') : __('Bayar') }}
 </a>
 @endif
-@if ($order->status === \App\Models\Order::STATUS_SELESAI)
-<a href="{{ route('customer.komplain.create', ['order' => $order->order_id]) }}" class="inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-sm rounded-full uppercase tracking-widest border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">
-<span class="material-symbols-outlined text-[16px]">report</span>{{ __('Komplain') }}
-</a>
-@endif
 @if (! in_array($order->status, [\App\Models\Order::STATUS_PENDING_PAYMENT, \App\Models\Order::STATUS_DIBATALKAN, \App\Models\Order::STATUS_REFUND], true))
 <a href="{{ route('customer.order-tracking', ['order' => $order->order_id]) }}" class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-sm rounded-full uppercase tracking-widest">
-<span class="material-symbols-outlined text-[16px]">local_shipping</span>{{ __('Lacak Pengiriman') }}
+<span class="material-symbols-outlined text-[16px]">local_shipping</span>{{ __('Lacak Pesanan') }}
 </a>
 @endif
 </div>

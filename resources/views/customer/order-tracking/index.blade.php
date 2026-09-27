@@ -673,6 +673,30 @@ if (is_array($tl) && array_key_exists('done', $tl)) {
 <h3 class="font-title-md text-title-md text-on-surface mb-xs">{{ $detail[0] }}</h3>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $detail[1] }}</p>
 </div>
+@if ($selected->status === \App\Models\Order::STATUS_SELESAI && $selected->items->isNotEmpty())
+<div class="mt-lg flex flex-col gap-sm">
+@php $multiRatingItems = $selected->items->count() > 1; @endphp
+@foreach ($selected->items as $item)
+@php
+$rateProductId = $item->productVariant?->product_id;
+$alreadyRated = ! empty($item->review) || ($rateProductId !== null && in_array($rateProductId, ($reviewedProductIds ?? collect())->all(), true));
+@endphp
+@if ($rateProductId !== null)
+@if ($alreadyRated)
+<a href="{{ route('customer.shop.produk-riviews', $rateProductId) }}" class="w-full min-w-0 inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest border border-secondary/40 text-secondary hover:bg-secondary/5 transition-colors">
+<span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="truncate">{{ __('Lihat rating') }}@if ($multiRatingItems) <span class="opacity-70">• {{ $item->nama_produk_snapshot }}</span>@endif</span>
+</a>
+@else
+<a href="{{ route('customer.reviews.create', ['order_item' => $item->order_item_id]) }}" class="btn-gold w-full min-w-0 inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest">
+<span class="material-symbols-outlined text-[18px]">rate_review</span>
+<span class="truncate">{{ __('Beri rating') }}@if ($multiRatingItems) <span class="opacity-70">• {{ $item->nama_produk_snapshot }}</span>@endif</span>
+</a>
+@endif
+@endif
+@endforeach
+</div>
+@endif
 @if (in_array($selected->status, [\App\Models\Order::STATUS_DIKIRIM, \App\Models\Order::STATUS_SELESAI]))
 <div class="mt-lg flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-sm">
 @if ($selected->status === \App\Models\Order::STATUS_DIKIRIM)

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\Notification;
 use App\Models\Order;
+use App\Models\Review;
 use App\Support\WalletService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -71,6 +72,7 @@ class OrderTrackingController extends Controller
             ->with([
                 'store',
                 'items.productVariant.product.images',
+                'items.review',
                 'shipments.courier',
                 'refunds',
                 'complaints',
@@ -141,6 +143,9 @@ class OrderTrackingController extends Controller
         // Komplain existing pesanan terpilih (satu pesanan = satu komplain).
         $existingComplaint = $selected->complaints->sortByDesc('complaint_id')->first();
 
+        // Produk yang sudah pernah dinilai user — menentukan tombol "Beri rating" / "Lihat rating" per item.
+        $reviewedProductIds = Review::where('user_id', Auth::id())->pluck('product_id');
+
         return view('customer.order-tracking.index', [
             'orders' => $orders,
             'selected' => $selected,
@@ -150,6 +155,7 @@ class OrderTrackingController extends Controller
             'hasResi' => $hasResi,
             'isPickup' => $isPickup,
             'existingComplaint' => $existingComplaint,
+            'reviewedProductIds' => $reviewedProductIds,
         ]);
     }
 

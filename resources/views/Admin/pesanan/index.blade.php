@@ -513,7 +513,7 @@
                                         class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Tgl
                                         Mulai Produksi *</label>
                                     <input type="datetime-local" name="tgl_mulai_produksi" required
-                                        class="raliva-input w-full" />
+                                        data-rdp-chain="tgl_berakhir_produksi" class="raliva-input w-full" />
                                 </div>
                                 <div>
                                     <label
