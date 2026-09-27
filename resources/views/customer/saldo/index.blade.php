@@ -378,14 +378,14 @@
                                         <td class="py-3 pr-md">
                                             <span class="inline-flex items-center gap-1">
                                                 <span class="material-symbols-outlined text-[16px] text-on-surface-variant">
-                                                    {{ $trx->jenis_transaksi === \App\Models\CustomerWalletTransaction::JENIS_TOPUP ? 'add_circle' : ($trx->jenis_transaksi === \App\Models\CustomerWalletTransaction::JENIS_REFUND_MASUK ? 'undo' : 'remove_circle') }}
+                                                    {{ in_array($trx->jenis_transaksi, [\App\Models\CustomerWalletTransaction::JENIS_TOPUP, \App\Models\CustomerWalletTransaction::JENIS_PENARIKAN_MASUK], true) ? 'add_circle' : ($trx->jenis_transaksi === \App\Models\CustomerWalletTransaction::JENIS_REFUND_MASUK ? 'undo' : 'remove_circle') }}
                                                 </span>
                                                 <span>{{ ['topup' => __('Top Up'), 'pembayaran_keluar' => __('Order Payment'), 'refund_masuk' => __('Refund Received'), 'penyesuaian' => __('Adjustment'), 'penarikan_keluar' => __('Withdrawal Sent'), 'penarikan_masuk' => __('Withdrawal Received')][$trx->jenis_transaksi] ?? $trx->jenis_transaksi }}</span>
                                             </span>
                                         </td>
                                         <td class="py-3 pr-md font-semibold tabular-nums whitespace-nowrap
-                                            @if (in_array($trx->jenis_transaksi, [\App\Models\CustomerWalletTransaction::JENIS_TOPUP, \App\Models\CustomerWalletTransaction::JENIS_REFUND_MASUK], true)) text-emerald-700 @else text-red-700 @endif">
-                                            @if (in_array($trx->jenis_transaksi, [\App\Models\CustomerWalletTransaction::JENIS_TOPUP, \App\Models\CustomerWalletTransaction::JENIS_REFUND_MASUK], true)) + @else - @endif
+                                            @if (in_array($trx->jenis_transaksi, [\App\Models\CustomerWalletTransaction::JENIS_TOPUP, \App\Models\CustomerWalletTransaction::JENIS_REFUND_MASUK, \App\Models\CustomerWalletTransaction::JENIS_PENARIKAN_MASUK], true)) text-emerald-700 @else text-red-700 @endif">
+                                            @if (in_array($trx->jenis_transaksi, [\App\Models\CustomerWalletTransaction::JENIS_TOPUP, \App\Models\CustomerWalletTransaction::JENIS_REFUND_MASUK, \App\Models\CustomerWalletTransaction::JENIS_PENARIKAN_MASUK], true)) + @else - @endif
                                             Rp {{ number_format((float) $trx->jumlah, 0, ',', '.') }}
                                         </td>
                                         <td class="py-3 text-on-surface tabular-nums whitespace-nowrap">Rp {{ number_format((float) $trx->saldo_sesudah, 0, ',', '.') }}</td>
