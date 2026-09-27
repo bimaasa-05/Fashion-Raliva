@@ -339,6 +339,7 @@
 <div class="flex-1 min-w-0 leading-tight">
 <p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ __('Subtotal') }}</p>
 <p id="cart-total" class="font-title-md text-title-md text-[var(--chrome-accent)] truncate">{{ 'Rp ' . number_format($total, 0, ',', '.') }}</p>
+<p class="text-[10px] leading-tight text-on-surface-variant truncate">{{ __('Belum termasuk ongkir & pajak') }}</p>
 </div>
 <a href="{{ route('customer.checkout') }}" class="btn-gold shrink-0 font-label-caps text-label-caps h-14 px-xl flex items-center justify-center rounded-lg uppercase tracking-widest">
 {{ __('Checkout') }}
