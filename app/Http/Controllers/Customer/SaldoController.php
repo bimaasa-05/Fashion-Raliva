@@ -59,12 +59,16 @@ class SaldoController extends Controller
             ->whereIn('jenis_transaksi', [
                 CustomerWalletTransaction::JENIS_TOPUP,
                 CustomerWalletTransaction::JENIS_REFUND_MASUK,
+                CustomerWalletTransaction::JENIS_PENARIKAN_MASUK,
             ])
             ->where('created_at', '>=', $since)
             ->get(['jumlah', 'created_at']);
 
         $transaksiKeluar = $wallet->transactions()
-            ->where('jenis_transaksi', CustomerWalletTransaction::JENIS_PEMBAYARAN_KELUAR)
+            ->whereIn('jenis_transaksi', [
+                CustomerWalletTransaction::JENIS_PEMBAYARAN_KELUAR,
+                CustomerWalletTransaction::JENIS_PENARIKAN_KELUAR,
+            ])
             ->where('created_at', '>=', $since)
             ->get(['jumlah', 'created_at']);
 
