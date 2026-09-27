@@ -253,7 +253,13 @@
   </head>
 <body class="bg-background text-on-background min-h-screen flex flex-col font-body-lg lg:pl-72">
 <!-- TopAppBar (Small Center Aligned) -->
-@php $chartBackUrl = request('from') === 'wishlist' ? route('customer.wishlist') : route('customer.shop'); @endphp
+@php
+    $chartFrom = request('from');
+    $chartBackUrl = $chartFrom === 'wishlist' ? route('customer.wishlist')
+        : ($chartFrom === 'search' ? route('customer.search')
+        : ($chartFrom === 'home' ? route('customer.home')
+        : ($chartFrom === 'product' && request('product') ? route('customer.shop.produk-detail', (int) request('product')) : route('customer.shop'))));
+@endphp
 <header class="bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 pt-safe border-b border-[var(--chrome-border)] sticky top-0 z-40">
 <a href="{{ $chartBackUrl }}" class="w-10 h-10 flex items-center justify-center -ml-2 hover:opacity-80 transition-opacity">
 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 0;">arrow_back_ios_new</span>
