@@ -29,8 +29,10 @@ class SettingsController extends Controller
             $request->session()->invalidate();
             $request->session()->regenerateToken();
 
-            return redirect()->route('home')
-                ->with('status', 'Akun Anda berhasil dihapus.');
+            // route('home') tidak ada (hanya customer.home) → pakai login
+            // yang menampilkan session('success') setelah akun dihapus.
+            return redirect()->route('login')
+                ->with('success', 'Akun Anda berhasil dihapus.');
         } catch (\Throwable $e) {
             DB::rollBack();
 
