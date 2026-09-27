@@ -997,6 +997,20 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                     <p class="font-body-sm text-body-sm text-on-surface-variant">
                         {{ __('Pembayaran telah diverifikasi. Pesanan Anda sedang diproses.') }}</p>
                 </div>
+            @elseif ($payment->status === \App\Models\Payment::STATUS_KADALUARSA)
+                <div
+                    class="bg-surface-container-low border border-error rounded-xl p-md mb-lg flex items-center gap-sm reveal-up">
+                    <span class="material-symbols-outlined text-error">schedule</span>
+                    <div class="flex-1">
+                        <p class="font-body-sm text-body-sm text-error">
+                            {{ __('Pembayaran telah melewati batas waktu dan pesanan dibatalkan otomatis.') }}
+                        </p>
+                        <a href="{{ route('customer.shop') }}"
+                            class="btn-gold inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-xs rounded-full uppercase tracking-widest mt-sm">
+                            <span class="material-symbols-outlined text-[16px]">shopping_bag</span>{{ __('Belanja Lagi') }}
+                        </a>
+                    </div>
+                </div>
             @endif
 
             @if ($errors->any())
