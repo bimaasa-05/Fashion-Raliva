@@ -79,10 +79,15 @@ class ProduksiRekapConnectTest extends TestCase
         $order = Order::whereHas('checkout', fn ($q) => $q->where('email_pelanggan', $email))->firstOrFail();
         $order->update(['status' => Order::STATUS_DIPROSES, 'produksi_dimulai_pada' => null]);
 
-        $produksi = User::whereHas('role', fn ($q) => $q->where('nama_role', Role::PRODUKSI))
-            ->whereHas('storeAssignments', fn ($q) => $q->where('store_id', $storeId)->where('status', 'aktif'))
-            ->where('status', User::STATUS_AKTIF)
-            ->firstOrFail();
+        // User produksi khusus uji ini agar hitungan rekap tidak tercemar data manual lain.
+        $produksi = User::create([
+            'role_id' => Role::where('nama_role', Role::PRODUKSI)->firstOrFail()->role_id,
+            'nama_lengkap' => 'Produksi Conn '.$prefix,
+            'email' => 'produksi-conn-'.Str::random(8).'@example.com',
+            'password' => bcrypt('secret123'),
+            'status' => User::STATUS_AKTIF,
+        ]);
+        StoreStaff::create(['store_id' => $storeId, 'user_id' => $produksi->user_id, 'status' => 'aktif']);
 
         $this->flushSession();
         $this->actingAs($produksi)->post(route('produksi.data-produksi.accept', $order->order_id))
