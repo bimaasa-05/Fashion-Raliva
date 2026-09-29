@@ -20,7 +20,18 @@ class ShopController extends Controller
      */
     public function index()
     {
-        $products = Product::query()
+        // Produk iklan diambil lebih dulu: tampil di grid yang sama
+        // (kartu biasa) dan dikeluarkan dari daftar produk agar tidak dobel.
+        // activeProducts() mengembalikan base Collection → bungkus dulu agar
+        // loadMissing() (method Eloquent Collection) bisa dipakai.
+        $ads = AdSlot::activeProducts(10);
+        \Illuminate\Database\Eloquent\Collection::make($ads)->loadMissing([
+            'category:category_id,nama_kategori,parent_id',
+            'category.parent:category_id,nama_kategori',
+        ]);
+        $adIds = $ads->pluck('product_id');
+
+        $query = Product::query()
             ->where('status', Product::STATUS_AKTIF)
             ->whereHas('store', fn ($q) => $q->where('status', Store::STATUS_AKTIF))
             ->with([
@@ -29,9 +40,13 @@ class ShopController extends Controller
                 'category.parent:category_id,nama_kategori',
                 'images' => fn ($q) => $q->orderBy('urutan'),
                 'variants' => fn ($q) => $q->where('status', 'aktif'),
-            ])
-            ->latest()
-            ->get();
+            ]);
+
+        if ($adIds->isNotEmpty()) {
+            $query->whereNotIn('products.product_id', $adIds->all());
+        }
+
+        $products = $query->latest()->get();
 
         $popularCounts = DB::table('order_items')
             ->join('product_variants as pv', 'pv.product_variant_id', '=', 'order_items.product_variant_id')
@@ -41,11 +56,13 @@ class ShopController extends Controller
             ->selectRaw('pv.product_id, SUM(order_items.quantity) as popular_count')
             ->pluck('popular_count', 'product_id');
 
+        $ads->each(function ($p) use ($popularCounts) {
+            $p->popular_count = (int) ($popularCounts[$p->product_id] ?? 0);
+            $p->is_sponsored = true;
+        });
         $products->each(fn ($p) => $p->popular_count = (int) ($popularCounts[$p->product_id] ?? 0));
 
-        $totalProducts = $products->count();
-
-        $ads = AdSlot::activeProducts(10);
+        $totalProducts = $products->count() + $ads->count();
 
         $wishlistedIds = $this->wishlistedIds();
         $cartCount = \App\Http\Controllers\Customer\CartController::countForUser(Auth::id());

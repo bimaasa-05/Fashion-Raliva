@@ -172,7 +172,20 @@ class AdSlot extends Model
             ->orderByDesc('nominal_bid')
             ->limit(max(1, $limit))
             ->get()
-            ->pluck('product')
+            // Satu produk bisa punya >1 slot aktif (periode overlap) → tampil
+            // sekali saja; sort nominal_bid desc berarti kemunculan pertama
+            // = bid tertinggi. Nilai bid dibawa ke model produk (ad_bid) untuk
+            // keperluan peringkat di grid toko.
+            ->unique('product_id')
+            ->map(function ($slot) {
+                $product = $slot->product;
+
+                if ($product !== null) {
+                    $product->ad_bid = (float) $slot->nominal_bid;
+                }
+
+                return $product;
+            })
             ->filter()
             ->values();
     }

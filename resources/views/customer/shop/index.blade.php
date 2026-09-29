@@ -410,22 +410,24 @@
     <div class="shop-category-nav flex-1 min-w-0 flex items-center gap-sm overflow-x-auto hide-scrollbar">
         <button type="button" data-cat="All" onclick="selectCategory(null)" class="cat-pill shrink-0 px-md py-xs border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5">{{ __('All') }}</button>
 @php
-    $parentCats = $products
+    // Opsi filter dihitung dari seluruh kartu yang tampil (iklan + produk).
+    $allItems = $ads->concat($products);
+    $parentCats = $allItems
         ->map(fn ($p) => $p->category?->parent?->nama_kategori ?? $p->category?->nama_kategori)
         ->filter()
         ->unique()
         ->values();
-    $filterSizes = $products
+    $filterSizes = $allItems
         ->flatMap(fn ($p) => $p->variants->pluck('ukuran'))
         ->filter()
         ->unique()
         ->values();
-    $filterColors = $products
+    $filterColors = $allItems
         ->flatMap(fn ($p) => $p->variants->pluck('warna'))
         ->filter(fn ($warna) => trim((string) $warna) !== '')
         ->unique()
         ->values();
-    $colorHexMap = $products
+    $colorHexMap = $allItems
         ->flatMap(fn ($p) => $p->variants)
         ->groupBy(fn ($v) => mb_strtolower(trim((string) $v->warna)))
         ->map(fn ($vs) => \App\Support\WarnaPalet::resolve($vs->first()->warna_hex, $vs->first()->warna) ?? '')
@@ -478,58 +480,18 @@
 </div>
 <!-- Shop Content Container -->
 <div class="mx-auto max-w-[1400px] px-container-margin shop-content-wrap">
-<div id="shop-content-box" class="shop-content-container bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium{{ $products->count() ? '' : ' is-empty' }}">
+<div id="shop-content-box" class="shop-content-container bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium{{ ($products->count() + $ads->count()) ? '' : ' is-empty' }}">
 <!-- Shop Header -->
 <div class="flex items-center justify-between gap-md mb-md flex-wrap shop-content-header">
 <div class="atl-eyebrow">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary shop-content-heading">{{ __('Shop') }}</span>
 </div>
-<div class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Showing') }} <span id="result-count" data-ads="{{ count($ads) }}">{{ min(count($ads) + $products->count(), 6) }}</span> {{ __('items') }}</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Showing') }} <span id="result-count">{{ min(count($ads) + $products->count(), 6) }}</span> {{ __('items') }}</div>
 </div>
-@if (count($ads))
-<!-- Sponsored Ads -->
-<div class="mb-md">
-<div class="flex items-center justify-between gap-md mb-sm">
-<span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary inline-flex items-center gap-xs"><span class="material-symbols-outlined text-[18px]" data-icon="campaign">campaign</span>{{ __('Sponsored') }}</span>
-<span class="font-body-sm text-body-sm text-on-surface-variant">{{ __('Iklan') }}</span>
-</div>
-<div id="ad-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-gutter">
-@foreach ($ads as $a)
-@php
-    $sMin = $a->variants->min('harga') ?? $a->harga_dasar;
-    $sImg = $a->images->first()->file_gambar ?? '';
-    $sImgUrl = $sImg ? (photo_url($sImg)) : 'https://picsum.photos/seed/shopad/900/1200';
-    $sWl = in_array($a->product_id, $wishlistedIds, true);
-    $sDefaultVariant = $a->variants->sortBy('harga')->first();
-@endphp
-<div class="relative flex flex-col group cursor-pointer">
-<a href="{{ route('customer.shop.produk-detail', $a->product_id) }}" class="flex flex-col group cursor-pointer">
-<div class="relative w-full aspect-[3/4] bg-surface-container mb-sm overflow-hidden rounded">
-<img class="w-full h-full object-cover " loading="lazy" decoding="async" alt="{{ $a->nama_produk }}" src="{{ $sImgUrl }}"/>
-<span class="absolute top-2 left-2 bg-secondary text-on-secondary text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">{{ __('Iklan') }}</span>
-</div>
-<div class="flex items-center justify-between gap-1 min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $a->store?->nama_toko ?? __('RALIVA') }}</span>
-@if ($sDefaultVariant)
-<button type="button" data-cart-add data-variant-id="{{ $sDefaultVariant->product_variant_id }}" aria-label="{{ __('Add to cart') }}" class="text-on-surface hover:text-secondary transition-colors flex items-center shrink-0">
-<span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
-</button>
-@endif
-</div>
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $a->nama_produk }}</h3>
-<span class="font-body-sm text-body-sm text-on-surface">Rp {{ number_format($sMin, 0, ',', '.') }}</span>
-</a>
-<button data-wishlist-toggle data-product-id="{{ $a->product_id }}" aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors{{ $sWl ? ' wishlisted-active' : '' }}">
-<span class="material-symbols-outlined" data-icon="favorite{{ $sWl ? '' : '_border' }}"@if($sWl) data-weight="fill"@endif>favorite{{ $sWl ? '' : '_border' }}</span>
-</button>
-</div>
-@endforeach
-</div>
-</div>
-@endif
 <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-gutter" style="background-color: transparent;">
-@forelse ($products as $p)
+@forelse ($ads->concat($products) as $p)
 @php
+    $isAd = ! empty($p->is_sponsored);
     $parentCat = $p->category?->parent?->nama_kategori ?? $p->category?->nama_kategori;
     $sizes = $p->variants->pluck('ukuran')->unique()->implode('|');
     $colors = $p->variants->pluck('warna')->filter(fn ($warna) => trim((string) $warna) !== '')->unique()->implode('|');
@@ -538,9 +500,12 @@
     $defaultVariant = $p->variants->sortBy('harga')->first();
 @endphp
 <!-- Product -->
-<a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col group cursor-pointer" data-category="{{ $parentCat }}" data-size="{{ $sizes }}" data-color="{{ $colors }}" data-price="{{ $minPrice }}" data-created="{{ $p->created_at?->getTimestamp() ?? 0 }}" data-popular="{{ $p->popular_count ?? 0 }}">
+<a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col group cursor-pointer" data-ad="{{ $isAd ? 1 : 0 }}" data-bid="{{ (float) ($p->ad_bid ?? 0) }}" data-category="{{ $parentCat }}" data-size="{{ $sizes }}" data-color="{{ $colors }}" data-price="{{ $minPrice }}" data-created="{{ $p->created_at?->getTimestamp() ?? 0 }}" data-popular="{{ $p->popular_count ?? 0 }}">
 <div class="relative w-full aspect-[3/4] bg-surface-container mb-sm overflow-hidden rounded">
-<img class="w-full h-full object-cover " loading="lazy" decoding="async" alt="{{ $p->nama_produk }}" src="{{ $firstImage ? (photo_url($firstImage)) : 'https://picsum.photos/seed/product/900/1200' }}"/>
+<img class="w-full h-full object-cover " loading="lazy" decoding="async" alt="{{ $p->nama_produk }}" src="{{ $firstImage ? (photo_url($firstImage)) : ($isAd ? 'https://picsum.photos/seed/shopad/900/1200' : 'https://picsum.photos/seed/product/900/1200') }}"/>
+@if ($isAd)
+<span class="absolute top-2 left-2 bg-secondary text-on-secondary text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">{{ __('Iklan') }}</span>
+@endif
 @php $isWl = in_array($p->product_id, $wishlistedIds, true); @endphp
 <button data-wishlist-toggle data-product-id="{{ $p->product_id }}" aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors{{ $isWl ? ' wishlisted-active' : '' }}">
 <span class="material-symbols-outlined" data-icon="favorite{{ $isWl ? '' : '_border' }}"@if($isWl) data-weight="fill"@endif>favorite{{ $isWl ? '' : '_border' }}</span>
@@ -855,16 +820,9 @@
         }
         function applyGridFilter() {
             var countEl = document.getElementById('result-count');
-            var adsCount = countEl ? (parseInt(countEl.getAttribute('data-ads') || '0', 10) || 0) : 0;
-            var adCards = document.querySelectorAll('#ad-grid > div');
             var cards = document.querySelectorAll('#product-grid > a');
             var visibleCount = 0;
             var matched = 0;
-            adCards.forEach(function (ad, i) {
-                var vis = i < revealedCount;
-                ad.style.display = vis ? '' : 'none';
-                if (vis) visibleCount++;
-            });
             cards.forEach(function (card) {
                 var catRaw = (card.getAttribute('data-category') || '').trim();
                 var sizes = (card.getAttribute('data-size') || '').split('|').map(function (s) { return s.trim(); });
@@ -878,7 +836,7 @@
                 if (activeFilters.price.max !== null && price > activeFilters.price.max) ok = false;
                 var visible = false;
                 if (ok) {
-                    visible = (adsCount + matched) < revealedCount;
+                    visible = matched < revealedCount;
                     matched++;
                 }
                 card.style.display = visible ? '' : 'none';
@@ -899,13 +857,10 @@
             var wrap = document.getElementById('load-more-wrap');
             var btn = document.getElementById('load-more-btn');
             if (!wrap || !btn) return;
-            var countEl = document.getElementById('result-count');
-            var adsCount = countEl ? (parseInt(countEl.getAttribute('data-ads') || '0', 10) || 0) : 0;
             var matched = (typeof window.__shopMatched === 'number') ? window.__shopMatched : 0;
-            var totalItems = adsCount + matched;
-            var show = totalItems > revealedCount;
+            var show = matched > revealedCount;
             btn.style.display = show ? 'inline-flex' : 'none';
-            wrap.classList.toggle('hidden', totalItems === 0);
+            wrap.classList.toggle('hidden', matched === 0);
         }
         function loadMoreProducts() {
             var btn = document.getElementById('load-more-btn');
@@ -931,6 +886,20 @@
             if (!grid) return;
             var cards = Array.prototype.slice.call(grid.children);
             cards.sort(function (a, b) {
+                // Tier 1: produk beriklan selalu di atas produk biasa, apa pun sort-nya.
+                var aAd = a.dataset.ad === '1';
+                var bAd = b.dataset.ad === '1';
+                if (aAd !== bAd) return aAd ? -1 : 1;
+                if (aAd) {
+                    // Di dalam tier iklan: nominal bid tertinggi dulu; bid sama → terbaru.
+                    var bidDiff = (parseFloat(b.dataset.bid) || 0) - (parseFloat(a.dataset.bid) || 0);
+                    if (bidDiff) return bidDiff;
+                    var aCreated = parseInt(a.dataset.created, 10) || 0;
+                    var bCreated = parseInt(b.dataset.created, 10) || 0;
+                    if (aCreated !== bCreated) return bCreated - aCreated;
+                    return 0;
+                }
+                // Tier 2: produk biasa menurut sort yang dipilih.
                 if (currentSort === 'Price: Low to High') return (parseInt(a.dataset.price, 10) || 0) - (parseInt(b.dataset.price, 10) || 0);
                 if (currentSort === 'Price: High to Low') return (parseInt(b.dataset.price, 10) || 0) - (parseInt(a.dataset.price, 10) || 0);
                 if (currentSort === 'Popular') return (parseInt(b.dataset.popular, 10) || 0) - (parseInt(a.dataset.popular, 10) || 0);
