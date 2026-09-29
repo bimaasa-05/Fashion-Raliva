@@ -355,7 +355,7 @@
 <a aria-label="{{ __('Back to home') }}" title="{{ __('Kembali ke Home') }}" href="{{ route('customer.home') }}" class="atl-chip w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-secondary hover:text-secondary flex items-center justify-center">
 <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4.5l8 7"/><path d="M6.5 10.2V19h11v-8.8"/><path d="M10.7 19v-4.4h2.6V19"/></svg>
 </a>
-<button id="theme-toggle-btn" aria-label="Toggle theme" title="Mode gelap" type="button" onclick="toggleTheme()" class="atl-chip w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-secondary hover:text-secondary flex items-center justify-center">
+<button id="theme-toggle-btn" aria-label="{{ __('Toggle theme') }}" title="{{ __('Mode gelap') }}" data-title-dark="{{ __('Mode gelap') }}" data-title-light="{{ __('Mode terang') }}" type="button" onclick="toggleTheme()" class="atl-chip w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-secondary hover:text-secondary flex items-center justify-center">
 <span class="relative block h-5 w-5">
 <svg class="atl-ic-sun absolute inset-0 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 3v1.8M12 19.2V21M3 12h1.8M19.2 12H21M5.64 5.64l1.27 1.27M17.09 17.09l1.27 1.27M18.36 5.64l-1.27 1.27M6.91 17.09l-1.27 1.27"/></svg>
 <svg class="atl-ic-moon absolute inset-0 h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79Z"/><circle cx="17.5" cy="5.5" r=".75" fill="currentColor" stroke="none"/><circle cx="20.5" cy="9.5" r=".55" fill="currentColor" stroke="none"/></svg>
@@ -440,7 +440,7 @@
         function updateThemeChipTitle() {
             var b = document.getElementById('theme-toggle-btn');
             if (!b) return;
-            b.title = document.documentElement.classList.contains('theme-dark') ? 'Mode terang' : 'Mode gelap';
+            b.title = document.documentElement.classList.contains('theme-dark') ? (b.dataset.titleLight || 'Mode terang') : (b.dataset.titleDark || 'Mode gelap');
         }
         updateThemeChipTitle();
         window.addEventListener('pageshow', function (e) {

@@ -48,10 +48,10 @@
 <p class="font-label-sm text-label-sm text-[var(--chrome-text-dim)] tracking-wide mt-1">{{ __('The Art of Everyday Dressing') }}</p>
 </div>
 <div class="flex items-center gap-xs shrink-0">
-<button aria-label="Toggle theme" class="w-9 h-9 rounded-full hover:bg-[var(--chrome-hover)] flex items-center justify-center transition-colors" onclick="toggleTheme()" type="button">
+<button aria-label="{{ __('Toggle theme') }}" class="w-9 h-9 rounded-full hover:bg-[var(--chrome-hover)] flex items-center justify-center transition-colors" onclick="toggleTheme()" type="button">
 <span class="material-symbols-outlined" data-icon="dark_mode" id="theme-icon">dark_mode</span>
 </button>
-<button aria-label="Close menu" class="w-9 h-9 rounded-full hover:bg-[var(--chrome-hover)] flex items-center justify-center transition-colors lg:hidden" onclick="closeDrawer()" type="button">
+<button aria-label="{{ __('Close menu') }}" class="w-9 h-9 rounded-full hover:bg-[var(--chrome-hover)] flex items-center justify-center transition-colors lg:hidden" onclick="closeDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="close">close</span>
 </button>
 </div>
@@ -91,7 +91,7 @@
 </div>
 <nav class="flex-grow overflow-y-auto py-sm">
 <div class="drawer-sec">
-<h3 class="font-label-caps text-label-caps text-[var(--chrome-text-faint)] uppercase tracking-widest px-lg pt-sm pb-xs">Menu Utama</h3>
+<h3 class="font-label-caps text-label-caps text-[var(--chrome-text-faint)] uppercase tracking-widest px-lg pt-sm pb-xs">{{ __('Menu Utama') }}</h3>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.home') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.home') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">home</span>
             {{ __('Home') }}
@@ -119,7 +119,7 @@
         </a>
 </div>
 <div class="drawer-sec border-t border-[var(--chrome-border)]">
-<h3 class="font-label-caps text-label-caps text-[var(--chrome-text-faint)] uppercase tracking-widest px-lg pt-md pb-xs">Akun</h3>
+<h3 class="font-label-caps text-label-caps text-[var(--chrome-text-faint)] uppercase tracking-widest px-lg pt-md pb-xs">{{ __('Akun') }}</h3>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.account') || request()->routeIs('customer.account.edit') || request()->routeIs('customer.account.password') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.account') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">person</span>
             {{ __('My Account') }}
@@ -127,7 +127,7 @@
         </a>
 </div>
 <div class="drawer-sec border-t border-[var(--chrome-border)]">
-<h3 class="font-label-caps text-label-caps text-[var(--chrome-text-faint)] uppercase tracking-widest px-lg pt-md pb-xs">Bantuan</h3>
+<h3 class="font-label-caps text-label-caps text-[var(--chrome-text-faint)] uppercase tracking-widest px-lg pt-md pb-xs">{{ __('Bantuan') }}</h3>
 <a class="mx-sm px-md py-sm rounded-full font-body-lg text-body-lg transition-colors flex items-center gap-sm {{ request()->routeIs('customer.help') ? 'drawer-link-active' : 'text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)]' }}" href="{{ route('customer.help') }}">
 <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)]">help_outline</span>
             {{ __('Help Center') }}
