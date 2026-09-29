@@ -30,7 +30,7 @@
         <span class="material-symbols-outlined text-gold-accent mt-0.5">info</span>
         <div class="text-sm text-on-surface">
             <p class="font-bold">Tabel berubah mengikuti filter role: Owner (ROI), Admin (CR/AOV/LTV/rating), Produksi (unit/durasi/keberhasilan), Gudang (transfer/stok).</p>
-            <p class="text-on-surface-variant text-xs mt-1">Closing Rate = pesanan selesai / seluruh order yang pernah ditangani karyawan. LTV = pendapatan / customer unik yang ditangani. Rating Admin adalah proxy dari ulasan pada order yang pembayarannya diverifikasi karyawan tersebut. ROI = laba bersih / total investasi (kategori Modal, Investor, dan biaya iklan).</p>
+            <p class="text-on-surface-variant text-xs mt-1">Closing Rate = pesanan selesai / seluruh order yang pernah ditangani karyawan. LTV = pendapatan / customer unik yang ditangani. Rating Admin adalah proxy dari ulasan pada order yang pembayarannya diverifikasi karyawan tersebut. ROI = laba bersih / total investasi. Investasi = modal pribadi Owner/Admin (kategori Modal, Investor) + biaya iklan — bukan dana investor luar.</p>
         </div>
     </section>
 
@@ -53,6 +53,17 @@
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">{{ $stat[3] }}</span>
             </div>
         @endforeach
+        @if ($roleFilter === 'owner')
+            @php
+                $barisOwner = $rows->firstWhere('role', 'owner');
+                $aovToko = $barisOwner['aov_toko'] ?? null;
+            @endphp
+            <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium col-span-2 xl:col-span-4">
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">AOV Toko (Pending + Dibayar + Selesai)</span>
+                <span class="raliva-figure text-[26px] text-secondary">{{ $aovToko !== null ? 'Rp '.number_format($aovToko, 0, ',', '.') : '—' }}</span>
+                <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">shopping_cart</span>
+            </div>
+        @endif
     </section>
 
     {{-- Tabel Rekap --}}
@@ -176,7 +187,7 @@
                                 <td class="py-3.5 px-4 text-right text-on-surface">{{ $r['rata_durasi_jam'] !== null ? number_format($r['rata_durasi_jam'], 1, ',', '.').' jam' : '—' }}</td>
                                 <td class="py-3.5 px-4 text-right font-bold text-secondary">{{ $r['sukses_persen'] !== null ? number_format($r['sukses_persen'], 2, ',', '.').'%' : '—' }}</td>
                             @else
-                                <td class="py-3.5 px-4 text-right text-on-surface">{{ number_format($r['transfer_diminta'],0,',','.') }} <span class="text-on-surface-variant text-xs">({{ $r['transfer_selesai'] }} ok / {{ $r['transfer_batal'] }} btl)</span></td>
+                                <td class="py-3.5 px-4 text-right text-on-surface">{{ number_format($r['transfer_diminta'],0,',','.') }} <span class="text-on-surface-variant text-xs">({{ $r['transfer_selesai'] }} ok / {{ $r['transfer_batal'] }} btl / {{ $r['transfer_disetujui'] ?? 0 }} setuju)</span></td>
                                 <td class="py-3.5 px-4 text-right text-on-surface">{{ $r['rata_putaran_jam'] !== null ? number_format($r['rata_putaran_jam'], 1, ',', '.').' jam' : '—' }}</td>
                                 <td class="py-3.5 px-4 text-right font-bold text-secondary">{{ $r['akurasi_persen'] !== null ? number_format($r['akurasi_persen'], 2, ',', '.').'%' : '—' }}</td>
                                 <td class="py-3.5 px-4 text-right text-error">{{ number_format($r['kerusakan_qty'],0,',','.') }} <span class="text-on-surface-variant text-xs">({{ $r['kerusakan'] }}x)</span></td>
@@ -300,13 +311,13 @@
         <p class="text-xs text-on-surface-variant mt-6 pt-5 border-t border-muted-border flex items-start gap-2">
             <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 shrink-0">info</span>
             @if ($roleFilter === 'owner')
-                ROI = laba bersih / total investasi (kategori Modal, Investor, dan biaya iklan) per pemilik toko.{{ !empty($dari) || !empty($sampai) ? ' Periode: '.($dari ?? 'awal').' s/d '.($sampai ?? 'sekarang').'.' : '' }}
+                ROI = laba bersih / total investasi. Investasi = modal pribadi Owner/Admin (kategori Modal, Investor) + biaya iklan — bukan dana investor luar.{{ !empty($dari) || !empty($sampai) ? ' Periode: '.($dari ?? 'awal').' s/d '.($sampai ?? 'sekarang').'.' : '' }}
             @elseif ($roleFilter === 'admin')
                 CR = pesanan selesai / seluruh order yang pernah ditangani karyawan. LTV = pendapatan / customer unik yang ditangani. Rating adalah proxy dari ulasan pada order yang pembayarannya diverifikasi karyawan tersebut, bukan bukti pelayanan langsung.{{ !empty($dari) || !empty($sampai) ? ' Periode: '.($dari ?? 'awal').' s/d '.($sampai ?? 'sekarang').'.' : '' }}
             @elseif ($roleFilter === 'produksi')
-                Metrik dihitung dari production order yang ditugaskan ke karyawan (assigned_to). Durasi hanya dari order selesai yang memiliki tanggal mulai dan selesai valid.{{ !empty($dari) || !empty($sampai) ? ' Periode: '.($dari ?? 'awal').' s/d '.($sampai ?? 'sekarang').'.' : '' }}
+                Metrik dihitung dari pesanan yang di-accept karyawan (produksi_oleh). Durasi hanya dari order selesai yang memiliki tanggal mulai dan selesai valid.{{ !empty($dari) || !empty($sampai) ? ' Periode: '.($dari ?? 'awal').' s/d '.($sampai ?? 'sekarang').'.' : '' }}
             @else
-                Transfer diatribusikan ke peminta, bukan penyetuju. Akurasi = opname tanpa selisih / total opname.{{ !empty($dari) || !empty($sampai) ? ' Periode: '.($dari ?? 'awal').' s/d '.($sampai ?? 'sekarang').'.' : '' }}
+                Transfer diminta & disetujui tercatat per karyawan (diminta oleh peminta, disetujui oleh penyetuju). Akurasi = opname tanpa selisih / total opname.{{ !empty($dari) || !empty($sampai) ? ' Periode: '.($dari ?? 'awal').' s/d '.($sampai ?? 'sekarang').'.' : '' }}
             @endif
         </p>
     </section>
