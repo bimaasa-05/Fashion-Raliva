@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Customer;
 
 use App\Http\Controllers\Controller;
+use App\Models\Notification;
 use App\Models\Store;
 use App\Models\StoreFollow;
 use Illuminate\Http\JsonResponse;
@@ -33,7 +34,7 @@ class StoreFollowController extends Controller
             ->where('status', Store::STATUS_AKTIF)
             ->first();
 
-        if (!$store) {
+        if (! $store) {
             return response()->json(['status' => 'error', 'message' => 'Toko tidak ditemukan.'], 404);
         }
 
@@ -50,6 +51,18 @@ class StoreFollowController extends Controller
             StoreFollow::create(['user_id' => $userId, 'store_id' => $id]);
             $followed = true;
             $message = 'Mengikuti toko.';
+
+            // Kabar ke owner: ada pengikut baru (in-app, tipe sistem).
+            if ($store->owner_id) {
+                Notification::create([
+                    'user_id' => $store->owner_id,
+                    'aktor_id' => $userId,
+                    'tipe' => Notification::TIPE_SISTEM,
+                    'judul' => 'Pengikut Baru',
+                    'pesan' => sprintf('%s mulai mengikuti toko %s.', Auth::user()->nama_lengkap, $store->nama_toko),
+                    'url' => route('owner.dashboard'),
+                ]);
+            }
         }
 
         return response()->json([

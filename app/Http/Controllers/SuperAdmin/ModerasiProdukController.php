@@ -136,6 +136,14 @@ class ModerasiProdukController extends Controller
                     'pesan' => sprintf('Produk "%s" telah disetujui moderasi dan kini dapat tampil di Raliva.', $locked->nama_produk),
                     'url' => route('owner.produk'),
                 ]);
+
+                // Kabar ke pengikut toko: produk baru tayang.
+                $locked->store->notifyFollowers(
+                    Notification::TIPE_SISTEM,
+                    'Produk Baru',
+                    sprintf('Toko %s menambahkan produk baru "%s".', $locked->store->nama_toko ?? '-', $locked->nama_produk),
+                    route('customer.shop.produk-detail', $locked->product_id)
+                );
             }
             Notification::fireSelf(Notification::TIPE_SISTEM, 'Produk Disetujui', sprintf('Produk "%s" disetujui.', $locked->nama_produk), route('superadmin.moderasi-produk'));
 
