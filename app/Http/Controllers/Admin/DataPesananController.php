@@ -589,6 +589,7 @@ class DataPesananController extends Controller
             'status' => $rework ? Order::STATUS_MENUNGGU_PRODUKSI : Order::STATUS_MENUNGGU_QC,
             'qc_perlu_admin_pada' => null,
             'qc_perlu_admin_catatan' => null,
+            'qc_admin_catatan' => $data['catatan'] ?? null,
         ]);
 
         $pesanLog = $rework
