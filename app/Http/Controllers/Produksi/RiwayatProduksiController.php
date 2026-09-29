@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Produksi;
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
+use App\Models\QualityCheck;
 use App\Models\StoreStaff;
 use Illuminate\Http\Request;
 
@@ -55,9 +56,11 @@ class RiwayatProduksiController extends Controller
             'siap_kirim' => Order::whereIn('store_id', $storeIds)->where('status', Order::STATUS_SIAP_KIRIM)->count(),
             'dikirim' => Order::whereIn('store_id', $storeIds)->where('status', Order::STATUS_DIKIRIM)->count(),
             'selesai' => Order::whereIn('store_id', $storeIds)->where('status', Order::STATUS_SELESAI)->count(),
-            'unit_berhasil' => (int) Order::whereIn('store_id', $storeIds)
-                ->whereIn('status', [Order::STATUS_SIAP_KIRIM, Order::STATUS_DIKIRIM, Order::STATUS_SELESAI])
-                ->sum('jumlah_berhasil'),
+            // Murni hasil produksi (bukan pcs yang diambil dari gudang).
+            'unit_berhasil' => (int) QualityCheck::whereHas('order', fn ($q) => $q
+                    ->whereIn('store_id', $storeIds)
+                    ->whereIn('status', [Order::STATUS_SIAP_KIRIM, Order::STATUS_DIKIRIM, Order::STATUS_SELESAI]))
+                ->sum('jumlah_lulus'),
         ];
 
         return view('Produksi.riwayat-produksi.index', compact('orders', 'stats', 'status', 'cari'));
