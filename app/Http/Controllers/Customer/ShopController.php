@@ -190,7 +190,9 @@ class ShopController extends Controller
 
         $wishlistedIds = $this->wishlistedIds();
 
-        return view('customer.store.produk', compact('store', 'products', 'reviewCount', 'averageRating', 'totalProducts', 'wishlistedIds'));
+        ['isFollowing' => $isFollowing, 'followersCount' => $followersCount] = $this->followState($store);
+
+        return view('customer.store.produk', compact('store', 'products', 'reviewCount', 'averageRating', 'totalProducts', 'wishlistedIds', 'isFollowing', 'followersCount'));
     }
 
     /**
@@ -209,7 +211,9 @@ class ShopController extends Controller
         $averageRating = $reviews->avg('rating');
         $reviewCount = $reviews->count();
 
-        return view('customer.store.riviews', compact('store', 'reviews', 'averageRating', 'reviewCount'));
+        ['isFollowing' => $isFollowing, 'followersCount' => $followersCount] = $this->followState($store);
+
+        return view('customer.store.riviews', compact('store', 'reviews', 'averageRating', 'reviewCount', 'isFollowing', 'followersCount'));
     }
 
     /**
@@ -223,7 +227,21 @@ class ShopController extends Controller
         $reviewCount = $reviews->count();
         $averageRating = $reviews->avg('rating');
 
-        return view('customer.store.about', compact('store', 'reviewCount', 'averageRating'));
+        ['isFollowing' => $isFollowing, 'followersCount' => $followersCount] = $this->followState($store);
+
+        return view('customer.store.about', compact('store', 'reviewCount', 'averageRating', 'isFollowing', 'followersCount'));
+    }
+
+    /**
+     * Status follow toko untuk user yang sedang login.
+     */
+    protected function followState(Store $store): array
+    {
+        return [
+            'isFollowing' => Auth::check()
+                && Auth::user()->followedStores()->where('stores.store_id', $store->store_id)->exists(),
+            'followersCount' => $store->followers()->count(),
+        ];
     }
 
     /**

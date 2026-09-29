@@ -429,5 +429,13 @@
     "Lihat Status Bayar": "View Payment Status",
     "Belum termasuk ongkir & pajak": "Excludes shipping & taxes",
     "Pembayaran telah melewati batas waktu dan pesanan dibatalkan otomatis.": "The payment has passed its deadline and the order was cancelled automatically.",
-    "Belanja Lagi": "Shop Again"
+    "Belanja Lagi": "Shop Again",
+    "Ikuti Toko": "Follow Store",
+    "Diikuti": "Following",
+    "pengikut": "followers",
+    "Toko yang Diikuti": "Followed Stores",
+    "toko diikuti": "stores followed",
+    "produk": "products",
+    "Belum mengikuti toko mana pun.": "You are not following any stores yet.",
+    "Tidak aktif": "Inactive"
 }

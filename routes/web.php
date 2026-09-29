@@ -36,6 +36,7 @@ use App\Http\Controllers\Customer\SearchController;
 use App\Http\Controllers\Customer\SettingsController;
 use App\Http\Controllers\Customer\ShopController;
 use App\Http\Controllers\Customer\WishlistController;
+use App\Http\Controllers\Customer\StoreFollowController;
 use App\Http\Controllers\Gudang\BarangKeluarController as GudangBarangKeluarController;
 use App\Http\Controllers\Gudang\BarangMasukController as GudangBarangMasukController;
 use App\Http\Controllers\Gudang\BahanProdukController as GudangBahanProdukController;
@@ -241,6 +242,9 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist');
         Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
         Route::delete('/wishlist/{productId}', [WishlistController::class, 'destroy'])->name('wishlist.destroy');
+
+        Route::post('/shop/store/{id}/follow', [StoreFollowController::class, 'toggle'])->name('shop.store.follow');
+        Route::get('/followed-stores', [StoreFollowController::class, 'index'])->name('followed-stores');
     });
 
     Route::get('/help', [HelpController::class, 'index'])->name('help');

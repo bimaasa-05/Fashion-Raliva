@@ -107,6 +107,12 @@ class Store extends Model
         return $this->hasMany(Review::class, 'store_id', 'store_id');
     }
 
+    public function followers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'store_follows', 'store_id', 'user_id')
+            ->withTimestamps();
+    }
+
     public function documents(): HasMany
     {
         return $this->hasMany(StoreDocument::class, 'store_id', 'store_id');
