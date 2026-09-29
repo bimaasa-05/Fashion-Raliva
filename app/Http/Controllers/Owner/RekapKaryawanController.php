@@ -199,6 +199,7 @@ class RekapKaryawanController extends Controller
             'bersih' => (float) ($ringkasan['bersih'] ?? 0),
             'customers' => (int) ($ringkasan['customers'] ?? 0),
             'roi' => $ringkasan['roi'] ?? null,
+            'aov_toko' => $this->report->aovToko($storeIds, $range),
         ];
     }
 
@@ -214,7 +215,7 @@ class RekapKaryawanController extends Controller
             'ditugaskan' => 0, 'selesai' => 0, 'sukses_persen' => null,
             'rata_unit_diminta' => null, 'rata_output_layak' => null,
             'rata_durasi_jam' => null, 'sampel_durasi' => 0,
-            'transfer_diminta' => 0, 'transfer_selesai' => 0, 'transfer_batal' => 0,
+            'transfer_diminta' => 0, 'transfer_selesai' => 0, 'transfer_batal' => 0, 'transfer_disetujui' => 0,
             'rata_putaran_jam' => null, 'sampel_putaran' => 0, 'mutasi' => 0,
             'opname' => 0, 'akurasi_persen' => null, 'kerusakan' => 0, 'kerusakan_qty' => 0,
         ];
@@ -224,9 +225,11 @@ class RekapKaryawanController extends Controller
     {
         if ($roleFilter === 'owner') {
             $n = $rows->count();
-            $pendapatan = (float) $rows->sum('pendapatan');
-            $investasi = (float) $rows->sum('investasi');
-            $bersih = (float) $rows->sum('bersih');
+            // Nilai level-toko diduplikasi ke tiap baris owner — ambil sekali saja.
+            $pertama = $rows->first();
+            $pendapatan = (float) ($pertama['pendapatan'] ?? 0);
+            $investasi = (float) ($pertama['investasi'] ?? 0);
+            $bersih = (float) ($pertama['bersih'] ?? 0);
 
             return [
                 'roi' => $investasi > 0 ? round($bersih / $investasi * 100, 2) : null,
@@ -276,6 +279,7 @@ class RekapKaryawanController extends Controller
         return [
             'transfer_diminta' => (int) $rows->sum('transfer_diminta'),
             'transfer_selesai' => (int) $rows->sum('transfer_selesai'),
+            'transfer_disetujui' => (int) $rows->sum('transfer_disetujui'),
             'mutasi' => (int) $rows->sum('mutasi'),
             'opname' => $opname,
             'akurasi_persen' => $opname > 0
