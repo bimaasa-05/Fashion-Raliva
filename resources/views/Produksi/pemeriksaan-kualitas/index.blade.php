@@ -64,8 +64,8 @@
                                     <p class="text-on-surface">{{ $item->nama_produk_snapshot }} <span class="text-on-surface-variant">× {{ $item->quantity }}</span></p>
                                 @endforeach
                             </td>
-                            <td class="py-3.5 px-4 text-center">
-                                <p class="text-green-600 font-bold">{{ $o->jumlah_berhasil ?? 0 }} berhasil</p>
+                            <td class="py-3.5 px-4 text-center" @if ($o->qc_admin_catatan) title="Catatan Admin: {{ $o->qc_admin_catatan }}" @endif>
+                                <p class="text-green-600 font-bold">{{ $o->jumlah_berhasil ?? 0 }}/{{ $o->items->sum('quantity') }} pcs berhasil</p>
                                 <p class="text-error">{{ $o->jumlah_gagal ?? 0 }} gagal</p>
                                 @if ($tab === 'siap' && (int) ($o->kekurangan_gudang ?? 0) > 0)
                                     <p class="text-xs text-gold-accent font-bold mt-0.5">+{{ $o->kekurangan_gudang }} dari Gudang</p>
