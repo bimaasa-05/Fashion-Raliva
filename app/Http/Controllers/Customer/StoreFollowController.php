@@ -52,16 +52,32 @@ class StoreFollowController extends Controller
             $followed = true;
             $message = 'Mengikuti toko.';
 
-            // Kabar ke owner: ada pengikut baru (in-app, tipe sistem).
+            // Kabar ke owner: hanya sekali per pelanggan per toko,
+            // supaya spam follow/batal-follow tidak membanjiri notifikasi owner.
+            // Kunci: url notif (berisi id toko) ATAU pesan identik (notif era kode lama).
             if ($store->owner_id) {
-                Notification::create([
-                    'user_id' => $store->owner_id,
-                    'aktor_id' => $userId,
-                    'tipe' => Notification::TIPE_SISTEM,
-                    'judul' => 'Pengikut Baru',
-                    'pesan' => sprintf('%s mulai mengikuti toko %s.', Auth::user()->nama_lengkap, $store->nama_toko),
-                    'url' => route('owner.dashboard'),
-                ]);
+                $notifUrl = route('owner.dashboard', ['toko' => $store->store_id]);
+                $pesan = sprintf('%s mulai mengikuti toko %s.', Auth::user()->nama_lengkap, $store->nama_toko);
+
+                $alreadyNotified = Notification::where('user_id', $store->owner_id)
+                    ->where('aktor_id', $userId)
+                    ->where('judul', 'Pengikut Baru')
+                    ->where(function ($query) use ($notifUrl, $pesan) {
+                        $query->where('url', $notifUrl)
+                            ->orWhere('pesan', $pesan);
+                    })
+                    ->exists();
+
+                if (! $alreadyNotified) {
+                    Notification::create([
+                        'user_id' => $store->owner_id,
+                        'aktor_id' => $userId,
+                        'tipe' => Notification::TIPE_SISTEM,
+                        'judul' => 'Pengikut Baru',
+                        'pesan' => $pesan,
+                        'url' => $notifUrl,
+                    ]);
+                }
             }
         }
 
