@@ -6,11 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Notification;
 use App\Models\Order;
 use App\Models\Role;
-use App\Models\StockMovement;
 use App\Models\StoreStaff;
-use App\Models\WarehouseStock;
 use App\Services\NotificationService;
 use App\Support\ActivityLogger;
+use App\Support\ShortfallStockAllocator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -49,84 +48,12 @@ class KekuranganController extends Controller
             return back()->with('toast', ['message' => 'Pesanan ini sudah tidak memiliki kekurangan.', 'icon' => 'info']);
         }
 
-        $items = $order->items()->whereNotNull('product_variant_id')->get();
-        $totalQty = (int) $items->sum('quantity');
-        if ($items->isEmpty() || $totalQty <= 0) {
-            return back()->with('toast', ['message' => 'Item pesanan tidak valid untuk disiapkan.', 'icon' => 'gpp_maybe']);
-        }
-
-        // Bagi kekurangan proporsional qty tiap varian (floor + sisa ke qty terbesar).
-        $bagi = [];
-        $terbagi = 0;
-        foreach ($items as $item) {
-            $share = intdiv($kurang * (int) $item->quantity, $totalQty);
-            $bagi[$item->order_item_id] = $share;
-            $terbagi += $share;
-        }
-        $sisa = $kurang - $terbagi;
-        foreach ($items->sortByDesc('quantity') as $item) {
-            if ($sisa <= 0) {
-                break;
-            }
-            $bagi[$item->order_item_id]++;
-            $sisa--;
-        }
-
         try {
-            DB::transaction(function () use ($order, $items, $bagi, $kurang, $storeIds) {
-                // Kunci & validasi stok dulu: tolak penuh bila ada varian yang kurang.
-                $stokTerkunci = [];
-                foreach ($items as $item) {
-                    $butuh = $bagi[$item->order_item_id] ?? 0;
-                    if ($butuh <= 0) {
-                        continue;
-                    }
-                    $stocks = WarehouseStock::where('product_variant_id', $item->product_variant_id)
-                        ->where('jumlah_stok', '>', 0)
-                        ->whereHas('warehouse', fn ($q) => $q->whereIn('store_id', $storeIds))
-                        ->orderByDesc('jumlah_stok')
-                        ->lockForUpdate()
-                        ->get();
-                    if ((int) $stocks->sum('jumlah_stok') < $butuh) {
-                        throw new \RuntimeException(
-                            sprintf('Stok %s kurang (butuh %d pcs).', $item->nama_produk_snapshot ?? 'varian', $butuh)
-                        );
-                    }
-                    $stokTerkunci[$item->order_item_id] = $stocks;
-                }
+            DB::transaction(function () use ($order, $kurang, $storeIds) {
+                // Mode manual: tolak penuh bila ada varian yang kurang.
+                ShortfallStockAllocator::allocate($order, $kurang, $storeIds, false);
 
-                foreach ($items as $item) {
-                    $butuh = $bagi[$item->order_item_id] ?? 0;
-                    if ($butuh <= 0) {
-                        continue;
-                    }
-                    foreach ($stokTerkunci[$item->order_item_id] as $stock) {
-                        if ($butuh <= 0) {
-                            break;
-                        }
-                        $ambil = min($butuh, (int) $stock->jumlah_stok);
-                        if ($ambil <= 0) {
-                            continue;
-                        }
-                        WarehouseStock::where('warehouse_stock_id', $stock->warehouse_stock_id)
-                            ->where('jumlah_stok', '>=', $ambil)
-                            ->decrement('jumlah_stok', $ambil);
-                        StockMovement::create([
-                            'warehouse_id' => $stock->warehouse_id,
-                            'product_variant_id' => $item->product_variant_id,
-                            'tipe_pergerakan' => StockMovement::TIPE_KELUAR,
-                            'jumlah' => $ambil,
-                            'sumber_tipe' => StockMovement::SUMBER_ORDER_ITEM,
-                            'sumber_id' => $order->order_id,
-                            'alasan' => sprintf('Penutup kekurangan pesanan %s (%s).', $order->nomor_order ?? $order->order_id, $item->nama_produk_snapshot ?? '-'),
-                            'dibuat_oleh' => ActivityLogger::resolveActorId(),
-                        ]);
-                        $butuh -= $ambil;
-                    }
-                    $item->increment('qty_dari_gudang', $bagi[$item->order_item_id]);
-                }
-
-                $totalQty = (int) $items->sum('quantity');
+                $totalQty = (int) $order->items()->sum('quantity');
                 $order->update([
                     'kekurangan_gudang' => 0,
                     'jumlah_berhasil' => min($totalQty, (int) ($order->jumlah_berhasil ?? 0) + $kurang),
