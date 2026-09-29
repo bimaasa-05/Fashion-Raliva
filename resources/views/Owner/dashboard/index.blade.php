@@ -57,6 +57,11 @@
                 <span class="font-title-md text-sm text-on-surface">{{ number_format($rating, 1, ',', '.') }}</span>
                 <span class="text-[11px] text-on-surface-variant">{{ $ratingCount }} ulasan</span>
             </div>
+            <div class="flex items-center gap-2 px-3 py-2 bg-surface-container-low rounded-lg border border-muted-border">
+                <span class="material-symbols-outlined text-[18px] text-gold-accent">group</span>
+                <span class="font-title-md text-sm text-on-surface">{{ number_format($followersCount, 0, ',', '.') }}</span>
+                <span class="text-[11px] text-on-surface-variant">pengikut</span>
+            </div>
             <a href="{{ route('owner.laporan') }}" class="flex items-center gap-2 px-5 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">
                 <span class="material-symbols-outlined text-[16px]">monitoring</span>Laporan
             </a>
