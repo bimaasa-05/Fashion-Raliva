@@ -21,10 +21,12 @@ class LaporanController extends Controller
     {
         $storeIds = AdminContext::assignedStoreIds();
         $storeId = $storeIds[0] ?? null;
+        $tanpaToko = $storeId === null;
 
-        // pendapatan = sum grand_total where status selesai for admin's stores
-        $pendapatan = $storeId ? (float) Order::whereIn('store_id', $storeIds)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->sum('grand_total') : 0;
-        $pesananDiproses = $storeId ? Order::whereIn('store_id', $storeIds)->whereIn('status', [Order::STATUS_SELESAI, Order::STATUS_REFUND])->count() : 0;
+        // pendapatan = order berstatus pendapatan (dibayar→selesai; TIDAK termasuk refund/dibatalkan),
+        // selaras dengan konstanta Order::STATUS_PENDAPATAN & omzet dashboard operasional.
+        $pendapatan = $storeId ? (float) Order::whereIn('store_id', $storeIds)->whereIn('status', Order::STATUS_PENDAPATAN)->sum('grand_total') : 0;
+        $pesananDiproses = $storeId ? Order::whereIn('store_id', $storeIds)->whereIn('status', Order::STATUS_PENDAPATAN)->count() : 0;
 
         // pengeluaran = refund disetujui/selesai + store expense
         $refund = $storeId ? (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
@@ -72,7 +74,7 @@ class LaporanController extends Controller
 
         $omzetBars = [];
         if ($storeIds) {
-            $validStatuses = [Order::STATUS_DIBAYAR, Order::STATUS_MENUNGGU_PRODUKSI, Order::STATUS_DIPROSES, Order::STATUS_MENUNGGU_QC, Order::STATUS_SIAP_KIRIM, Order::STATUS_DIKIRIM, Order::STATUS_SELESAI, Order::STATUS_REFUND];
+            $validStatuses = Order::STATUS_PENDAPATAN;
             $dailyRows = Order::query()
                 ->whereIn('store_id', $storeIds)
                 ->whereIn('status', $validStatuses)
@@ -100,6 +102,23 @@ class LaporanController extends Controller
             ];
         })->values()->all();
 
-        return view('Admin.laporan.index', compact('pendapatan', 'pesananDiproses', 'totalPengeluaran', 'totalBersih', 'perMetode', 'pesananBaru', 'menungguVerifikasi', 'saya', 'omzetBars', 'distribusiMetode', 'dari', 'sampai'));
+        // Metode pembayaran terbanyak (berdasar jumlah transaksi — selaras dengan donut).
+        $metodeTerbanyak = $perMetode->sortByDesc('jumlah_transaksi')->first();
+
+        // Tabel pesanan selesai: hanya status selesai (income pasti), ikut filter tanggal,
+        // 10 terbaru + relasi customer & metode bayar.
+        $pesananSelesai = collect();
+        if ($storeIds) {
+            $pesananSelesai = Order::query()
+                ->whereIn('store_id', $storeIds)
+                ->where('status', Order::STATUS_SELESAI)
+                ->whereBetween('created_at', [$dari, $sampai])
+                ->with(['checkout.user:user_id,nama_lengkap', 'checkout.payment.paymentMethod'])
+                ->orderByDesc('created_at')
+                ->limit(10)
+                ->get();
+        }
+
+        return view('Admin.laporan.index', compact('pendapatan', 'pesananDiproses', 'totalPengeluaran', 'totalBersih', 'perMetode', 'pesananBaru', 'menungguVerifikasi', 'saya', 'omzetBars', 'distribusiMetode', 'dari', 'sampai', 'tanpaToko', 'metodeTerbanyak', 'pesananSelesai'));
     }
 }

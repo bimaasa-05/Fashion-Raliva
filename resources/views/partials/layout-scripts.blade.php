@@ -273,3 +273,4 @@
         });
     })();
 </script>
+@include('partials.session-guard')

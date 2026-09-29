@@ -205,8 +205,9 @@ class ShopController extends Controller
         $reviews = $store->reviews()->where('status', Review::STATUS_AKTIF)->get();
         $reviewCount = $reviews->count();
         $averageRating = $reviews->avg('rating');
+        $storeSocials = $store->socials()->with('platform')->orderBy('store_social_id')->get();
 
-        return view('customer.store.about', compact('store', 'reviewCount', 'averageRating'));
+        return view('customer.store.about', compact('store', 'reviewCount', 'averageRating', 'storeSocials'));
     }
 
     /**
