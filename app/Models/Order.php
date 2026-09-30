@@ -198,4 +198,36 @@ class Order extends Model
     {
         return $this->hasMany(QualityCheck::class, 'order_id', 'order_id');
     }
+
+    /**
+     * Movement stok gudang yang menutup kekurangan produksi pesanan ini.
+     */
+    public function shortfallMovements(): HasMany
+    {
+        return $this->hasMany(StockMovement::class, 'sumber_id', 'order_id')
+            ->where('sumber_tipe', StockMovement::SUMBER_ORDER_ITEM)
+            ->where('alasan', 'like', 'Penutup kekurangan%');
+    }
+
+    /**
+     * Nama gudang sumber pcs yang diambil untuk pesanan ini.
+     */
+    public function namaGudangShortfall(): ?string
+    {
+        if (! $this->relationLoaded('shortfallMovements')) {
+            $this->load('shortfallMovements.warehouse');
+        }
+
+        $nama = $this->shortfallMovements
+            ->pluck('warehouse.nama_gudang')
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($nama->isEmpty()) {
+            return null;
+        }
+
+        return $nama->count() === 1 ? $nama->first() : $nama->count().' gudang';
+    }
 }
