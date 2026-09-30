@@ -69,7 +69,7 @@
                                 <p class="text-error">{{ $o->jumlah_gagal ?? 0 }} gagal</p>
                                 @php($dariGudang = (int) $o->items->sum('qty_dari_gudang'))
                                 @if ($tab === 'siap' && $dariGudang > 0)
-                                    <p class="text-xs text-gold-accent font-bold mt-0.5">{{ $dariGudang }} pcs dari Gudang</p>
+                                    <p class="text-xs text-gold-accent font-bold mt-0.5">{{ $dariGudang }} pcs dari {{ $o->namaGudangShortfall() ?? 'Gudang' }}</p>
                                 @endif
                                 @if ($tab === 'siap' && (int) ($o->kekurangan_gudang ?? 0) > 0)
                                     <p class="text-xs text-error font-bold mt-0.5">−{{ $o->kekurangan_gudang }} masih kurang</p>
