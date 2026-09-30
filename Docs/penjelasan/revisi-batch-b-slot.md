@@ -51,6 +51,31 @@ dengan pilih toko) → `SlotPurchaseRequest pending` → disetujui SuperAdmin
 seperti alur Owner. `Admin/DataProdukController@store` menolak bila kuota
 penuh dan mengarahkan ke Beli Slot.
 
+## 7. Popup gate kuota + syarat dokumen legal (2026-09-30)
+
+- **Owner — tombol "Tambah Slot"** (`Owner/produk`) tidak lagi pindah halaman:
+  membuka popup 2 opsi (partial `Owner/partials/modal-slot`):
+  **Beli Paket Slot** (ke halaman `owner.paket-slot`) dan **Kelola Slot**
+  (form fleksibel dibuka di popup itu juga, ada tombol X + Escape + klik gelap).
+- **Admin — kuota habis + tombol "Tambah"** (`Admin/produk`): form produk
+  tidak langsung dibuka; popup 2 opsi muncul (partial
+  `Admin/partials/modal-slot`): **Beli Slot** (form fleksibel di popup,
+  POST `admin.slot.request`) dan **Beli Paket** (ke `admin.slot#paket`).
+  Gate server `DataProdukController@store` pindah ke **atas validasi** —
+  input tidak hilang, redirect ke `admin.produk?slot_habis=1` yang otomatis
+  membuka popup.
+- **Syarat wajib beli slot (Owner):** minimal SATU dari KTP / NIB / NPWP
+  berstatus `terverifikasi` (NIB = dokumen `jenis='siu'`).
+  Helper baru `App\Support\DokumenLegal`. Tidak lolos → form disabled +
+  pesan + link Pengajuan Toko; gate server di
+  `KelolaSlotController@store` dan `PaketSlotController@purchase`.
+- **Overlay popup baru lebih terang:** `bg-black/35 backdrop-blur-sm`
+  (bukan `bg-black/50` dst). Modal lama tidak disentuh.
+- **Banner sukses Pengajuan Toko:** `text-secondary` (kuning) → hijau
+  (`text-success`). Banner error tetap merah.
+- Test: `SlotHabisTest` 12/12 (gate modal Admin, popup Owner, syarat legal,
+  banner hijau).
+
 ## 6. Batasan jujur
 
 1. Penyatuan alur paket vs fleksibel (paket bypass verifikasi) **ditunda** —
