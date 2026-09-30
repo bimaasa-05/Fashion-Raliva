@@ -97,6 +97,7 @@ class AdminStoreIsolationTest extends TestCase
         $store2 = Store::create([
             'nama_toko' => 'Toko Isolasi Uji ' . uniqid(),
             'owner_id' => $ownerId,
+            'alamat' => 'Jl. Isolasi Uji No. 1',
             'status' => Store::STATUS_AKTIF,
         ]);
         $admin2 = User::create([
