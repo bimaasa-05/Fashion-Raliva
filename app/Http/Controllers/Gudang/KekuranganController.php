@@ -49,9 +49,11 @@ class KekuranganController extends Controller
         }
 
         try {
-            DB::transaction(function () use ($order, $kurang, $storeIds) {
+            $gudangSumber = null;
+            DB::transaction(function () use ($order, $kurang, $storeIds, &$gudangSumber) {
                 // Mode manual: tolak penuh bila ada varian yang kurang.
-                ShortfallStockAllocator::allocate($order, $kurang, $storeIds, false);
+                $hasil = ShortfallStockAllocator::allocate($order, $kurang, $storeIds, false);
+                $gudangSumber = $hasil['gudang'];
 
                 $totalQty = (int) $order->items()->sum('quantity');
                 $order->update([
@@ -65,24 +67,24 @@ class KekuranganController extends Controller
 
         $lama = ['kekurangan_gudang' => $kurang];
         ActivityLogger::log('gudang.kekurangan.siapkan', Order::class, $order->order_id, $lama,
-            ['kekurangan_gudang' => 0],
-            sprintf('Kekurangan %d pcs pesanan %s disiapkan dari stok gudang.', $kurang, $order->nomor_order));
+            ['kekurangan_gudang' => 0, 'gudang_sumber' => $gudangSumber],
+            sprintf('Kekurangan %d pcs pesanan %s disiapkan dari stok gudang%s.', $kurang, $order->nomor_order, $gudangSumber ? ' ('.$gudangSumber.')' : ''));
 
         NotificationService::sendToRoleInStores(Role::PRODUKSI, [$order->store_id], Notification::TIPE_SISTEM,
             'Kekurangan Disiapkan dari Gudang',
-            sprintf('Pesanan %s — %d pcs kekurangan sudah disiapkan Gudang. Silakan dipacking ulang.',
-                $order->nomor_order, $kurang),
+            sprintf('Pesanan %s — %d pcs kekurangan sudah disiapkan Gudang%s. Silakan dipacking ulang.',
+                $order->nomor_order, $kurang, $gudangSumber ? ' ('.$gudangSumber.')' : ''),
             ActivityLogger::resolveActorId(),
             route('produksi.pemeriksaan-kualitas'));
 
         NotificationService::sendToRoleInStores(Role::ADMIN, [$order->store_id], Notification::TIPE_SISTEM,
             'Kekurangan Disiapkan dari Gudang',
-            sprintf('Pesanan %s — %d pcs kekurangan sudah disiapkan Gudang.', $order->nomor_order, $kurang),
+            sprintf('Pesanan %s — %d pcs kekurangan sudah disiapkan Gudang%s.', $order->nomor_order, $kurang, $gudangSumber ? ' ('.$gudangSumber.')' : ''),
             ActivityLogger::resolveActorId(),
             route('admin.pesanan', ['status' => Order::STATUS_MENUNGGU_QC]));
 
         return back()->with('toast', [
-            'message' => "Kekurangan {$kurang} pcs untuk pesanan {$order->nomor_order} disiapkan dari gudang.",
+            'message' => "Kekurangan {$kurang} pcs untuk pesanan {$order->nomor_order} disiapkan dari gudang".($gudangSumber ? " ({$gudangSumber})" : '').'.',
             'icon' => 'task_alt',
         ]);
     }
