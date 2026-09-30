@@ -3474,5 +3474,19 @@
     "Profil Anda berhasil diperbarui.": "Your profile has been updated successfully.",
     "Semua notifikasi Anda ditandai sudah dibaca.": "All your notifications have been marked as read.",
     "Syarat & Ketentuan dan Kebijakan Privasi diperbarui.": "Terms & Conditions and Privacy Policy have been updated.",
-    "Saldo Akun + —": "Account Balance + —"
+    "Saldo Akun + —": "Account Balance + —",
+    "Alamat tidak ditemukan.": "Address not found.",
+    "Anda tidak memiliki izin (warehouse.damage) untuk melakukan tindakan ini.": "You do not have the (warehouse.damage) permission to perform this action.",
+    "Anda tidak memiliki izin (warehouse.stock_adjust) untuk melakukan tindakan ini.": "You do not have the (warehouse.stock_adjust) permission to perform this action.",
+    "Anda tidak memiliki izin (warehouse.stock_in) untuk melakukan tindakan ini.": "You do not have the (warehouse.stock_in) permission to perform this action.",
+    "Anda tidak memiliki izin (warehouse.stock_out) untuk melakukan tindakan ini.": "You do not have the (warehouse.stock_out) permission to perform this action.",
+    "Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.": "You do not have the (warehouse.transfer) permission to perform this action.",
+    "Hanya kurir milik toko yang bisa dihapus.": "Only store couriers can be deleted.",
+    "Hanya kurir milik toko yang bisa diubah. Kurir global dikelola SuperAdmin.": "Only store couriers can be modified. Global couriers are managed by Super Admin.",
+    "Hanya layanan milik toko yang bisa dihapus.": "Only store services can be deleted.",
+    "Hanya layanan milik toko yang bisa diubah.": "Only store services can be modified.",
+    "Pendaftaran slot via Super Admin dinonaktifkan. Gunakan alur Owner (bank+file+bukti).": "Slot registration via Super Admin is disabled. Use the Owner flow (bank + file + proof).",
+    "Permintaan berhasil diajukan.": "Request submitted successfully.",
+    "Refund ini bukan untuk toko Anda.": "This refund does not belong to your store.",
+    "Semua notifikasi telah dibaca": "All notifications have been read."
 }
