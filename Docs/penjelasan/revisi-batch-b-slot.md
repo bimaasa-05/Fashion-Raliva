@@ -61,9 +61,10 @@ penuh dan mengarahkan ke Beli Slot.
   tidak langsung dibuka; popup 2 opsi muncul (partial
   `Admin/partials/modal-slot`): **Beli Slot** (form fleksibel di popup,
   POST `admin.slot.request`) dan **Beli Paket** (ke `admin.slot#paket`).
-  Gate server `DataProdukController@store` pindah ke **atas validasi** —
-  input tidak hilang, redirect ke `admin.produk?slot_habis=1` yang otomatis
-  membuka popup.
+  Gate server `DataProdukController@store` tetap setelah validasi (agar error
+  validasi form tidak tertelan) — tapi redirect-nya ke
+  `admin.produk?slot_habis=1` dengan `withInput()`, yang otomatis membuka
+  popup.
 - **Syarat wajib beli slot (Owner):** minimal SATU dari KTP / NIB / NPWP
   berstatus `terverifikasi` (NIB = dokumen `jenis='siu'`).
   Helper baru `App\Support\DokumenLegal`. Tidak lolos → form disabled +
