@@ -271,31 +271,6 @@
     @include('partials.notification-popup')
     @stack('modals')
     @include('partials.layout-scripts')
-    <script>
-        /* Handler modal khusus layout Owner (terisolasi, tanpa identifier global). */
-        (function () {
-            document.querySelectorAll('[data-modal-open]').forEach(function (btn) {
-                btn.addEventListener('click', function () {
-                    var modal = document.getElementById(btn.getAttribute('data-modal-open'));
-                    if (modal) modal.classList.remove('hidden');
-                    document.body.style.overflow = 'hidden';
-                });
-            });
-            document.querySelectorAll('[data-modal-close]').forEach(function (el) {
-                el.addEventListener('click', function () {
-                    var modal = el.closest('[data-modal]');
-                    if (modal) modal.classList.add('hidden');
-                    document.body.style.overflow = '';
-                });
-            });
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') {
-                    document.querySelectorAll('[data-modal]').forEach(function (m) { m.classList.add('hidden'); });
-                    document.body.style.overflow = '';
-                }
-            });
-        })();
-    </script>
 
     <script>
         const ralivaToast = document.getElementById('raliva-toast');
@@ -314,25 +289,50 @@
             }, 2800);
         };
 
-        const closeAllOverlays = () => {
-            document.querySelectorAll('[data-modal]').forEach((m) => m.classList.add('hidden'));
-            document.querySelectorAll('[data-drawer-panel]').forEach((d) => d.classList.add('translate-x-full'));
-            document.getElementById('drawer-overlay')?.classList.add('opacity-0');
-            const overlay = document.getElementById('drawer-overlay');
-            if (overlay) setTimeout(() => overlay.classList.add('hidden'), 300);
-            document.body.style.overflow = '';
-        };
+        // === Scroll-jail layout Owner ===
+// Root scroller (body) tidak pernah di-stop, sehingga elemen sticky (sidebar,
+// header) tetap in-flow dan konten tidak "tembus" ke belakang sidebar.
+// Latar diblokir lewat preventDefault pada wheel/touchmove/keyboard di luar
+// overlay yang sedang terbuka (modal maupun drawer).
+let ralivaJailLocked = false;
+const ralivaJailOpenTargets = () => [
+    ...document.querySelectorAll('[data-modal]:not(.hidden)'),
+    ...document.querySelectorAll('[data-drawer-panel]:not(.translate-x-full)'),
+];
+const ralivaJailWheel = (e) => {
+    if (ralivaJailOpenTargets().some((el) => el.contains(e.target))) return;
+    e.preventDefault();
+};
+const ralivaJailKeys = (e) => {
+    if (![' ', 'PageUp', 'PageDown', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(e.key)) return;
+    if (ralivaJailOpenTargets().some((el) => el.contains(e.target))) return;
+    if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+    e.preventDefault();
+};
+const lockScroll = () => {
+    if (ralivaJailLocked) return;
+    ralivaJailLocked = true;
+    document.body.addEventListener('wheel', ralivaJailWheel, { passive: false });
+    document.body.addEventListener('touchmove', ralivaJailWheel, { passive: false });
+    window.addEventListener('keydown', ralivaJailKeys);
+};
+const unlockScroll = () => {
+    if (ralivaJailOpenTargets().length) return;
+    if (!ralivaJailLocked) return;
+    ralivaJailLocked = false;
+    document.body.removeEventListener('wheel', ralivaJailWheel);
+    document.body.removeEventListener('touchmove', ralivaJailWheel);
+    window.removeEventListener('keydown', ralivaJailKeys);
+};
 
-        // Kunci scroll tanpa menggeser layout (kompensasi lebar scrollbar)
-        const lockScroll = () => {
-            const sbw = window.innerWidth - document.documentElement.clientWidth;
-            if (sbw > 0) document.body.style.paddingRight = sbw + 'px';
-            document.body.style.overflow = 'hidden';
-        };
-        const unlockScroll = () => {
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
-        };
+const closeAllOverlays = () => {
+    document.querySelectorAll('[data-modal]').forEach((m) => m.classList.add('hidden'));
+    document.querySelectorAll('[data-drawer-panel]').forEach((d) => d.classList.add('translate-x-full'));
+    document.getElementById('drawer-overlay')?.classList.add('opacity-0');
+    const overlay = document.getElementById('drawer-overlay');
+    if (overlay) setTimeout(() => overlay.classList.add('hidden'), 300);
+    unlockScroll();
+};
 
         document.querySelectorAll('[data-modal-open]').forEach((btn) => {
             btn.addEventListener('click', () => {

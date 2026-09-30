@@ -47,10 +47,10 @@ class PengajuanTokoController extends Controller
 
         // Validasi dokumen SEBELUM menulis store ke database, agar tidak ada store
         // pending yang tercipta tanpa dokumen yang layak diverifikasi.
-        // Wajib: KTP + NPWP + SIU. Foto depan toko opsional.
+        // Wajib: KTP saja. NPWP, foto depan toko, dan SIU bersifat opsional.
         // Dokumen yang sudah terverifikasi terkunci (tidak bisa diunggah ulang);
         // yang ditolak / belum ada wajib dilengkapi.
-        $jenisWajib = ['ktp', 'npwp', 'siu'];
+        $jenisWajib = ['ktp'];
         $jenisList = ['ktp', 'npwp', 'foto_depan', 'siu'];
         $presentFiles = collect($jenisList)->filter(fn ($jenis) => $request->hasFile($jenis))->values()->all();
 
@@ -70,7 +70,7 @@ class PengajuanTokoController extends Controller
         $kurang = collect($jenisWajib)->filter(fn ($jenis) => ! in_array($jenis, $presentFiles, true) && ! in_array($statusDok[$jenis] ?? null, ['pending', 'terverifikasi'], true))->values()->all();
         if ($kurang) {
             $nama = $kurang->map(fn ($jenis) => static::jenisLabel($jenis))->implode(', ');
-            return back()->with('error', 'Dokumen wajib belum lengkap: '.$nama.' (foto depan toko opsional).')->withInput();
+            return back()->with('error', 'Dokumen wajib belum lengkap: '.$nama.'. NPWP, foto depan toko, dan SIU bersifat opsional.')->withInput();
         }
 
         $request->validate(collect($presentFiles)->mapWithKeys(fn ($jenis) => [
@@ -132,10 +132,10 @@ class PengajuanTokoController extends Controller
             }
         });
 
-        $sa = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
+        $superAdmins = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
             ->where('status', User::STATUS_AKTIF)
-            ->first();
-        if ($sa) {
+            ->get();
+        foreach ($superAdmins as $sa) {
             Notification::create([
                 'user_id' => $sa->user_id,
                 'aktor_id' => $user->user_id,
@@ -190,10 +190,10 @@ class PengajuanTokoController extends Controller
             );
         });
 
-        $sa = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
+        $superAdmins = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
             ->where('status', User::STATUS_AKTIF)
-            ->first();
-        if ($sa) {
+            ->get();
+        foreach ($superAdmins as $sa) {
             Notification::create([
                 'user_id' => $sa->user_id,
                 'aktor_id' => $user->user_id,
