@@ -47,3 +47,18 @@ tidak benar-benar memotong stok.
 ## Test
 `QcAutoShortfallTest` 4/4 (penuh/kosong/separuh/idempoten),
 `KekuranganSiapkanTest` 3/3, `ProduksiQcGudangTest` hijau.
+
+## Revisi 2 — prioritas gudang utama + nama gudang sumber (2026-09-30)
+- Kasus nyata: potongan 1 pcs tercatat di warehouse 4 (stok terbanyak),
+  sedangkan layar Gudang menampilkan warehouse 5 (total 51) — membingungkan.
+- `ShortfallStockAllocator` kini mengambil dari **gudang utama toko**
+  (`warehouse_id` terkecil), fallback ke gudang berikutnya bila kurang.
+- Nama gudang sumber tampil di mana-mana:
+  - `StockMovement.alasan` → "… — Gudang Utama Bandung",
+  - notif QC/Gudang/Admin + toast `siapkan`,
+  - label view: "1 pcs dari Gudang Utama Bandung" (QC, Admin, modal detail),
+  - `Order::shortfallMovements()` + `namaGudangShortfall()` (multi-gudang → "2 gudang").
+- Perhatian Blade: `@if` inline harus diawali spasi (`gagal @if`),
+  karena `gagal@if` tidak dikenali kompiler Blade (`\B@`).
+- Test baru: `utama_warehouse_is_prioritized` + assertion nama gudang
+  di alasan movement (`KekuranganSiapkanTest`).
