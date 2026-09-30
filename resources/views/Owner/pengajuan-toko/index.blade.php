@@ -103,7 +103,7 @@
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">Ajukan Toko Baru</h2>
             <span class="text-xs text-on-surface-variant">{{ $documents->count() }} / 4 dokumen diunggah</span>
         </div>
-        <form method="POST" action="{{ route('owner.pengajuan-toko.store') }}" enctype="multipart/form-data" class="space-y-6" data-min-dok data-dok-valid="0">
+        <form method="POST" action="{{ route('owner.pengajuan-toko.store') }}" enctype="multipart/form-data" class="space-y-6" data-min-dok>
             @csrf
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
@@ -141,15 +141,15 @@
                 </div>
             </div>
             <div>
-                <h3 class="font-title-md text-sm text-on-surface mb-3">Dokumen Persyaratan (minimal 3 dari 4)</h3>
+                <h3 class="font-title-md text-sm text-on-surface mb-3">Dokumen Persyaratan (minimal 1 dari 4)</h3>
                 <div class="flex items-center gap-3 mb-3" data-dok-progress>
                     <div class="flex-1 h-2 rounded-full bg-surface-container-high overflow-hidden">
                         <div class="h-full bg-gold-accent rounded-full transition-all duration-300" data-dok-bar style="width:0%"></div>
                     </div>
-                    <span class="text-xs font-bold text-on-surface-variant whitespace-nowrap" data-dok-text>0/3 dokumen wajib</span>
+                    <span class="text-xs font-bold text-on-surface-variant whitespace-nowrap" data-dok-text>0/1 dokumen wajib</span>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
-                    @foreach ([['ktp', 'description', 'KTP / Identitas Owner', true], ['npwp', 'receipt_long', 'NPWP Toko', true], ['foto_depan', 'storefront', 'Foto Depan Toko', false], ['siu', 'gavel', 'Surat Izin Usaha (NIB)', true]] as $doc)
+                    @foreach ([['ktp', 'description', 'KTP / Identitas Owner', true], ['npwp', 'receipt_long', 'NPWP Toko', false], ['foto_depan', 'storefront', 'Foto Depan Toko', false], ['siu', 'gavel', 'Surat Izin Usaha (NIB)', false]] as $doc)
                         @php $existing = $documents->firstWhere('jenis', $doc[0]); @endphp
                         <div class="bg-surface-container-low p-4 border border-muted-border rounded-lg flex flex-col gap-3">
                             <div class="w-11 h-11 rounded-xl bg-gold-accent/10 border border-gold-accent/30 flex items-center justify-center">
@@ -170,7 +170,7 @@
                 </div>
             </div>
             <div class="flex justify-end">
-                <button type="submit" data-submit-dok disabled title="Pilih file dokumen dulu" class="py-3 px-8 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                <button type="submit" data-submit-dok disabled title="Lengkapi dokumen wajib KTP dulu" class="py-3 px-8 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
                     <span class="material-symbols-outlined text-[16px]">send</span>Ajukan Toko
                 </button>
             </div>
@@ -182,11 +182,11 @@
             <div>
                 <h2 class="font-title-md text-title-md text-on-surface premium-heading">Lengkapi Dokumen</h2>
                 @php $dokValid = $documents->where('status', '!=', 'ditolak')->count(); @endphp
-                <p class="text-xs text-on-surface-variant mt-1">Status: <span class="font-bold {{ $isDitolak ? 'text-error' : 'text-gold-accent' }}">{{ ucfirst($store->status) }}</span> • {{ $dokValid }} / 3 dokumen valid (dari 4 jenis)</p>
+                <p class="text-xs text-on-surface-variant mt-1">Status: <span class="font-bold {{ $isDitolak ? 'text-error' : 'text-gold-accent' }}">{{ ucfirst($store->status) }}</span> • {{ $dokValid }} / 4 dokumen valid • wajib: KTP</p>
             </div>
         </div>
-        @php $trioOk = collect(['ktp','npwp','siu'])->filter(fn ($j) => ($d = $documents->firstWhere('jenis', $j)) && $d->status !== 'ditolak')->values()->implode(','); @endphp
-        <form method="POST" action="{{ route('owner.pengajuan-toko.store') }}" enctype="multipart/form-data" class="space-y-6" data-min-dok data-dok-valid="{{ $dokValid ?? 0 }}" data-trio-ok="{{ $trioOk }}">
+        @php $wajibOk = collect(['ktp'])->filter(fn ($j) => ($d = $documents->firstWhere('jenis', $j)) && $d->status !== 'ditolak')->values()->implode(','); @endphp
+        <form method="POST" action="{{ route('owner.pengajuan-toko.store') }}" enctype="multipart/form-data" class="space-y-6" data-min-dok data-wajib-ok="{{ $wajibOk }}">
             @csrf
             @if($isDitolak)
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
@@ -232,7 +232,7 @@
                             @if($existing->status === 'terverifikasi')
                                 <p class="mt-auto flex items-center gap-1.5 text-[11px] text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-gold-accent">lock</span>Terverifikasi — terkunci.</p>
                             @elseif($existing->status === 'ditolak')
-                                <input type="file" name="{{ $doc[0] }}" accept=".jpg,.jpeg,.png,.pdf" aria-label="Unggah ulang {{ $doc[2] }}" @if(in_array($doc[0], ['ktp','npwp','siu'], true)) data-wajib="1" @endif data-ada="0" class="mt-auto block w-full text-xs text-on-surface-variant file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-error file:text-white file:cursor-pointer" />
+                                <input type="file" name="{{ $doc[0] }}" accept=".jpg,.jpeg,.png,.pdf" aria-label="Unggah ulang {{ $doc[2] }}" @if($doc[0] === 'ktp') data-wajib="1" @endif data-ada="0" class="mt-auto block w-full text-xs text-on-surface-variant file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:bg-error file:text-white file:cursor-pointer" />
                                 <p class="text-[11px] text-on-surface-variant">JPG / PNG / PDF, maks 5 MB.</p>
                                 @error($doc[0]) <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                             @else
@@ -241,7 +241,7 @@
                                 @error($doc[0]) <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                             @endif
                         @else
-                            <input type="file" name="{{ $doc[0] }}" accept=".jpg,.jpeg,.png,.pdf" aria-label="Unggah {{ $doc[2] }}" @if(in_array($doc[0], ['ktp','npwp','siu'], true)) data-wajib="1" @endif data-ada="0" class="mt-auto block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:cursor-pointer" />
+                            <input type="file" name="{{ $doc[0] }}" accept=".jpg,.jpeg,.png,.pdf" aria-label="Unggah {{ $doc[2] }}" @if($doc[0] === 'ktp') data-wajib="1" @endif data-ada="0" class="mt-auto block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:cursor-pointer" />
                                 <p class="text-[11px] text-on-surface-variant">JPG / PNG / PDF, maks 5 MB.</p>
                                 @error($doc[0]) <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                         @endif
@@ -250,7 +250,7 @@
             </div>
             @if($isDitolak)
             <div class="flex justify-end">
-                <button type="submit" data-submit-dok disabled title="Pilih file dokumen dulu" class="py-3 px-8 bg-error text-white text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
+                <button type="submit" data-submit-dok disabled title="Lengkapi dokumen wajib KTP dulu" class="py-3 px-8 bg-error text-white text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2 hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed">
                     <span class="material-symbols-outlined text-[16px]">upload</span>Ajukan Ulang
                 </button>
             </div>
@@ -377,9 +377,9 @@
         refresh();
     });
 
-    const TRIO = ['ktp', 'npwp', 'siu'];
-    const trioTerpenuhi = (form) => {
-        const ok = new Set((form.getAttribute('data-trio-ok') || '').split(',').filter(Boolean));
+    const WAJIB = ['ktp'];
+    const wajibTerpenuhi = (form) => {
+        const ok = new Set((form.getAttribute('data-wajib-ok') || '').split(',').filter(Boolean));
         form.querySelectorAll('input[type="file"][data-wajib]').forEach((i) => {
             if (i.files && i.files.length > 0) ok.add(i.name);
         });
@@ -388,30 +388,29 @@
     const refreshDokProgress = (form) => {
         const wrap = form.querySelector('[data-dok-progress]');
         if (!wrap) return;
-        const n = trioTerpenuhi(form).size;
+        const n = wajibTerpenuhi(form).size;
         const bar = wrap.querySelector('[data-dok-bar]');
         const text = wrap.querySelector('[data-dok-text]');
-        if (bar) bar.style.width = Math.round((n / 3) * 100) + '%';
-        if (text) text.textContent = n + '/3 dokumen wajib';
+        if (bar) bar.style.width = Math.round((n / WAJIB.length) * 100) + '%';
+        if (text) text.textContent = n + '/' + WAJIB.length + ' dokumen wajib';
     };
     document.querySelectorAll('form[data-min-dok]').forEach((form) => {
         const submitBtn = form.querySelector('[data-submit-dok]');
+        // Tombol mengikuti gate yang sama dengan pemeriksaan saat submit, agar
+        // tidak ada keadaan "tombol aktif" lalu tiba-tiba muncul toast.
         const refreshSubmit = () => {
             if (!submitBtn) return;
-            const ada = Array.from(form.querySelectorAll('input[type="file"]:not([disabled])')).some((i) => i.files && i.files.length > 0);
-            submitBtn.disabled = !ada;
+            submitBtn.disabled = wajibTerpenuhi(form).size < WAJIB.length;
         };
         form.querySelectorAll('input[type="file"]').forEach((i) => i.addEventListener('change', () => { refreshSubmit(); refreshDokProgress(form); }));
         refreshSubmit();
         refreshDokProgress(form);
         form.addEventListener('submit', (e) => {
-            const valid = parseInt(form.getAttribute('data-dok-valid') || '0', 10);
-            const baru = Array.from(form.querySelectorAll('input[type="file"]')).filter((i) => i.files && i.files.length > 0).length;
-            if (valid + baru < 3) {
+            const kurang = WAJIB.filter((j) => !wajibTerpenuhi(form).has(j));
+            if (kurang.length) {
                 e.preventDefault();
-                window.showRalivaToast('Minimal 3 dokumen (saat ini ' + (valid + baru) + ').', 'gpp_bad');
-                const kurang = TRIO.find((j) => !trioTerpenuhi(form).has(j));
-                const inputKurang = kurang && form.querySelector('input[type="file"][name="' + kurang + '"]');
+                window.showRalivaToast('Minimal 1 dokumen wajib: KTP / Identitas Owner.', 'gpp_bad');
+                const inputKurang = form.querySelector('input[type="file"][name="' + kurang[0] + '"]');
                 const kartu = inputKurang?.closest('div.bg-surface-container-low');
                 (kartu || form).scrollIntoView({ behavior: 'smooth', block: 'center' });
             }
