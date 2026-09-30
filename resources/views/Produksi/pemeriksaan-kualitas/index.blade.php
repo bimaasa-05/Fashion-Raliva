@@ -128,7 +128,7 @@
             <div>
                 <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Jumlah Lulus QC *</label>
                 <input type="number" name="jumlah_lulus" required min="0" max="{{ $o->items->sum('quantity') }}" value="{{ $o->items->sum('quantity') }}" class="raliva-input w-full" />
-                <p class="text-[11px] text-on-surface-variant mt-1">Gagal dihitung otomatis (total − lulus). Kekurangan lulus <b>langsung dipotong dari stok Gudang</b> saat disimpan; sisa yang tak terpenuhi masuk menu Kekurangan Gudang.</p>
+                <p class="text-[11px] text-on-surface-variant mt-1">Gagal dihitung otomatis (total − lulus). Kekurangan lulus dicatat dan disiapkan manual oleh Gudang lewat menu Kekurangan.</p>
             </div>
             <div>
                 <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Catatan (wajib bila Gagal)</label>
