@@ -56,15 +56,15 @@ class ProduksiQcGudangTest extends TestCase
 
         $order->refresh();
         $this->assertSame(Order::STATUS_SIAP_KIRIM, $order->status);
-        // Stok gudang cukup → kekurangan 1 pcs langsung terpenuhi otomatis.
-        $this->assertSame(5, (int) $order->jumlah_berhasil);
+        // Manual: QC hanya mencatat kekurangan, Gudang yang menyiapkan.
+        $this->assertSame(4, (int) $order->jumlah_berhasil);
         $this->assertSame(1, (int) $order->jumlah_gagal);
-        $this->assertSame(0, (int) $order->kekurangan_gudang);
+        $this->assertSame(1, (int) $order->kekurangan_gudang);
 
         $gudang = $this->userByRole(Role::GUDANG, $storeId);
         $this->assertTrue(
             Notification::where('user_id', $gudang->user_id)
-                ->where('judul', 'Kekurangan Terpenuhi Otomatis dari Gudang')
+                ->where('judul', 'Kekurangan Produksi — Siapkan dari Gudang')
                 ->where('pesan', 'like', '%'.$order->nomor_order.'%')
                 ->exists()
         );
@@ -72,7 +72,7 @@ class ProduksiQcGudangTest extends TestCase
         $admin = $this->userByRole(Role::ADMIN, $storeId);
         $this->assertTrue(
             Notification::where('user_id', $admin->user_id)
-                ->where('judul', 'Kekurangan Terpenuhi Otomatis dari Gudang')
+                ->where('judul', 'Kekurangan Produksi Diambil dari Gudang')
                 ->where('pesan', 'like', '%'.$order->nomor_order.'%')
                 ->exists()
         );
