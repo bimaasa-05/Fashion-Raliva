@@ -269,6 +269,7 @@
     </div>
 
     @include('partials.notification-popup')
+    @stack('modals')
     @include('partials.layout-scripts')
     <script>
         /* Handler modal khusus layout Owner (terisolasi, tanpa identifier global). */
