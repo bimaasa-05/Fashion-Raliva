@@ -15,7 +15,7 @@
 
 <div data-real class="hidden space-y-section-gap">
     @if(session('success'))
-        <div class="rounded-lg border border-secondary/20 bg-secondary-container/10 px-4 py-3 text-sm text-secondary">{{ session('success') }}</div>
+        <div class="rounded-lg border border-success/20 bg-success/10 px-4 py-3 text-sm text-success">{{ session('success') }}</div>
     @endif
     @if(session('info'))
         <div class="rounded-lg border border-outline-variant bg-surface-container-low px-4 py-3 text-sm text-on-surface-variant">{{ session('info') }}</div>
