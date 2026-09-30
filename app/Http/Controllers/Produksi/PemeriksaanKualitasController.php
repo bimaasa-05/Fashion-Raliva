@@ -27,7 +27,7 @@ class PemeriksaanKualitasController extends Controller
 
         $orders = Order::whereIn('store_id', $storeIds)
             ->where('status', $tab === 'siap' ? Order::STATUS_SIAP_KIRIM : Order::STATUS_MENUNGGU_QC)
-            ->with(['items.productVariant.product', 'bahanList', 'checkout', 'store', 'qualityChecks', 'shipments'])
+            ->with(['items.productVariant.product', 'bahanList', 'checkout', 'store', 'qualityChecks', 'shipments', 'shortfallMovements.warehouse'])
             ->orderByDesc('created_at')
             ->paginate(15);
 
@@ -71,8 +71,9 @@ class PemeriksaanKualitasController extends Controller
 
         $terambil = 0;
         $sisa = $kurang;
+        $gudangSumber = null;
 
-        DB::transaction(function () use ($order, $data, $totalQty, $gagal, $kurang, $storeIds, $qcStatus, &$terambil, &$sisa) {
+        DB::transaction(function () use ($order, $data, $totalQty, $gagal, $kurang, $storeIds, $qcStatus, &$terambil, &$sisa, &$gudangSumber) {
             QualityCheck::create([
                 'order_id' => $order->order_id,
                 'checked_by' => ActivityLogger::resolveActorId(),
@@ -88,6 +89,7 @@ class PemeriksaanKualitasController extends Controller
                 $hasil = ShortfallStockAllocator::allocate($order, $kurang, $storeIds, true);
                 $terambil = $hasil['terambil'];
                 $sisa = $hasil['sisa'];
+                $gudangSumber = $hasil['gudang'];
             }
 
             $order->update([
@@ -104,8 +106,8 @@ class PemeriksaanKualitasController extends Controller
 
         $lama = $order->only(['status']);
         ActivityLogger::log('produksi.qc.complete', Order::class, $order->order_id, $lama,
-            ['status' => Order::STATUS_SIAP_KIRIM, 'lulus' => $data['jumlah_lulus'], 'gagal' => $gagal, 'kekurangan_gudang' => $sisa, 'dari_gudang' => $terambil],
-            sprintf('QC + Packing selesai untuk pesanan %s. Lulus: %d, Gagal (otomatis): %d, Dari Gudang: %d, Sisa Kurang: %d.', $order->nomor_order, $data['jumlah_lulus'], $gagal, $terambil, $sisa));
+            ['status' => Order::STATUS_SIAP_KIRIM, 'lulus' => $data['jumlah_lulus'], 'gagal' => $gagal, 'kekurangan_gudang' => $sisa, 'dari_gudang' => $terambil, 'gudang_sumber' => $gudangSumber],
+            sprintf('QC + Packing selesai untuk pesanan %s. Lulus: %d, Gagal (otomatis): %d, Dari Gudang: %d%s, Sisa Kurang: %d.', $order->nomor_order, $data['jumlah_lulus'], $gagal, $terambil, $gudangSumber ? ' ('.$gudangSumber.')' : '', $sisa));
 
         if ($sisa > 0) {
             NotificationService::sendToRoleInStores(Role::GUDANG, [$order->store_id], Notification::TIPE_SISTEM,
@@ -121,18 +123,18 @@ class PemeriksaanKualitasController extends Controller
         } elseif ($terambil > 0) {
             NotificationService::sendToRoleInStores(Role::GUDANG, [$order->store_id], Notification::TIPE_SISTEM,
                 'Kekurangan Terpenuhi Otomatis dari Gudang',
-                sprintf('Pesanan %s — %d pcs kekurangan diambil otomatis dari stok gudang saat QC.', $order->nomor_order, $terambil),
+                sprintf('Pesanan %s — %d pcs kekurangan diambil otomatis dari stok gudang%s saat QC.', $order->nomor_order, $terambil, $gudangSumber ? ' ('.$gudangSumber.')' : ''),
                 ActivityLogger::resolveActorId(),
                 route('gudang.kekurangan'));
             NotificationService::sendToRoleInStores(Role::ADMIN, [$order->store_id], Notification::TIPE_SISTEM,
                 'Kekurangan Terpenuhi Otomatis dari Gudang',
-                sprintf('Pesanan %s kurang %d pcs dan sudah terpenuhi otomatis dari stok gudang.', $order->nomor_order, $terambil),
+                sprintf('Pesanan %s kurang %d pcs dan sudah terpenuhi otomatis dari stok gudang%s.', $order->nomor_order, $terambil, $gudangSumber ? ' ('.$gudangSumber.')' : ''),
                 ActivityLogger::resolveActorId(),
                 route('admin.pesanan'));
             NotificationService::sendToRoleInStores(Role::PRODUKSI, [$order->store_id], Notification::TIPE_SISTEM,
                 'Kekurangan Terpenuhi Otomatis dari Gudang',
-                sprintf('Pesanan %s — %d pcs kekurangan sudah diambil dari stok gudang. Silakan dipacking ulang.',
-                    $order->nomor_order, $terambil),
+                sprintf('Pesanan %s — %d pcs kekurangan sudah diambil dari stok gudang%s. Silakan dipacking ulang.',
+                    $order->nomor_order, $terambil, $gudangSumber ? ' ('.$gudangSumber.')' : ''),
                 ActivityLogger::resolveActorId(),
                 route('produksi.pemeriksaan-kualitas'));
         }
