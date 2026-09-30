@@ -45,6 +45,11 @@ class KekuranganSiapkanTest extends TestCase
                 ->where('alasan', 'like', 'Penutup kekurangan%')
                 ->exists()
         );
+        $movement = StockMovement::where('sumber_id', $order->order_id)
+            ->where('alasan', 'like', 'Penutup kekurangan%')
+            ->firstOrFail();
+        $this->assertStringContainsString('WH Kek', $movement->alasan, 'Alasan menyebut nama gudang sumber.');
+        $this->assertSame('WH Kek prop-', $order->refresh()->namaGudangShortfall());
     }
 
     public function test_siapkan_rejected_when_stock_insufficient(): void
