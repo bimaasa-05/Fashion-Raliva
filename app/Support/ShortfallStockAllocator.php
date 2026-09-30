@@ -15,15 +15,17 @@ use Illuminate\Support\Facades\DB;
  * - Tombol manual Gudang (partial=false): tolak penuh bila ada varian yang kurang.
  *
  * Pembagian proporsional qty tiap varian (floor + sisa ke qty terbesar).
+ * Prioritas gudang: gudang utama toko (dibuat pertama) dulu,
+ * fallback ke gudang berikutnya bila gudang utama kurang.
  *
- * @return array{terambil: int, sisa: int, rincian: array<int, array{item: string, diambil: int}>}
+ * @return array{terambil: int, sisa: int, gudang: string|null, rincian: array<int, array{item: string, diambil: int, gudang: string|null}>}
  */
 class ShortfallStockAllocator
 {
     public static function allocate(Order $order, int $need, array $storeIds, bool $partial): array
     {
         if ($need <= 0) {
-            return ['terambil' => 0, 'sisa' => 0, 'rincian' => []];
+            return ['terambil' => 0, 'sisa' => 0, 'gudang' => null, 'rincian' => []];
         }
 
         $items = $order->items()->whereNotNull('product_variant_id')->get();
@@ -55,10 +57,11 @@ class ShortfallStockAllocator
                 if ($butuh <= 0) {
                     continue;
                 }
-                $stocks = WarehouseStock::where('product_variant_id', $item->product_variant_id)
+                $stocks = WarehouseStock::with('warehouse')
+                    ->where('product_variant_id', $item->product_variant_id)
                     ->where('jumlah_stok', '>', 0)
                     ->whereHas('warehouse', fn ($q) => $q->whereIn('store_id', $storeIds))
-                    ->orderByDesc('jumlah_stok')
+                    ->orderBy('warehouse_id')
                     ->lockForUpdate()
                     ->get();
                 if ((int) $stocks->sum('jumlah_stok') < $butuh && ! $partial) {
@@ -71,6 +74,7 @@ class ShortfallStockAllocator
 
             $terambil = 0;
             $rincian = [];
+            $namaGudang = [];
             foreach ($items as $item) {
                 $butuh = $bagi[$item->order_item_id] ?? 0;
                 if ($butuh <= 0) {
@@ -88,6 +92,7 @@ class ShortfallStockAllocator
                     WarehouseStock::where('warehouse_stock_id', $stock->warehouse_stock_id)
                         ->where('jumlah_stok', '>=', $ambil)
                         ->decrement('jumlah_stok', $ambil);
+                    $namaWh = $stock->warehouse?->nama_gudang;
                     StockMovement::create([
                         'warehouse_id' => $stock->warehouse_id,
                         'product_variant_id' => $item->product_variant_id,
@@ -95,20 +100,30 @@ class ShortfallStockAllocator
                         'jumlah' => $ambil,
                         'sumber_tipe' => StockMovement::SUMBER_ORDER_ITEM,
                         'sumber_id' => $order->order_id,
-                        'alasan' => sprintf('Penutup kekurangan pesanan %s (%s).', $order->nomor_order ?? $order->order_id, $item->nama_produk_snapshot ?? '-'),
+                        'alasan' => sprintf('Penutup kekurangan pesanan %s (%s)%s.', $order->nomor_order ?? $order->order_id, $item->nama_produk_snapshot ?? '-', $namaWh ? ' — '.$namaWh : ''),
                         'dibuat_oleh' => ActivityLogger::resolveActorId(),
                     ]);
+                    if ($namaWh) {
+                        $namaGudang[$namaWh] = true;
+                    }
                     $butuh -= $ambil;
                     $diambilItem += $ambil;
                 }
                 if ($diambilItem > 0) {
                     $item->increment('qty_dari_gudang', $diambilItem);
                 }
-                $rincian[] = ['item' => $item->nama_produk_snapshot ?? '-', 'diambil' => $diambilItem];
+                $rincian[] = ['item' => $item->nama_produk_snapshot ?? '-', 'diambil' => $diambilItem, 'gudang' => null];
                 $terambil += $diambilItem;
             }
 
-            return ['terambil' => $terambil, 'sisa' => $need - $terambil, 'rincian' => $rincian];
+            $daftarGudang = array_keys($namaGudang);
+
+            return [
+                'terambil' => $terambil,
+                'sisa' => $need - $terambil,
+                'gudang' => count($daftarGudang) === 1 ? $daftarGudang[0] : (count($daftarGudang) > 1 ? count($daftarGudang).' gudang' : null),
+                'rincian' => $rincian,
+            ];
         });
     }
 }
