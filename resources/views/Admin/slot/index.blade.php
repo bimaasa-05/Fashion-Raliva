@@ -83,7 +83,7 @@
     @endif
 
     @if (($packages ?? collect())->isNotEmpty())
-        <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        <section id="paket" data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium scroll-mt-24">
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">Beli Paket Slot (langsung aktif)</h2>
             <p class="text-on-surface-variant font-body-md text-xs mt-1">Paket menambah kuota seketika tanpa menunggu persetujuan.</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
