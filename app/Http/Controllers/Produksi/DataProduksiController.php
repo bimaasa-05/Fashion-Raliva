@@ -73,7 +73,10 @@ class DataProduksiController extends Controller
         $lama = $order->only(['status', 'produksi_dimulai_pada']);
 
         DB::transaction(function () use ($order) {
-            $order->update(['produksi_dimulai_pada' => now()]);
+            $order->update([
+                'produksi_dimulai_pada' => now(),
+                'produksi_oleh' => auth()->id(),
+            ]);
 
             // Salin resep produk (diisi Gudang) menjadi bahan order (idempoten).
             $this->salinResepKeOrder($order);

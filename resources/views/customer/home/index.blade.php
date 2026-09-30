@@ -319,14 +319,7 @@
 </head>
  <body class="bg-surface text-on-surface antialiased font-body-lg pb-[72px] md:pb-0 lg:pl-72">
 @php $cartCount = $cartCount ?? 0; @endphp
-@php
-    $homeCats = collect($products)
-        ->map(fn ($p) => $p->category?->parent?->nama_kategori ?? $p->category?->nama_kategori)
-        ->filter()
-        ->unique()
-        ->values()
-        ->all();
-@endphp
+@php $homeCats = $homeCats ?? []; @endphp
 <!-- TopAppBar -->
 <header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
 <button class="hover:opacity-80 transition-opacity lg:hidden" onclick="openDrawer()" type="button">
@@ -383,7 +376,7 @@
 <span class="font-body-sm text-body-sm text-on-surface-variant inline-flex items-center gap-xs"><span class="material-symbols-outlined text-[16px]" data-icon="campaign">campaign</span>{{ __('Iklan') }}</span>
 </div>
 <h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Featured by Our Ateliers') }}</h3>
-<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-gutter mt-md">
+<div id="sponsored-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-gutter mt-md">
 @foreach ($adProducts as $a)
 @php
     $aPrice = $a->variants->min('harga') ?? $a->harga_dasar;
@@ -391,8 +384,9 @@
     $aImgUrl = $aImg ? (photo_url($aImg)) : 'https://picsum.photos/seed/ad/900/1200';
     $aWl = in_array($a->product_id, $wishlistedIds, true);
     $aDefaultVariant = $a->variants->sortBy('harga')->first();
+    $adCat = $a->category?->parent?->nama_kategori ?? $a->category?->nama_kategori;
 @endphp
-<div class="relative flex flex-col group cursor-pointer">
+<div data-category="{{ $adCat }}" class="relative flex flex-col group cursor-pointer">
 <a href="{{ route('customer.shop.produk-detail', $a->product_id) }}" class="flex flex-col group cursor-pointer">
 <div class="relative aspect-[3/4] mb-xs bg-surface-container overflow-hidden">
 <img loading="lazy" decoding="async" class="object-cover w-full h-full " alt="{{ $a->nama_produk }}" src="{{ $aImgUrl }}"/>
@@ -415,6 +409,7 @@
 </div>
 @endforeach
 </div>
+<p id="sponsored-empty" class="hidden text-center text-on-surface-variant font-body-lg py-md">{{ __('Tidak ada produk bersponsor di kategori ini.') }}</p>
 </div>
 </div>
 @endif
@@ -464,7 +459,7 @@
 </div>
 <p id="new-arrivals-empty" class="hidden text-center text-on-surface-variant font-body-lg py-md">{{ __('No products in this category.') }}</p>
 <div class="mt-md flex justify-center">
-<a href="{{ route('customer.shop') }}" class="border border-secondary rounded-xl text-secondary bg-transparent font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:bg-secondary/5 transition-colors inline-block">{{ __('VIEW ALL NEW ARRIVALS') }}</a>
+<a href="{{ route('customer.shop') }}" data-shop-url="{{ route('customer.shop') }}" class="border border-secondary rounded-xl text-secondary bg-transparent font-label-caps text-label-caps px-lg py-sm uppercase tracking-widest hover:bg-secondary/5 transition-colors inline-block">{{ __('VIEW ALL NEW ARRIVALS') }}</a>
 </div>
 </div>
 </div>
@@ -557,7 +552,18 @@
         syncHomePills();
     }
     function applyHomeFilter() {
-        var grid = document.getElementById('new-arrivals-grid');
+        filterHomeSection('new-arrivals-grid', 'new-arrivals-empty');
+        filterHomeSection('sponsored-grid', 'sponsored-empty');
+        var link = document.querySelector('[data-shop-url]');
+        if (link) {
+            var base = link.getAttribute('data-shop-url');
+            link.setAttribute('href', homeCategory ? base + '?kategori=' + encodeURIComponent(homeCategory) : base);
+        }
+    }
+    // Satu jalur penyaringan untuk tiap section: kartu disamarkan bila
+    // kategorinya tidak cocok, dan pesan kosong muncul bila tidak ada yang tampil.
+    function filterHomeSection(gridId, emptyId) {
+        var grid = document.getElementById(gridId);
         if (!grid) return;
         var cards = Array.prototype.slice.call(grid.children);
         var shown = 0;
@@ -566,7 +572,7 @@
             c.style.display = show ? '' : 'none';
             if (show) shown++;
         });
-        var empty = document.getElementById('new-arrivals-empty');
+        var empty = document.getElementById(emptyId);
         if (empty) empty.classList.toggle('hidden', shown > 0);
     }
     function syncHomePills() {

@@ -226,6 +226,7 @@ class ShopController extends Controller
         $reviews = $store->reviews()->where('status', Review::STATUS_AKTIF)->get();
         $reviewCount = $reviews->count();
         $averageRating = $reviews->avg('rating');
+        $storeSocials = $store->socials()->with('platform')->orderBy('store_social_id')->get();
 
         ['isFollowing' => $isFollowing, 'followersCount' => $followersCount] = $this->followState($store);
 

@@ -957,6 +957,15 @@
             }
         });
         (function initShop() {
+            // Kategori yang dibawa dari beranda (?kategori=...) langsung
+            // dipreselect, selama pill-nya benar-benar ada di halaman ini.
+            var preCat = new URLSearchParams(window.location.search).get('kategori');
+            if (preCat) {
+                var known = Array.prototype.some.call(document.querySelectorAll('.cat-pill'), function (b) {
+                    return b.dataset.cat === preCat;
+                });
+                if (known) selectCategory(preCat);
+            }
             applySort();
             applyGridFilter();
             renderChips();

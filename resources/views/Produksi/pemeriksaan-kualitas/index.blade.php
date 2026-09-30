@@ -64,11 +64,15 @@
                                     <p class="text-on-surface">{{ $item->nama_produk_snapshot }} <span class="text-on-surface-variant">× {{ $item->quantity }}</span></p>
                                 @endforeach
                             </td>
-                            <td class="py-3.5 px-4 text-center">
-                                <p class="text-green-600 font-bold">{{ $o->jumlah_berhasil ?? 0 }} berhasil</p>
+                            <td class="py-3.5 px-4 text-center" @if ($o->qc_admin_catatan) title="Catatan Admin: {{ $o->qc_admin_catatan }}" @endif>
+                                <p class="text-green-600 font-bold">{{ $o->jumlah_berhasil ?? 0 }}/{{ $o->items->sum('quantity') }} pcs berhasil</p>
                                 <p class="text-error">{{ $o->jumlah_gagal ?? 0 }} gagal</p>
+                                @php($dariGudang = (int) $o->items->sum('qty_dari_gudang'))
+                                @if ($tab === 'siap' && $dariGudang > 0)
+                                    <p class="text-xs text-gold-accent font-bold mt-0.5">{{ $dariGudang }} pcs dari {{ $o->namaGudangShortfall() ?? 'Gudang' }}</p>
+                                @endif
                                 @if ($tab === 'siap' && (int) ($o->kekurangan_gudang ?? 0) > 0)
-                                    <p class="text-xs text-gold-accent font-bold mt-0.5">+{{ $o->kekurangan_gudang }} dari Gudang</p>
+                                    <p class="text-xs text-error font-bold mt-0.5">−{{ $o->kekurangan_gudang }} masih kurang</p>
                                 @endif
                             </td>
                             <td class="py-3.5 px-4 text-center">
@@ -124,7 +128,7 @@
             <div>
                 <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">{{ __('Jumlah Lulus QC') }} *</label>
                 <input type="number" name="jumlah_lulus" required min="0" max="{{ $o->items->sum('quantity') }}" value="{{ $o->items->sum('quantity') }}" class="raliva-input w-full" />
-                <p class="text-[11px] text-on-surface-variant mt-1">Gagal dihitung otomatis (total − lulus). Kekurangan lulus diambil dari Gudang.</p>
+                <p class="text-[11px] text-on-surface-variant mt-1">Gagal dihitung otomatis (total − lulus). Kekurangan lulus dicatat dan disiapkan manual oleh Gudang lewat menu Kekurangan.</p>
             </div>
             <div>
                 <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">{{ __('Catatan (wajib bila Gagal)') }}</label>

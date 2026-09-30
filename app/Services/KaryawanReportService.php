@@ -150,33 +150,43 @@ class KaryawanReportService
     /**
      * @param  int[]  $storeIds
      */
+    /**
+     * Metrik produksi dibaca dari alur live tabel `orders` (accept/selesai/QC),
+     * bukan tabel legacy `production_orders` yang tidak lagi ditulis.
+     *
+     * @param  int[]  $storeIds
+     */
     public function rekapProduksi(int $userId, array $storeIds, ?array $range = null): array
     {
         $base = fn () => $this->dalamRentang(
-            ProductionOrder::whereIn('store_id', $storeIds)->where('assigned_to', $userId),
-            $range
+            Order::whereIn('store_id', $storeIds)
+                ->where('produksi_oleh', $userId)
+                ->whereNotNull('produksi_dimulai_pada'),
+            $range,
+            'produksi_dimulai_pada'
         );
 
         $ditugaskan = (clone $base())->count();
-        $selesai = (clone $base())->where('status', ProductionOrder::STATUS_SELESAI)->count();
+        $selesai = (clone $base())->whereNotNull('produksi_selesai_pada')->count();
 
         $unitDiminta = (float) (clone $base())
-            ->join('production_order_items', 'production_order_items.production_order_id', '=', 'production_orders.production_order_id')
-            ->sum('production_order_items.jumlah_diminta');
+            ->join('order_items', 'order_items.order_id', '=', 'orders.order_id')
+            ->sum('order_items.quantity');
 
-        $qcBase = QualityCheck::whereHas('productionOrder', fn ($q) => $q
-            ->whereIn('store_id', $storeIds)->where('assigned_to', $userId));
-        $qcBase = $this->dalamRentang($qcBase, $range);
+        $qcBase = $this->dalamRentang(
+            QualityCheck::where('checked_by', $userId)
+                ->whereHas('order', fn ($q) => $q->whereIn('store_id', $storeIds)),
+            $range,
+            'diperiksa_pada'
+        );
         $outputLayak = (int) (clone $qcBase)->sum('jumlah_lulus');
-        $orderQc = (clone $qcBase)->distinct()->count('production_order_id');
+        $orderQc = (clone $qcBase)->distinct()->count('order_id');
 
         $durasiSelesai = (clone $base())
-            ->where('status', ProductionOrder::STATUS_SELESAI)
-            ->whereNotNull('dimulai_pada')
-            ->whereNotNull('selesai_pada')
-            ->get(['dimulai_pada', 'selesai_pada']);
+            ->whereNotNull('produksi_selesai_pada')
+            ->get(['produksi_dimulai_pada', 'produksi_selesai_pada']);
         $durasiJam = $durasiSelesai
-            ->map(fn ($o) => $o->dimulai_pada->diffInHours($o->selesai_pada))
+            ->map(fn ($o) => $o->produksi_dimulai_pada->diffInHours($o->produksi_selesai_pada))
             ->filter(fn ($h) => $h >= 0);
 
         return [
@@ -206,6 +216,12 @@ class KaryawanReportService
         $diminta = (clone $transferBase())->count();
         $selesaiTf = (clone $transferBase())->where('status', StockTransfer::STATUS_RECEIVED)->count();
         $batalTf = (clone $transferBase())->where('status', StockTransfer::STATUS_CANCELLED)->count();
+        $disetujui = (int) $this->dalamRentang(
+            StockTransfer::where('approved_by', $userId)
+                ->where('status', StockTransfer::STATUS_RECEIVED)
+                ->whereHas('fromWarehouse', fn ($q) => $q->whereIn('store_id', $storeIds)),
+            $range
+        )->count();
         $putaran = (clone $transferBase())
             ->where('status', StockTransfer::STATUS_RECEIVED)
             ->whereNotNull('diminta_pada')
@@ -234,6 +250,7 @@ class KaryawanReportService
             'transfer_diminta' => $diminta,
             'transfer_selesai' => $selesaiTf,
             'transfer_batal' => $batalTf,
+            'transfer_disetujui' => $disetujui,
             'rata_putaran_jam' => $putaran->isNotEmpty() ? round($putaran->avg(), 2) : null,
             'sampel_putaran' => $putaran->count(),
             'mutasi' => $mutasi,
@@ -245,6 +262,30 @@ class KaryawanReportService
     }
 
     /* ================= KEUANGAN OWNER ================= */
+
+    /**
+     * AOV level toko: pending + dibayar + selesai (semua potensi income).
+     *
+     * @param  int[]  $storeIds
+     */
+    public function aovToko(array $storeIds, ?array $range = null): ?float
+    {
+        $orders = $this->dalamRentang(
+            Order::whereIn('orders.store_id', $storeIds)->whereIn('orders.status', [
+                Order::STATUS_PENDING_PAYMENT,
+                Order::STATUS_DIBAYAR,
+                Order::STATUS_SELESAI,
+            ]),
+            $range,
+            'orders.created_at'
+        );
+        $jumlah = (clone $orders)->count();
+        if ($jumlah === 0) {
+            return null;
+        }
+
+        return round((float) (clone $orders)->sum('orders.grand_total') / $jumlah, 2);
+    }
 
     /**
      * @param  int[]  $storeIds

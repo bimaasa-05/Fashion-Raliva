@@ -17,6 +17,7 @@ class OrderItem extends Model
         'nama_produk_snapshot',
         'harga_snapshot',
         'quantity',
+        'qty_dari_gudang',
         'subtotal',
         'diskon',
         'total',

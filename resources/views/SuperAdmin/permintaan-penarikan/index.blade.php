@@ -441,17 +441,31 @@
         showDialog('reject-dialog');
     }
 
+    // Delegasi ke API modal bersama (partials.ui-scripts) agar kunci scroll ikut
+    // dilepas saat dialog ditutup lewat jalur ui-scripts: X, backdrop, mousedown
+    // root, maupun tombol Batal ber-atribut data-modal-close. Versi lama hanya
+    // menulis inline body.style.overflow sehingga terkunci selamanya.
     function showDialog(id) {
-        const el = document.getElementById(id);
-        el.classList.remove('hidden');
-        el.classList.add('flex');
+        const modal = document.getElementById(id);
+        if (!modal) return;
+        if (typeof window.ralivaOpenModal === 'function') {
+            window.ralivaOpenModal(modal);
+            return;
+        }
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
         document.body.style.overflow = 'hidden';
     }
 
     function hideDialog(id) {
-        const el = document.getElementById(id);
-        el.classList.add('hidden');
-        el.classList.remove('flex');
+        const modal = document.getElementById(id);
+        if (!modal) return;
+        if (typeof window.ralivaCloseModal === 'function') {
+            window.ralivaCloseModal(modal);
+            return;
+        }
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
         document.body.style.overflow = '';
     }
 

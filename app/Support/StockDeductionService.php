@@ -27,7 +27,8 @@ class StockDeductionService
             $items = $order->items()->get();
 
             foreach ($items as $item) {
-                $need = max(0, (int) $item->quantity);
+                // Kurangi yang sudah diambil Gudang saat tutup kekurangan (anti double-deduct).
+                $need = max(0, (int) $item->quantity - (int) ($item->qty_dari_gudang ?? 0));
                 if ($need <= 0 || ! $item->product_variant_id) {
                     continue;
                 }

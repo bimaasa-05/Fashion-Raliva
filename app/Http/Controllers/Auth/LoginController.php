@@ -14,8 +14,12 @@ use Illuminate\View\View;
 
 class LoginController extends Controller
 {
-    public function create(): View|RedirectResponse
+    public function create(Request $request): View|RedirectResponse
     {
+        if ($request->query('expired') === '1') {
+            session()->flash('info', 'Sesi Anda telah berakhir. Silakan masuk kembali untuk melanjutkan.');
+        }
+
         return view('customer.auth.login');
     }
 

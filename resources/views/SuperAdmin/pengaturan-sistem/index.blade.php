@@ -244,6 +244,42 @@
         </div>
     </form>
 
+    {{--=== Media Sosial ===--}}
+    <section id="kartu-sosmed" data-scroll-section="sosmed" class="snap-anchor bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 space-y-gutter card-premium">
+        <div class="flex items-center justify-between gap-4 flex-wrap">
+            <div>
+                <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">share</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Media Sosial</h2></div>
+                <p class="font-body-md text-sm text-on-surface-variant mt-2">Daftar platform yang bisa dipilih Owner di halaman tokonya, plus opsi custom bila belum ada.</p>
+            </div>
+            <span class="inline-flex items-center px-3 py-1 rounded-full bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-[10px] uppercase tracking-wider">Dipakai Owner saat isi sosmed toko</span>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-gutter">
+            @foreach($sosmedPlatforms as $platform)
+                <div class="border border-muted-border rounded-lg p-4 flex items-center justify-between gap-3">
+                    <div>
+                        <p class="font-title-md text-sm text-on-surface">{{ $platform->nama_platform }}</p>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full font-label-sm text-[10px] uppercase tracking-wider {{ $platform->status === 'aktif' ? 'bg-tertiary-container/20 text-tertiary border border-tertiary/25' : 'bg-surface-container text-on-surface-variant border border-muted-border' }}">{{ $platform->status }}</span>
+                    </div>
+                    <form method="POST" action="{{ route('superadmin.pengaturan-sistem.sosmed.toggle', $platform) }}">
+                        @csrf
+                        <button type="submit" class="px-4 py-2 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ $platform->status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan' }}</button>
+                    </form>
+                </div>
+            @endforeach
+        </div>
+
+        <form method="POST" action="{{ route('superadmin.pengaturan-sistem.sosmed.store') }}" class="flex items-end gap-gutter flex-wrap border-t border-muted-border pt-gutter">
+            @csrf
+            <div class="flex-1 min-w-52">
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="nama_platform">Tambah Platform Baru</label>
+                <input class="w-full bg-transparent border border-muted-border rounded-lg p-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="nama_platform" name="nama_platform" type="text" maxlength="50" value="{{ old('nama_platform') }}" placeholder="cth: YouTube" required />
+                @error('nama_platform')<p class="font-body-md text-xs text-error mt-2">{{ $message }}</p>@enderror
+            </div>
+            <button type="submit" class="bg-deep-onyx text-on-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">Tambah Platform</button>
+        </form>
+    </section>
+
     {{--=== Pusat Bantuan ===--}}
     <section id="kartu-help" data-scroll-section="help" class="snap-anchor bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 space-y-gutter card-premium">
         <div class="flex items-center justify-between gap-4 flex-wrap">

@@ -862,7 +862,7 @@ return view('customer.checkout.selesai', [
 
                 PaymentVerification::create([
                     'payment_id' => $payment->payment_id,
-                    'verifier_id' => ActivityLogger::resolveActorId(),
+                    'verifier_id' => self::rekapVerifierId($user, (int) $firstOrder->store_id),
                     'status' => PaymentVerification::STATUS_DITERIMA,
                     'diverifikasi_pada' => now(),
                 ]);
@@ -904,6 +904,27 @@ return view('customer.checkout.selesai', [
 
         return redirect()->route('customer.checkout.selesai', $checkoutModel->checkout_id)
             ->with('toast', ['message' => __('Pembayaran berhasil menggunakan saldo akun.'), 'icon' => 'task_alt']);
+    }
+
+    /**
+     * Verifier untuk rekap karyawan: bila aktor adalah customer sendiri
+     * (self-checkout saldo), fallback ke Admin aktif pertama di toko agar
+     * verifikasi tetap masuk rekap. Audit asli tetap via ActivityLog.
+     */
+    protected static function rekapVerifierId(User $user, int $storeId): int
+    {
+        if (($user->role?->nama_role ?? null) !== Role::CUSTOMER) {
+            return (int) ActivityLogger::resolveActorId();
+        }
+
+        $adminId = \App\Models\StoreStaff::query()
+            ->where('store_id', $storeId)
+            ->where('status', 'aktif')
+            ->whereHas('user.role', fn ($q) => $q->where('nama_role', Role::ADMIN))
+            ->orderBy('user_id')
+            ->value('user_id');
+
+        return (int) ($adminId ?? ActivityLogger::resolveActorId());
     }
 
     /**

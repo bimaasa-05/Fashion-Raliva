@@ -56,6 +56,7 @@ class ProduksiQcGudangTest extends TestCase
 
         $order->refresh();
         $this->assertSame(Order::STATUS_SIAP_KIRIM, $order->status);
+        // Manual: QC hanya mencatat kekurangan, Gudang yang menyiapkan.
         $this->assertSame(4, (int) $order->jumlah_berhasil);
         $this->assertSame(1, (int) $order->jumlah_gagal);
         $this->assertSame(1, (int) $order->kekurangan_gudang);

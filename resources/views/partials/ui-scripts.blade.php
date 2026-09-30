@@ -20,97 +20,41 @@
         }, 2800);
     };
 
-    let ralivaScrollY = 0;
     let ralivaScrollLocked = false;
-    let ralivaStickyEls = [];
 
-    const ralivaCollectRootSticky = () => {
-        const found = [];
-        document.body.querySelectorAll('*').forEach((el) => {
-            if (getComputedStyle(el).position !== 'sticky') return;
-            let p = el.parentElement;
-            let scoped = false;
-            while (p && p !== document.body) {
-                const ov = getComputedStyle(p).overflowY;
-                if (ov === 'auto' || ov === 'scroll') { scoped = true; break; }
-                p = p.parentElement;
-            }
-            if (!scoped) found.push(el);
-        });
-        return found;
+    const ralivaJailModal = () => document.querySelector('[data-modal]:not(.hidden)');
+
+    const ralivaJailWheel = (e) => {
+        const modal = ralivaJailModal();
+        if (modal && !modal.contains(e.target)) e.preventDefault();
     };
 
+    const ralivaJailKeys = (e) => {
+        if (![' ', 'PageUp', 'PageDown', 'ArrowUp', 'ArrowDown', 'Home', 'End'].includes(e.key)) return;
+        const modal = ralivaJailModal();
+        if (!modal || modal.contains(e.target)) return;
+        if (['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) return;
+        e.preventDefault();
+    };
+
+    // Scroll-jail: root scroller TIDAK dihentikan, jadi elemen sticky (sidebar, header)
+    // tidak pernah keluar flow — mencegah konten "tembus" ke belakang sidebar saat modal
+    // dibuka. Latar diblokir via preventDefault pada wheel/touchmove/keyboard di luar modal.
     const ralivaLockScroll = () => {
         if (ralivaScrollLocked) return;
         ralivaScrollLocked = true;
-        ralivaScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
-        const w = window.innerWidth - document.documentElement.clientWidth;
-        if (w > 0) {
-            document.body.style.paddingRight = w + 'px';
-            document.documentElement.style.paddingRight = w + 'px';
-        }
-        // Bekukan elemen sticky yang scrollport-nya root (sidebar, header dsb) BERDASARKAN
-        // rect saat ini, DIPANGGIL SEBELUM body di-posisikan:fixed. Tanpa ini, scroll-lock
-        // menghentikan root scroller dan sticky jatuh ke posisi statisnya ("geser ke atas").
-        // Ukur dulu, baru ubah, agar satu reflow & tanpa animasi (transition-all).
-        const stickyNow = ralivaCollectRootSticky();
-        const rects = stickyNow.map((el) => el.getBoundingClientRect());
-        const prevStyles = stickyNow.map((el) => ({
-            position: el.style.position,
-            top: el.style.top,
-            left: el.style.left,
-            width: el.style.width,
-            height: el.style.height,
-            transition: el.style.transition,
-        }));
-        stickyNow.forEach((el, i) => {
-            const r = rects[i];
-            el.style.transition = 'none';
-            el.style.position = 'fixed';
-            el.style.top = r.top + 'px';
-            el.style.left = r.left + 'px';
-            el.style.width = r.width + 'px';
-            el.style.height = r.height + 'px';
-        });
-        ralivaStickyEls = stickyNow.map((el, i) => ({ el, prev: prevStyles[i] }));
-        document.body.style.position = 'fixed';
-        document.body.style.top = '-' + ralivaScrollY + 'px';
-        document.body.style.left = '0';
-        document.body.style.right = '0';
-        document.body.style.width = '100%';
-        document.body.style.overflow = 'hidden';
-        document.documentElement.style.overflow = 'hidden';
+        document.body.addEventListener('wheel', ralivaJailWheel, { passive: false });
+        document.body.addEventListener('touchmove', ralivaJailWheel, { passive: false });
+        window.addEventListener('keydown', ralivaJailKeys);
     };
 
     const ralivaUnlockScroll = () => {
         if (document.querySelector('[data-modal]:not(.hidden)')) return;
-        if (!ralivaScrollLocked) {
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '';
-            document.documentElement.style.overflow = '';
-            document.documentElement.style.paddingRight = '';
-            return;
-        }
+        if (!ralivaScrollLocked) return;
         ralivaScrollLocked = false;
-        document.body.style.position = '';
-        document.body.style.top = '';
-        document.body.style.left = '';
-        document.body.style.right = '';
-        document.body.style.width = '';
-        document.body.style.overflow = '';
-        document.body.style.paddingRight = '';
-        document.documentElement.style.overflow = '';
-        document.documentElement.style.paddingRight = '';
-        ralivaStickyEls.forEach(({ el, prev }) => {
-            el.style.position = prev.position;
-            el.style.top = prev.top;
-            el.style.left = prev.left;
-            el.style.width = prev.width;
-            el.style.height = prev.height;
-            el.style.transition = prev.transition;
-        });
-        ralivaStickyEls = [];
-        window.scrollTo(0, ralivaScrollY);
+        document.body.removeEventListener('wheel', ralivaJailWheel);
+        document.body.removeEventListener('touchmove', ralivaJailWheel);
+        window.removeEventListener('keydown', ralivaJailKeys);
     };
 
     window.ralivaOpenModal = (modal) => {

@@ -15,7 +15,15 @@ class PengaturanSistemController extends Controller
 {
     public function index()
     {
+        foreach (['TikTok', 'Instagram', 'YouTube'] as $nama) {
+            \App\Models\SosmedPlatform::firstOrCreate(
+                ['nama_platform' => $nama],
+                ['status' => \App\Models\SosmedPlatform::STATUS_AKTIF]
+            );
+        }
+
         return view('SuperAdmin.pengaturan-sistem.index', [
+            'sosmedPlatforms' => \App\Models\SosmedPlatform::orderBy('nama_platform')->get(),
             'syaratKetentuan' => Setting::get(Setting::SYARAT_KETENTUAN, ''),
             'kebijakanPrivasi' => Setting::get(Setting::KEBIJAKAN_PRIVASI, ''),
             'settings' => [
@@ -41,6 +49,34 @@ class PengaturanSistemController extends Controller
             ],
             'helpWhatsappHours' => Setting::get(Setting::HELP_WHATSAPP_HOURS, 'Mon–Fri, 09.00–17.00 WIB'),
         ]);
+    }
+
+    public function storeSosmed(Request $request)
+    {
+        $data = $request->validate([
+            'nama_platform' => ['required', 'string', 'max:50', 'unique:sosmed_platforms,nama_platform'],
+        ], [
+            'nama_platform.required' => 'Nama platform wajib diisi.',
+            'nama_platform.unique' => 'Platform ini sudah ada.',
+        ]);
+
+        \App\Models\SosmedPlatform::create([
+            'nama_platform' => trim($data['nama_platform']),
+            'status' => \App\Models\SosmedPlatform::STATUS_AKTIF,
+        ]);
+
+        return back()->with('success', 'Platform media sosial ditambahkan.');
+    }
+
+    public function toggleSosmed(Request $request, \App\Models\SosmedPlatform $platform)
+    {
+        $platform->update([
+            'status' => $platform->status === \App\Models\SosmedPlatform::STATUS_AKTIF
+                ? \App\Models\SosmedPlatform::STATUS_NONAKTIF
+                : \App\Models\SosmedPlatform::STATUS_AKTIF,
+        ]);
+
+        return back()->with('success', 'Status platform diperbarui.');
     }
 
     public function updateSettings(Request $request)

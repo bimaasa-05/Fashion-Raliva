@@ -44,7 +44,23 @@ class DataProdukController extends Controller
         $pendingUpdateIds = \App\Models\ProductUpdateRequest::where('status', \App\Models\ProductUpdateRequest::STATUS_PENDING)
             ->pluck('product_id')
             ->all();
-        return view('Admin.produk.index', compact('products', 'categories', 'stats', 'ukuranOptions', 'tokoKategori', 'pendingUpdateIds'));
+
+        // Kuota untuk popup gate "Tambah": habis = buka modal Beli Slot / Beli Paket, bukan form.
+        $slotStoreIds = AdminContext::assignedStoreIds();
+        $slotKuota = [];
+        foreach ($slotStoreIds as $sid) {
+            $slotTotal = \App\Support\SlotService::totalQuota((int) $sid);
+            $slotUsed = \App\Support\SlotService::usedSlots((int) $sid);
+            $slotKuota[(int) $sid] = ['total' => $slotTotal, 'used' => $slotUsed, 'sisa' => max(0, $slotTotal - $slotUsed)];
+        }
+        $slotStoreAktif = (int) ($slotStoreIds[0] ?? 0);
+        $slotHabis = $slotStoreAktif < 1 || ($slotKuota[$slotStoreAktif]['sisa'] ?? 0) < 1;
+        $slotStores = \App\Models\Store::whereIn('store_id', $slotStoreIds)->get(['store_id', 'nama_toko']);
+        $slotMetode = \App\Models\PaymentMethod::where('status', \App\Models\PaymentMethod::STATUS_AKTIF)
+            ->orderBy('nama_metode')->get(['payment_method_id', 'nama_metode']);
+        $slotHarga = \App\Support\SlotService::hargaPerSlot();
+
+        return view('Admin.produk.index', compact('products', 'categories', 'stats', 'ukuranOptions', 'tokoKategori', 'pendingUpdateIds', 'slotKuota', 'slotStoreAktif', 'slotHabis', 'slotStores', 'slotMetode', 'slotHarga'));
     }
 
     public function store(Request $request): \Illuminate\Http\RedirectResponse
@@ -106,11 +122,14 @@ class DataProdukController extends Controller
         $data['warna'] = $warna['names'];
         $data['warna_hex'] = $warna['hexes'];
 
+        // Gate kuota setelah validasi: form valid + kuota habis = input tidak hilang,
+        // halaman buka popup Beli Slot / Beli Paket. Form tidak valid = error validasi biasa.
         if (! \App\Support\SlotService::canAdd((int) $storeId)) {
             $total = \App\Support\SlotService::totalQuota((int) $storeId);
             $used = \App\Support\SlotService::usedSlots((int) $storeId);
 
-            return redirect()->route('admin.slot', ['habis' => 1])->with('error', sprintf(__('Kuota slot produk penuh (%d/%d). Pilih ajukan slot atau beli paket di bawah.'), $used, $total));
+            return redirect()->route('admin.produk', ['slot_habis' => 1])->withInput()
+                ->with('error', sprintf(__('Kuota slot produk penuh (%d/%d). Pilih Beli Slot atau Beli Paket di bawah.'), $used, $total));
         }
 
         // Unggah foto dulu (kumpulkan path), lalu 1 transaksi untuk semua baris DB master.

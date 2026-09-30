@@ -403,10 +403,11 @@
             </div>
             <div class="p-6 space-y-4">
                 <p class="text-xs text-on-surface-variant">{{ __('Input hasil produksi. Pesanan akan masuk ke tahap QC.') }}</p>
+                <p class="text-sm text-on-surface bg-gold-accent/10 border border-gold-accent/30 rounded-lg px-4 py-3">{{ __('Total pesanan:') }} <b class="text-base">{{ $o->items->sum('quantity') }} pcs</b></p>
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">{{ __('Jumlah Berhasil') }} *</label>
                     <input type="number" name="jumlah_berhasil" required min="0" max="{{ $o->items->sum('quantity') }}" value="{{ $o->items->sum('quantity') }}" class="raliva-input w-full" placeholder="0" />
-                    <p class="text-[11px] text-on-surface-variant mt-1">{{ __('Total pesanan:') }} <b>{{ $o->items->sum('quantity') }} pcs</b>. Jumlah gagal dihitung otomatis (total − berhasil).</p>
+                    <p class="text-[11px] text-on-surface-variant mt-1">{{ __('Jumlah gagal dihitung otomatis (total − berhasil).') }}</p>
                 </div>
                 <div>
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">{{ __('Catatan (opsional)') }}</label>

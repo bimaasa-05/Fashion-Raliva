@@ -10,6 +10,7 @@ use App\Models\SlotPurchaseRequest;
 use App\Models\User;
 use App\Support\OwnerContext;
 use App\Support\SlotService;
+use App\Support\DokumenLegal;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 
@@ -100,6 +101,10 @@ class KelolaSlotController extends Controller
         $storeId = OwnerContext::firstStoreId();
         if (! $storeId) {
             return back()->with('error',__('Anda belum memiliki toko.'));
+        }
+
+        if (! DokumenLegal::satisfied($storeId)) {
+            return back()->withInput()->with('error', DokumenLegal::pesanKurang($storeId));
         }
 
         $data = $request->validate([

@@ -11,6 +11,7 @@ use App\Models\StoreStaff;
 use App\Services\NotificationService;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PemeriksaanKualitasController extends Controller
 {
@@ -25,7 +26,7 @@ class PemeriksaanKualitasController extends Controller
 
         $orders = Order::whereIn('store_id', $storeIds)
             ->where('status', $tab === 'siap' ? Order::STATUS_SIAP_KIRIM : Order::STATUS_MENUNGGU_QC)
-            ->with(['items.productVariant.product', 'bahanList', 'checkout', 'store', 'qualityChecks', 'shipments'])
+            ->with(['items.productVariant.product', 'bahanList', 'checkout', 'store', 'qualityChecks', 'shipments', 'shortfallMovements.warehouse'])
             ->orderByDesc('created_at')
             ->paginate(15);
 
@@ -61,32 +62,36 @@ class PemeriksaanKualitasController extends Controller
             return back()->with('toast', ['message' => __('Jumlah lulus melebihi total pesanan (:ph77679 pcs).', ['ph77679' => $totalQty]), 'icon' => 'gpp_maybe']);
         }
 
-        // Gagal dihitung otomatis; kekurangan (lulus < total) diambil dari Gudang.
+        // Gagal dihitung otomatis; kekurangan (lulus < total) dicatat untuk
+        // disiapkan manual oleh Gudang lewat menu Kekurangan.
         $gagal = max(0, $totalQty - (int) $data['jumlah_lulus']);
         $kurang = max(0, $totalQty - (int) $data['jumlah_lulus']);
 
         $qcStatus = $gagal > 0 ? QualityCheck::STATUS_SEBAGIAN : QualityCheck::STATUS_LULUS;
 
-        QualityCheck::create([
-            'order_id' => $order->order_id,
-            'checked_by' => ActivityLogger::resolveActorId(),
-            'jumlah_lulus' => $data['jumlah_lulus'],
-            'jumlah_gagal' => $gagal,
-            'status' => $qcStatus,
-            'catatan' => $data['catatan'] ?? null,
-            'diperiksa_pada' => now(),
-        ]);
+        DB::transaction(function () use ($order, $data, $totalQty, $gagal, $kurang, $qcStatus) {
+            QualityCheck::create([
+                'order_id' => $order->order_id,
+                'checked_by' => ActivityLogger::resolveActorId(),
+                'jumlah_lulus' => $data['jumlah_lulus'],
+                'jumlah_gagal' => $gagal,
+                'status' => $qcStatus,
+                'catatan' => $data['catatan'] ?? null,
+                'diperiksa_pada' => now(),
+            ]);
+
+            $order->update([
+                'status' => Order::STATUS_SIAP_KIRIM,
+                'jumlah_berhasil' => $data['jumlah_lulus'],
+                // jumlah_gagal tetap cacat produksi (bukan sisa kirim).
+                'jumlah_gagal' => $gagal,
+                'kekurangan_gudang' => $kurang,
+                'tanggal_qc' => now(),
+                'tanggal_packing' => now(),
+            ]);
+        });
 
         $lama = $order->only(['status']);
-        $order->update([
-            'status' => Order::STATUS_SIAP_KIRIM,
-            'jumlah_berhasil' => $data['jumlah_lulus'],
-            'jumlah_gagal' => $gagal,
-            'kekurangan_gudang' => $kurang,
-            'tanggal_qc' => now(),
-            'tanggal_packing' => now(),
-        ]);
-
         ActivityLogger::log('produksi.qc.complete', Order::class, $order->order_id, $lama,
             ['status' => Order::STATUS_SIAP_KIRIM, 'lulus' => $data['jumlah_lulus'], 'gagal' => $gagal, 'kekurangan_gudang' => $kurang],
             sprintf('QC + Packing selesai untuk pesanan %s. Lulus: %d, Gagal (otomatis): %d, Kurang dari Gudang: %d.', $order->nomor_order, $data['jumlah_lulus'], $gagal, $kurang));

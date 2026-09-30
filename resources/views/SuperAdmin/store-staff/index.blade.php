@@ -440,12 +440,26 @@
 @include('SuperAdmin.partials.dd-helpers')
 <script>
     // === MODAL SYSTEM ===
+    // Delegasi ke API modal bersama (partials.ui-scripts): kunci scroll harus
+    // ikut dilepas pada jalur ui-scripts (X, backdrop, Batal data-modal-close).
     function openModal(id) {
-        document.getElementById(id)?.classList.remove('hidden');
+        const modal = document.getElementById(id);
+        if (!modal) return;
+        if (typeof window.ralivaOpenModal === 'function') {
+            window.ralivaOpenModal(modal);
+            return;
+        }
+        modal.classList.remove('hidden');
         document.body.style.overflow = 'hidden';
     }
     function closeModal(id) {
-        document.getElementById(id)?.classList.add('hidden');
+        const modal = document.getElementById(id);
+        if (!modal) return;
+        if (typeof window.ralivaCloseModal === 'function') {
+            window.ralivaCloseModal(modal);
+            return;
+        }
+        modal.classList.add('hidden');
         document.body.style.overflow = '';
     }
     function openAddStaffModal() {
@@ -459,10 +473,7 @@
         if (e.key === 'Escape') {
             closeAllDropdowns();
             document.querySelectorAll('[id^="modal-"]').forEach(m => {
-                if (!m.classList.contains('hidden')) {
-                    m.classList.add('hidden');
-                    document.body.style.overflow = '';
-                }
+                if (!m.classList.contains('hidden')) closeModal(m.id);
             });
         }
     });

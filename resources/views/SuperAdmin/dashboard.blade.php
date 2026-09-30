@@ -124,12 +124,16 @@
     <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Pesanan per Bulan') }}</h2>
-            <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">{{ __('6 Bulan Terakhir') }}</span>
+            <div class="inline-flex self-start bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
+                <button type="button" data-order-range="7" class="order-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">{{ __('7 Hari') }}</button>
+                <button type="button" data-order-range="30" class="order-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">{{ __('30 Hari') }}</button>
+                <button type="button" data-order-range="90" class="order-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">{{ __('3 Bulan') }}</button>
+            </div>
         </div>
-        <div class="h-48" data-bars='@json($chartPesananBars)' data-bars-suffix=""></div>
+        <div id="order-bars-holder" class="h-48 min-h-0"></div>
         <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
             <span class="material-symbols-outlined text-[14px] text-gold-accent">insights</span>
-            Pesanan bulan {{ $bulanTertinggi['label'] }} tertinggi dengan {{ number_format($bulanTertinggi['jumlah'], 0, ',', '.') }} pesanan.
+            <span id="order-bars-summary">Memuat data…</span>
         </p>
     </section>
 
@@ -423,6 +427,68 @@
             chartWrap?.classList.add('hidden');
             chartError?.classList.remove('hidden');
         }
+    });
+
+    /* ===== Kartu "Pesanan per Bulan" — filter 7/30/90 hari ===== */
+    const orderBarsHolder = document.getElementById('order-bars-holder');
+    const orderBarsSummary = document.getElementById('order-bars-summary');
+    let currentOrderRange = '7';
+
+    const setActiveOrderRangeButton = () => {
+        document.querySelectorAll('[data-order-range]').forEach((b) => {
+            const isActive = b.getAttribute('data-order-range') === currentOrderRange;
+            b.classList.toggle('bg-deep-onyx', isActive);
+            b.classList.toggle('text-on-primary', isActive);
+            b.classList.toggle('text-on-surface-variant', !isActive);
+        });
+    };
+
+    const buildOrderBars = () => {
+        if (!orderBarsHolder) return;
+        const data = rangeData[currentOrderRange];
+        const segs = (data && data.labels)
+            ? data.labels.map((label, i) => ({ label, value: Number(data.pesanan[i]) || 0 }))
+            : [];
+
+        orderBarsHolder.innerHTML = '';
+        if (!segs.length) {
+            orderBarsHolder.innerHTML = '<div class="w-full h-full flex flex-col items-center justify-center text-center gap-2 text-on-surface-variant">'
+                + '<span class="material-symbols-outlined text-[28px] opacity-50">bar_chart</span>'
+                + '<p class="font-body-md text-sm">Belum ada data pesanan.</p></div>';
+            if (orderBarsSummary) orderBarsSummary.textContent = 'Belum ada data pesanan pada rentang ini.';
+            return;
+        }
+
+        const el = document.createElement('div');
+        el.className = 'w-full h-full';
+        el.setAttribute('data-bars', JSON.stringify(segs));
+        el.setAttribute('data-bars-suffix', '');
+        orderBarsHolder.appendChild(el);
+        if (window.ralivaBars) window.ralivaBars(el);
+
+        if (orderBarsSummary) {
+            let maxIdx = 0;
+            segs.forEach((s, i) => { if (s.value > (segs[maxIdx].value || 0)) maxIdx = i; });
+            if ((segs[maxIdx].value || 0) > 0) {
+                orderBarsSummary.textContent = 'Periode ' + (segs[maxIdx].label || '-') + ' tertinggi dengan '
+                    + new Intl.NumberFormat('id-ID').format(segs[maxIdx].value) + ' pesanan.';
+            } else {
+                orderBarsSummary.textContent = 'Belum ada data pesanan pada rentang ini.';
+            }
+        }
+    };
+
+    document.querySelectorAll('[data-order-range]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+            currentOrderRange = btn.getAttribute('data-order-range');
+            setActiveOrderRangeButton();
+            buildOrderBars();
+        });
+    });
+
+    window.ralivaOnReady(() => {
+        setActiveOrderRangeButton();
+        buildOrderBars();
     });
 </script>
 @endpush

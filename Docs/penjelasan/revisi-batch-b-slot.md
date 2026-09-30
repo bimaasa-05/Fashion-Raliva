@@ -51,7 +51,15 @@ dengan pilih toko) → `SlotPurchaseRequest pending` → disetujui SuperAdmin
 seperti alur Owner. `Admin/DataProdukController@store` menolak bila kuota
 penuh dan mengarahkan ke Beli Slot.
 
-## 6. Batasan jujur
+## 6. Popup gate kuota + syarat dokumen legal (2026-09-30)
+
+Penjelasan lengkap pindah ke dokumen fokus:
+**[`revisi-slot-popup-legal.md`](./revisi-slot-popup-legal.md)** —
+popup Tambah Slot Owner (2 opsi), popup gate kuota Admin (2 opsi),
+syarat wajib KTP/NIB/NPWP terverifikasi (NIB = `jenis='siu'`),
+overlay `bg-black/35 backdrop-blur-sm`, banner sukses Pengajuan Toko hijau.
+
+## 7. Batasan jujur
 
 1. Penyatuan alur paket vs fleksibel (paket bypass verifikasi) **ditunda** —
    butuh kolom paket di request + approve SA baru.

@@ -18,6 +18,10 @@
 </div>
 
 <div data-real class="hidden space-y-section-gap">
+    @include('partials.flash-toast')
+    @if (session('success') || session('error'))
+        <div class="rounded-lg border px-4 py-3 text-sm font-body-md {{ session('success') ? 'border-success/30 bg-success/10 text-success' : 'border-error/30 bg-error/10 text-error' }}">{{ session('success') ?? session('error') }}</div>
+    @endif
     @if(! \App\Support\OwnerContext::currentStore())
         <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
@@ -37,7 +41,7 @@
                 <div class="progress-fill h-full rounded-full" data-progress-mode="quota" data-progress="{{ $pctSlot ?? 0 }}"></div>
             </div>
         </div>
-        <a href="{{ route('owner.kelola-slot') }}" class="relative shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-gold-accent text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:brightness-110 transition">{{ __('Tambah Slot') }}</a>
+        <button type="button" data-modal-open="modal-pilih-slot" class="relative shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-gold-accent text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:brightness-110 transition">{{ __('Tambah Slot') }}</button>
     </section>
 
     {{-- Ringkasan --}}
@@ -146,7 +150,22 @@
                                         <select name="status" data-status-select data-current="{{ $p->status }}" title="{{ __('Ubah status') }}" class="cursor-pointer text-[10px] font-bold uppercase border rounded-full pl-2 pr-6 py-1 {{ $p->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($p->status === 'nonaktif' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }}">
                                             @foreach (($statusOptions[$p->status] ?? [$p->status]) as $opt)
                                                 <option value="{{ $opt }}" @selected($opt === $p->status)>{{ ucfirst($opt) }}</option>
-                                            @endforeach
+@endforeach
+
+@push('modals')
+@include('Owner.partials.modal-slot')
+@endpush
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    @if ($errors->hasAny(['jumlah_slot', 'metode_pembayaran', 'file_bukti', 'alasan']))
+        document.getElementById('modal-kelola-slot')?.classList.remove('hidden');
+        document.body.style.overflow = 'hidden';
+    @endif
+});
+</script>
+@endpush
                                         </select>
                                     </form>
                                 @elseif ($p->status === 'pending')

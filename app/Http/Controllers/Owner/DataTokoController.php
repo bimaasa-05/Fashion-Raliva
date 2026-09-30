@@ -39,7 +39,16 @@ class DataTokoController extends Controller
         $cities = \App\Models\City::orderBy('city_id')->get()->groupBy('pulau')
             ->map(fn ($g) => $g->pluck('nama_kota')->values()->all())->all();
 
-        return view('Owner.data-toko.index', compact('store', 'rating', 'reviewCount', 'storeCategories', 'updatePending', 'cities'));
+        $sosmedPlatforms = \App\Models\SosmedPlatform::where('status', \App\Models\SosmedPlatform::STATUS_AKTIF)
+            ->orderBy('nama_platform')
+            ->get();
+        $storeSocials = \App\Models\StoreSocial::with('platform')
+            ->where('store_id', $store->store_id)
+            ->orderBy('store_social_id')
+            ->get();
+
+        return view('Owner.data-toko.index', compact('store', 'rating', 'reviewCount', 'storeCategories', 'updatePending', 'cities',
+            'sosmedPlatforms', 'storeSocials'));
     }
 
     public function update(Request $request)
