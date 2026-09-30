@@ -3,18 +3,19 @@
 namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
-
 use App\Models\Complaint;
 use App\Models\Order;
 use App\Models\Product;
-use App\Models\Promotion;
 use App\Models\ProductionOrder;
+use App\Models\Promotion;
 use App\Models\Review;
 use App\Models\Wallet;
+use App\Services\KaryawanReportService;
 use App\Support\OwnerContext;
+use App\Support\StoreGate;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Http\Request;
 
 class DashboardController extends Controller
 {
@@ -58,6 +59,7 @@ class DashboardController extends Controller
 
         $rating = $store ? (float) Review::where('store_id', $store->store_id)->avg('rating') : 0;
         $ratingCount = $store ? Review::where('store_id', $store->store_id)->count() : 0;
+        $followersCount = $store ? $store->followers()->count() : 0;
 
         $pesananTerbaru = Order::with('checkout.user')
             ->where('store_id', $storeId)
@@ -77,7 +79,7 @@ class DashboardController extends Controller
 
         $roi = null;
         if ($storeId) {
-            $roi = (new \App\Services\KaryawanReportService())->ringkasanKeuangan([$storeId])['roi'] ?? null;
+            $roi = (new KaryawanReportService)->ringkasanKeuangan([$storeId])['roi'] ?? null;
         }
 
         return view('Owner.dashboard.index', compact(
@@ -91,14 +93,15 @@ class DashboardController extends Controller
             'komplainTerbuka',
             'rating',
             'ratingCount',
+            'followersCount',
             'pesananTerbaru',
             'ulasanTerbaru',
             'chart',
             'aktivitas',
             'roi',
         ))->with([
-            'storeSuspended' => \App\Support\StoreGate::isLocked(),
-            'suspendedStores' => \App\Support\StoreGate::suspendedStoreNames(),
+            'storeSuspended' => StoreGate::isLocked(),
+            'suspendedStores' => StoreGate::suspendedStoreNames(),
         ]);
     }
 
@@ -118,7 +121,7 @@ class DashboardController extends Controller
         if ($diproses) {
             $items[] = [
                 'icon' => 'precision_manufacturing',
-                'title' => 'Pesanan #' . ($diproses->nomor_order ?? $diproses->order_id) . ' diproses',
+                'title' => 'Pesanan #'.($diproses->nomor_order ?? $diproses->order_id).' diproses',
                 'subtitle' => 'Sedang disiapkan di gudang',
                 'progress' => 50,
             ];
@@ -132,7 +135,7 @@ class DashboardController extends Controller
         if ($dikirim) {
             $items[] = [
                 'icon' => 'local_shipping',
-                'title' => 'Pengiriman #' . ($dikirim->nomor_order ?? $dikirim->order_id),
+                'title' => 'Pengiriman #'.($dikirim->nomor_order ?? $dikirim->order_id),
                 'subtitle' => 'Dalam perjalanan ke pelanggan',
                 'progress' => 85,
             ];
@@ -152,7 +155,7 @@ class DashboardController extends Controller
             };
             $items[] = [
                 'icon' => 'inventory_2',
-                'title' => 'Produksi ' . ($produksi->nomor_produksi ?? 'PRQ-' . $produksi->production_order_id),
+                'title' => 'Produksi '.($produksi->nomor_produksi ?? 'PRQ-'.$produksi->production_order_id),
                 'subtitle' => 'Sedang berjalan',
                 'progress' => $p,
             ];
@@ -168,8 +171,8 @@ class DashboardController extends Controller
             $sisa = Carbon::today()->diffInDays($promo->berakhir_pada, false);
             $items[] = [
                 'icon' => 'local_offer',
-                'title' => 'Promo ' . $promo->nama_promo . ' berjalan',
-                'subtitle' => 'Diskon ' . $promo->nilai_diskon . '% — sisa ' . max(0, $sisa) . ' hari',
+                'title' => 'Promo '.$promo->nama_promo.' berjalan',
+                'subtitle' => 'Diskon '.$promo->nilai_diskon.'% — sisa '.max(0, $sisa).' hari',
                 'progress' => 56,
             ];
         }

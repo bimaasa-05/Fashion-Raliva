@@ -287,9 +287,10 @@
 <p class="font-body-lg text-body-lg text-on-surface-variant max-w-md mx-auto mb-lg">
                 {{ $store->deskripsi }}
             </p>
-<button class="btn-gold font-label-caps text-label-caps px-xl py-sm rounded-xl tracking-widest font-label-caps text-label-caps uppercase tracking-widest w-full md:w-auto min-w-[200px] mx-auto">
-                {{ __('FOLLOW STORE') }}
+<button type="button" data-follow-store data-follow-url="{{ route('customer.shop.store.follow', $store->store_id) }}" class="btn-gold font-label-caps text-label-caps px-xl py-sm rounded-xl tracking-widest font-label-caps text-label-caps uppercase tracking-widest w-full md:w-auto min-w-[200px] mx-auto{{ ! empty($isFollowing) ? ' is-following' : '' }}">
+                <span data-follow-label>{{ ! empty($isFollowing) ? __('Diikuti') : __('Ikuti Toko') }}</span>
             </button>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs text-center"><span data-follow-count>{{ $followersCount }} {{ __('pengikut') }}</span></p>
 </div>
 <!-- Navigation Tabs (Produk active) -->
 <div class="shop-toolbar flex flex-row items-center gap-sm md:gap-md px-container-margin py-md sticky top-16 lg:top-16 z-30 card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl shadow-sm flex items-center gap-sm md:gap-md min-w-0 overflow-x-auto hide-scrollbar">
@@ -504,6 +505,7 @@
         })();
     </script>
 @include('customer._partials.drawer')
+@include('customer._partials.follow-store-script')
 <script>
     /* Arrow back = kembali ke halaman customer sebelumnya */
     document.addEventListener('click', function (e) {

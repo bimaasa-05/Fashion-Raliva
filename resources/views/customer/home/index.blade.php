@@ -374,8 +374,7 @@
 </section>
 @if (count($adProducts))
 <!-- Sponsored Ads -->
-<section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="mx-auto max-w-[1400px] px-container-margin mb-xl">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="flex items-center justify-between mb-xs">
 <div class="atl-eyebrow">
@@ -418,7 +417,6 @@
 </div>
 </div>
 </div>
-</section>
 @endif
 <!-- New Arrivals -->
 <div class="mx-auto max-w-[1400px] px-container-margin">

@@ -107,6 +107,12 @@ class Store extends Model
         return $this->hasMany(Review::class, 'store_id', 'store_id');
     }
 
+    public function followers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'store_follows', 'store_id', 'user_id')
+            ->withTimestamps();
+    }
+
     public function documents(): HasMany
     {
         return $this->hasMany(StoreDocument::class, 'store_id', 'store_id');
@@ -172,5 +178,27 @@ class Store extends Model
         }
 
         return $count;
+    }
+
+    /**
+     * Kirim notifikasi in-app ke semua pengikut toko ini.
+     * aktor_id null = kabar dari toko (bukan aksi user tertentu).
+     */
+    public function notifyFollowers(string $tipe, string $judul, string $pesan, ?string $url = null): int
+    {
+        $userIds = $this->followers()->pluck('users.user_id');
+
+        foreach ($userIds as $userId) {
+            Notification::create([
+                'user_id' => $userId,
+                'aktor_id' => null,
+                'tipe' => $tipe,
+                'judul' => $judul,
+                'pesan' => $pesan,
+                'url' => $url,
+            ]);
+        }
+
+        return $userIds->count();
     }
 }
