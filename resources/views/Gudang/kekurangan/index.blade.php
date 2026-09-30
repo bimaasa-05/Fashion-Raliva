@@ -4,7 +4,7 @@
 
 @section('header-title', 'Kekurangan Produksi')
 @section('header-badge', $orders->total() . ' Pesanan')
-@section('header-subtitle', 'Sisa kekurangan yang belum terpenuhi otomatis saat QC — siapkan dari stok gudang.')
+@section('header-subtitle', 'Kekurangan hasil produksi — siapkan manual dari stok gudang, lalu tandai selesai.')
 
 @section('content')
 @include('partials.flash-toast')
@@ -15,7 +15,7 @@
         <div class="relative">
             <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Total Kekurangan</span>
             <p class="raliva-figure text-[26px] text-gold-accent">{{ $totalKekurangan }} pcs</p>
-            <p class="text-xs text-on-surface-variant">Kekurangan otomatis diambil saat QC — ini hanya sisa yang belum terpenuhi.</p>
+            <p class="text-xs text-on-surface-variant">Potong stok gudang utama dulu, lalu tandai selesai.</p>
         </div>
     </section>
 
