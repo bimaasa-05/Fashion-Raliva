@@ -7,12 +7,6 @@
 
 @section('content')
 @include('partials.flash-toast')
-@if (request('habis'))
-    <div class="bg-error/10 border border-error/30 rounded-lg px-4 py-3 mb-6 flex items-center gap-3">
-        <span class="material-symbols-outlined text-error">warning</span>
-        <p class="text-sm text-on-surface"><b>{{ __('Slot produk habis.') }}</b> {{ __('Pilih salah satu cara di bawah untuk menambah kuota lalu kembali tambah produk.') }}</p>
-    </div>
-@endif
 @if (session('success'))
     <div class="bg-secondary-container/15 border border-secondary/30 text-secondary rounded-lg px-4 py-3 text-sm font-body-md">{{ session('success') }}</div>
 @endif
