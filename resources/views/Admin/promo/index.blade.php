@@ -1,10 +1,10 @@
 @extends('layouts.admin')
 
-@section('title', 'Promo Toko')
+@section('title', __('Promo Toko'))
 
-@section('header-title', 'Promo Toko')
-@section('header-badge', ($counts['aktif'] ?? 0) . ' Aktif')
-@section('header-subtitle', 'Buat dan kelola promo khusus untuk pelanggan toko Anda.')
+@section('header-title', __('Promo Toko'))
+@section('header-badge', ($counts['aktif'] ?? 0) . ' ' . __('Aktif'))
+@section('header-subtitle', __('Buat dan kelola promo khusus untuk pelanggan toko Anda.'))
 
 @section('content')
 @include('partials.flash-toast')
@@ -19,23 +19,23 @@
     {{-- Ringkasan --}}
     <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Promo Berjalan</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Promo Berjalan') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $counts['aktif'] }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">local_offer</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Penukaran Bulan Ini</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Penukaran Bulan Ini') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $counts['total'] }}</span>
-            <span class="font-label-sm text-[11px] text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">trending_up</span>+22% vs Bulan Lalu</span>
+            <span class="font-label-sm text-[11px] text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">trending_up</span>+22% {{ __('vs Bulan Lalu') }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">redeem</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Estimasi Diskon Diberikan</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Estimasi Diskon Diberikan') }}</span>
             <span class="raliva-figure text-[26px] text-gold-accent">Rp 0</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">savings</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Konversi Promo</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Konversi Promo') }}</span>
             <span class="raliva-figure text-[26px] text-secondary"><span>{{ $counts['aktif'] > 0 ? '18' : '0' }}</span>%</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">query_stats</span>
         </div>
@@ -45,23 +45,23 @@
     <section>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <div>
-                <h2 data-reveal class="font-title-md text-title-md text-on-surface premium-heading">Daftar Promo</h2>
-                <p class="text-xs text-on-surface-variant mt-1">Kelola promo aktif, terjadwal, dan riwayat diskon toko Anda.</p>
+                <h2 data-reveal class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Daftar Promo') }}</h2>
+                <p class="text-xs text-on-surface-variant mt-1">{{ __('Kelola promo aktif, terjadwal, dan riwayat diskon toko Anda.') }}</p>
             </div>
             @if ($store)
             <button type="button" data-modal-open="modal-tambah-promo" class="py-2.5 px-5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center gap-2 shrink-0">
-                <span class="material-symbols-outlined text-[18px]">add</span>Tambah Promo
+                <span class="material-symbols-outlined text-[18px]">add</span>{{ __('Tambah Promo') }}
             </button>
             @else
-            <span class="text-xs text-on-surface-variant bg-surface-container-low border border-muted-border rounded-lg px-4 py-2.5">Minta Owner menugaskan toko untuk membuat promo</span>
+            <span class="text-xs text-on-surface-variant bg-surface-container-low border border-muted-border rounded-lg px-4 py-2.5">{{ __('Minta Owner menugaskan toko untuk membuat promo') }}</span>
             @endif
         </div>
 
         <div class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 mb-6 overflow-x-auto max-w-full">
             @php $f = request('status'); @endphp
-            <a href="{{ route('admin.promo') }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ ! $f ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">Semua</a>
-            <a href="{{ route('admin.promo', ['status' => 'aktif']) }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ $f === 'aktif' ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">Aktif</a>
-            <a href="{{ route('admin.promo', ['status' => 'nonaktif']) }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ $f === 'nonaktif' ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">Nonaktif</a>
+            <a href="{{ route('admin.promo') }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ ! $f ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">{{ __('Semua') }}</a>
+            <a href="{{ route('admin.promo', ['status' => 'aktif']) }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ $f === 'aktif' ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">{{ __('Aktif') }}</a>
+            <a href="{{ route('admin.promo', ['status' => 'nonaktif']) }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ $f === 'nonaktif' ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">{{ __('Nonaktif') }}</a>
         </div>
 
         <div data-reveal-group class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-section-gap">
@@ -79,27 +79,27 @@
                             </div>
                         </div>
                         @if ($promo->status === 'aktif')
-                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[9px] font-bold uppercase border border-success/20">Aktif</span>
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[9px] font-bold uppercase border border-success/20">{{ __('Aktif') }}</span>
                         @elseif ($promo->mulai_pada && $promo->mulai_pada->isFuture())
-                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30">Terjadwal</span>
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30">{{ __('Terjadwal') }}</span>
                         @elseif ($promo->status === 'nonaktif')
-                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20">Nonaktif</span>
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20">{{ __('Nonaktif') }}</span>
                         @else
-                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[9px] font-bold uppercase border border-success/20">Selesai</span>
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[9px] font-bold uppercase border border-success/20">{{ __('Selesai') }}</span>
                         @endif
                     </div>
 
                     <dl class="space-y-1.5 font-body-md text-xs text-on-surface-variant">
-                        <div class="flex justify-between gap-3"><dt>Tipe</dt><dd class="text-on-surface font-bold">{{ $promo->tipe_diskon === 'persen' ? 'Diskon '.$promo->nilai_diskon.'%' : 'Diskon Rp '.number_format($promo->nilai_diskon,0,',','.') }} @if($promo->maksimal_diskon)<span class="font-normal">• Maks. Rp {{ number_format($promo->maksimal_diskon,0,',','.') }}</span>@endif</dd></div>
-                        <div class="flex justify-between gap-3"><dt>Syarat</dt><dd class="text-on-surface">{{ $promo->minimal_pembelian ? 'Min. belanja Rp '.number_format($promo->minimal_pembelian,0,',','.') : 'Tanpa minimum' }}</dd></div>
-                        <div class="flex justify-between gap-3"><dt>Periode</dt><dd class="text-on-surface">{{ $promo->mulai_pada?->translatedFormat('d M Y') }} — {{ $promo->berakhir_pada?->translatedFormat('d M Y') }}</dd></div>
+                        <div class="flex justify-between gap-3"><dt>{{ __('Tipe') }}</dt><dd class="text-on-surface font-bold">{{ $promo->tipe_diskon === 'persen' ? __('Diskon').' '.$promo->nilai_diskon.'%' : __('Diskon Rp').' '.number_format($promo->nilai_diskon,0,',','.') }} @if($promo->maksimal_diskon)<span class="font-normal">• {{ __('Maks.') }} Rp {{ number_format($promo->maksimal_diskon,0,',','.') }}</span>@endif</dd></div>
+                        <div class="flex justify-between gap-3"><dt>{{ __('Syarat') }}</dt><dd class="text-on-surface">{{ $promo->minimal_pembelian ? __('Min. belanja').' Rp '.number_format($promo->minimal_pembelian,0,',','.') : __('Tanpa minimum') }}</dd></div>
+                        <div class="flex justify-between gap-3"><dt>{{ __('Periode') }}</dt><dd class="text-on-surface">{{ $promo->mulai_pada?->translatedFormat('d M Y') }} — {{ $promo->berakhir_pada?->translatedFormat('d M Y') }}</dd></div>
                     </dl>
 
                     <div class="flex items-center gap-2 pt-1 mt-auto">
-                        <button type="button" data-modal-open="modal-detail-promo-{{ $promo->promotion_id }}" class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Detail</button>
-                        <button type="button" data-modal-open="modal-edit-promo-{{ $promo->promotion_id }}" class="px-4 py-2.5 bg-gold-accent/10 border border-gold-accent/30 text-gold-accent rounded-lg text-xs font-bold hover:border-gold-accent transition-colors">Edit</button>
-                        <button type="button" data-modal-open="modal-toggle-promo-{{ $promo->promotion_id }}" class="px-3 py-2.5 {{ $promo->status==='aktif' ? 'bg-secondary text-white' : 'bg-surface-container-low border border-muted-border text-on-surface-variant' }} rounded-lg text-xs font-bold transition-colors" title="{{ $promo->status==='aktif' ? 'Nonaktifkan' : 'Aktifkan' }}">{{ $promo->status==='aktif' ? 'Nonaktifkan' : 'Aktifkan' }}</button>
-                        <button type="button" data-modal-open="modal-del-promo-{{ $promo->promotion_id }}" class="w-9 h-9 rounded-lg bg-error/10 text-error border border-error/20 hover:bg-error hover:text-white flex items-center justify-center transition-colors" title="Hapus"><span class="material-symbols-outlined text-[16px]">delete</span></button>
+                        <button type="button" data-modal-open="modal-detail-promo-{{ $promo->promotion_id }}" class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Detail') }}</button>
+                        <button type="button" data-modal-open="modal-edit-promo-{{ $promo->promotion_id }}" class="px-4 py-2.5 bg-gold-accent/10 border border-gold-accent/30 text-gold-accent rounded-lg text-xs font-bold hover:border-gold-accent transition-colors">{{ __('Edit') }}</button>
+                        <button type="button" data-modal-open="modal-toggle-promo-{{ $promo->promotion_id }}" class="px-3 py-2.5 {{ $promo->status==='aktif' ? 'bg-secondary text-white' : 'bg-surface-container-low border border-muted-border text-on-surface-variant' }} rounded-lg text-xs font-bold transition-colors" title="{{ $promo->status==='aktif' ? __('Nonaktifkan') : __('Aktifkan') }}">{{ $promo->status==='aktif' ? __('Nonaktifkan') : __('Aktifkan') }}</button>
+                        <button type="button" data-modal-open="modal-del-promo-{{ $promo->promotion_id }}" class="w-9 h-9 rounded-lg bg-error/10 text-error border border-error/20 hover:bg-error hover:text-white flex items-center justify-center transition-colors" title="{{ __('Hapus') }}"><span class="material-symbols-outlined text-[16px]">delete</span></button>
                     </div>
                 </article>
 
@@ -109,7 +109,7 @@
                     <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
                         <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
                             <div>
-                                <p class="raliva-label text-gold-accent">Detail Promo</p>
+                                <p class="raliva-label text-gold-accent">{{ __('Detail Promo') }}</p>
                                 <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $promo->kode_promo }}</h3>
                             </div>
                             <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
@@ -128,29 +128,29 @@
                             </div>
                             <dl class="grid grid-cols-2 gap-4 font-body-md text-sm">
                                 <div class="bg-surface-container-low rounded-lg p-3">
-                                    <dt class="text-on-surface-variant text-[11px] uppercase">Jenis Diskon</dt>
-                                    <dd class="text-on-surface font-bold mt-1">{{ $promo->tipe_diskon === 'persen' ? 'Persen (%)' : 'Nominal (Rp)' }}</dd>
+                                    <dt class="text-on-surface-variant text-[11px] uppercase">{{ __('Jenis Diskon') }}</dt>
+                                    <dd class="text-on-surface font-bold mt-1">{{ $promo->tipe_diskon === 'persen' ? __('Persen (%)') : __('Nominal (Rp)') }}</dd>
                                 </div>
                                 <div class="bg-surface-container-low rounded-lg p-3">
-                                    <dt class="text-on-surface-variant text-[11px] uppercase">Nilai Diskon</dt>
+                                    <dt class="text-on-surface-variant text-[11px] uppercase">{{ __('Nilai Diskon') }}</dt>
                                     <dd class="text-on-surface font-bold mt-1">{{ $promo->tipe_diskon === 'persen' ? $promo->nilai_diskon.'%' : 'Rp '.number_format($promo->nilai_diskon,0,',','.') }}</dd>
                                 </div>
                                 <div class="bg-surface-container-low rounded-lg p-3">
-                                    <dt class="text-on-surface-variant text-[11px] uppercase">Min. Pembelian</dt>
-                                    <dd class="text-on-surface font-bold mt-1">{{ $promo->minimal_pembelian ? 'Rp '.number_format($promo->minimal_pembelian,0,',','.') : 'Tanpa minimum' }}</dd>
+                                    <dt class="text-on-surface-variant text-[11px] uppercase">{{ __('Min. Pembelian') }}</dt>
+                                    <dd class="text-on-surface font-bold mt-1">{{ $promo->minimal_pembelian ? 'Rp '.number_format($promo->minimal_pembelian,0,',','.') : __('Tanpa minimum') }}</dd>
                                 </div>
                                 <div class="bg-surface-container-low rounded-lg p-3">
-                                    <dt class="text-on-surface-variant text-[11px] uppercase">Maks. Diskon</dt>
-                                    <dd class="text-on-surface font-bold mt-1">{{ $promo->maksimal_diskon ? 'Rp '.number_format($promo->maksimal_diskon,0,',','.') : 'Tidak dibatasi' }}</dd>
+                                    <dt class="text-on-surface-variant text-[11px] uppercase">{{ __('Maks. Diskon') }}</dt>
+                                    <dd class="text-on-surface font-bold mt-1">{{ $promo->maksimal_diskon ? 'Rp '.number_format($promo->maksimal_diskon,0,',','.') : __('Tidak dibatasi') }}</dd>
                                 </div>
                                 <div class="bg-surface-container-low rounded-lg p-3 col-span-2">
-                                    <dt class="text-on-surface-variant text-[11px] uppercase">Periode Berlaku</dt>
+                                    <dt class="text-on-surface-variant text-[11px] uppercase">{{ __('Periode Berlaku') }}</dt>
                                     <dd class="text-on-surface font-bold mt-1">{{ $promo->mulai_pada?->translatedFormat('d M Y') }} — {{ $promo->berakhir_pada?->translatedFormat('d M Y') }}</dd>
                                 </div>
                             </dl>
                         </div>
                         <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end">
-                            <button type="button" data-modal-close class="py-2.5 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+                            <button type="button" data-modal-close class="py-2.5 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Tutup') }}</button>
                         </div>
                     </div>
                 </div>
@@ -161,65 +161,65 @@
                     <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
                         <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
                             <div>
-                                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Edit Promo</h3>
-                                <p class="text-on-surface-variant font-body-md text-xs mt-1">{{ $promo->kode_promo }} — status manual.</p>
+                                <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Edit Promo') }}</h3>
+                                <p class="text-on-surface-variant font-body-md text-xs mt-1">{{ $promo->kode_promo }} — {{ __('status manual.') }}</p>
                             </div>
                             <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined">close</span></button>
                         </div>
                         <form method="POST" action="{{ route('admin.promo.update', $promo) }}" class="p-6 space-y-4">
                             @csrf @method('PUT')
                             <div>
-                                <label class="block raliva-label mb-2">Kode Promo</label>
+                                <label class="block raliva-label mb-2">{{ __('Kode Promo') }}</label>
                                 <input type="text" value="{{ $promo->kode_promo }}" disabled class="w-full bg-surface-container-low border border-muted-border rounded-lg px-3 py-2.5 text-sm text-on-surface-variant opacity-80 cursor-not-allowed" />
                             </div>
                             <div>
-                                <label class="block raliva-label mb-2">Nama Promo</label>
+                                <label class="block raliva-label mb-2">{{ __('Nama Promo') }}</label>
                                 <input name="nama_promo" type="text" value="{{ $promo->nama_promo }}" required class="raliva-input" />
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block raliva-label mb-2">Jenis Diskon</label>
+                                    <label class="block raliva-label mb-2">{{ __('Jenis Diskon') }}</label>
                                     <select name="tipe_diskon" class="raliva-select" required>
-                                        <option value="persen" {{ $promo->tipe_diskon==='persen' ? 'selected' : '' }}>Persen (%)</option>
-                                        <option value="nominal" {{ $promo->tipe_diskon==='nominal' ? 'selected' : '' }}>Nominal (Rp)</option>
+                                        <option value="persen" {{ $promo->tipe_diskon==='persen' ? 'selected' : '' }}>{{ __('Persen (%)') }}</option>
+                                        <option value="nominal" {{ $promo->tipe_diskon==='nominal' ? 'selected' : '' }}>{{ __('Nominal (Rp)') }}</option>
                                     </select>
                                 </div>
                                 <div>
-                                    <label class="block raliva-label mb-2">Nilai Diskon</label>
+                                    <label class="block raliva-label mb-2">{{ __('Nilai Diskon') }}</label>
                                     <input name="nilai_diskon" type="number" value="{{ $promo->nilai_diskon }}" required class="raliva-input" />
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block raliva-label mb-2">Min. Pembelian</label>
+                                    <label class="block raliva-label mb-2">{{ __('Min. Pembelian') }}</label>
                                     <input name="minimal_pembelian" type="number" value="{{ $promo->minimal_pembelian }}" class="raliva-input" />
                                 </div>
                                 <div>
-                                    <label class="block raliva-label mb-2">Maks. Diskon</label>
+                                    <label class="block raliva-label mb-2">{{ __('Maks. Diskon') }}</label>
                                     <input name="maksimal_diskon" type="number" value="{{ $promo->maksimal_diskon }}" class="raliva-input" />
                                 </div>
                             </div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block raliva-label mb-2">Mulai Pada</label>
+                                    <label class="block raliva-label mb-2">{{ __('Mulai Pada') }}</label>
                                     <input name="mulai_pada" type="date" value="{{ $promo->mulai_pada?->format('Y-m-d') }}" required class="raliva-input" />
                                 </div>
                                 <div>
-                                    <label class="block raliva-label mb-2">Berakhir Pada</label>
+                                    <label class="block raliva-label mb-2">{{ __('Berakhir Pada') }}</label>
                                     <input name="berakhir_pada" type="date" value="{{ $promo->berakhir_pada?->format('Y-m-d') }}" required class="raliva-input" />
                                 </div>
                             </div>
                             <div>
-                                <label class="block raliva-label mb-2">Status (manual)</label>
+                                <label class="block raliva-label mb-2">{{ __('Status (manual)') }}</label>
                                 <select name="status" class="raliva-select" required>
-                                    <option value="aktif" {{ $promo->status==='aktif' ? 'selected' : '' }}>Aktif</option>
-                                    <option value="nonaktif" {{ $promo->status==='nonaktif' ? 'selected' : '' }}>Nonaktif</option>
+                                    <option value="aktif" {{ $promo->status==='aktif' ? 'selected' : '' }}>{{ __('Aktif') }}</option>
+                                    <option value="nonaktif" {{ $promo->status==='nonaktif' ? 'selected' : '' }}>{{ __('Nonaktif') }}</option>
                                 </select>
-                                <p class="text-xs text-on-surface-variant mt-1">Tidak otomatis off by tanggal — ubah manual.</p>
+                                <p class="text-xs text-on-surface-variant mt-1">{{ __('Tidak otomatis off by tanggal — ubah manual.') }}</p>
                             </div>
                             <div class="flex justify-end gap-3 pt-2">
-                                <button type="button" data-modal-close class="py-2.5 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface">Batal</button>
-                                <button type="submit" class="py-2.5 px-6 bg-deep-onyx text-on-primary rounded-lg text-sm font-semibold btn-premium">Simpan</button>
+                                <button type="button" data-modal-close class="py-2.5 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface">{{ __('Batal') }}</button>
+                                <button type="submit" class="py-2.5 px-6 bg-deep-onyx text-on-primary rounded-lg text-sm font-semibold btn-premium">{{ __('Simpan') }}</button>
                             </div>
                         </form>
                     </div>
@@ -229,12 +229,12 @@
                     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
                     <form method="POST" action="{{ route('admin.promo.toggle', $promo) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
                         @csrf
-                        <p class="raliva-label text-gold-accent">{{ $promo->status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan' }} Promo</p>
+                        <p class="raliva-label text-gold-accent">{{ $promo->status === 'aktif' ? __('Nonaktifkan') : __('Aktifkan') }} {{ __('Promo') }}</p>
                         <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $promo->kode_promo }}</h3>
-                        <p class="text-sm text-on-surface-variant mt-3">Ubah status promo menjadi <span class="font-bold text-on-surface">{{ $promo->status === 'aktif' ? 'Nonaktif' : 'Aktif' }}</span>?</p>
+                        <p class="text-sm text-on-surface-variant mt-3">{{ __('Ubah status promo menjadi') }} <span class="font-bold text-on-surface">{{ $promo->status === 'aktif' ? __('Nonaktif') : __('Aktif') }}</span>?</p>
                         <div class="flex gap-3 mt-6">
-                            <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
-                            <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded btn-premium">Ya, Lanjutkan</button>
+                            <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">{{ __('Batal') }}</button>
+                            <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded btn-premium">{{ __('Ya, Lanjutkan') }}</button>
                         </div>
                     </form>
                 </div>
@@ -244,17 +244,17 @@
                     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
                     <form method="POST" action="{{ route('admin.promo.destroy', $promo) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
                         @csrf @method('DELETE')
-                        <p class="raliva-label text-error">Hapus Promo</p>
+                        <p class="raliva-label text-error">{{ __('Hapus Promo') }}</p>
                         <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $promo->kode_promo }}</h3>
-                        <p class="text-sm text-on-surface-variant mt-3">Yakin ingin menghapus promo ini? Tindakan tidak dapat dibatalkan.</p>
+                        <p class="text-sm text-on-surface-variant mt-3">{{ __('Yakin ingin menghapus promo ini? Tindakan tidak dapat dibatalkan.') }}</p>
                         <div class="flex gap-3 mt-6">
-                            <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
-                            <button type="submit" class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error hover:text-white transition-colors">Ya, Hapus</button>
+                            <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">{{ __('Batal') }}</button>
+                            <button type="submit" class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error hover:text-white transition-colors">{{ __('Ya, Hapus') }}</button>
                         </div>
                     </form>
                 </div>
             @empty
-                <p class="text-on-surface-variant text-sm col-span-full py-8 text-center">Belum ada promo.</p>
+                <p class="text-on-surface-variant text-sm col-span-full py-8 text-center">{{ __('Belum ada promo.') }}</p>
             @endforelse
         </div>
         <div class="mt-6">{{ $promos->links() }}</div>
@@ -267,8 +267,8 @@
     <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
             <div>
-                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Promo Baru</h3>
-                <p class="text-on-surface-variant font-body-md text-xs mt-1">Promo akan langsung aktif untuk toko Anda.</p>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Tambah Promo Baru') }}</h3>
+                <p class="text-on-surface-variant font-body-md text-xs mt-1">{{ __('Promo akan langsung aktif untuk toko Anda.') }}</p>
             </div>
             <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
                 <span class="material-symbols-outlined">close</span>
@@ -278,51 +278,51 @@
             @csrf
             <div class="grid grid-cols-2 gap-gutter">
                 <div>
-                    <label class="block raliva-label mb-2">Kode Promo</label>
+                    <label class="block raliva-label mb-2">{{ __('Kode Promo') }}</label>
                     <input name="kode_promo" type="text" required placeholder="DISKON10" class="raliva-input uppercase" />
                 </div>
                 <div>
-                    <label class="block raliva-label mb-2">Nama Promo</label>
+                    <label class="block raliva-label mb-2">{{ __('Nama Promo') }}</label>
                     <input name="nama_promo" type="text" required placeholder="Diskon Lebaran" class="raliva-input" />
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-gutter">
                 <div>
-                    <label class="block raliva-label mb-2">Tipe Diskon</label>
+                    <label class="block raliva-label mb-2">{{ __('Tipe Diskon') }}</label>
                     <select name="tipe_diskon" class="raliva-select">
-                        <option value="persen">Persen (%)</option>
-                        <option value="nominal">Nominal (Rp)</option>
+                        <option value="persen">{{ __('Persen (%)') }}</option>
+                        <option value="nominal">{{ __('Nominal (Rp)') }}</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block raliva-label mb-2">Nilai Diskon</label>
+                    <label class="block raliva-label mb-2">{{ __('Nilai Diskon') }}</label>
                     <input name="nilai_diskon" type="number" min="1" required placeholder="10" class="raliva-input" />
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-gutter">
                 <div>
-                    <label class="block raliva-label mb-2">Min. Pembelian (Rp)</label>
+                    <label class="block raliva-label mb-2">{{ __('Min. Pembelian (Rp)') }}</label>
                     <input name="minimal_pembelian" type="number" min="0" placeholder="0" class="raliva-input" />
                 </div>
                 <div>
-                    <label class="block raliva-label mb-2">Maks. Diskon (Rp)</label>
-                    <input name="maksimal_diskon" type="number" min="0" placeholder="opsional" class="raliva-input" />
+                    <label class="block raliva-label mb-2">{{ __('Maks. Diskon (Rp)') }}</label>
+                    <input name="maksimal_diskon" type="number" min="0" placeholder="{{ __('opsional') }}" class="raliva-input" />
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-gutter">
                 <div>
-                    <label class="block raliva-label mb-2">Mulai</label>
+                    <label class="block raliva-label mb-2">{{ __('Mulai') }}</label>
                     <input name="mulai_pada" type="date" required value="{{ date('Y-m-d') }}" class="raliva-input" />
                 </div>
                 <div>
-                    <label class="block raliva-label mb-2">Berakhir</label>
+                    <label class="block raliva-label mb-2">{{ __('Berakhir') }}</label>
                     <input name="berakhir_pada" type="date" required class="raliva-input" />
                 </div>
             </div>
             <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Batal') }}</button>
                 <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
-                    <span class="material-symbols-outlined text-[16px]">check_circle</span>Simpan Promo
+                    <span class="material-symbols-outlined text-[16px]">check_circle</span>{{ __('Simpan Promo') }}
                 </button>
             </div>
         </form>

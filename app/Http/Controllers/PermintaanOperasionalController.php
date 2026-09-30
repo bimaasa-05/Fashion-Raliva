@@ -61,7 +61,7 @@ class PermintaanOperasionalController extends Controller
 
         $storeId = $storeIds[0] ?? null;
         if (! $storeId) {
-            return back()->with('toast', ['message' => 'Anda belum ditugaskan ke toko mana pun.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Anda belum ditugaskan ke toko mana pun.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -106,6 +106,6 @@ class PermintaanOperasionalController extends Controller
             route('admin.permintaan-operasional')
         );
 
-        return back()->with('toast', ['message' => 'Permintaan berhasil diajukan.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Permintaan berhasil diajukan.'), 'icon' => 'task_alt']);
     }
 }

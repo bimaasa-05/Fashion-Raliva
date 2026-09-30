@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta name="user-id" content="{{ Auth::id() }}" />
-    <title>RALIVA - @yield('title', 'Gudang')</title>
+    <title>RALIVA - @yield('title', __('Gudang'))</title>
     @include('partials.theme-head')
     <style>
         /* Gudang RALIVA burgundy — scoped only to this layout (hanya Gudang) — mirror Customer/Super Admin/Owner/Admin #8B1E3F */
@@ -155,7 +155,7 @@
                                 \App\Models\Notification::TIPE_PROMO => 'local_offer',
                                 default => 'notifications',
                             },
-                            'html' => $n->pesan,
+                            'html' => __($n->pesan),
                             'time' => $n->created_at?->diffForHumans() ?? '-',
                         ];
                     })->all() : [];
@@ -180,7 +180,7 @@
                     @endif
                 </div>
             </div>
-            <button type="button" id="sidebar-collapse" aria-expanded="true" aria-label="Perkecil menu sidebar" class="sidebar-collapse-btn hidden md:inline-flex w-8 h-8 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-gold-accent/70 hover:text-gold-accent items-center justify-center transition-colors shrink-0">
+            <button type="button" id="sidebar-collapse" aria-expanded="true" aria-label="{{ __('Perkecil menu sidebar') }}" class="sidebar-collapse-btn hidden md:inline-flex w-8 h-8 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-gold-accent/70 hover:text-gold-accent items-center justify-center transition-colors shrink-0">
                 <span class="material-symbols-outlined icon-chevron text-[18px] transition-transform duration-300">chevron_left</span>
             </button>
         </div>
@@ -213,11 +213,11 @@
             @include('partials.sidebar-menu-gudang')
         </nav>
         <div class="shrink-0 border-t border-sidebar-border/70 mt-2 pt-2">
-            <button type="button" class="theme-toggle w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-on-sidebar hover:bg-gold-accent/10 transition-colors" aria-label="Ganti tema">
+            <button type="button" class="theme-toggle w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-on-sidebar hover:bg-gold-accent/10 transition-colors" aria-label="{{ __('Ganti tema') }}">
                 <span class="material-symbols-outlined text-[20px] text-gold-accent/80 shrink-0" data-theme-icon>light_mode</span>
                 <span data-sidebar-text class="min-w-0 flex-1 text-left">
-                    <span class="block text-[13px] font-semibold leading-tight">Tampilan</span>
-                    <span class="block text-[11px] opacity-60">Terang / Gelap</span>
+                    <span class="block text-[13px] font-semibold leading-tight">{{ __('Tampilan') }}</span>
+                    <span class="block text-[11px] opacity-60">{{ __('Terang / Gelap') }}</span>
                 </span>
                 <span data-sidebar-text class="relative shrink-0 w-10 h-6 rounded-full bg-sidebar-border/60 dark:bg-gold-accent/50 transition-colors" aria-hidden="true">
                     <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-surface shadow transition-transform dark:translate-x-4"></span>
@@ -235,12 +235,12 @@
         <header class="hidden md:flex sticky top-0 z-40 justify-between items-center px-container-margin h-20 bg-surface-container-lowest border-b border-outline-variant">
             <div>
                 <div class="flex items-center gap-3">
-                    <h1 class="font-title-md text-title-md text-on-surface">@yield('header-title', 'Dashboard')</h1>
+                    <h1 class="font-title-md text-title-md text-on-surface">@yield('header-title', __('Dashboard'))</h1>
                     @hasSection('header-badge')
                         <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-label-sm uppercase tracking-wider">@yield('header-badge')</span>
                     @endif
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">@yield('header-subtitle', 'Pantau persediaan dan aktivitas gudang Anda.')</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">@yield('header-subtitle', __('Pantau persediaan dan aktivitas gudang Anda.'))</p>
             </div>
             <div class="flex items-center gap-6">
                 @include('partials.notification-panel', ['items' => $notifications, 'lihatSemuaRoute' => 'gudang.notifikasi'])
@@ -251,12 +251,12 @@
         <!-- Mobile Greeting -->
         <div class="md:hidden px-container-margin py-6">
             <div class="flex items-center gap-3 flex-wrap">
-                <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">@yield('header-title', 'Dashboard')</h1>
+                <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">@yield('header-title', __('Dashboard'))</h1>
                 @hasSection('header-badge')
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">@yield('header-badge')</span>
                 @endif
             </div>
-            <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Pantau persediaan dan aktivitas gudang Anda.')</p>
+            <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', __('Pantau persediaan dan aktivitas gudang Anda.'))</p>
         </div>
 
         <div class="page-enter px-container-margin pt-8 pb-section-gap flex flex-col gap-6 w-full">
@@ -267,10 +267,10 @@
 
     <!-- Bottom Nav Bar (Mobile) -->
     @include('partials.bottom-nav', ['items' => [
-        ['route' => 'gudang.dashboard', 'icon' => 'space_dashboard', 'label' => 'Beranda'],
-        ['route' => 'gudang.stok', 'icon' => 'inventory_2', 'label' => 'Stok'],
-        ['route' => 'gudang.riwayat-stok', 'icon' => 'history', 'label' => 'Riwayat'],
-        ['route' => 'gudang.profil', 'icon' => 'person', 'label' => 'Profil'],
+        ['route' => 'gudang.dashboard', 'icon' => 'space_dashboard', 'label' => __('Beranda')],
+        ['route' => 'gudang.stok', 'icon' => 'inventory_2', 'label' => __('Stok')],
+        ['route' => 'gudang.riwayat-stok', 'icon' => 'history', 'label' => __('Riwayat')],
+        ['route' => 'gudang.profil', 'icon' => 'person', 'label' => __('Profil')],
     ]])
 
     @include('partials.notification-popup')

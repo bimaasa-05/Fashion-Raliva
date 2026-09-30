@@ -1,10 +1,10 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Stok')
+@section('title', __('Stok'))
 
-@section('header-title', 'Stok')
-@section('header-badge', 'Pantau')
-@section('header-subtitle', 'Pantau ketersediaan stok dari seluruh toko di platform.')
+@section('header-title', __('Stok'))
+@section('header-badge', __('Pantau'))
+@section('header-subtitle', __('Pantau ketersediaan stok dari seluruh toko di platform.'))
 
 @php
     $statusBadgeMap = [
@@ -22,20 +22,20 @@
     </span>
     <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
         <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
-        Stok diperbarui real-time
+        {{ __('Stok diperbarui real-time') }}
     </span>
 </div>
 <section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Monitor Stok Platform</h2>
+        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Monitor Stok Platform') }}</h2>
         <div class="flex items-center gap-3 flex-wrap">
             <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
                 <span class="material-symbols-outlined text-[18px]">tune</span>
-                Filter
+                {{ __('Filter') }}
                 <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
             </button>
             <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">
-                <span class="material-symbols-outlined text-[14px]">visibility</span> Mode Pantau
+                <span class="material-symbols-outlined text-[14px]">visibility</span> {{ __('Mode Pantau') }}
             </span>
         </div>
     </div>
@@ -45,7 +45,7 @@
         <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
             <div class="flex items-center gap-2 shrink-0">
                 <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Status') }}</span>
             </div>
             <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
             <div id="chip-group" class="flex flex-wrap gap-2">
@@ -65,8 +65,8 @@
         <form method="GET" action="{{ route('superadmin.stok') }}" class="relative">
             <input type="hidden" name="status" value="{{ $activeStatus }}">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] pointer-events-none">search</span>
-            <input name="q" value="{{ $q }}" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama produk, SKU, toko, gudang, atau supplier..." />
-            <a href="{{ route('superadmin.stok', ['status' => $activeStatus]) }}" aria-label="Hapus pencarian" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent transition-opacity {{ $q ? 'opacity-100' : 'opacity-0 pointer-events-none' }}">
+            <input name="q" value="{{ $q }}" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="{{ __('Cari nama produk, SKU, toko, gudang, atau supplier...') }}" />
+            <a href="{{ route('superadmin.stok', ['status' => $activeStatus]) }}" aria-label="{{ __('Hapus pencarian') }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent transition-opacity {{ $q ? 'opacity-100' : 'opacity-0 pointer-events-none' }}">
                 <span class="material-symbols-outlined text-[20px]">close</span>
             </a>
         </form>
@@ -77,16 +77,16 @@
         <table class="w-full min-w-[1180px] premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                    <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No.</th>
-                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Produk</th>
-                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">SKU</th>
-                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Toko</th>
-                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Supplier</th>
-                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Stok</th>
-                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Direservasi</th>
-                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Minimum</th>
-                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
-                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Aksi</th>
+                    <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">{{ __('No.') }}</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Produk') }}</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('SKU') }}</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Toko') }}</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Supplier') }}</th>
+                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Stok') }}</th>
+                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Direservasi') }}</th>
+                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Minimum') }}</th>
+                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Status') }}</th>
+                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Aksi') }}</th>
                 </tr>
             </thead>
             <tbody class="font-body-md text-sm">
@@ -117,7 +117,7 @@
                         </td>
                         <td class="p-4 text-center">
                             <button type="button" data-stok-detail="{{ $stock->warehouse_stock_id }}" data-modal-open="detail-stok" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-deep-onyx text-on-primary rounded-full text-[11px] font-bold uppercase tracking-widest border border-gold-accent/30 btn-premium focus:ring-2 focus:ring-gold-accent/20 focus:outline-none active:scale-[0.98]">
-                                <span class="material-symbols-outlined text-sm">visibility</span> Detail
+                                <span class="material-symbols-outlined text-sm">visibility</span> {{ __('Detail') }}
                             </button>
                         </td>
                     </tr>
@@ -127,10 +127,10 @@
                                 @if ($activeStatus !== 'semua' || $q)
                                 <div class="flex flex-col items-center gap-2">
                                     <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
-                                    <p class="text-on-surface-variant font-body-md text-sm">Tidak ada data stok yang cocok.</p>
+                                    <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada data stok yang cocok.') }}</p>
                                 </div>
                                 @else
-                                <p class="text-on-surface-variant">Belum ada data stok tercatat.</p>
+                                <p class="text-on-surface-variant">{{ __('Belum ada data stok tercatat.') }}</p>
                                 @endif
                             </td>
                         </tr>
@@ -155,11 +155,11 @@
                 </div>
                 <dl class="space-y-2 font-body-md text-sm">
                     <div class="flex justify-between gap-3">
-                        <dt class="text-on-surface-variant">Toko</dt>
+                        <dt class="text-on-surface-variant">{{ __('Toko') }}</dt>
                         <dd class="text-on-surface text-right">{{ $stock->nama_toko }}</dd>
                     </div>
                     <div class="flex justify-between gap-3">
-                        <dt class="text-on-surface-variant">Supplier</dt>
+                        <dt class="text-on-surface-variant">{{ __('Supplier') }}</dt>
                         <dd class="text-right">
                             @if ($stock->nama_supplier)
                             <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[10px] font-bold uppercase">
@@ -171,20 +171,20 @@
                         </dd>
                     </div>
                     <div class="flex justify-between gap-3">
-                        <dt class="text-on-surface-variant">Stok</dt>
+                        <dt class="text-on-surface-variant">{{ __('Stok') }}</dt>
                         <dd class="font-bold {{ $stock->status_stok === 'habis' ? 'text-error' : ($stock->status_stok === 'menipis' ? 'text-amber-600' : 'text-on-surface') }} text-right">{{ $stock->jumlah_stok }}</dd>
                     </div>
                     <div class="flex justify-between gap-3">
-                        <dt class="text-on-surface-variant">Direservasi</dt>
+                        <dt class="text-on-surface-variant">{{ __('Direservasi') }}</dt>
                         <dd class="text-on-surface text-right">{{ $stock->jumlah_direservasi }}</dd>
                     </div>
                     <div class="flex justify-between gap-3">
-                        <dt class="text-on-surface-variant">Minimum</dt>
+                        <dt class="text-on-surface-variant">{{ __('Minimum') }}</dt>
                         <dd class="text-on-surface text-right">{{ $stock->stok_minimum }}</dd>
                     </div>
                 </dl>
                 <button type="button" data-stok-detail="{{ $stock->warehouse_stock_id }}" data-modal-open="detail-stok" class="mt-4 w-full min-h-11 inline-flex items-center justify-center gap-2 bg-deep-onyx text-on-primary rounded-lg font-label-sm text-[11px] uppercase tracking-widest border border-gold-accent/30 btn-premium focus:ring-2 focus:ring-gold-accent/20 focus:outline-none active:scale-[0.98]">
-                    <span class="material-symbols-outlined text-sm">visibility</span> Detail
+                    <span class="material-symbols-outlined text-sm">visibility</span> {{ __('Detail') }}
                 </button>
             </article>
         @empty
@@ -214,35 +214,35 @@
     'size' => 'xl',
 ])
     <section>
-        <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">inventory_2</span> Info Stok</p>
+        <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">inventory_2</span> {{ __('Info Stok') }}</p>
         <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 md:p-5">
             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 font-body-md text-sm">
                 <div>
-                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">storefront</span> Toko</dt>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">storefront</span> {{ __('Toko') }}</dt>
                     <dd class="text-on-surface break-words"><span data-slot="toko">-</span></dd>
                 </div>
                 <div>
-                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">warehouse</span> Gudang</dt>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">warehouse</span> {{ __('Gudang') }}</dt>
                     <dd class="text-on-surface break-words"><span data-slot="gudang">-</span></dd>
                 </div>
                 <div class="sm:col-span-2">
-                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">tag</span> SKU / Varian</dt>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">tag</span> {{ __('SKU / Varian') }}</dt>
                     <dd class="font-mono text-on-surface break-words"><span data-slot="sku">-</span></dd>
                 </div>
                 <div>
-                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">warehouse</span> Stok Tersedia</dt>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">warehouse</span> {{ __('Stok Tersedia') }}</dt>
                     <dd class="font-bold text-on-surface"><span data-slot="jumlah">-</span></dd>
                 </div>
                 <div>
-                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">event_available</span> Direservasi</dt>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">event_available</span> {{ __('Direservasi') }}</dt>
                     <dd class="text-on-surface"><span data-slot="reservasi">-</span></dd>
                 </div>
                 <div>
-                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">warning</span> Minimum</dt>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">warning</span> {{ __('Minimum') }}</dt>
                     <dd class="text-on-surface"><span data-slot="minimum">-</span></dd>
                 </div>
                 <div>
-                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">verified</span> Status</dt>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">verified</span> {{ __('Status') }}</dt>
                     <dd><span data-slot="status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border bg-surface-container-high text-on-surface-variant border-outline-variant"></span></dd>
                 </div>
             </dl>
@@ -250,7 +250,7 @@
     </section>
 
     <section>
-        <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">local_shipping</span> Supplier Terakhir</p>
+        <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">local_shipping</span> {{ __('Supplier Terakhir') }}</p>
         <div data-supplier-wrap>
             <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 md:p-5 space-y-2">
                 <div class="h-3 rounded bg-surface-container-high animate-pulse"></div>
@@ -262,10 +262,10 @@
     @slot('footer')
         <div class="flex flex-col sm:flex-row gap-3">
             <button type="button" id="stok-copy-supplier" class="btn-modal btn-modal-ghost flex-1">
-                <span class="material-symbols-outlined text-[16px]">content_copy</span> Salin Kontak Supplier
+                <span class="material-symbols-outlined text-[16px]">content_copy</span> {{ __('Salin Kontak Supplier') }}
             </button>
             <button type="button" data-modal-close class="btn-modal btn-modal-primary flex-1">
-                <span class="material-symbols-outlined text-[16px]">close</span> Tutup
+                <span class="material-symbols-outlined text-[16px]">close</span> {{ __('Tutup') }}
             </button>
         </div>
     @endslot
@@ -359,7 +359,7 @@
                 catatan.className = 'mt-4 border-l-4 border-l-gold-accent/40 pl-3';
                 const catLabel = document.createElement('p');
                 catLabel.className = 'text-on-surface-variant text-[10px] uppercase tracking-widest mb-0.5';
-                catLabel.textContent = 'Catatan';
+                catLabel.textContent = '{{ __('Catatan') }}';
                 const catBody = document.createElement('p');
                 catBody.className = 'text-on-surface text-xs whitespace-pre-line';
                 catBody.textContent = s.catatan;
@@ -379,7 +379,7 @@
             ic.textContent = 'local_shipping';
             const p = document.createElement('p');
             p.className = 'text-on-surface-variant font-body-md text-sm mt-2';
-            p.textContent = 'Belum ada riwayat supplier untuk stok ini.';
+            p.textContent = '{{ __('Belum ada riwayat supplier untuk stok ini.') }}';
             box.appendChild(ic);
             box.appendChild(p);
             return box;
@@ -440,7 +440,7 @@
                 modal.dataset.supplierKontak = data.supplier?.kontak || '';
                 modal.dataset.supplierEmail = data.supplier?.email || '';
             } catch (err) {
-                if (supplierWrap) supplierWrap.innerHTML = '<div class="bg-surface-container-low border border-muted-border rounded-lg p-6 text-center text-on-surface-variant text-sm">Gagal memuat detail.</div>';
+                if (supplierWrap) supplierWrap.innerHTML = '<div class="bg-surface-container-low border border-muted-border rounded-lg p-6 text-center text-on-surface-variant text-sm">{{ __('Gagal memuat detail.') }}</div>';
             }
         });
 
@@ -454,7 +454,7 @@
                 const text = [nama, kontak, email].filter(Boolean).join(' \u2022 ');
                 if (!text) return;
                 if (navigator.clipboard) {
-                    navigator.clipboard.writeText(text).then(() => window.showRalivaToast?.('Kontak supplier disalin', 'content_copy'));
+                    navigator.clipboard.writeText(text).then(() => window.showRalivaToast?.('{{ __('Kontak supplier disalin') }}', 'content_copy'));
                 }
             });
         }

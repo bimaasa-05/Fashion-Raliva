@@ -1,11 +1,11 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Manajemen Toko')
+@section('title', __('Manajemen Toko'))
 
-@section('header-title', 'Data Toko')
-@section('header-badge', 'Kelola')
+@section('header-title', __('Data Toko'))
+@section('header-badge', __('Kelola'))
 
-@section('header-subtitle', 'Verifikasi, tolak, tangguhkan, dan aktifkan kembali toko penjual.')
+@section('header-subtitle', __('Verifikasi, tolak, tangguhkan, dan aktifkan kembali toko penjual.'))
 
 @php
     $tabs = [
@@ -41,12 +41,12 @@
 <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 mb-6">
     <div class="flex items-center gap-2 mb-3 flex-wrap">
         <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-        <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status Toko</span>
+        <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Status Toko') }}</span>
         <span class="ml-auto flex items-center gap-2">
-            <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Tampilan</span>
+            <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Tampilan') }}</span>
             <div class="inline-flex bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
-                <button type="button" data-view="kartu" class="view-mode-btn px-3 py-1.5 rounded-md text-xs font-medium text-on-surface-variant">Kartu</button>
-                <button type="button" data-view="tabel" class="view-mode-btn px-3 py-1.5 rounded-md text-xs font-medium text-on-surface-variant">Tabel</button>
+                <button type="button" data-view="kartu" class="view-mode-btn px-3 py-1.5 rounded-md text-xs font-medium text-on-surface-variant">{{ __('Kartu') }}</button>
+                <button type="button" data-view="tabel" class="view-mode-btn px-3 py-1.5 rounded-md text-xs font-medium text-on-surface-variant">{{ __('Tabel') }}</button>
             </div>
         </span>
     </div>
@@ -63,7 +63,7 @@
     <div class="flex flex-col sm:flex-row sm:items-center gap-3 pt-4">
         <div class="relative flex-1">
             <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-            <input id="toko-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama toko, pemilik, lokasi, atau telepon..." />
+            <input id="toko-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="{{ __('Cari nama toko, pemilik, lokasi, atau telepon...') }}" />
             <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
                 <span class="material-symbols-outlined text-[20px]">close</span>
             </button>
@@ -154,7 +154,7 @@
         const chip = document.getElementById('store-status-chip');
         chip.textContent = meta.chipLabel;
         chip.className = meta.chipClass;
-        document.getElementById('store-meta').textContent = 'Bergabung ' + d.joined + ' \u2022 ' + d.location;
+        document.getElementById('store-meta').textContent = '{{ __('Bergabung') }} ' + d.joined + ' \u2022 ' + d.location;
         document.getElementById('stat-products').textContent = d.products;
         document.getElementById('stat-orders').textContent = d.orders;
         document.getElementById('stat-rating').textContent = d.rating;
@@ -180,7 +180,7 @@
         const mainForm = document.getElementById('store-action-form');
 
         if (d.status === 'pending') {
-            mainBtn.textContent = 'Setujui Toko';
+            mainBtn.textContent = '{{ __('Setujui Toko') }}';
             mainBtn.dataset.confirm = 'false';
             mainBtn.classList.remove('hidden');
             mainForm.action = actionUrls.setujui(d.id);
@@ -196,7 +196,7 @@
             suspendBtn.classList.remove('hidden');
             suspendBtn.onclick = () => { closeStoreModal(); openSuspendModal(d.id, d.name); };
         } else if (d.status === 'nonaktif') {
-            mainBtn.textContent = 'Aktifkan Kembali';
+            mainBtn.textContent = '{{ __('Aktifkan Kembali') }}';
             mainBtn.dataset.confirm = 'false';
             mainBtn.classList.remove('hidden');
             mainForm.action = actionUrls.aktifkan(d.id);
@@ -207,7 +207,7 @@
                 ? 'Ditangguhkan sementara — aktif kembali ' + d.sampai
                 : 'Ditangguhkan oleh Admin tanpa batas waktu';
         } else if (d.status === 'ditolak') {
-            mainBtn.textContent = 'Pulihkan & Setujui';
+            mainBtn.textContent = '{{ __('Pulihkan & Setujui') }}';
             mainBtn.dataset.confirm = 'true';
             mainBtn.classList.remove('hidden');
             mainForm.action = actionUrls.setujui(d.id);
@@ -237,11 +237,11 @@
 
     function confirmStoreAction() {
         if (document.getElementById('store-action-main').dataset.confirm === 'true') {
-            pageConfirm('Pulihkan dan setujui toko yang sebelumnya ditolak ini?', {
-                title: 'Setujui Toko',
-                sub: 'Toko akan kembali aktif dan dapat menerima pesanan.',
+            pageConfirm('{{ __('Pulihkan dan setujui toko yang sebelumnya ditolak ini?') }}', {
+                title: '{{ __('Setujui Toko') }}',
+                sub: '{{ __('Toko akan kembali aktif dan dapat menerima pesanan.') }}',
                 accent: 'primary',
-                yesLabel: 'Ya, Setujui',
+                yesLabel: '{{ __('Ya, Setujui') }}',
                 onConfirm: function () {
                     closeStoreModal();
                     document.getElementById('store-action-form').submit();
@@ -271,10 +271,10 @@
     }
 
     const docMeta = {
-        ktp: { label: 'KTP / Identitas Owner', icon: 'description' },
-        npwp: { label: 'NPWP Toko', icon: 'receipt_long' },
-        foto_depan: { label: 'Foto Depan Toko', icon: 'storefront' },
-        siu: { label: 'Surat Izin Usaha (NIB)', icon: 'gavel' }
+        ktp: { label: '{{ __('KTP / Identitas Owner') }}', icon: 'description' },
+        npwp: { label: '{{ __('NPWP Toko') }}', icon: 'receipt_long' },
+        foto_depan: { label: '{{ __('Foto Depan Toko') }}', icon: 'storefront' },
+        siu: { label: '{{ __('Surat Izin Usaha (NIB)') }}', icon: 'gavel' }
     };
 
     function previewUrl(path) {
@@ -291,7 +291,7 @@
             return ka - kb;
         });
         if (activeDocs.length === 0) {
-            container.innerHTML = '<div class="bg-surface-container-low border border-muted-border rounded-lg p-4 text-sm text-on-surface-variant">Belum ada dokumen diunggah.</div>';
+            container.innerHTML = '<div class="bg-surface-container-low border border-muted-border rounded-lg p-4 text-sm text-on-surface-variant">{{ __('Belum ada dokumen diunggah.') }}</div>';
             allBtn.classList.add('hidden');
             allBtn.classList.remove('inline-flex');
             return;
@@ -469,19 +469,19 @@
         if (isSementara) {
             const sampai = document.getElementById('sampai-input').value;
             if (! sampai) {
-                showRalivaToast('Mohon pilih tanggal berakhirnya penangguhan.', 'warning');
+                showRalivaToast('{{ __('Mohon pilih tanggal berakhirnya penangguhan.') }}', 'warning');
                 return false;
             }
             if (new Date(sampai) <= new Date()) {
-                showRalivaToast('Batas waktu harus di masa depan.', 'warning');
+                showRalivaToast('{{ __('Batas waktu harus di masa depan.') }}', 'warning');
                 return false;
             }
             const tanggal = new Date(sampai).toLocaleString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            pageConfirm('Toko akan ditangguhkan sementara hingga ' + tanggal + '. Lanjutkan?', {
-                title: 'Konfirmasi Penangguhan',
-                sub: 'Toko aktif kembali otomatis saat melewati batas waktu tersebut.',
+            pageConfirm(@js(__('Toko akan ditangguhkan sementara hingga :ph1. Lanjutkan?')).replace(':ph1', tanggal), {
+                title: '{{ __('Konfirmasi Penangguhan') }}',
+                sub: '{{ __('Toko aktif kembali otomatis saat melewati batas waktu tersebut.') }}',
                 accent: 'danger',
-                yesLabel: 'Ya, Tangguhkan',
+                yesLabel: '{{ __('Ya, Tangguhkan') }}',
                 onConfirm: function () {
                     closeSuspendModal();
                     document.getElementById('suspend-form').submit();
@@ -489,11 +489,11 @@
             });
             return false;
         }
-        pageConfirm('Toko akan ditangguhkan secara permanen. Lanjutkan?', {
-            title: 'Konfirmasi Penangguhan',
-            sub: 'Hanya Super Admin yang dapat mengaktifkan kembali toko ini.',
+        pageConfirm('{{ __('Toko akan ditangguhkan secara permanen. Lanjutkan?') }}', {
+            title: '{{ __('Konfirmasi Penangguhan') }}',
+            sub: '{{ __('Hanya Super Admin yang dapat mengaktifkan kembali toko ini.') }}',
             accent: 'danger',
-            yesLabel: 'Ya, Tangguhkan',
+            yesLabel: '{{ __('Ya, Tangguhkan') }}',
             onConfirm: function () {
                 closeSuspendModal();
                 document.getElementById('suspend-form').submit();
@@ -644,7 +644,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (err) {
             if (err.name === 'AbortError') return;
             setListLoading(false);
-            if (window.showRalivaToast) showRalivaToast('Gagal memuat data toko. Silakan coba lagi.', 'error');
+            if (window.showRalivaToast) showRalivaToast('{{ __('Gagal memuat data toko. Silakan coba lagi.') }}', 'error');
         }
     }
 
@@ -707,14 +707,14 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="absolute inset-0 bg-gradient-to-r from-gold-accent/15 via-gold-accent/5 to-transparent pointer-events-none"></div>
             <div class="relative flex items-start justify-between gap-4 p-6 md:p-7">
                 <div class="flex items-center gap-5 min-w-0">
-                    <div id="store-avatar" class="w-16 h-16 rounded-2xl bg-surface-container-high border-2 border-gold-accent/40 shadow-lg flex items-center justify-center font-title-md text-lg text-on-surface shrink-0">NS</div>
+                    <div id="store-avatar" class="w-16 h-16 rounded-2xl bg-surface-container-high border-2 border-gold-accent/40 shadow-lg flex items-center justify-center font-title-md text-lg text-on-surface shrink-0">{{ __('NS') }}</div>
                     <div class="min-w-0">
                         <div class="flex items-center gap-2 flex-wrap">
-                            <h2 class="font-display-lg text-headline-lg-mobile md:text-headline-lg truncate" id="modal-title">Nama Toko</h2>
+                            <h2 class="font-display-lg text-headline-lg-mobile md:text-headline-lg truncate" id="modal-title">{{ __('Nama Toko') }}</h2>
                         </div>
                         <div class="flex items-center gap-3 mt-1.5 flex-wrap">
-                            <span id="store-status-chip" class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-gold-accent/10 text-gold-accent border-gold-accent/30">Menunggu Tinjauan</span>
-                            <span id="store-meta" class="text-xs text-on-surface-variant">Bergabung - • -</span>
+                            <span id="store-status-chip" class="inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-gold-accent/10 text-gold-accent border-gold-accent/30">{{ __('Menunggu Tinjauan') }}</span>
+                            <span id="store-meta" class="text-xs text-on-surface-variant">{{ __('Bergabung - • -') }}</span>
                         </div>
                     </div>
                 </div>
@@ -727,7 +727,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="flex items-start gap-3">
                     <span class="material-symbols-outlined text-error text-[18px] mt-0.5">gpp_bad</span>
                     <div>
-                        <p class="font-label-sm text-[10px] uppercase tracking-widest text-error mb-1">Alasan Penolakan</p>
+                        <p class="font-label-sm text-[10px] uppercase tracking-widest text-error mb-1">{{ __('Alasan Penolakan') }}</p>
                         <p id="reject-reason-text" class="text-sm text-on-surface"></p>
                     </div>
                 </div>
@@ -736,61 +736,61 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
                 <div class="relative overflow-hidden bg-surface-container-low border border-muted-border rounded-lg p-4 text-center">
                     <span class="block font-headline-lg-mobile text-headline-lg-mobile text-on-surface" id="stat-products">-</span>
-                    <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-1">Produk Aktif</span>
+                    <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-1">{{ __('Produk Aktif') }}</span>
                     <span class="material-symbols-outlined absolute -right-2 -bottom-3 text-[44px] text-gold-accent/15 fill pointer-events-none select-none">checkroom</span>
                 </div>
                 <div class="relative overflow-hidden bg-surface-container-low border border-muted-border rounded-lg p-4 text-center">
                     <span class="block font-headline-lg-mobile text-headline-lg-mobile text-on-surface" id="stat-orders">-</span>
-                    <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-1">Total Pesanan</span>
+                    <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-1">{{ __('Total Pesanan') }}</span>
                     <span class="material-symbols-outlined absolute -right-2 -bottom-3 text-[44px] text-gold-accent/15 fill pointer-events-none select-none">shopping_bag</span>
                 </div>
                 <div class="relative overflow-hidden bg-surface-container-low border border-muted-border rounded-lg p-4 text-center">
                     <span class="block font-headline-lg-mobile text-headline-lg-mobile text-on-surface flex items-center justify-center gap-1"><span id="stat-rating">-</span><span class="material-symbols-outlined text-[18px] filled text-secondary">star</span></span>
-                    <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-1">Rating Toko</span>
+                    <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-1">{{ __('Rating Toko') }}</span>
                     <span class="material-symbols-outlined absolute -right-2 -bottom-3 text-[44px] text-gold-accent/15 fill pointer-events-none select-none">reviews</span>
                 </div>
             </div>
 
             <section>
-                <h4 class="font-title-md text-title-md mb-3 uppercase tracking-wider text-on-surface premium-heading">Deskripsi Toko</h4>
+                <h4 class="font-title-md text-title-md mb-3 uppercase tracking-wider text-on-surface premium-heading">{{ __('Deskripsi Toko') }}</h4>
                 <p id="store-desc" class="font-body-md text-body-md text-on-surface-variant leading-relaxed max-w-2xl">-</p>
             </section>
 
             <section>
-                <h4 class="font-title-md text-title-md mb-4 uppercase tracking-wider text-on-surface premium-heading">Informasi Toko</h4>
+                <h4 class="font-title-md text-title-md mb-4 uppercase tracking-wider text-on-surface premium-heading">{{ __('Informasi Toko') }}</h4>
                 <div class="grid sm:grid-cols-2 gap-gutter">
                     <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 flex items-center gap-3">
                         <div class="w-9 h-9 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[18px]">person</span></div>
-                        <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Pemilik</span><span id="info-owner" class="font-title-md text-title-md text-on-surface block truncate">-</span></div>
+                        <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">{{ __('Pemilik') }}</span><span id="info-owner" class="font-title-md text-title-md text-on-surface block truncate">-</span></div>
                     </div>
                     <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 flex items-center gap-3">
                         <div class="w-9 h-9 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[18px]">calendar_month</span></div>
-                        <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Bergabung</span><span id="info-joined" class="font-title-md text-title-md text-on-surface block truncate">-</span></div>
+                        <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">{{ __('Bergabung') }}</span><span id="info-joined" class="font-title-md text-title-md text-on-surface block truncate">-</span></div>
                     </div>
                     <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 flex items-center gap-3">
                         <div class="w-9 h-9 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[18px]">place</span></div>
-                        <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Lokasi</span><span id="info-location" class="font-title-md text-title-md text-on-surface block truncate">-</span></div>
+                        <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">{{ __('Lokasi') }}</span><span id="info-location" class="font-title-md text-title-md text-on-surface block truncate">-</span></div>
                     </div>
                     <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 flex items-center gap-3">
                         <div class="w-9 h-9 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[18px]">fact_check</span></div>
-                        <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Verifikasi</span><span id="info-verification" class="font-title-md text-title-md text-on-surface block truncate">-</span></div>
+                        <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">{{ __('Verifikasi') }}</span><span id="info-verification" class="font-title-md text-title-md text-on-surface block truncate">-</span></div>
                     </div>
                     <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 flex items-center gap-3">
                         <div class="w-9 h-9 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[18px]">call</span></div>
-                        <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Telepon</span><span id="info-phone" class="font-title-md text-title-md text-on-surface block truncate">-</span></div>
+                        <div class="min-w-0"><span class="block text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">{{ __('Telepon') }}</span><span id="info-phone" class="font-title-md text-title-md text-on-surface block truncate">-</span></div>
                     </div>
                 </div>
             </section>
 
             <section>
                 <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
-                    <h4 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading min-w-0">Dokumen Toko</h4>
+                    <h4 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading min-w-0">{{ __('Dokumen Toko') }}</h4>
                     <button id="btn-open-all-docs" type="button" onclick="openAllDocs()" class="hidden items-center gap-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-gold-accent/40 text-gold-accent hover:bg-gold-accent/10 transition-colors whitespace-nowrap">
-                        <span class="material-symbols-outlined text-[14px]">folder_open</span>Lihat Semua Sertifikat
+                        <span class="material-symbols-outlined text-[14px]">folder_open</span>{{ __('Lihat Semua Sertifikat') }}
                     </button>
                 </div>
                 <div id="store-docs-list" class="grid sm:grid-cols-2 gap-gutter">
-                    <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 text-sm text-on-surface-variant">Belum ada dokumen.</div>
+                    <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 text-sm text-on-surface-variant">{{ __('Belum ada dokumen.') }}</div>
                 </div>
             </section>
         </div>
@@ -799,16 +799,16 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="space-y-1">
                 <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
                     <span class="material-symbols-outlined text-[14px] text-gold-accent">history</span>
-                    Keputusan tercatat di riwayat aktivitas
+                    {{ __('Keputusan tercatat di riwayat aktivitas') }}
                 </p>
-                <p id="store-action-info" class="text-[11px] text-on-surface-variant hidden">Menyetujui akan otomatis verifikasi dokumen pending & beri 5 slot awal bila kosong.</p>
+                <p id="store-action-info" class="text-[11px] text-on-surface-variant hidden">{{ __('Menyetujui akan otomatis verifikasi dokumen pending & beri 5 slot awal bila kosong.') }}</p>
             </div>
             <div class="flex gap-3 w-full sm:w-auto">
-                <button id="store-action-suspend" type="button" class="hidden flex-1 sm:flex-none px-6 py-3 border border-error/40 text-error font-label-sm text-label-sm uppercase tracking-wider rounded-lg hover:bg-error/10 transition-colors">Tangguhkan</button>
-                <button id="store-action-reject" type="button" onclick="openRejectModal()" class="flex-1 sm:flex-none px-6 py-3 border border-error/40 text-error font-label-sm text-label-sm uppercase tracking-wider rounded-lg hover:bg-error/10 transition-colors">Tolak</button>
+                <button id="store-action-suspend" type="button" class="hidden flex-1 sm:flex-none px-6 py-3 border border-error/40 text-error font-label-sm text-label-sm uppercase tracking-wider rounded-lg hover:bg-error/10 transition-colors">{{ __('Tangguhkan') }}</button>
+                <button id="store-action-reject" type="button" onclick="openRejectModal()" class="flex-1 sm:flex-none px-6 py-3 border border-error/40 text-error font-label-sm text-label-sm uppercase tracking-wider rounded-lg hover:bg-error/10 transition-colors">{{ __('Tolak') }}</button>
                 <form id="store-action-form" method="POST" action="" onsubmit="return confirmStoreAction()">
                     @csrf
-                    <button id="store-action-main" type="submit" class="w-full sm:w-auto px-8 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-lg btn-premium">Setujui Toko</button>
+                    <button id="store-action-main" type="submit" class="w-full sm:w-auto px-8 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-wider rounded-lg btn-premium">{{ __('Setujui Toko') }}</button>
                 </form>
             </div>
         </div>
@@ -825,14 +825,14 @@ document.addEventListener('DOMContentLoaded', () => {
         'dataModal' => true,
     ])
         <div class="p-6">
-            <h3 class="font-display-lg text-headline-lg-mobile text-center mb-2" id="reject-title">Tolak Toko</h3>
-            <p class="text-on-surface-variant text-sm text-center mb-6">Berikan alasan penolakan untuk <span id="reject-store-name" class="font-bold text-on-surface">-</span>. Pesan ini akan dikirim ke pemilik toko.</p>
-            <textarea required minlength="10" maxlength="1000" name="alasan" id="reject-alasan-input" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-6 min-h-[120px] resize-none" placeholder="Misal: Dokumen izin usaha belum lengkap... (minimal 10 karakter)"></textarea>
+            <h3 class="font-display-lg text-headline-lg-mobile text-center mb-2" id="reject-title">{{ __('Tolak Toko') }}</h3>
+            <p class="text-on-surface-variant text-sm text-center mb-6">{{ __('Berikan alasan penolakan untuk') }} <span id="reject-store-name" class="font-bold text-on-surface">-</span>{{ __('. Pesan ini akan dikirim ke pemilik toko.') }}</p>
+            <textarea required minlength="10" maxlength="1000" name="alasan" id="reject-alasan-input" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-6 min-h-[120px] resize-none" placeholder="{{ __('Misal: Dokumen izin usaha belum lengkap... (minimal 10 karakter)') }}"></textarea>
         </div>
         @slot('footer')
             <div class="flex justify-end gap-3">
-                <button type="button" class="btn-modal btn-modal-ghost" onclick="closeRejectModal()">Batal</button>
-                <button type="submit" class="btn-modal btn-modal-danger">Konfirmasi Penolakan</button>
+                <button type="button" class="btn-modal btn-modal-ghost" onclick="closeRejectModal()">{{ __('Batal') }}</button>
+                <button type="submit" class="btn-modal btn-modal-danger">{{ __('Konfirmasi Penolakan') }}</button>
             </div>
         @endslot
     @endcomponent
@@ -848,14 +848,14 @@ document.addEventListener('DOMContentLoaded', () => {
         'dataModal' => true,
     ])
         <div class="p-6">
-            <h3 class="font-display-lg text-headline-lg-mobile text-center mb-2" id="doc-reject-title">Tolak Dokumen</h3>
-            <p class="text-on-surface-variant text-sm text-center mb-6">Berikan alasan penolakan untuk <span id="doc-reject-name" class="font-bold text-on-surface">-</span>. Penolakan dokumen akan mengubah status pengajuan toko menjadi <span class="font-bold text-error">Ditolak</span>. Pesan ini akan dikirim ke pemilik toko.</p>
-            <textarea required minlength="3" maxlength="1000" name="alasan" id="doc-reject-alasan-input" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-6 min-h-[120px] resize-none" placeholder="Alasan penolakan dokumen... (minimal 3 karakter)"></textarea>
+            <h3 class="font-display-lg text-headline-lg-mobile text-center mb-2" id="doc-reject-title">{{ __('Tolak Dokumen') }}</h3>
+            <p class="text-on-surface-variant text-sm text-center mb-6">{{ __('Berikan alasan penolakan untuk') }} <span id="doc-reject-name" class="font-bold text-on-surface">-</span>{{ __('. Penolakan dokumen akan mengubah status pengajuan toko menjadi') }} <span class="font-bold text-error">{{ __('Ditolak') }}</span>{{ __('. Pesan ini akan dikirim ke pemilik toko.') }}</p>
+            <textarea required minlength="3" maxlength="1000" name="alasan" id="doc-reject-alasan-input" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-6 min-h-[120px] resize-none" placeholder="{{ __('Alasan penolakan dokumen... (minimal 3 karakter)') }}"></textarea>
         </div>
         @slot('footer')
             <div class="flex justify-end gap-3">
-                <button type="button" class="btn-modal btn-modal-ghost" onclick="closeDocRejectModal()">Batal</button>
-                <button type="submit" class="btn-modal btn-modal-danger">Konfirmasi Penolakan</button>
+                <button type="button" class="btn-modal btn-modal-ghost" onclick="closeDocRejectModal()">{{ __('Batal') }}</button>
+                <button type="submit" class="btn-modal btn-modal-danger">{{ __('Konfirmasi Penolakan') }}</button>
             </div>
         @endslot
     @endcomponent
@@ -866,8 +866,8 @@ document.addEventListener('DOMContentLoaded', () => {
         <div class="shrink-0 border-b border-muted-border px-6 md:px-8 py-5">
             <div class="flex items-start justify-between gap-4">
                 <div class="min-w-0">
-                    <p class="font-label-sm text-[10px] uppercase tracking-widest text-gold-accent inline-flex items-center gap-1.5 mb-1"><span class="material-symbols-outlined text-[14px]">folder_open</span>Dokumen Toko</p>
-                    <h3 class="font-display-lg text-headline-lg-mobile truncate" id="all-docs-title">Semua Sertifikat</h3>
+                    <p class="font-label-sm text-[10px] uppercase tracking-widest text-gold-accent inline-flex items-center gap-1.5 mb-1"><span class="material-symbols-outlined text-[14px]">folder_open</span>{{ __('Dokumen Toko') }}</p>
+                    <h3 class="font-display-lg text-headline-lg-mobile truncate" id="all-docs-title">{{ __('Semua Sertifikat') }}</h3>
                     <p class="text-xs text-on-surface-variant mt-0.5"><span id="all-docs-store-name" class="font-bold text-on-surface">-</span> &bull; <span id="all-docs-count">0</span> dokumen</p>
                 </div>
                 <button type="button" onclick="closeAllDocs()" class="text-on-surface-variant hover:text-on-surface transition-colors p-2 -mr-2 shrink-0"><span class="material-symbols-outlined">close</span></button>
@@ -889,22 +889,22 @@ document.addEventListener('DOMContentLoaded', () => {
         'dataModal' => true,
     ])
         <div class="p-6">
-            <h3 class="font-display-lg text-headline-lg-mobile text-center mb-2" id="suspend-title">Tangguhkan Toko</h3>
-            <p class="text-on-surface-variant text-sm text-center mb-6">Toko <span id="suspend-store-name" class="font-bold text-on-surface">-</span> akan ditangguhkan. Pilih jenis penangguhan:</p>
+            <h3 class="font-display-lg text-headline-lg-mobile text-center mb-2" id="suspend-title">{{ __('Tangguhkan Toko') }}</h3>
+            <p class="text-on-surface-variant text-sm text-center mb-6">{{ __('Toko') }} <span id="suspend-store-name" class="font-bold text-on-surface">-</span> {{ __('akan ditangguhkan. Pilih jenis penangguhan:') }}</p>
 
             <div class="space-y-3 mb-6">
                 <label class="flex items-start gap-3 p-3 border border-muted-border rounded-lg cursor-pointer hover:border-gold-accent/50 transition-colors has-[:checked]:border-error has-[:checked]:bg-error/5">
                     <input type="radio" name="tipe_suspend" value="permanen" checked class="mt-0.5 accent-error" />
                     <div>
-                        <p class="font-label-sm text-label-sm text-on-surface font-bold">Permanen</p>
-                        <p class="text-xs text-on-surface-variant mt-0.5">Toko akan ditangguhkan tanpa batas waktu. Hanya bisa diaktifkan kembali oleh Super Admin.</p>
+                        <p class="font-label-sm text-label-sm text-on-surface font-bold">{{ __('Permanen') }}</p>
+                        <p class="text-xs text-on-surface-variant mt-0.5">{{ __('Toko akan ditangguhkan tanpa batas waktu. Hanya bisa diaktifkan kembali oleh Super Admin.') }}</p>
                     </div>
                 </label>
                 <label class="flex items-start gap-3 p-3 border border-muted-border rounded-lg cursor-pointer hover:border-gold-accent/50 transition-colors has-[:checked]:border-error has-[:checked]:bg-error/5">
                     <input type="radio" name="tipe_suspend" value="sementara" class="mt-0.5 accent-error" onchange="document.getElementById('sampai-input').disabled = this.value !== 'sementara'; if(this.value !== 'sementara') document.getElementById('sampai-input').value = '';" />
                     <div class="flex-1">
-                        <p class="font-label-sm text-label-sm text-on-surface font-bold">Sementara (Berbatas Waktu)</p>
-                        <p class="text-xs text-on-surface-variant mt-0.5 mb-3">Toko akan otomatis aktif kembali melewati batas waktu yang ditentukan.</p>
+                        <p class="font-label-sm text-label-sm text-on-surface font-bold">{{ __('Sementara (Berbatas Waktu)') }}</p>
+                        <p class="text-xs text-on-surface-variant mt-0.5 mb-3">{{ __('Toko akan otomatis aktif kembali melewati batas waktu yang ditentukan.') }}</p>
                         <input type="datetime-local" id="sampai-input" name="sampai" disabled class="w-full bg-surface-container-low border border-muted-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-error focus:ring-1 focus:ring-error disabled:opacity-40" />
                     </div>
                 </label>
@@ -913,8 +913,8 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
         @slot('footer')
             <div class="flex justify-end gap-3">
-                <button type="button" class="btn-modal btn-modal-ghost" onclick="closeSuspendModal()">Batal</button>
-                <button type="submit" class="btn-modal btn-modal-danger">Konfirmasi Tangguhkan</button>
+                <button type="button" class="btn-modal btn-modal-ghost" onclick="closeSuspendModal()">{{ __('Batal') }}</button>
+                <button type="submit" class="btn-modal btn-modal-danger">{{ __('Konfirmasi Tangguhkan') }}</button>
             </div>
         @endslot
     @endcomponent
@@ -930,14 +930,14 @@ document.addEventListener('DOMContentLoaded', () => {
     'dataModal' => true,
 ])
     <div class="p-6 text-center">
-        <h3 id="confirm-title" class="font-display-lg text-headline-lg-mobile text-on-surface">Konfirmasi</h3>
+        <h3 id="confirm-title" class="font-display-lg text-headline-lg-mobile text-on-surface">{{ __('Konfirmasi') }}</h3>
         <p id="confirm-sub" class="text-xs text-on-surface-variant mt-1"></p>
         <p id="confirm-message" class="text-sm text-on-surface font-semibold mt-4"></p>
     </div>
     @slot('footer')
         <div class="flex justify-end gap-3">
-            <button type="button" class="btn-modal btn-modal-ghost" onclick="closeConfirmModal()">Batal</button>
-            <button type="button" id="confirm-yes" class="btn-modal btn-modal-danger">Ya, Lanjutkan</button>
+            <button type="button" class="btn-modal btn-modal-ghost" onclick="closeConfirmModal()">{{ __('Batal') }}</button>
+            <button type="button" id="confirm-yes" class="btn-modal btn-modal-danger">{{ __('Ya, Lanjutkan') }}</button>
         </div>
     @endslot
 @endcomponent
@@ -951,7 +951,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
                 <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
                     <div>
-                        <p class="raliva-label text-gold-accent">Perubahan Data Toko</p>
+                        <p class="raliva-label text-gold-accent">{{ __('Perubahan Data Toko') }}</p>
                         <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $st->nama_toko }}</h3>
                         <p class="text-on-surface-variant text-xs mt-1">Diajukan {{ $pr->created_at?->translatedFormat('d M Y H:i') ?? '-' }}</p>
                     </div>
@@ -960,27 +960,27 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="p-6 space-y-3 text-sm">
                     @foreach ([['Nama Toko', $st->nama_toko, $pr->nama_toko], ['Kategori', $st->kategori ?? '-', $pr->kategori ?? '-'], ['Alamat', $st->alamat, $pr->alamat], ['Kota', $st->kota ?? '-', $pr->kota ?? '-'], ['Telepon', $st->nomor_telepon, $pr->nomor_telepon]] as $row)
                         <div class="grid grid-cols-2 gap-3 border border-muted-border rounded-lg p-3 {{ $row[1] != $row[2] ? 'border-gold-accent/40 bg-gold-accent/5' : '' }}">
-                            <div><p class="text-[10px] uppercase text-on-surface-variant">{{ $row[0] }} (lama)</p><p class="text-on-surface mt-0.5">{{ $row[1] }}</p></div>
-                            <div><p class="text-[10px] uppercase text-on-surface-variant">{{ $row[0] }} (baru)</p><p class="font-bold text-on-surface mt-0.5">{{ $row[2] }}</p></div>
+                            <div><p class="text-[10px] uppercase text-on-surface-variant">{{ $row[0] }} {{ __('(lama)') }}</p><p class="text-on-surface mt-0.5">{{ $row[1] }}</p></div>
+                            <div><p class="text-[10px] uppercase text-on-surface-variant">{{ $row[0] }} {{ __('(baru)') }}</p><p class="font-bold text-on-surface mt-0.5">{{ $row[2] }}</p></div>
                         </div>
                     @endforeach
                     <div class="border border-muted-border rounded-lg p-3">
-                        <p class="text-[10px] uppercase text-on-surface-variant">Deskripsi (baru)</p>
+                        <p class="text-[10px] uppercase text-on-surface-variant">{{ __('Deskripsi (baru)') }}</p>
                         <p class="text-on-surface mt-0.5">{{ $pr->deskripsi ?? '-' }}</p>
                     </div>
                     @if(!empty($pr->logo))
                     <div class="grid grid-cols-2 gap-3 border border-gold-accent/40 bg-gold-accent/5 rounded-lg p-3">
                         <div>
-                            <p class="text-[10px] uppercase text-on-surface-variant">Logo (lama)</p>
+                            <p class="text-[10px] uppercase text-on-surface-variant">{{ __('Logo (lama)') }}</p>
                             @if(!empty($st->logo))
-                                <img src="{{ photo_url($st->logo) }}" alt="Logo lama" class="mt-1 w-20 h-20 rounded-lg object-cover border border-muted-border" />
+                                <img src="{{ photo_url($st->logo) }}" alt="{{ __('Logo lama') }}" class="mt-1 w-20 h-20 rounded-lg object-cover border border-muted-border" />
                             @else
                                 <p class="text-on-surface mt-0.5">-</p>
                             @endif
                         </div>
                         <div>
-                            <p class="text-[10px] uppercase text-on-surface-variant">Logo (baru)</p>
-                            <img src="{{ photo_url($pr->logo) }}" alt="Logo baru" class="mt-1 w-20 h-20 rounded-lg object-cover border border-gold-accent/40" />
+                            <p class="text-[10px] uppercase text-on-surface-variant">{{ __('Logo (baru)') }}</p>
+                            <img src="{{ photo_url($pr->logo) }}" alt="{{ __('Logo baru') }}" class="mt-1 w-20 h-20 rounded-lg object-cover border border-gold-accent/40" />
                         </div>
                     </div>
                     @endif
@@ -988,12 +988,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex gap-3">
                     <form method="POST" action="{{ route('superadmin.manajemen-toko.perubahan.tolak', [$st->store_id, $pr->store_update_request_id]) }}" class="flex-1 flex gap-2">
                         @csrf
-                        <input type="text" name="alasan" required minlength="3" maxlength="1000" placeholder="Alasan penolakan..." class="raliva-input flex-1 text-sm" />
-                        <button type="submit" class="px-5 py-2.5 bg-error/10 border border-error/20 text-error text-xs font-semibold rounded-lg hover:bg-error hover:text-white transition-colors shrink-0">Tolak</button>
+                        <input type="text" name="alasan" required minlength="3" maxlength="1000" placeholder="{{ __('Alasan penolakan...') }}" class="raliva-input flex-1 text-sm" />
+                        <button type="submit" class="px-5 py-2.5 bg-error/10 border border-error/20 text-error text-xs font-semibold rounded-lg hover:bg-error hover:text-white transition-colors shrink-0">{{ __('Tolak') }}</button>
                     </form>
                     <form method="POST" action="{{ route('superadmin.manajemen-toko.perubahan.setujui', [$st->store_id, $pr->store_update_request_id]) }}" class="shrink-0">
                         @csrf
-                        <button type="submit" class="px-5 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded-lg btn-premium h-full">Setujui</button>
+                        <button type="submit" class="px-5 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded-lg btn-premium h-full">{{ __('Setujui') }}</button>
                     </form>
                 </div>
             </div>

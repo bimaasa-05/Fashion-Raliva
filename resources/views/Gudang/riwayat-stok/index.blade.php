@@ -1,10 +1,10 @@
 @extends('layouts.gudang')
 
-@section('title', 'Riwayat Stok')
+@section('title', __('Riwayat Stok'))
 
-@section('header-title', 'Riwayat Stok')
-@section('header-badge', $warehouse->nama_gudang ?? 'Gudang')
-@section('header-subtitle', 'Jejak audit seluruh perubahan stok pada gudang Anda.')
+@section('header-title', __('Riwayat Stok'))
+@section('header-badge', $warehouse->nama_gudang ?? __('Gudang'))
+@section('header-subtitle', __('Jejak audit seluruh perubahan stok pada gudang Anda.'))
 
 @section('content')
 @php
@@ -35,7 +35,7 @@
             <div class="flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant hidden md:block">Filter Riwayat</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant hidden md:block">{{ __('Filter Riwayat') }}</span>
                 </div>
                 <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors btn-premium">
                     <span class="material-symbols-outlined text-[18px]" data-filter-icon>tune</span>
@@ -46,7 +46,7 @@
             <div data-filter-panel class="hidden md:block bg-surface-container-low border border-muted-border rounded-lg p-4">
                 <form method="GET" class="flex flex-wrap items-end gap-gutter">
                     <div class="flex flex-col gap-2 min-w-[200px]">
-                        <label class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Aktivitas</label>
+                        <label class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Aktivitas') }}</label>
                         @php
                             $csTipe = !empty($filters['tipe']) && isset($tipeList[$filters['tipe']]) ? $tipeList[$filters['tipe']] : 'Semua Aktivitas';
                         @endphp
@@ -58,7 +58,7 @@
                             </button>
                             <div data-cs-menu role="listbox" style="transform-origin: top left"
                                 class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden py-1">
-                                <button type="button" role="option" data-cs-option="" data-cs-option-label="Semua Aktivitas" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                <button type="button" role="option" data-cs-option="" data-cs-option-label="{{ __('Semua Aktivitas') }}" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
                                     Semua Aktivitas<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($filters['tipe'] ?? '') === '' ? '' : 'hidden' }}">check</span>
                                 </button>
                                 @foreach ($tipeList as $key => $label)
@@ -71,13 +71,13 @@
                         </div>
                     </div>
                     <div class="flex flex-col gap-2 min-w-[200px] flex-1">
-                        <label class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Cari Produk</label>
+                        <label class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Cari Produk') }}</label>
                         <div class="relative">
                             <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                            <input type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Nama produk..." class="raliva-search" />
+                            <input type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="{{ __('Nama produk...') }}" class="raliva-search" />
                         </div>
                     </div>
-                    <button type="submit" class="px-4 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Terapkan</button>
+                    <button type="submit" class="px-4 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">{{ __('Terapkan') }}</button>
                     <a href="{{ route('gudang.riwayat-stok') }}" class="px-4 py-2 border border-muted-border rounded-lg font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant hover:text-on-surface hover:border-gold-accent transition-colors">Reset</a>
                 </form>
             </div>
@@ -88,12 +88,12 @@
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
                         <th class="p-4 text-center w-12">No.</th>
-                        <th class="p-4 text-left">Waktu</th>
-                        <th class="p-4 text-left">Produk</th>
-                        <th class="p-4 text-left">Aktivitas</th>
-                        <th class="p-4 text-center">Perubahan</th>
-                        <th class="p-4 text-center">Referensi</th>
-                        <th class="p-4 text-center">Petugas</th>
+                        <th class="p-4 text-left">{{ __('Waktu') }}</th>
+                        <th class="p-4 text-left">{{ __('Produk') }}</th>
+                        <th class="p-4 text-left">{{ __('Aktivitas') }}</th>
+                        <th class="p-4 text-center">{{ __('Perubahan') }}</th>
+                        <th class="p-4 text-center">{{ __('Referensi') }}</th>
+                        <th class="p-4 text-center">{{ __('Petugas') }}</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -119,7 +119,7 @@
                             <td class="p-4 text-center text-on-surface whitespace-nowrap">{{ $m->creator->nama_lengkap ?? '-' }}</td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" class="p-10 text-center text-on-surface-variant">Belum ada riwayat stok pada gudang ini.</td></tr>
+                        <tr><td colspan="7" class="p-10 text-center text-on-surface-variant">{{ __('Belum ada riwayat stok pada gudang ini.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -150,21 +150,21 @@
 
                     <dl class="space-y-2 font-body-md text-sm">
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Aktivitas</dt>
+                            <dt class="text-on-surface-variant">{{ __('Aktivitas') }}</dt>
                             <dd class="text-on-surface text-right">{{ $aktivitasM }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Referensi</dt>
+                            <dt class="text-on-surface-variant">{{ __('Referensi') }}</dt>
                             <dd><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ $m->sumber_tipe ?? '-' }}</span></dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Petugas</dt>
+                            <dt class="text-on-surface-variant">{{ __('Petugas') }}</dt>
                             <dd class="text-on-surface text-right">{{ $m->creator->nama_lengkap ?? '-' }}</dd>
                         </div>
                     </dl>
                 </article>
             @empty
-                <p class="text-center text-on-surface-variant py-10">Belum ada riwayat stok pada gudang ini.</p>
+                <p class="text-center text-on-surface-variant py-10">{{ __('Belum ada riwayat stok pada gudang ini.') }}</p>
             @endforelse
         </div>
 

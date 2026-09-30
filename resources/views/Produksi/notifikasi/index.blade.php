@@ -1,9 +1,9 @@
 @extends('layouts.produksi')
 
-@section('title', 'Notifikasi')
+@section('title', __('Notifikasi'))
 
-@section('header-title', 'Notifikasi')
-@section('header-subtitle', 'Semua pemberitahuan penting untuk tim produksi Anda.')
+@section('header-title', __('Notifikasi'))
+@section('header-subtitle', __('Semua pemberitahuan penting untuk tim produksi Anda.'))
 
 @section('content')
 <div data-skeleton class="space-y-gutter">
@@ -21,7 +21,7 @@
             </span>
             <p class="font-title-md text-sm text-on-surface"><span id="notif-unread-count" class="font-bold text-gold-accent">{{ $notifications->whereNull('dibaca_pada')->count() }} notifikasi belum dibaca</span></p>
         </div>
-        <button type="button" id="mark-all-read" class="font-label-sm text-[10px] text-gold-accent uppercase tracking-widest hover:underline shrink-0">Tandai Semua Dibaca</button>
+        <button type="button" id="mark-all-read" class="font-label-sm text-[10px] text-gold-accent uppercase tracking-widest hover:underline shrink-0">{{ __('Tandai Semua Dibaca') }}</button>
     </section>
 
     <section>
@@ -33,7 +33,7 @@
                     <div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center">
                         <span class="material-symbols-outlined text-on-surface-variant">notifications_off</span>
                     </div>
-                    <p class="font-title-md text-title-md text-on-surface">Tidak Ada Notifikasi</p>
+                    <p class="font-title-md text-title-md text-on-surface">{{ __('Tidak Ada Notifikasi') }}</p>
                 </li>
             @endforelse
         </ul>
@@ -93,7 +93,7 @@
                     item.querySelector('.notif-text')?.classList.remove('font-semibold');
                 });
                 updateUnreadCount();
-                if (window.showRalivaToast) showRalivaToast('Semua notifikasi ditandai sudah dibaca.', 'done_all');
+                if (window.showRalivaToast) showRalivaToast('{{ __('Semua notifikasi ditandai sudah dibaca.') }}', 'done_all');
                 if (window.updateNotifBadge) window.updateNotifBadge();
             });
         });

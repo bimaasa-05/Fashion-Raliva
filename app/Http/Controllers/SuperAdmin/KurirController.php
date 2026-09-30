@@ -60,7 +60,7 @@ class KurirController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Kurir Ditambahkan', 'Kurir "'.$kurir->nama_kurir.'" ditambahkan.', route('superadmin.kurir'));
 
         return back()->with('toast', [
-            'message' => 'Kurir "'.$kurir->nama_kurir.'" berhasil ditambahkan.',
+            'message' => __('Kurir ":ph1" berhasil ditambahkan.', ['ph1' => $kurir->nama_kurir]),
             'icon' => 'task_alt',
         ]);
     }
@@ -94,7 +94,7 @@ class KurirController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Kurir Diubah', 'Kurir "'.$kurir->nama_kurir.'" diperbarui.', route('superadmin.kurir'));
 
         return back()->with('toast', [
-            'message' => 'Perubahan kurir "'.$kurir->nama_kurir.'" berhasil disimpan.',
+            'message' => __('Perubahan kurir ":ph1" berhasil disimpan.', ['ph1' => $kurir->nama_kurir]),
             'icon' => 'task_alt',
         ]);
     }
@@ -105,7 +105,7 @@ class KurirController extends Controller
 
         if ($adaShipment) {
             return back()->with('toast', [
-                'message' => 'Hapus dibatalkan — kurir "'.$kurir->nama_kurir.'" masih memiliki riwayat pengiriman.',
+                'message' => __('Hapus dibatalkan — kurir ":ph1" masih memiliki riwayat pengiriman.', ['ph1' => $kurir->nama_kurir]),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -127,7 +127,7 @@ class KurirController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Kurir Dihapus', 'Kurir "'.$lama['nama_kurir'].'" dihapus.', route('superadmin.kurir'));
 
         return back()->with('toast', [
-            'message' => 'Kurir "'.$lama['nama_kurir'].'" berhasil dihapus.',
+            'message' => __('Kurir ":ph1" berhasil dihapus.', ['ph1' => $lama['nama_kurir']]),
             'icon' => 'delete',
         ]);
     }
@@ -156,7 +156,7 @@ class KurirController extends Controller
 
         if ($exists) {
             return back()->with('toast', [
-                'message' => 'Layanan "'.$data['nama_layanan'].'" sudah ada di kurir ini.',
+                'message' => __('Layanan ":ph1" sudah ada di kurir ini.', ['ph1' => $data['nama_layanan']]),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -175,7 +175,7 @@ class KurirController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Layanan Kurir Ditambahkan', 'Layanan "'.$layanan->nama_layanan.'" ditambahkan ke '.$kurir->nama_kurir.'.', route('superadmin.kurir'));
 
         return back()->with('toast', [
-            'message' => 'Layanan "'.$layanan->nama_layanan.'" berhasil ditambahkan ke '.$kurir->nama_kurir.'.',
+            'message' => __('Layanan ":ph1" berhasil ditambahkan ke :ph2.', ['ph1' => $layanan->nama_layanan, 'ph2' => $kurir->nama_kurir]),
             'icon' => 'task_alt',
         ]);
     }
@@ -198,7 +198,7 @@ class KurirController extends Controller
 
         if ($exists) {
             return back()->with('toast', [
-                'message' => 'Layanan "'.$data['nama_layanan'].'" sudah ada di kurir ini.',
+                'message' => __('Layanan ":ph1" sudah ada di kurir ini.', ['ph1' => $data['nama_layanan']]),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -219,7 +219,7 @@ class KurirController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Layanan Kurir Diubah', 'Layanan "'.$layanan->nama_layanan.'" diperbarui.', route('superadmin.kurir'));
 
         return back()->with('toast', [
-            'message' => 'Perubahan layanan "'.$layanan->nama_layanan.'" berhasil disimpan.',
+            'message' => __('Perubahan layanan ":ph1" berhasil disimpan.', ['ph1' => $layanan->nama_layanan]),
             'icon' => 'task_alt',
         ]);
     }
@@ -230,7 +230,7 @@ class KurirController extends Controller
 
         if ($adaShipment) {
             return back()->with('toast', [
-                'message' => 'Hapus dibatalkan — layanan "'.$layanan->nama_layanan.'" masih memiliki riwayat pengiriman.',
+                'message' => __('Hapus dibatalkan — layanan ":ph1" masih memiliki riwayat pengiriman.', ['ph1' => $layanan->nama_layanan]),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -252,7 +252,7 @@ class KurirController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Layanan Kurir Dihapus', 'Layanan "'.$lama['nama_layanan'].'" dihapus.', route('superadmin.kurir'));
 
         return back()->with('toast', [
-            'message' => 'Layanan "'.$lama['nama_layanan'].'" berhasil dihapus.',
+            'message' => __('Layanan ":ph1" berhasil dihapus.', ['ph1' => $lama['nama_layanan']]),
             'icon' => 'delete',
         ]);
     }

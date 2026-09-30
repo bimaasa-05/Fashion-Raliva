@@ -32,7 +32,7 @@ class OwnerRekapKaryawanExport implements FromCollection, WithHeadings, WithMapp
             default => 'REKAP KARYAWAN — GUDANG',
         };
         $this->judulSheet = $judul;
-        $this->subtitleSheet = 'Peran & KPI per Karyawan — ' . $this->storeName;
+        $this->subtitleSheet = __('Peran & KPI per Karyawan — :ph1', ['ph1' => $this->storeName]);
         $this->barisHeaderSheet = 3;
         $this->lebarKolomSheet = $this->role === 'admin' ? [8, 26, 30, 14, 14, 14, 14, 14] : [8, 26, 30, 14, 14, 14, 14];
         $this->kolomUangSheet = match ($this->role) {
@@ -60,10 +60,10 @@ class OwnerRekapKaryawanExport implements FromCollection, WithHeadings, WithMapp
     public function headings(): array
     {
         return match ($this->role) {
-            'owner' => ['No.', 'Nama', 'Email', 'ROI (%)', 'Pendapatan', 'Investasi', 'Bersih'],
-            'admin' => ['No.', 'Nama', 'Email', 'CR (%)', 'AOV', 'LTV', 'Rating', 'Pesanan'],
-            'produksi' => ['No.', 'Nama', 'Email', 'Ditugaskan', 'Rata2 Unit', 'Rata2 Durasi (jam)', 'Berhasil (%)'],
-            default => ['No.', 'Nama', 'Email', 'Transfer', 'Rata2 Putaran (jam)', 'Akurasi (%)', 'Rusak (qty)'],
+            'owner' => [__('No.'), __('Nama'), __('Email'), __('ROI (%)'), __('Pendapatan'), __('Investasi'), __('Bersih')],
+            'admin' => [__('No.'), __('Nama'), __('Email'), __('CR (%)'), __('AOV'), __('LTV'), __('Rating'), __('Pesanan')],
+            'produksi' => [__('No.'), __('Nama'), __('Email'), __('Ditugaskan'), __('Rata2 Unit'), __('Rata2 Durasi (jam)'), __('Berhasil (%)')],
+            default => [__('No.'), __('Nama'), __('Email'), __('Transfer'), __('Rata2 Putaran (jam)'), __('Akurasi (%)'), __('Rusak (qty)')],
         };
     }
 
@@ -87,7 +87,7 @@ class OwnerRekapKaryawanExport implements FromCollection, WithHeadings, WithMapp
 
     public function title(): string
     {
-        return 'Rekap Karyawan';
+        return __('Rekap Karyawan');
     }
 
     /**
@@ -142,7 +142,7 @@ class OwnerRekapKaryawanExport implements FromCollection, WithHeadings, WithMapp
 
         return match ($this->role) {
             'owner' => [
-                'nama' => 'Total',
+                'nama' => __('Total'),
                 'email' => '',
                 'kolom1' => $t['roi'] ?? null,
                 'kolom2' => $t['pendapatan'] ?? 0,
@@ -150,7 +150,7 @@ class OwnerRekapKaryawanExport implements FromCollection, WithHeadings, WithMapp
                 'kolom4' => $t['bersih'] ?? 0,
             ],
             'admin' => [
-                'nama' => 'Total',
+                'nama' => __('Total'),
                 'email' => '',
                 'kolom1' => $t['cr'] ?? null,
                 'kolom2' => $t['aov'] ?? null,
@@ -159,7 +159,7 @@ class OwnerRekapKaryawanExport implements FromCollection, WithHeadings, WithMapp
                 'kolom5' => $t['pesanan'] ?? 0,
             ],
             'produksi' => [
-                'nama' => 'Total',
+                'nama' => __('Total'),
                 'email' => '',
                 'kolom1' => $t['ditugaskan'] ?? 0,
                 'kolom2' => null,
@@ -167,7 +167,7 @@ class OwnerRekapKaryawanExport implements FromCollection, WithHeadings, WithMapp
                 'kolom4' => $t['sukses_persen'] ?? null,
             ],
             default => [
-                'nama' => 'Total',
+                'nama' => __('Total'),
                 'email' => '',
                 'kolom1' => $t['transfer_diminta'] ?? 0,
                 'kolom2' => null,

@@ -1,11 +1,11 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Komplain')
+@section('title', __('Komplain'))
 
-@section('header-title', 'Komplain')
-@section('header-badge', 'Pantau')
+@section('header-title', __('Komplain'))
+@section('header-badge', __('Pantau'))
 
-@section('header-subtitle', 'Monitor dan tangani komplain Customer terhadap toko.')
+@section('header-subtitle', __('Monitor dan tangani komplain Customer terhadap toko.'))
 
 @php
     $badgeMap = [
@@ -30,40 +30,40 @@
         </span>
         <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
-            Data komplain diperbarui real-time
+            {{ __('Data komplain diperbarui real-time') }}
         </span>
     </div>
     <section>
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Komplain</h2>
+        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">{{ __('Ringkasan Komplain') }}</h2>
         <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-gutter">
             <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium flex flex-col gap-2 relative overflow-hidden min-w-0">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Terbuka</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Terbuka') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent relative break-words">{{ $stats['open'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">perlu ditangani</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">{{ __('perlu ditangani') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">radio_button_unchecked</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium flex flex-col gap-2 relative overflow-hidden min-w-0">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Diproses</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Diproses') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface relative break-words">{{ $stats['diproses'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">sedang di follow-up</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">{{ __('sedang di follow-up') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">pending</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium flex flex-col gap-2 relative overflow-hidden min-w-0">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Eskalasi</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Eskalasi') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent relative break-words">{{ $stats['escalated'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">ditonjolkan ke Owner</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">{{ __('ditonjolkan ke Owner') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">emergency</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium flex flex-col gap-2 relative overflow-hidden min-w-0">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Selesai</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Selesai') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-success relative break-words">{{ $stats['selesai'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">sudah ditangani</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">{{ __('sudah ditangani') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">check_circle</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 card-premium flex flex-col gap-2 relative overflow-hidden min-w-0">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Ditutup</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Ditutup') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface relative break-words">{{ $stats['ditutup'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">ditutup manual</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">{{ __('ditutup manual') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">support_agent</span>
             </div>
         </div>
@@ -71,10 +71,10 @@
 
     <section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Komplain</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Daftar Komplain') }}</h2>
             <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
                 <span class="material-symbols-outlined text-[18px]">tune</span>
-                Filter
+                {{ __('Filter') }}
                 <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
             </button>
         </div>
@@ -84,7 +84,7 @@
             <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
                 <div class="flex items-center gap-2 shrink-0">
                     <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Status') }}</span>
                 </div>
                 <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
                 <div id="chip-group" class="flex flex-wrap gap-2">
@@ -101,7 +101,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div class="relative flex-1">
                     <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                    <input id="komplain-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari ID komplain, nama pelanggan, atau toko..." />
+                    <input id="komplain-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="{{ __('Cari ID komplain, nama pelanggan, atau toko...') }}" />
                     <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
@@ -118,13 +118,13 @@
             <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
-                        <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">No.</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Detail Komplain</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Toko</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Status</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Kategori</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Kirim</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Aksi</th>
+                        <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">{{ __('No.') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Detail Komplain') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Toko') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Status') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Kategori') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Kirim') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Aksi') }}</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -158,19 +158,19 @@
                                     <button type="button" onclick="openChatModal({{ $c->complaint_id }}, '{{ addslashes($c->subjek ?? $c->kategori) }}', '{{ $kode }}', '{{ addslashes($chatStatusLabel) }}', {{ $chatDone ? 'true' : 'false' }})"
                                         class="flex items-center gap-1 px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:opacity-80 transition-opacity btn-premium">
                                         <span class="material-symbols-outlined text-sm">chat</span>
-                                        Buka
+                                        {{ __('Buka') }}
                                     </button>
                                 </div>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" class="py-12 text-center text-on-surface-variant">Tidak ada komplain tercatat.</td></tr>
+                        <tr><td colspan="7" class="py-12 text-center text-on-surface-variant">{{ __('Tidak ada komplain tercatat.') }}</td></tr>
                     @endforelse
                     <tr id="empty-search" class="hidden">
                         <td colspan="7" class="p-8 text-center">
                             <div class="flex flex-col items-center gap-2">
                                 <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
-                                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada komplain yang cocok.</p>
+                                <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada komplain yang cocok.') }}</p>
                             </div>
                         </td>
                     </tr>
@@ -197,19 +197,19 @@
 
                     <dl class="space-y-2 font-body-md text-sm mb-4">
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Toko</dt>
+                            <dt class="text-on-surface-variant">{{ __('Toko') }}</dt>
                             <dd class="text-on-surface text-right">{{ $c->store->nama_toko }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Pemilik</dt>
+                            <dt class="text-on-surface-variant">{{ __('Pemilik') }}</dt>
                             <dd class="text-on-surface text-right">{{ $c->store->owner->nama_lengkap ?? '-' }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Kategori</dt>
+                            <dt class="text-on-surface-variant">{{ __('Kategori') }}</dt>
                             <dd class="text-on-surface text-right">{{ $c->kategori }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Kirim</dt>
+                            <dt class="text-on-surface-variant">{{ __('Kirim') }}</dt>
                             <dd class="text-on-surface text-right">{{ $c->dibuat_pada ? \Carbon\Carbon::parse($c->dibuat_pada)->locale('id')->diffForHumans() : '-' }}</dd>
                         </div>
                     </dl>
@@ -217,14 +217,14 @@
                     @php $chatDoneM = in_array($c->status, ['selesai', 'ditutup'], true); $chatStatusLabelM = $badge['label']; @endphp
                     <div class="flex gap-gutter">
                         <button type="button" onclick="openChatModal({{ $c->complaint_id }}, '{{ addslashes($c->subjek ?? $c->kategori) }}', '{{ $kode }}', '{{ addslashes($chatStatusLabelM) }}', {{ $chatDoneM ? 'true' : 'false' }})" class="flex-1 min-h-11 inline-flex items-center justify-center gap-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:opacity-80 transition-opacity btn-premium">
-                            <span class="material-symbols-outlined text-[16px]">chat</span>Buka
+                            <span class="material-symbols-outlined text-[16px]">chat</span>{{ __('Buka') }}
                         </button>
                     </div>
                 </article>
             @empty
-                <p class="text-center text-on-surface-variant py-10">Tidak ada komplain tercatat.</p>
+                <p class="text-center text-on-surface-variant py-10">{{ __('Tidak ada komplain tercatat.') }}</p>
             @endforelse
-            <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada komplain yang cocok.</p>
+            <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">{{ __('Tidak ada komplain yang cocok.') }}</p>
         </div>
         @if ($complaints->hasPages())
             <div class="mt-6 flex justify-center">{{ $complaints->links() }}</div>
@@ -243,16 +243,16 @@
                 </div>
                 <div class="flex items-center gap-2 lg:gap-3 shrink-0 chat-header-item" id="chat-header-actions">
                     <span id="chat-status" class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border bg-surface-container-high text-on-surface-variant border-outline-variant shrink-0 whitespace-nowrap"></span>
-                    <button type="button" onclick="toggleChatSearch()" id="chat-search-toggle" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Cari pesan" aria-label="Cari pesan">
+                    <button type="button" onclick="toggleChatSearch()" id="chat-search-toggle" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Cari pesan') }}" aria-label="{{ __('Cari pesan') }}">
                         <span class="material-symbols-outlined text-[20px]">search</span>
                     </button>
                 </div>
                 <div id="chat-search-panel" class="absolute inset-0 flex items-center gap-2 lg:gap-3 px-6">
-                    <button type="button" id="chat-search-close" onclick="toggleChatSearch()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Tutup pencarian" aria-label="Tutup pencarian">
+                    <button type="button" id="chat-search-close" onclick="toggleChatSearch()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Tutup pencarian') }}" aria-label="{{ __('Tutup pencarian') }}">
                         <span class="material-symbols-outlined text-[20px]">search</span>
                     </button>
-                    <input id="chat-search-input" type="text" inputmode="search" autocomplete="off" placeholder="Cari pesan..." class="flex-1 min-w-0 bg-transparent font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/70 border-b border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] focus:border-secondary py-2"/>
-                    <button type="button" id="chat-search-clear" onclick="clearChatSearch()" class="hidden w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Hapus pencarian" aria-label="Hapus pencarian">
+                    <input id="chat-search-input" type="text" inputmode="search" autocomplete="off" placeholder="{{ __('Cari pesan...') }}" class="flex-1 min-w-0 bg-transparent font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/70 border-b border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] focus:border-secondary py-2"/>
+                    <button type="button" id="chat-search-clear" onclick="clearChatSearch()" class="hidden w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Hapus pencarian') }}" aria-label="{{ __('Hapus pencarian') }}">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                     <span id="chat-search-count" class="font-label-sm text-label-sm text-on-surface-variant shrink-0 hidden"></span>
@@ -266,63 +266,63 @@
             </div>
             <div class="relative px-3 lg:px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] shrink-0 bg-transparent" id="chat-input-area">
                 <div id="chat-emoji-panel" class="hidden absolute bottom-full mb-3 left-3 lg:left-4 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] bg-surface-container-high p-3 shadow-xl"></div>
-                <p id="chat-limit-note" class="hidden text-center font-body-sm text-body-sm text-secondary pb-3">Batas 3 balasan tercapai, menunggu balasan toko.</p>
+                <p id="chat-limit-note" class="hidden text-center font-body-sm text-body-sm text-secondary pb-3">{{ __('Batas 3 balasan tercapai, menunggu balasan toko.') }}</p>
                 <div id="chat-composer" class="flex items-end gap-1 lg:gap-1.5 bg-surface-container-lowest dark:bg-[#1c1c1c] border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-[26px] lg:rounded-[28px] px-2 lg:px-2.5 py-2 lg:py-2.5 shadow-sm transition-colors duration-150 focus-within:border-secondary">
-                    <button type="button" onclick="toggleEmojiPanel()" id="chat-emoji-toggle" aria-label="Emoji" title="Emoji" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0">
+                    <button type="button" onclick="toggleEmojiPanel()" id="chat-emoji-toggle" aria-label="{{ __('Emoji') }}" title="{{ __('Emoji') }}" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0">
                         <span class="material-symbols-outlined text-[20px]">mood</span>
                     </button>
-                    <textarea id="chat-input" rows="1" maxlength="2000" placeholder="Tulis pesan..."
+                    <textarea id="chat-input" rows="1" maxlength="2000" placeholder="{{ __('Tulis pesan...') }}"
                         class="flex-1 min-w-0 bg-transparent border-0 outline-none resize-none px-1 py-2.5 font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant"
-                        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}" aria-label="Tulis pesan"></textarea>
-                    <button type="button" onclick="sendMessage()" id="chat-send" aria-label="Kirim pesan" title="Kirim"
+                        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}" aria-label="{{ __('Tulis pesan') }}"></textarea>
+                    <button type="button" onclick="sendMessage()" id="chat-send" aria-label="{{ __('Kirim pesan') }}" title="{{ __('Kirim') }}"
                         class="w-11 h-11 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 active:scale-[0.96] transition-all disabled:opacity-40 rounded-full">
                         <span class="material-symbols-outlined text-[20px]">send</span>
                     </button>
                 </div>
-                <p id="chat-closed-note" class="hidden text-center font-body-sm text-body-sm text-on-surface-variant pt-4">Komplain telah selesai dan tidak dapat dibalas lagi.</p>
-                <p id="chat-readonly-note" class="text-center font-body-sm text-body-sm text-on-surface-variant pt-4">Super Admin hanya dapat melihat komplain. Penanganan komplain dilakukan oleh role Admin.</p>
+                <p id="chat-closed-note" class="hidden text-center font-body-sm text-body-sm text-on-surface-variant pt-4">{{ __('Komplain telah selesai dan tidak dapat dibalas lagi.') }}</p>
+                <p id="chat-readonly-note" class="text-center font-body-sm text-body-sm text-on-surface-variant pt-4">{{ __('Super Admin hanya dapat melihat komplain. Penanganan komplain dilakukan oleh role Admin.') }}</p>
             </div>
             </div><!-- /#chat-content -->
         </div>
     </div>
     <div id="chat-delete-dialog" class="hidden fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeDeleteDialog();}">
         <div class="w-full sm:max-w-sm bg-surface-container-low rounded-t-3xl sm:rounded-2xl p-2 sm:p-4 border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shadow-2xl" onclick="event.stopPropagation()">
-            <p class="font-title-sm text-title-sm text-on-surface px-4 pt-3 pb-2">Hapus pesan ini?</p>
+            <p class="font-title-sm text-title-sm text-on-surface px-4 pt-3 pb-2">{{ __('Hapus pesan ini?') }}</p>
             <button type="button" id="chat-del-opt-all" data-del-per="all" onclick="deleteMessage(deleteDialogMsgId,'all')" class="w-full text-left px-4 py-3 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
-                <span class="block font-body-sm text-body-sm text-on-surface">Hapus untuk semua orang</span>
-                <span class="block font-body-sm text-body-sm text-on-surface-variant/80">Pesan akan dihapus untuk semua peserta chat ini</span>
+                <span class="block font-body-sm text-body-sm text-on-surface">{{ __('Hapus untuk semua orang') }}</span>
+                <span class="block font-body-sm text-body-sm text-on-surface-variant/80">{{ __('Pesan akan dihapus untuk semua peserta chat ini') }}</span>
             </button>
             <button type="button" data-del-per="me" onclick="deleteMessage(deleteDialogMsgId,'me')" class="w-full text-left px-4 py-3 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
-                <span class="block font-body-sm text-body-sm text-on-surface">Hapus untuk diri sendiri</span>
-                <span class="block font-body-sm text-body-sm text-on-surface-variant/80">Pesan hanya dihapus dari perangkat Anda</span>
+                <span class="block font-body-sm text-body-sm text-on-surface">{{ __('Hapus untuk diri sendiri') }}</span>
+                <span class="block font-body-sm text-body-sm text-on-surface-variant/80">{{ __('Pesan hanya dihapus dari perangkat Anda') }}</span>
             </button>
             <button type="button" onclick="closeDeleteDialog()" class="w-full text-left px-4 py-3 mt-1 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
-                <span class="font-body-sm text-body-sm text-secondary">Batal</span>
+                <span class="font-body-sm text-body-sm text-secondary">{{ __('Batal') }}</span>
             </button>
         </div>
     </div>
     <div id="chat-edit-dialog" class="hidden fixed inset-0 z-[80] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeEditDialog();}">
         <div class="w-full sm:max-w-lg bg-surface-container-low rounded-t-3xl sm:rounded-2xl border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shadow-2xl overflow-hidden flex flex-col max-h-[90dvh]" onclick="event.stopPropagation()">
             <div class="flex items-center gap-3 px-5 py-4 border-b border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shrink-0">
-                <button type="button" onclick="closeEditDialog()" class="p-2 -ml-2 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer" title="Tutup">
+                <button type="button" onclick="closeEditDialog()" class="p-2 -ml-2 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer" title="{{ __('Tutup') }}">
                     <span class="material-symbols-outlined text-[20px]">close</span>
                 </button>
-                <h3 class="font-title-md text-title-md text-on-surface">Edit pesan</h3>
+                <h3 class="font-title-md text-title-md text-on-surface">{{ __('Edit pesan') }}</h3>
             </div>
             <div id="chat-edit-wallpaper" class="flex-1 min-h-[150px] sm:min-h-[220px] flex items-center justify-end px-6 py-8">
                 <div class="max-w-[90%] rounded-xl px-4 py-2.5 bg-secondary text-white">
-                    <p class="text-xs mb-1 text-white/60 uppercase tracking-wider">Anda</p>
+                    <p class="text-xs mb-1 text-white/60 uppercase tracking-wider">{{ __('Anda') }}</p>
                     <p id="chat-edit-preview" class="font-body-sm text-body-sm whitespace-pre-wrap break-words">-</p>
                 </div>
             </div>
             <div class="relative border-t border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] bg-surface-container-lowest/60 px-5 pt-4 pb-[max(1rem,env(safe-area-inset-bottom))] shrink-0">
                 <div id="chat-edit-emoji-panel" class="hidden absolute bottom-full mb-3 left-5 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] bg-surface-container-high p-3 shadow-xl"></div>
                 <div class="flex items-end gap-2 lg:gap-3">
-                    <button type="button" onclick="toggleEditEmojiPanel()" id="chat-edit-emoji-toggle" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Emoji" aria-label="Emoji">
+                    <button type="button" onclick="toggleEditEmojiPanel()" id="chat-edit-emoji-toggle" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Emoji') }}" aria-label="{{ __('Emoji') }}">
                         <span class="material-symbols-outlined text-[20px]">mood</span>
                     </button>
                     <textarea id="chat-edit-input" rows="1" maxlength="2000" class="flex-1 bg-surface-container-low border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-lg px-4 py-3 font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant resize-none focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors" onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();saveEditMessage();}"></textarea>
-                    <button type="button" onclick="saveEditMessage()" id="chat-edit-save" class="w-11 h-11 lg:w-12 lg:h-12 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 transition-opacity disabled:opacity-40 rounded-full" title="Simpan">
+                    <button type="button" onclick="saveEditMessage()" id="chat-edit-save" class="w-11 h-11 lg:w-12 lg:h-12 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 transition-opacity disabled:opacity-40 rounded-full" title="{{ __('Simpan') }}">
                         <span class="material-symbols-outlined text-[20px]">check</span>
                     </button>
                 </div>
@@ -573,7 +573,7 @@
         const el = document.getElementById('chat-messages');
         el.innerHTML = '<div class="text-center py-8">' +
             '<p class="text-on-surface-variant text-sm">' + escapeHtml(message) + '</p>' +
-            '<p class="text-xs text-on-surface-variant/60 mt-1">Coba muat ulang halaman.</p>' +
+            '<p class="text-xs text-on-surface-variant/60 mt-1">{{ __('Coba muat ulang halaman.') }}</p>' +
             '</div>';
         el.scrollTop = el.scrollHeight;
     }
@@ -593,7 +593,7 @@
         if (!messages || messages.length === 0) {
             el.innerHTML = '<div class="text-center py-10">' +
                 '<span class="material-symbols-outlined text-[38px] text-outline-variant inline-block mb-2">chat_bubble_outline</span>' +
-                '<p class="font-body-sm text-body-sm text-on-surface-variant">' + escapeHtml('Belum ada pesan. Mulai percakapan.') + '</p>' +
+                '<p class="font-body-sm text-body-sm text-on-surface-variant">' + escapeHtml('{{ __('Belum ada pesan. Mulai percakapan.') }}') + '</p>' +
                 '</div>';
             el.scrollTop = el.scrollHeight;
             return;
@@ -625,13 +625,13 @@
                 let delMenu = '';
                 if (actionsOn) {
                     delMenu = chatMenuMarkup(m.complaint_message_id, delBtn) +
-                        '<button type="button" onclick="event.stopPropagation();openDeleteDialog(' + m.complaint_message_id + ',true)" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>' +
+                        '<button type="button" onclick="event.stopPropagation();openDeleteDialog(' + m.complaint_message_id + ',true)" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('{{ __('Hapus pesan') }}') + '</button>' +
                         '</span></span>';
                 }
                 return '<div class="' + rowClass + '" data-mid="' + m.complaint_message_id + '">' +
                     '<div class="max-w-[82%] lg:max-w-[72%] rounded-2xl px-3.5 lg:px-4 pt-2.5 pb-5 relative ' + delBubble + ' shadow-sm" data-bubble>' +
                     '<div class="flex items-center justify-between gap-2">' +
-                    '<p class="font-body-sm text-body-sm italic flex items-center gap-1.5 ' + delText + '"><span class="material-symbols-outlined text-[16px] leading-none shrink-0">block</span>' + escapeHtml('Pesan ini telah dihapus') + '</p>' +
+                    '<p class="font-body-sm text-body-sm italic flex items-center gap-1.5 ' + delText + '"><span class="material-symbols-outlined text-[16px] leading-none shrink-0">block</span>' + escapeHtml('{{ __('Pesan ini telah dihapus') }}') + '</p>' +
                     delMenu +
                     '</div>' +
                     '<span class="absolute bottom-1.5 right-2.5 text-[10px] leading-none ' + time + '">' + formatTime(m.created_at) + '</span>' +
@@ -644,9 +644,9 @@
                 const canEdit = mine && chatEditAllowed(m.created_at);
                 let items = '';
                 if (canEdit) {
-                    items += '<button type="button" onclick="event.stopPropagation();openEditDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">edit</span>' + escapeHtml('Edit pesan') + '</button>';
+                    items += '<button type="button" onclick="event.stopPropagation();openEditDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">edit</span>' + escapeHtml('{{ __('Edit pesan') }}') + '</button>';
                 }
-                items += '<button type="button" onclick="event.stopPropagation();openDeleteDialog(' + m.complaint_message_id + ',' + (canAll ? 'false' : 'true') + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>';
+                items += '<button type="button" onclick="event.stopPropagation();openDeleteDialog(' + m.complaint_message_id + ',' + (canAll ? 'false' : 'true') + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('{{ __('Hapus pesan') }}') + '</button>';
                 menu = chatMenuMarkup(m.complaint_message_id, mine ? 'text-white/60 hover:text-white' : 'text-on-surface-variant hover:text-on-surface') + items + '</span></span>';
             }
 
@@ -814,7 +814,7 @@
                 noResults = document.createElement('p');
                 noResults.id = 'chat-search-noresults';
                 noResults.className = 'hidden text-center font-body-sm text-body-sm text-on-surface-variant py-8';
-                noResults.textContent = 'Tidak ada pesan yang cocok.';
+                noResults.textContent = '{{ __('Tidak ada pesan yang cocok.') }}';
                 el.appendChild(noResults);
             }
             noResults.classList.toggle('hidden', shown > 0 || rows.length === 0 || !q);

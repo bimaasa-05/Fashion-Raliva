@@ -46,7 +46,7 @@ class PeringkatIklanController extends Controller
     {
         $storeId = OwnerContext::firstStoreId();
         if (! $storeId) {
-            return back()->with('error', 'Anda belum memiliki toko.');
+            return back()->with('error',__('Anda belum memiliki toko.'));
         }
 
         $request->merge(['nominal_bid' => str_replace('.', '', (string) $request->input('nominal_bid', ''))]);
@@ -74,7 +74,7 @@ class PeringkatIklanController extends Controller
 
         $product = Product::where('product_id', $data['product_id'])->where('store_id', $storeId)->first();
         if (! $product) {
-            return back()->with('error', 'Produk tidak valid untuk toko Anda.');
+            return back()->with('error',__('Produk tidak valid untuk toko Anda.'));
         }
 
         $metode = PaymentMethod::find($data['metode_pembayaran']);
@@ -119,6 +119,6 @@ class PeringkatIklanController extends Controller
         }
         Notification::fireSelf(Notification::TIPE_PROMO, 'Pengajuan Iklan Terkirim', sprintf('Pengajuan iklan "%s" (%s s/d %s) menunggu persetujuan Super Admin.', $product->nama_produk, $mulai, $selesai), route('owner.peringkat-iklan'));
 
-        return back()->with('success', 'Pengajuan iklan berhasil diajukan ('.$mulai.' s/d '.$selesai.'). Menunggu persetujuan Super Admin.');
+        return back()->with('success',__('Pengajuan iklan berhasil diajukan (:ph1 s/d :ph2). Menunggu persetujuan Super Admin.', ['ph1' => $mulai, 'ph2' => $selesai]));
     }
 }

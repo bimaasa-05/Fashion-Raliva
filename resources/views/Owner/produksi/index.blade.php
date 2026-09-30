@@ -1,10 +1,10 @@
 @extends('layouts.owner')
 
-@section('title', 'Produksi')
+@section('title', __('Produksi'))
 
-@section('header-title', 'Produksi')
-@section('header-badge', '3 Berjalan')
-@section('header-subtitle', 'Pantau permintaan produksi barang untuk toko Anda.')
+@section('header-title', __('Produksi'))
+@section('header-badge', __('3 Berjalan'))
+@section('header-subtitle', __('Pantau permintaan produksi barang untuk toko Anda.'))
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
@@ -25,30 +25,30 @@
         <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
             <div>
-                <p class="font-bold text-sm">Belum punya toko</p>
-                <p class="text-sm text-on-surface-variant mt-1">Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk akses fitur ini.</p>
+                <p class="font-bold text-sm">{{ __('Belum punya toko') }}</p>
+                <p class="text-sm text-on-surface-variant mt-1">{{ __('Silakan') }} <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">{{ __('ajukan toko') }}</a> {{ __('untuk akses fitur ini.') }}</p>
             </div>
         </div>
     @endif
     {{-- Ringkasan --}}
     <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Permintaan Berjalan</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Permintaan Berjalan') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $summary['berjalan'] }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">precision_manufacturing</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Selesai Bulan Ini</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Selesai Bulan Ini') }}</span>
             <span class="raliva-figure text-[26px] text-secondary">{{ $summary['selesai'] }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">task_alt</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Unit Diproduksi (Agu)</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Unit Diproduksi (Agu)') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $summary['unit'] }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">inventory</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Persetujuan</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Menunggu Persetujuan') }}</span>
             <span class="raliva-figure text-[26px] text-gold-accent">{{ $summary['menunggu'] }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">pending_actions</span>
         </div>
@@ -57,8 +57,8 @@
     {{-- Daftar Permintaan Produksi --}}
     <section>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <h2 data-reveal class="font-title-md text-title-md text-on-surface premium-heading">Daftar Permintaan Produksi</h2>
-            <p data-reveal class="text-xs text-on-surface-variant flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">lock</span> Halaman ini read-only</p>
+            <h2 data-reveal class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Daftar Permintaan Produksi') }}</h2>
+            <p data-reveal class="text-xs text-on-surface-variant flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">lock</span> {{ __('Halaman ini read-only') }}</p>
         </div>
 
         <div data-reveal-group class="space-y-gutter">
@@ -69,7 +69,7 @@
                     $st = $pr->status;
                     $key = $st === 'selesai' ? 'selesai' : ($st === 'menunggu' || $st === 'pending' ? 'menunggu' : 'diproses');
                     $progress = $key === 'selesai' ? 100 : ($key === 'menunggu' ? 0 : 50);
-                    $tahap = $key === 'selesai' ? 'Selesai — masuk gudang' : ($key === 'menunggu' ? 'Belum dimulai' : 'Sedang diproses');
+                    $tahap = $key === 'selesai' ? __('Selesai — masuk gudang') : ($key === 'menunggu' ? __('Belum dimulai') : __('Sedang diproses'));
                     $pic = $pr->targetWarehouse?->nama_gudang ?? '—';
                     $target = $pr->selesai_pada ? $pr->selesai_pada->translatedFormat('d M Y') : '—';
                 @endphp
@@ -104,12 +104,12 @@
                             </div>
                         </div>
                         <div class="flex gap-gutter lg:justify-end">
-                            <button type="button" data-modal-open="modal-produksi-{{ $pr->production_order_id }}" class="flex-1 lg:flex-none py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Lihat Detail</button>
+                            <button type="button" data-modal-open="modal-produksi-{{ $pr->production_order_id }}" class="flex-1 lg:flex-none py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">{{ __('Lihat Detail') }}</button>
                         </div>
                     </div>
                 </article>
             @empty
-                <p class="text-on-surface-variant text-sm py-8 text-center">Belum ada permintaan produksi untuk toko ini.</p>
+                <p class="text-on-surface-variant text-sm py-8 text-center">{{ __('Belum ada permintaan produksi untuk toko ini.') }}</p>
             @endforelse
         </div>
     </section>
@@ -122,9 +122,9 @@
     <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
             <div>
-                <p class="raliva-label text-gold-accent">Detail Produksi</p>
+                <p class="raliva-label text-gold-accent">{{ __('Detail Produksi') }}</p>
                 <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $pr->nomor_produksi }}</h3>
-                <p class="text-xs text-on-surface-variant mt-0.5">PIC Gudang: {{ $pr->targetWarehouse?->nama_gudang ?? '—' }} • Prioritas {{ ucfirst($pr->prioritas ?? '-') }}</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">{{ __('PIC Gudang:') }} {{ $pr->targetWarehouse?->nama_gudang ?? '—' }} • {{ __('Prioritas') }} {{ ucfirst($pr->prioritas ?? '-') }}</p>
             </div>
             <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
                 <span class="material-symbols-outlined">close</span>
@@ -133,16 +133,16 @@
         <div class="p-6 space-y-4">
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-surface-container-low rounded-lg p-3">
-                    <p class="text-[10px] uppercase text-on-surface-variant">Status</p>
+                    <p class="text-[10px] uppercase text-on-surface-variant">{{ __('Status') }}</p>
                     <p class="font-bold text-on-surface capitalize">{{ $pr->status }}</p>
                 </div>
                 <div class="bg-surface-container-low rounded-lg p-3">
-                    <p class="text-[10px] uppercase text-on-surface-variant">Total Item</p>
+                    <p class="text-[10px] uppercase text-on-surface-variant">{{ __('Total Item') }}</p>
                     <p class="font-bold text-on-surface">{{ $pr->items->sum('jumlah_diminta') ?: 0 }} pcs</p>
                 </div>
             </div>
             <div>
-                <p class="text-[10px] uppercase text-on-surface-variant mb-2">Daftar Item</p>
+                <p class="text-[10px] uppercase text-on-surface-variant mb-2">{{ __('Daftar Item') }}</p>
                 <ul class="space-y-1.5">
                     @foreach ($pr->items as $it)
                     <li class="flex items-center justify-between text-sm bg-surface-container-low rounded-lg px-3 py-2">
@@ -154,13 +154,13 @@
             </div>
             @if ($pr->catatan)
             <div class="bg-surface-container-low border border-muted-border rounded-lg p-4">
-                <p class="text-[10px] uppercase text-on-surface-variant mb-1">Catatan</p>
+                <p class="text-[10px] uppercase text-on-surface-variant mb-1">{{ __('Catatan') }}</p>
                 <p class="font-body-md text-sm text-on-surface">{{ $pr->catatan }}</p>
             </div>
             @endif
         </div>
         <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end">
-            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Tutup') }}</button>
         </div>
     </div>
 </div>
@@ -183,7 +183,7 @@ document.addEventListener('DOMContentLoaded', function(){
       // For tambah buttons, disable if no store
       el.setAttribute('disabled','');
       el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
-      el.title = 'Ajukan toko dulu';
+      el.title = '{{ __('Ajukan toko dulu') }}';
     }
   });
   // More generic: disable all buttons in data-real except those inside pengajuan

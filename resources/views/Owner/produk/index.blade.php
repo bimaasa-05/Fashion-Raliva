@@ -1,10 +1,10 @@
 @extends('layouts.owner')
 
-@section('title', 'Data Produk')
+@section('title', __('Data Produk'))
 
-@section('header-title', 'Data Produk')
-@section('header-badge', $counts['total'] . ' Produk')
-@section('header-subtitle', 'Kelola produk, harga, variasi, dan stok toko Anda.')
+@section('header-title', __('Data Produk'))
+@section('header-badge', $counts['total'] . ' ' . __('Produk'))
+@section('header-subtitle', __('Kelola produk, harga, variasi, dan stok toko Anda.'))
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
@@ -26,8 +26,8 @@
         <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
             <div>
-                <p class="font-bold text-sm">Belum punya toko</p>
-<p class="text-sm text-on-surface-variant mt-1">Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk akses fitur ini.</p>
+                <p class="font-bold text-sm">{{ __('Belum punya toko') }}</p>
+<p class="text-sm text-on-surface-variant mt-1">{{ __('Silakan') }} <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">{{ __('ajukan toko') }}</a> {{ __('untuk akses fitur ini.') }}</p>
                 </div>
             </div>
         @endif
@@ -35,34 +35,34 @@
     <section data-reveal class="bg-deep-onyx text-on-primary rounded-lg px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-4 relative overflow-hidden">
         <span class="material-symbols-outlined absolute -right-4 -bottom-5 text-[96px] text-on-primary/5 pointer-events-none select-none" aria-hidden="true">storage</span>
         <div class="relative">
-            <p class="raliva-label text-gold-accent">Kuota Slot Produk</p>
-            <p class="font-body-md text-sm text-inverse-on-surface/70 mt-1">Sisa {{ $sisaSlot ?? 0 }} dari Maksimal {{ $totalSlot ?? 0 }} ({{ $usedSlot ?? 0 }} terpakai, {{ $pctSlot ?? 0 }}%)</p>
+            <p class="raliva-label text-gold-accent">{{ __('Kuota Slot Produk') }}</p>
+            <p class="font-body-md text-sm text-inverse-on-surface/70 mt-1">{{ __('Sisa') }} {{ $sisaSlot ?? 0 }} {{ __('dari Maksimal') }} {{ $totalSlot ?? 0 }} ({{ $usedSlot ?? 0 }} {{ __('terpakai') }}, {{ $pctSlot ?? 0 }}%)</p>
             <div class="h-2 w-full max-w-xs bg-white/10 rounded-full overflow-hidden mt-3">
                 <div class="progress-fill h-full rounded-full" data-progress-mode="quota" data-progress="{{ $pctSlot ?? 0 }}"></div>
             </div>
         </div>
-        <button type="button" data-modal-open="modal-pilih-slot" class="relative shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-gold-accent text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:brightness-110 transition">Tambah Slot</button>
+        <button type="button" data-modal-open="modal-pilih-slot" class="relative shrink-0 inline-flex items-center gap-2 px-5 py-2.5 bg-gold-accent text-white text-xs font-bold uppercase tracking-wider rounded-lg hover:brightness-110 transition">{{ __('Tambah Slot') }}</button>
     </section>
 
     {{-- Ringkasan --}}
     <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Produk</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Produk') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $counts['total'] }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">checkroom</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Produk Aktif</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Produk Aktif') }}</span>
             <span class="raliva-figure text-[26px] text-secondary">{{ $counts['aktif'] }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">check_circle</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Produk Nonaktif</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Produk Nonaktif') }}</span>
             <span class="raliva-figure text-[26px] text-error">{{ $counts['nonaktif'] }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">visibility_off</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Varian</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Varian') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $counts['varian'] }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">tune</span>
         </div>
@@ -72,8 +72,8 @@
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
             <div>
-                <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Produk</h2>
-                <p class="text-xs text-on-surface-variant mt-1">Kelola seluruh produk, variasi, dan stok toko Anda.</p>
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Daftar Produk') }}</h2>
+                <p class="text-xs text-on-surface-variant mt-1">{{ __('Kelola seluruh produk, variasi, dan stok toko Anda.') }}</p>
             </div>
         </div>
 
@@ -81,23 +81,23 @@
         <div class="flex flex-col lg:flex-row lg:items-center gap-3 mb-6">
             <div class="relative flex-1 min-w-[220px]">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                <input type="text" placeholder="Cari nama produk atau SKU..." data-table-search value="{{ request('q') }}" class="raliva-search" />
+                <input type="text" placeholder="{{ __('Cari nama produk atau SKU...') }}" data-table-search value="{{ request('q') }}" class="raliva-search" />
             </div>
             <div class="flex flex-wrap items-center gap-3 lg:justify-end">
                 <select data-table-filter="kategori" class="raliva-select lg:w-44">
-                    <option value="">Semua Kategori</option>
+                    <option value="">{{ __('Semua Kategori') }}</option>
                     @foreach(($categories ?? collect()) as $catName)
                         <option value="{{ $catName }}" {{ request('kategori')===$catName ? 'selected' : '' }}>{{ $catName }}</option>
                     @endforeach
                 </select>
                 <select data-table-filter="status-produk" class="raliva-select lg:w-44">
-                    <option value="">Semua Status</option>
-                    <option value="aktif" {{ request('status-produk')==='aktif' ? 'selected' : '' }}>Aktif</option>
-                    <option value="pending" {{ request('status-produk')==='pending' ? 'selected' : '' }}>Menunggu</option>
-                    <option value="ditolak" {{ request('status-produk')==='ditolak' ? 'selected' : '' }}>Ditolak</option>
-                    <option value="nonaktif" {{ request('status-produk')==='nonaktif' ? 'selected' : '' }}>Nonaktif</option>
-                    <option value="draft" {{ request('status-produk')==='draft' ? 'selected' : '' }}>Draft</option>
-                    <option value="arsip" {{ request('status-produk')==='arsip' ? 'selected' : '' }}>Arsip</option>
+                    <option value="">{{ __('Semua Status') }}</option>
+                    <option value="aktif" {{ request('status-produk')==='aktif' ? 'selected' : '' }}>{{ __('Aktif') }}</option>
+                    <option value="pending" {{ request('status-produk')==='pending' ? 'selected' : '' }}>{{ __('Menunggu') }}</option>
+                    <option value="ditolak" {{ request('status-produk')==='ditolak' ? 'selected' : '' }}>{{ __('Ditolak') }}</option>
+                    <option value="nonaktif" {{ request('status-produk')==='nonaktif' ? 'selected' : '' }}>{{ __('Nonaktif') }}</option>
+                    <option value="draft" {{ request('status-produk')==='draft' ? 'selected' : '' }}>{{ __('Draft') }}</option>
+                    <option value="arsip" {{ request('status-produk')==='arsip' ? 'selected' : '' }}>{{ __('Arsip') }}</option>
                 </select>
                 <button type="button" data-filter-reset class="py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Reset</button>
             </div>
@@ -108,13 +108,13 @@
             <table class="premium-table w-full min-w-[900px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Produk</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Kategori</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Harga</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Stok</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Terjual</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Aksi</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Produk') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Kategori') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Harga') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">{{ __('Stok') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Terjual') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">{{ __('Status') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">{{ __('Aksi') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -138,16 +138,16 @@
                             </td>
                             <td class="py-3.5 px-4 text-on-surface-variant">{{ $p->category?->nama_kategori ?? '-' }}</td>
                             <td class="py-3.5 px-4 font-bold text-gold-accent whitespace-nowrap">{{ 'Rp ' . number_format($p->harga_dasar, 0, ',', '.') }}</td>
-                            <td class="py-3.5 px-4 text-center text-on-surface">{{ $p->variants->count() }} <span class="text-xs text-on-surface-variant">varian</span></td>
+                            <td class="py-3.5 px-4 text-center text-on-surface">{{ $p->variants->count() }} <span class="text-xs text-on-surface-variant">{{ __('varian') }}</span></td>
                             <td class="py-3.5 px-4">
-                                <p class="text-on-surface">{{ $p->terjual }} pcs</p>
+                                <p class="text-on-surface">{{ $p->terjual }} {{ __('pcs') }}</p>
                                 <p class="text-xs text-on-surface-variant">{{ $p->variants->map(fn($v) => trim(($v->ukuran ?? '').' '.($v->warna ?? '')))->filter()->implode(', ') ?: '-' }}</p>
                             </td>
                             <td class="py-3.5 px-4 text-center">
                                 @if (in_array($p->status, ['aktif', 'nonaktif', 'draft'], true))
                                     <form method="POST" action="{{ route('owner.produk.status', $p) }}" class="inline">
                                         @csrf
-                                        <select name="status" data-status-select data-current="{{ $p->status }}" title="Ubah status" class="cursor-pointer text-[10px] font-bold uppercase border rounded-full pl-2 pr-6 py-1 {{ $p->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($p->status === 'nonaktif' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }}">
+                                        <select name="status" data-status-select data-current="{{ $p->status }}" title="{{ __('Ubah status') }}" class="cursor-pointer text-[10px] font-bold uppercase border rounded-full pl-2 pr-6 py-1 {{ $p->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($p->status === 'nonaktif' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }}">
                                             @foreach (($statusOptions[$p->status] ?? [$p->status]) as $opt)
                                                 <option value="{{ $opt }}" @selected($opt === $p->status)>{{ ucfirst($opt) }}</option>
 @endforeach
@@ -169,27 +169,27 @@ document.addEventListener('DOMContentLoaded', function () {
                                         </select>
                                     </form>
                                 @elseif ($p->status === 'pending')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Menunggu</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">{{ __('Menunggu') }}</span>
                                 @elseif ($p->status === 'ditolak')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Ditolak</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">{{ __('Ditolak') }}</span>
                                 @elseif ($p->status === 'habis')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">Habis</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">{{ __('Habis') }}</span>
                                 @else
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ ucfirst($p->status) }}</span>
                                 @endif
                             </td>
                             <td class="py-3.5 px-4">
                                 <div class="flex items-center justify-end gap-2">
-                                    <button type="button" data-modal-open="modal-produk-{{ $p->product_id }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">visibility</span>Detail</button>
+                                    <button type="button" data-modal-open="modal-produk-{{ $p->product_id }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">visibility</span>{{ __('Detail') }}</button>
                                     @if (in_array($p->status, ['pending', 'ditolak', 'draft'], true))
-                                        <button type="button" data-modal-open="modal-edit-produk-{{ $p->product_id }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">edit</span>Edit</button>
+                                        <button type="button" data-modal-open="modal-edit-produk-{{ $p->product_id }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">edit</span>{{ __('Edit') }}</button>
                                     @endif
-                                    <button type="button" data-modal-open="modal-hapus-produk-{{ $p->product_id }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-error/10 border border-error/20 rounded-lg text-xs font-semibold text-error hover:bg-error/20 transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">delete</span>Hapus</button>
+                                    <button type="button" data-modal-open="modal-hapus-produk-{{ $p->product_id }}" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-error/10 border border-error/20 rounded-lg text-xs font-semibold text-error hover:bg-error/20 transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">delete</span>{{ __('Hapus') }}</button>
                                 </div>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" class="py-6 text-center text-on-surface-variant">Belum ada produk.</td></tr>
+                        <tr><td colspan="7" class="py-6 text-center text-on-surface-variant">{{ __('Belum ada produk.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -214,14 +214,14 @@ document.addEventListener('DOMContentLoaded', function () {
                         @if (in_array($p->status, ['aktif', 'nonaktif', 'draft'], true))
                             <form method="POST" action="{{ route('owner.produk.status', $p) }}" class="shrink-0">
                                 @csrf
-                                <select name="status" data-status-select data-current="{{ $p->status }}" title="Ubah status" class="cursor-pointer text-[10px] font-bold uppercase border rounded-full pl-2 pr-6 py-1 {{ $p->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($p->status === 'nonaktif' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }}">
+                                <select name="status" data-status-select data-current="{{ $p->status }}" title="{{ __('Ubah status') }}" class="cursor-pointer text-[10px] font-bold uppercase border rounded-full pl-2 pr-6 py-1 {{ $p->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($p->status === 'nonaktif' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }}">
                                     @foreach (($statusOptions[$p->status] ?? [$p->status]) as $opt)
                                         <option value="{{ $opt }}" @selected($opt === $p->status)>{{ ucfirst($opt) }}</option>
                                     @endforeach
                                 </select>
                             </form>
                         @elseif ($p->status === 'pending')
-                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30 shrink-0">Menunggu</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30 shrink-0">{{ __('Menunggu') }}</span>
                         @elseif (in_array($p->status, ['ditolak', 'habis'], true))
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20 shrink-0">{{ ucfirst($p->status) }}</span>
                         @else
@@ -229,20 +229,20 @@ document.addEventListener('DOMContentLoaded', function () {
                         @endif
                     </div>
                     <div class="grid grid-cols-3 gap-2 mt-3 pt-3 border-t border-muted-border text-sm text-center">
-                        <div><p class="text-[11px] text-on-surface-variant">Harga</p><p class="font-bold text-gold-accent whitespace-nowrap">{{ 'Rp ' . number_format($p->harga_dasar, 0, ',', '.') }}</p></div>
-                        <div><p class="text-[11px] text-on-surface-variant">Stok</p><p class="font-semibold text-on-surface">{{ $p->variants->count() }} varian</p></div>
-                        <div><p class="text-[11px] text-on-surface-variant">Terjual</p><p class="font-semibold text-on-surface">{{ $p->terjual }} pcs</p></div>
+                        <div><p class="text-[11px] text-on-surface-variant">{{ __('Harga') }}</p><p class="font-bold text-gold-accent whitespace-nowrap">{{ 'Rp ' . number_format($p->harga_dasar, 0, ',', '.') }}</p></div>
+                        <div><p class="text-[11px] text-on-surface-variant">{{ __('Stok') }}</p><p class="font-semibold text-on-surface">{{ $p->variants->count() }} {{ __('varian') }}</p></div>
+                        <div><p class="text-[11px] text-on-surface-variant">{{ __('Terjual') }}</p><p class="font-semibold text-on-surface">{{ $p->terjual }} {{ __('pcs') }}</p></div>
                     </div>
                     <div class="flex gap-2 mt-3">
-                        <button type="button" data-modal-open="modal-produk-{{ $p->product_id }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">visibility</span>Detail</button>
+                        <button type="button" data-modal-open="modal-produk-{{ $p->product_id }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">visibility</span>{{ __('Detail') }}</button>
                         @if (in_array($p->status, ['pending', 'ditolak', 'draft'], true))
-                            <button type="button" data-modal-open="modal-edit-produk-{{ $p->product_id }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">edit</span>Edit</button>
+                            <button type="button" data-modal-open="modal-edit-produk-{{ $p->product_id }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">edit</span>{{ __('Edit') }}</button>
                         @endif
-                        <button type="button" data-modal-open="modal-hapus-produk-{{ $p->product_id }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-error/10 border border-error/20 rounded-lg text-xs font-semibold text-error hover:bg-error/20 transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">delete</span>Hapus</button>
+                        <button type="button" data-modal-open="modal-hapus-produk-{{ $p->product_id }}" class="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-error/10 border border-error/20 rounded-lg text-xs font-semibold text-error hover:bg-error/20 transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[16px]">delete</span>{{ __('Hapus') }}</button>
                     </div>
                 </article>
             @empty
-                <p class="py-6 text-center text-on-surface-variant">Belum ada produk.</p>
+                <p class="py-6 text-center text-on-surface-variant">{{ __('Belum ada produk.') }}</p>
             @endforelse
         </div>
 
@@ -251,15 +251,15 @@ document.addEventListener('DOMContentLoaded', function () {
                 <span class="material-symbols-outlined text-[28px] text-on-surface-variant">search_off</span>
             </div>
             <div>
-                <p class="font-title-md text-title-md text-on-surface">Produk tidak ditemukan</p>
-                <p class="text-on-surface-variant font-body-md text-sm mt-1">Coba ubah kata kunci atau filter pencarian Anda.</p>
+                <p class="font-title-md text-title-md text-on-surface">{{ __('Produk tidak ditemukan') }}</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-1">{{ __('Coba ubah kata kunci atau filter pencarian Anda.') }}</p>
             </div>
-            <button type="button" data-filter-reset class="mt-2 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Reset Filter</button>
+            <button type="button" data-filter-reset class="mt-2 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Reset Filter') }}</button>
         </div>
 
         <div data-pagination class="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 mt-2 border-t border-muted-border">
             <p class="text-xs text-on-surface-variant">
-                Menampilkan {{ $products->firstItem() ?? 0 }}–{{ $products->lastItem() ?? 0 }} dari {{ $products->total() }} produk
+                {{ __('Menampilkan') }} {{ $products->firstItem() ?? 0 }}–{{ $products->lastItem() ?? 0 }} {{ __('dari') }} {{ $products->total() }} {{ __('produk') }}
             </p>
             <div class="flex items-center gap-1">
                 @if ($products->onFirstPage())
@@ -267,7 +267,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 @else
                     <a href="{{ $products->previousPageUrl() }}" class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface hover:border-gold-accent transition-colors"><span class="material-symbols-outlined text-[18px]">chevron_left</span></a>
                 @endif
-                <span class="px-3 py-1.5 text-xs font-medium text-on-surface-variant whitespace-nowrap">Halaman {{ $products->currentPage() }} / {{ $products->lastPage() }}</span>
+                <span class="px-3 py-1.5 text-xs font-medium text-on-surface-variant whitespace-nowrap">{{ __('Halaman') }} {{ $products->currentPage() }} / {{ $products->lastPage() }}</span>
                 @if ($products->hasMorePages())
                     <a href="{{ $products->nextPageUrl() }}" class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface hover:border-gold-accent transition-colors"><span class="material-symbols-outlined text-[18px]">chevron_right</span></a>
                 @else
@@ -285,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
             <div>
-                <p class="raliva-label text-gold-accent">Detail Produk</p>
+                <p class="raliva-label text-gold-accent">{{ __('Detail Produk') }}</p>
                 <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $p->nama_produk }}</h3>
                 <p class="text-xs text-on-surface-variant mt-0.5">{{ $p->category?->nama_kategori ?? '-' }} • SKU {{ $p->variants->first()?->sku ?? '-' }}</p>
             </div>
@@ -317,36 +317,36 @@ document.addEventListener('DOMContentLoaded', function () {
             @endif
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-surface-container-low rounded-lg p-3">
-                    <p class="text-[10px] uppercase text-on-surface-variant">Harga Dasar</p>
+                    <p class="text-[10px] uppercase text-on-surface-variant">{{ __('Harga Dasar') }}</p>
                     <p class="font-bold text-on-surface">Rp {{ number_format($p->harga_dasar, 0, ',', '.') }}</p>
                 </div>
                 <div class="bg-surface-container-low rounded-lg p-3">
-                    <p class="text-[10px] uppercase text-on-surface-variant">Status</p>
+                    <p class="text-[10px] uppercase text-on-surface-variant">{{ __('Status') }}</p>
                     <p class="font-bold text-on-surface capitalize">{{ $p->status }}</p>
                 </div>
                 <div class="bg-surface-container-low rounded-lg p-3">
-                    <p class="text-[10px] uppercase text-on-surface-variant">Jumlah Varian</p>
+                    <p class="text-[10px] uppercase text-on-surface-variant">{{ __('Jumlah Varian') }}</p>
                     <p class="font-bold text-on-surface">{{ $p->variants->count() }}</p>
                 </div>
                 <div class="bg-surface-container-low rounded-lg p-3">
-                    <p class="text-[10px] uppercase text-on-surface-variant">Terjual</p>
+                    <p class="text-[10px] uppercase text-on-surface-variant">{{ __('Terjual') }}</p>
                     <p class="font-bold text-on-surface">{{ $sold[$p->product_id] ?? 0 }}</p>
                 </div>
             </div>
             <div>
-                <p class="text-[10px] uppercase text-on-surface-variant mb-2">Varian (ukuran • warna • stok)</p>
+                <p class="text-[10px] uppercase text-on-surface-variant mb-2">{{ __('Varian (ukuran • warna • stok)') }}</p>
                 <ul class="space-y-1.5">
                     @foreach ($p->variants as $v)
                     <li class="flex items-center justify-between text-sm bg-surface-container-low rounded-lg px-3 py-2">
                         <span class="text-on-surface">{{ trim(($v->ukuran ?? '').' '.($v->warna ?? '')) ?: '-' }}</span>
-                        <span class="text-on-surface-variant">SKU {{ $v->sku ?? '-' }} • stok {{ $v->stok ?? 0 }}</span>
+                        <span class="text-on-surface-variant">SKU {{ $v->sku ?? '-' }} • {{ __('stok') }} {{ $v->stok ?? 0 }}</span>
                     </li>
                     @endforeach
                 </ul>
             </div>
         </div>
         <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end">
-            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Tutup') }}</button>
         </div>
     </div>
 </div>
@@ -359,10 +359,10 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
             <div>
-                <p class="raliva-label text-gold-accent">Edit Produk</p>
+                <p class="raliva-label text-gold-accent">{{ __('Edit Produk') }}</p>
                 <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $p->nama_produk }}</h3>
             </div>
-            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors" aria-label="Tutup">
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors" aria-label="{{ __('Tutup') }}">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
@@ -370,18 +370,18 @@ document.addEventListener('DOMContentLoaded', function () {
             @csrf
             @method('PUT')
             <div>
-                <label for="edit-nama-{{ $p->product_id }}" class="block raliva-label mb-2">Nama Produk</label>
+                <label for="edit-nama-{{ $p->product_id }}" class="block raliva-label mb-2">{{ __('Nama Produk') }}</label>
                 <input id="edit-nama-{{ $p->product_id }}" name="nama_produk" type="text" value="{{ old('nama_produk', $p->nama_produk) }}" required class="raliva-input" />
                 @error('nama_produk') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label for="edit-harga-{{ $p->product_id }}" class="block raliva-label mb-2">Harga Dasar</label>
+                    <label for="edit-harga-{{ $p->product_id }}" class="block raliva-label mb-2">{{ __('Harga Dasar') }}</label>
                     <input id="edit-harga-{{ $p->product_id }}" name="harga_dasar" type="number" min="0" value="{{ old('harga_dasar', $p->harga_dasar) }}" required class="raliva-input" />
                     @error('harga_dasar') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label for="edit-tipe-{{ $p->product_id }}" class="block raliva-label mb-2">Tipe</label>
+                    <label for="edit-tipe-{{ $p->product_id }}" class="block raliva-label mb-2">{{ __('Tipe') }}</label>
                     <select id="edit-tipe-{{ $p->product_id }}" name="tipe_produk" class="raliva-select">
                         @foreach (['regular' => 'Regular', 'preorder' => 'Preorder', 'made_to_order' => 'Made to Order'] as $val => $label)
                             <option value="{{ $val }}" @selected(old('tipe_produk', $p->tipe_produk) === $val)>{{ $label }}</option>
@@ -390,39 +390,39 @@ document.addEventListener('DOMContentLoaded', function () {
                 </div>
             </div>
             <div>
-                <label for="edit-kategori-{{ $p->product_id }}" class="block raliva-label mb-2">Kategori</label>
+                <label for="edit-kategori-{{ $p->product_id }}" class="block raliva-label mb-2">{{ __('Kategori') }}</label>
                 <select id="edit-kategori-{{ $p->product_id }}" name="category_id" class="raliva-select">
-                    <option value="">— Tanpa Kategori —</option>
+                    <option value="">{{ __('— Tanpa Kategori —') }}</option>
                     @foreach (($categoryOptions ?? collect()) as $id => $nama)
                         <option value="{{ $id }}" @selected((string) old('category_id', $p->category_id) === (string) $id)>{{ $nama }}</option>
                     @endforeach
                 </select>
             </div>
             <div>
-                <label for="edit-deskripsi-{{ $p->product_id }}" class="block raliva-label mb-2">Deskripsi</label>
+                <label for="edit-deskripsi-{{ $p->product_id }}" class="block raliva-label mb-2">{{ __('Deskripsi') }}</label>
                 <textarea id="edit-deskripsi-{{ $p->product_id }}" name="deskripsi" rows="3" class="raliva-textarea">{{ old('deskripsi', $p->deskripsi) }}</textarea>
             </div>
             @if ($p->images->isNotEmpty())
                 <div>
-                    <p class="raliva-label mb-2">Foto Saat Ini</p>
+                    <p class="raliva-label mb-2">{{ __('Foto Saat Ini') }}</p>
                     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         @foreach ($p->images as $img)
                             <div class="h-20 rounded-lg overflow-hidden border border-outline-variant bg-surface-container-high">
-                                <img src="{{ filter_var($img->file_gambar, FILTER_VALIDATE_URL) ? $img->file_gambar : (str_starts_with(ltrim($img->file_gambar, '/'), 'assets/') ? asset(ltrim($img->file_gambar, '/')) : asset('storage/' . ltrim($img->file_gambar, '/'))) }}" alt="Foto produk" class="w-full h-full object-cover" loading="lazy" />
+                                <img src="{{ filter_var($img->file_gambar, FILTER_VALIDATE_URL) ? $img->file_gambar : (str_starts_with(ltrim($img->file_gambar, '/'), 'assets/') ? asset(ltrim($img->file_gambar, '/')) : asset('storage/' . ltrim($img->file_gambar, '/'))) }}" alt="{{ __('Foto produk') }}" class="w-full h-full object-cover" loading="lazy" />
                             </div>
                         @endforeach
                     </div>
                 </div>
             @endif
             <div>
-                <label for="edit-foto-{{ $p->product_id }}" class="block raliva-label mb-2">Tambah Foto (Opsional)</label>
+                <label for="edit-foto-{{ $p->product_id }}" class="block raliva-label mb-2">{{ __('Tambah Foto (Opsional)') }}</label>
                 <input id="edit-foto-{{ $p->product_id }}" type="file" name="foto_produk[]" accept=".jpg,.jpeg,.png,.webp" multiple class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:cursor-pointer" />
-                <p class="text-[11px] text-on-surface-variant mt-1">JPG / PNG / WEBP, maks 2 MB per file.</p>
+                <p class="text-[11px] text-on-surface-variant mt-1">{{ __('JPG / PNG / WEBP, maks 2 MB per file.') }}</p>
                 @error('foto_produk.*') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
             </div>
             <div class="flex gap-3 pt-2">
-                <button type="button" data-modal-close class="flex-1 py-3 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                <button type="submit" class="flex-1 py-3 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Simpan Perubahan</button>
+                <button type="button" data-modal-close class="flex-1 py-3 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Batal') }}</button>
+                <button type="submit" class="flex-1 py-3 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">{{ __('Simpan Perubahan') }}</button>
             </div>
         </form>
     </div>
@@ -437,13 +437,13 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-4">
             <span class="material-symbols-outlined text-error text-[28px]">delete</span>
         </div>
-        <h3 class="font-title-md text-title-md text-on-surface">Hapus Produk</h3>
-        <p class="text-on-surface-variant text-sm mt-2">Hapus <span class="font-bold text-on-surface">{{ $p->nama_produk }}</span> beserta varian &amp; fotonya? Tindakan ini tidak dapat dibatalkan.</p>
+        <h3 class="font-title-md text-title-md text-on-surface">{{ __('Hapus Produk') }}</h3>
+        <p class="text-on-surface-variant text-sm mt-2">{{ __('Hapus') }} <span class="font-bold text-on-surface">{{ $p->nama_produk }}</span> {{ __('beserta varian') }} &amp; {{ __('fotonya? Tindakan ini tidak dapat dibatalkan.') }}</p>
         <form method="POST" action="{{ route('owner.produk.destroy', $p) }}" class="flex gap-3 mt-6">
             @csrf
             @method('DELETE')
-            <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-            <button type="submit" class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error text-sm font-semibold rounded-lg hover:bg-error/20 transition-colors">Ya, Hapus</button>
+            <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Batal') }}</button>
+            <button type="submit" class="flex-1 py-2.5 bg-error/10 border border-error/20 text-error text-sm font-semibold rounded-lg hover:bg-error/20 transition-colors">{{ __('Ya, Hapus') }}</button>
         </form>
     </div>
 </div>
@@ -463,7 +463,7 @@ document.addEventListener('DOMContentLoaded', function(){
       // For tambah buttons, disable if no store
       el.setAttribute('disabled','');
       el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
-      el.title = 'Ajukan toko dulu';
+      el.title = '{{ __('Ajukan toko dulu') }}';
     }
   });
   // More generic: disable all buttons in data-real except those inside pengajuan
@@ -494,7 +494,7 @@ document.addEventListener('DOMContentLoaded', function(){
     document.querySelectorAll('[data-status-select]').forEach((sel) => {
         sel.addEventListener('change', () => {
             const label = sel.options[sel.selectedIndex]?.text || sel.value;
-            if (confirm('Ubah status menjadi ' + label + '?')) {
+            if (confirm('{{ __('Ubah status menjadi') }} ' + label + '?')) {
                 sel.closest('form').submit();
             } else {
                 sel.value = sel.dataset.current;

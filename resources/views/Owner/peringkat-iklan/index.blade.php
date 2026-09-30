@@ -1,10 +1,10 @@
 @extends('layouts.owner')
 
-@section('title', 'Iklan Peringkat')
+@section('title', __('Iklan Peringkat'))
 
-@section('header-title', 'Iklan Peringkat')
+@section('header-title', __('Iklan Peringkat'))
 @section('header-badge', 'Promo')
-@section('header-subtitle', 'Ajukan peringkat iklan agar produk tampil teratas — pilih produk, nominal, periode, rekening tujuan & bukti transfer.')
+@section('header-subtitle', __('Ajukan peringkat iklan agar produk tampil teratas — pilih produk, nominal, periode, rekening tujuan & bukti transfer.'))
 
 @section('content')
 <div class="space-y-section-gap">
@@ -18,22 +18,22 @@
         <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
             <div>
-                <p class="font-bold text-sm">Belum punya toko</p>
-                <p class="text-sm text-on-surface-variant mt-1">Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk akses iklan.</p>
+                <p class="font-bold text-sm">{{ __('Belum punya toko') }}</p>
+                <p class="text-sm text-on-surface-variant mt-1">{{ __('Silakan') }} <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">{{ __('ajukan toko') }}</a> {{ __('untuk akses iklan.') }}</p>
             </div>
         </div>
     @endif
 
     <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
-        <h2 class="font-title-md text-title-md text-on-surface premium-heading mb-2">Ajukan Iklan Peringkat</h2>
-        <p class="text-xs text-on-surface-variant mb-5">Pilih produk, nominal bid (min Rp 100.000), periode tayang, rekening tujuan (dari Data Bank Super Admin), metode & bukti transfer. Menunggu verifikasi Super Admin.</p>
+        <h2 class="font-title-md text-title-md text-on-surface premium-heading mb-2">{{ __('Ajukan Iklan Peringkat') }}</h2>
+        <p class="text-xs text-on-surface-variant mb-5">{{ __('Pilih produk, nominal bid (min Rp 100.000), periode tayang, rekening tujuan (dari Data Bank Super Admin), metode & bukti transfer. Menunggu verifikasi Super Admin.') }}</p>
 
         <form method="POST" action="{{ route('owner.peringkat-iklan.request') }}" enctype="multipart/form-data" class="space-y-5">
             @csrf
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Produk</label>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">{{ __('Produk') }}</label>
                 <select name="product_id" required class="raliva-input">
-                    <option value="">Pilih Produk</option>
+                    <option value="">{{ __('Pilih Produk') }}</option>
                     @foreach($products as $p)
                         <option value="{{ $p->product_id }}">{{ $p->nama_produk }}</option>
                     @endforeach
@@ -42,7 +42,7 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Nominal Bid (Rp)</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">{{ __('Nominal Bid (Rp)') }}</label>
                     <div class="flex items-stretch">
                         <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
                         <input type="text" name="nominal_bid" inputmode="numeric" data-rupiah value="{{ old('nominal_bid', '500.000') }}" required placeholder="500.000" class="raliva-input" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
@@ -50,9 +50,9 @@
                     @error('nominal_bid')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Metode Pembayaran</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">{{ __('Metode Pembayaran') }}</label>
                     <select name="metode_pembayaran" required class="raliva-input">
-                        <option value="">Pilih metode</option>
+                        <option value="">{{ __('Pilih metode') }}</option>
                         @foreach($metode as $m)
                             <option value="{{ $m->payment_method_id }}">{{ $m->nama_metode }}</option>
                         @endforeach
@@ -61,25 +61,25 @@
                 </div>
             </div>
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Rekening Tujuan Transfer</label>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">{{ __('Rekening Tujuan Transfer') }}</label>
                 <select name="platform_bank_account_id" required class="raliva-input">
-                    <option value="">Pilih rekening tujuan</option>
+                    <option value="">{{ __('Pilih rekening tujuan') }}</option>
                     @forelse($rekenings as $rek)
-                        <option value="{{ $rek->platform_bank_account_id }}">{{ $rek->bank->nama_bank ?? '-' }} • {{ $rek->nomor_rekening }} a.n. {{ $rek->nama_pemilik }}</option>
+                        <option value="{{ $rek->platform_bank_account_id }}">{{ $rek->bank->nama_bank ?? '-' }} • {{ $rek->nomor_rekening }} {{ __('a.n.') }} {{ $rek->nama_pemilik }}</option>
                     @empty
-                        <option value="" disabled>Belum ada rekening platform — hubungi Super Admin</option>
+                        <option value="" disabled>{{ __('Belum ada rekening platform — hubungi Super Admin') }}</option>
                     @endforelse
                 </select>
                 @error('platform_bank_account_id')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Tanggal Mulai Tayang</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">{{ __('Tanggal Mulai Tayang') }}</label>
                     <input type="date" name="tanggal_mulai" value="{{ old('tanggal_mulai', now()->format('Y-m-d')) }}" required class="raliva-input" />
                     @error('tanggal_mulai')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Tanggal Selesai Tayang</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">{{ __('Tanggal Selesai Tayang') }}</label>
                     <input type="date" name="tanggal_selesai" value="{{ old('tanggal_selesai') }}" required class="raliva-input" />
                     @error('tanggal_selesai')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
@@ -87,34 +87,34 @@
             <div class="flex items-start gap-3 p-4 border border-gold-accent/30 bg-gold-accent/5 rounded-lg">
                 <span class="material-symbols-outlined text-gold-accent mt-0.5 text-[20px]">campaign</span>
                 <div class="flex-1">
-                    <p class="font-label-sm text-label-sm text-on-surface uppercase">Posisi Iklan</p>
-                    <p class="text-sm text-on-surface-variant mt-1">Setelah disetujui, iklan tayang <span class="font-bold text-on-surface">sesuai tanggal mulai selesai pilihanmu</span> dan tampil di katalog pelanggan — semakin besar nominal, semakin tinggi peringkat.</p>
+                    <p class="font-label-sm text-label-sm text-on-surface uppercase">{{ __('Posisi Iklan') }}</p>
+                    <p class="text-sm text-on-surface-variant mt-1">{{ __('Setelah disetujui, iklan tayang') }} <span class="font-bold text-on-surface">{{ __('sesuai tanggal mulai selesai pilihanmu') }}</span> {{ __('dan tampil di katalog pelanggan — semakin besar nominal, semakin tinggi peringkat.') }}</p>
                 </div>
             </div>
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Bukti Pembayaran</label>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">{{ __('Bukti Pembayaran') }}</label>
                 <input type="file" name="file_bukti" accept=".jpg,.jpeg,.png,.pdf" required class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:font-label-sm" />
-                <p class="text-xs text-on-surface-variant mt-1.5">JPG/PNG/PDF maks 5MB. Transfer sesuai nominal ke rekening tujuan.</p>
+                <p class="text-xs text-on-surface-variant mt-1.5">{{ __('JPG/PNG/PDF maks 5MB. Transfer sesuai nominal ke rekening tujuan.') }}</p>
                 @error('file_bukti')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
             </div>
             <div class="flex justify-end">
-                <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Ajukan Iklan</button>
+                <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">{{ __('Ajukan Iklan') }}</button>
             </div>
         </form>
     </section>
 
     <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
-        <h2 class="font-title-md text-title-md text-on-surface premium-heading mb-4">Riwayat Pengajuan Iklan</h2>
+        <h2 class="font-title-md text-title-md text-on-surface premium-heading mb-4">{{ __('Riwayat Pengajuan Iklan') }}</h2>
         <div class="overflow-x-auto hidden md:block">
             <table class="w-full text-left border-collapse">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low/50 text-on-surface-variant text-xs uppercase">
-                        <th class="p-3">Produk</th>
-                        <th class="p-3">Nominal</th>
-                        <th class="p-3">Periode</th>
-                        <th class="p-3">Rekening</th>
-                        <th class="p-3">Status</th>
-                        <th class="p-3">Pembayaran</th>
+                        <th class="p-3">{{ __('Produk') }}</th>
+                        <th class="p-3">{{ __('Nominal') }}</th>
+                        <th class="p-3">{{ __('Periode') }}</th>
+                        <th class="p-3">{{ __('Rekening') }}</th>
+                        <th class="p-3">{{ __('Status') }}</th>
+                        <th class="p-3">{{ __('Pembayaran') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -124,19 +124,19 @@
                             <td class="p-3 text-sm font-mono">Rp {{ number_format((float) $s->nominal_bid, 0, ',', '.') }}</td>
                             <td class="p-3 text-xs">{{ $s->tanggal_mulai?->format('d M Y') }} - {{ $s->tanggal_selesai?->format('d M Y') }}</td>
                             <td class="p-3 text-xs">{{ $s->bankAccount?->bank->nama_bank ?? '-' }} {{ $s->bankAccount?->nomor_rekening ?? '' }}</td>
-                            <td class="p-3"><span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($s->status === 'terjadwal' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/20' : ($s->status === 'ditunda' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/20' : 'bg-error/10 text-error border-error/20')) }}">{{ $s->status === 'terjadwal' ? 'Menunggu Aktif' : $s->status }}</span></td>
+                            <td class="p-3"><span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($s->status === 'terjadwal' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/20' : ($s->status === 'ditunda' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/20' : 'bg-error/10 text-error border-error/20')) }}">{{ $s->status === 'terjadwal' ? __('Menunggu Aktif') : $s->status }}</span></td>
                             <td class="p-3 text-xs">
                                 <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->payment_status === 'terverifikasi' ? 'bg-success/10 text-success border-success/20' : ($s->payment_status === 'ditolak' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }}">{{ $s->payment_status }}</span>
                                 @if($s->file_bukti)
-                                    <a href="{{ asset('storage/' . $s->file_bukti) }}" target="_blank" class="ml-2 text-gold-accent hover:underline">Bukti</a>
+                                    <a href="{{ asset('storage/' . $s->file_bukti) }}" target="_blank" class="ml-2 text-gold-accent hover:underline">{{ __('Bukti') }}</a>
                                 @endif
                                 @if($s->alasan_penolakan)
-                                    <div class="text-error text-[11px] mt-1">Tolak: {{ $s->alasan_penolakan }}</div>
+                                    <div class="text-error text-[11px] mt-1">{{ __('Tolak:') }} {{ $s->alasan_penolakan }}</div>
                                 @endif
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="p-8 text-center text-on-surface-variant text-sm">Belum ada riwayat pengajuan iklan.</td></tr>
+                        <tr><td colspan="6" class="p-8 text-center text-on-surface-variant text-sm">{{ __('Belum ada riwayat pengajuan iklan.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -149,33 +149,33 @@
                             <p class="font-bold text-on-surface">{{ $s->product->nama_produk ?? '-' }}</p>
                             <p class="text-xs text-on-surface-variant mt-0.5">{{ $s->tanggal_mulai?->format('d M Y') }} - {{ $s->tanggal_selesai?->format('d M Y') }}</p>
                         </div>
-                        <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($s->status === 'terjadwal' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/20' : ($s->status === 'ditunda' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/20' : 'bg-error/10 text-error border-error/20')) }}">{{ $s->status === 'terjadwal' ? 'Menunggu Aktif' : $s->status }}</span>
+                        <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($s->status === 'terjadwal' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/20' : ($s->status === 'ditunda' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/20' : 'bg-error/10 text-error border-error/20')) }}">{{ $s->status === 'terjadwal' ? __('Menunggu Aktif') : $s->status }}</span>
                     </div>
                     <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-muted-border">
                         <div>
-                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Nominal</p>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Nominal') }}</p>
                             <p class="text-sm font-mono font-bold text-on-surface mt-0.5">Rp {{ number_format((float) $s->nominal_bid, 0, ',', '.') }}</p>
                         </div>
                         <div>
-                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Pembayaran</p>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Pembayaran') }}</p>
                             <p class="mt-0.5">
                                 <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase border {{ $s->payment_status === 'terverifikasi' ? 'bg-success/10 text-success border-success/20' : ($s->payment_status === 'ditolak' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }}">{{ $s->payment_status }}</span>
                                 @if($s->file_bukti)
-                                    <a href="{{ asset('storage/' . $s->file_bukti) }}" target="_blank" class="ml-2 text-gold-accent hover:underline">Bukti</a>
+                                    <a href="{{ asset('storage/' . $s->file_bukti) }}" target="_blank" class="ml-2 text-gold-accent hover:underline">{{ __('Bukti') }}</a>
                                 @endif
                             </p>
                         </div>
                     </div>
                     <div class="mt-3 pt-3 border-t border-muted-border">
-                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Rekening</p>
+                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Rekening') }}</p>
                         <p class="text-sm text-on-surface-variant mt-0.5">{{ $s->bankAccount?->bank->nama_bank ?? '-' }} {{ $s->bankAccount?->nomor_rekening ?? '' }}</p>
                         @if($s->alasan_penolakan)
-                            <div class="text-error text-[11px] mt-1">Tolak: {{ $s->alasan_penolakan }}</div>
+                            <div class="text-error text-[11px] mt-1">{{ __('Tolak:') }} {{ $s->alasan_penolakan }}</div>
                         @endif
                     </div>
                 </article>
             @empty
-                <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada riwayat pengajuan iklan.</p>
+                <p class="text-on-surface-variant text-sm py-6 text-center">{{ __('Belum ada riwayat pengajuan iklan.') }}</p>
             @endforelse
         </div>
         @if($slots instanceof \Illuminate\Pagination\AbstractPaginator && $slots->hasPages())

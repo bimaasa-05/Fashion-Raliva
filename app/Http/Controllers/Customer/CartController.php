@@ -50,10 +50,10 @@ class CartController extends Controller
     public function add(Request $request): JsonResponse
     {
         if (! Auth::check()) {
-            return response()->json(['status' => 'error', 'message' => 'Anda belum login.'], 401);
+            return response()->json(['status' => 'error', 'message' => __('Anda belum login.')], 401);
         }
         if (Auth::user()->role?->nama_role !== Role::CUSTOMER) {
-            return response()->json(['status' => 'error', 'message' => 'Hanya customer yang dapat memakai keranjang.'], 403);
+            return response()->json(['status' => 'error', 'message' => __('Hanya customer yang dapat memakai keranjang.')], 403);
         }
 
         try {
@@ -61,7 +61,7 @@ class CartController extends Controller
                 'product_variant_id' => 'required|integer|exists:product_variants,product_variant_id',
             ]);
         } catch (ValidationException $e) {
-            return response()->json(['status' => 'error', 'message' => 'Varian produk tidak ditemukan.'], 422);
+            return response()->json(['status' => 'error', 'message' => __('Varian produk tidak ditemukan.')], 422);
         }
 
         $variant = ProductVariant::where('product_variant_id', $validated['product_variant_id'])
@@ -70,7 +70,7 @@ class CartController extends Controller
             ->first();
 
         if (!$variant || !$variant->product || $variant->product->status !== Product::STATUS_AKTIF) {
-            return response()->json(['status' => 'error', 'message' => 'Produk tidak tersedia.'], 422);
+            return response()->json(['status' => 'error', 'message' => __('Produk tidak tersedia.')], 422);
         }
 
         $cart = $this->getOrCreateCart();
@@ -91,7 +91,7 @@ class CartController extends Controller
 
         return response()->json([
             'status' => 'added',
-            'message' => 'Ditambahkan ke keranjang.',
+            'message' => __('Ditambahkan ke keranjang.'),
             'count' => $this->cartTotalQty(),
         ]);
     }
@@ -107,16 +107,16 @@ class CartController extends Controller
                 'quantity' => 'required|integer|min:1|max:99',
             ]);
         } catch (ValidationException $e) {
-            return response()->json(['status' => 'error', 'message' => 'Jumlah tidak valid.'], 422);
+            return response()->json(['status' => 'error', 'message' => __('Jumlah tidak valid.')], 422);
         }
 
         if ($cartItem->cart->user_id !== Auth::id()) {
-            return response()->json(['status' => 'error', 'message' => 'Tidak diizinkan.'], 403);
+            return response()->json(['status' => 'error', 'message' => __('Tidak diizinkan.')], 403);
         }
 
         $stok = (int) $cartItem->productVariant->warehouseStocks()->sum('jumlah_stok');
         if ($validated['quantity'] > $stok) {
-            return response()->json(['status' => 'error', 'message' => 'Stok tersisa ' . $stok . '.'], 422);
+            return response()->json(['status' => 'error', 'message' => __('Stok tersisa :ph1.', ['ph1' => $stok])], 422);
         }
 
         $cartItem->update(['quantity' => $validated['quantity']]);
@@ -125,7 +125,7 @@ class CartController extends Controller
 
         return response()->json([
             'status' => 'updated',
-            'message' => 'Keranjang diperbarui.',
+            'message' => __('Keranjang diperbarui.'),
             'count' => $totals['count'],
             'subtotal' => $totals['subtotal'],
             'total' => $totals['total'],
@@ -139,7 +139,7 @@ class CartController extends Controller
     public function destroy(CartItem $cartItem): JsonResponse
     {
         if ($cartItem->cart->user_id !== Auth::id()) {
-            return response()->json(['status' => 'error', 'message' => 'Tidak diizinkan.'], 403);
+            return response()->json(['status' => 'error', 'message' => __('Tidak diizinkan.')], 403);
         }
 
         $cartItem->delete();
@@ -148,7 +148,7 @@ class CartController extends Controller
 
         return response()->json([
             'status' => 'removed',
-            'message' => 'Dihapus dari keranjang.',
+            'message' => __('Dihapus dari keranjang.'),
             'count' => $totals['count'],
             'subtotal' => $totals['subtotal'],
             'total' => $totals['total'],

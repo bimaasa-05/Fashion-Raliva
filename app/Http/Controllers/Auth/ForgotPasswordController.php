@@ -32,6 +32,6 @@ class ForgotPasswordController extends Controller
 
         return back()
             ->withInput($request->only('email'))
-            ->withErrors(['email' => 'Permintaan reset password terlalu sering. Silakan coba lagi nanti.']);
+            ->withErrors(['email' => __('Permintaan reset password terlalu sering. Silakan coba lagi nanti.')]);
     }
 }

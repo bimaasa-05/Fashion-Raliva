@@ -77,7 +77,7 @@ class KategoriProdukController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Kategori Ditambahkan', "Kategori \"{$kategori->nama_kategori}\" ditambahkan.", route('superadmin.kategori-produk'));
 
         return back()->with('toast', [
-            'message' => "Kategori \"{$kategori->nama_kategori}\" berhasil ditambahkan.",
+            'message' => __('Kategori ":ph37941" berhasil ditambahkan.', ['ph37941' => $kategori->nama_kategori]),
             'icon' => 'task_alt',
         ]);
     }
@@ -88,14 +88,14 @@ class KategoriProdukController extends Controller
 
         if ((int) ($data['parent_id'] ?? 0) === (int) $kategori->category_id) {
             return back()->with('toast', [
-                'message' => 'Kategori tidak dapat menjadi induk bagi dirinya sendiri.',
+                'message' => __('Kategori tidak dapat menjadi induk bagi dirinya sendiri.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if ($data['parent_id'] && $this->isDescendant($kategori, (int) $data['parent_id'])) {
             return back()->with('toast', [
-                'message' => 'Kategori induk tidak boleh berada di bawah sub-kategori miliknya sendiri.',
+                'message' => __('Kategori induk tidak boleh berada di bawah sub-kategori miliknya sendiri.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -124,7 +124,7 @@ class KategoriProdukController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Kategori Diubah', "Kategori \"{$kategori->nama_kategori}\" diperbarui.", route('superadmin.kategori-produk'));
 
         return back()->with('toast', [
-            'message' => "Perubahan kategori \"{$kategori->nama_kategori}\" berhasil disimpan.",
+            'message' => __('Perubahan kategori ":ph37940" berhasil disimpan.', ['ph37940' => $kategori->nama_kategori]),
             'icon' => 'task_alt',
         ]);
     }
@@ -144,7 +144,7 @@ class KategoriProdukController extends Controller
             }
 
             return back()->with('toast', [
-                'message' => 'Hapus dibatalkan — kategori "'.$kategori->nama_kategori.'" '.implode(' dan ', $alasan).'.',
+                'message' => __('Hapus dibatalkan — kategori ":ph1" :ph2.', ['ph1' => $kategori->nama_kategori, 'ph2' => implode(' dan ', $alasan)]),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -165,7 +165,7 @@ class KategoriProdukController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Kategori Dihapus', "Kategori \"{$lama['nama_kategori']}\" dihapus.", route('superadmin.kategori-produk'));
 
         return back()->with('toast', [
-            'message' => "Kategori \"{$lama['nama_kategori']}\" berhasil dihapus.",
+            'message' => __('Kategori ":ph37939" berhasil dihapus.', ['ph37939' => $lama['nama_kategori']]),
             'icon' => 'delete',
         ]);
     }
@@ -198,7 +198,7 @@ class KategoriProdukController extends Controller
         }
 
         if ($query->exists()) {
-            return "Kategori dengan nama \"{$nama}\" sudah ada.";
+            return __('Kategori dengan nama ":ph1" sudah ada.', ['ph1' => $nama]);
         }
 
         return null;

@@ -1,10 +1,10 @@
 @extends('layouts.owner')
 
-@section('title', 'Komplain')
+@section('title', __('Komplain'))
 
-@section('header-title', 'Komplain')
-@section('header-badge', $eskalasiCount.' Eskalasi')
-@section('header-subtitle', 'Komplain yang dieskalasi Admin untuk keputusan final Anda.')
+@section('header-title', __('Komplain'))
+@section('header-badge', $eskalasiCount . ' ' . __('Eskalasi'))
+@section('header-subtitle', __('Komplain yang dieskalasi Admin untuk keputusan final Anda.'))
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
@@ -23,29 +23,29 @@
 <div data-real class="hidden space-y-section-gap">
     {{-- Penanda halaman: Komplain / Pengembalian Dana --}}
     <div data-reveal class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 max-w-full overflow-x-auto">
-        <a href="{{ route('owner.komplain') }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ request()->routeIs('owner.komplain*') && ! request()->routeIs('owner.pengembalian-dana') ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">Komplain</a>
-        <a href="{{ route('owner.pengembalian-dana') }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ request()->routeIs('owner.pengembalian-dana') ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">Pengembalian Dana</a>
+        <a href="{{ route('owner.komplain') }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ request()->routeIs('owner.komplain*') && ! request()->routeIs('owner.pengembalian-dana') ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">{{ __('Komplain') }}</a>
+        <a href="{{ route('owner.pengembalian-dana') }}" class="px-4 py-2 rounded-md text-xs font-medium transition-colors whitespace-nowrap {{ request()->routeIs('owner.pengembalian-dana') ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">{{ __('Pengembalian Dana') }}</a>
     </div>
     @if(! \App\Support\OwnerContext::currentStore())
         <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
             <div>
-                <p class="font-bold text-sm">Belum punya toko</p>
-                <p class="text-sm text-on-surface-variant mt-1">Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk akses fitur ini.</p>
+                <p class="font-bold text-sm">{{ __('Belum punya toko') }}</p>
+                <p class="text-sm text-on-surface-variant mt-1">{{ __('Silakan') }} <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">{{ __('ajukan toko') }}</a> {{ __('untuk akses fitur ini.') }}</p>
             </div>
         </div>
     @endif
     {{-- Daftar Komplain (hanya eskalasi) --}}
     <section data-table-scope>
         <div data-reveal class="flex items-center justify-between gap-4 mb-6">
-            <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Perlu Keputusan Anda</h2>
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">{{ __('Perlu Keputusan Anda') }}</h2>
         </div>
 
         <div data-reveal-group class="space-y-gutter">
             @forelse ($complaints as $c)
                 @php
                     $key = $c->status;
-                    $statusLabel = 'Eskalasi';
+                    $statusLabel = __('Eskalasi');
                     $kodeComplain = 'KL-' . str_pad((string) $c->complaint_id, 10, '0', STR_PAD_LEFT);
                 @endphp
                 <article data-reveal data-komplain-row data-status="{{ $key }}"
@@ -66,20 +66,20 @@
                                     <span class="text-xs text-on-surface-variant">• {{ $c->order_id ? '#'.$c->order_id : '-' }} • {{ $c->kategori }}</span>
                                 </div>
                                 <p class="font-body-md text-sm text-on-surface mt-1.5 leading-snug">{{ $c->subjek }}</p>
-                                <p class="text-xs text-on-surface-variant mt-1">{{ $c->user?->nama_lengkap ?? 'Customer' }} • {{ optional($c->dibuat_pada)->translatedFormat('d M Y, H:i') }}</p>
+                                <p class="text-xs text-on-surface-variant mt-1">{{ $c->user?->nama_lengkap ?? __('Customer') }} • {{ optional($c->dibuat_pada)->translatedFormat('d M Y, H:i') }}</p>
                             </div>
                         </div>
                         <div class="flex items-center gap-gutter shrink-0 self-start">
-                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30">Eskalasi</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30">{{ __('Eskalasi') }}</span>
                         </div>
                     </div>
                     <div class="flex flex-wrap gap-gutter mt-5 pt-4 border-t border-muted-border">
-                        <button type="button" data-modal-open="modal-komplain-{{ $c->complaint_id }}" class="py-2 px-4 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium">Lihat Detail</button>
-                        <button type="button" onclick="openChatFromCard(this)" class="py-2 px-4 border border-muted-border text-on-surface rounded-lg text-xs font-semibold hover:border-gold-accent transition-colors">Buka Thread</button>
+                        <button type="button" data-modal-open="modal-komplain-{{ $c->complaint_id }}" class="py-2 px-4 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium">{{ __('Lihat Detail') }}</button>
+                        <button type="button" onclick="openChatFromCard(this)" class="py-2 px-4 border border-muted-border text-on-surface rounded-lg text-xs font-semibold hover:border-gold-accent transition-colors">{{ __('Buka Thread') }}</button>
                     </div>
                 </article>
             @empty
-                <p class="text-on-surface-variant text-sm py-8 text-center">Belum ada komplain yang dieskalasi ke Anda.</p>
+                <p class="text-on-surface-variant text-sm py-8 text-center">{{ __('Belum ada komplain yang dieskalasi ke Anda.') }}</p>
             @endforelse
         </div>
     </section>
@@ -92,9 +92,9 @@
     <div class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
             <div>
-                <p class="raliva-label text-gold-accent">Detail Komplain</p>
+                <p class="raliva-label text-gold-accent">{{ __('Detail Komplain') }}</p>
                 <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $c->subjek ?? $c->kategori }}</h3>
-                <p class="text-xs text-on-surface-variant mt-0.5">{{ $c->complaint_id }} • {{ $c->user?->nama_lengkap ?? 'Customer' }}</p>
+                <p class="text-xs text-on-surface-variant mt-0.5">{{ $c->complaint_id }} • {{ $c->user?->nama_lengkap ?? __('Customer') }}</p>
             </div>
             <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
                 <span class="material-symbols-outlined">close</span>
@@ -103,24 +103,24 @@
         <div class="p-6 space-y-4">
             <div class="grid grid-cols-2 gap-3">
                 <div class="bg-surface-container-low rounded-lg p-3">
-                    <p class="text-[10px] uppercase text-on-surface-variant">Kategori</p>
+                    <p class="text-[10px] uppercase text-on-surface-variant">{{ __('Kategori') }}</p>
                     <p class="font-bold text-on-surface capitalize">{{ $c->kategori }}</p>
                 </div>
                 <div class="bg-surface-container-low rounded-lg p-3">
-                    <p class="text-[10px] uppercase text-on-surface-variant">Status</p>
+                    <p class="text-[10px] uppercase text-on-surface-variant">{{ __('Status') }}</p>
                     <p class="font-bold text-on-surface">{{ $statusLabel }}</p>
                 </div>
             </div>
             <div class="bg-surface-container-low border border-muted-border rounded-lg p-4">
-                <p class="text-[10px] uppercase text-on-surface-variant mb-1">Deskripsi</p>
+                <p class="text-[10px] uppercase text-on-surface-variant mb-1">{{ __('Deskripsi') }}</p>
                 <p class="font-body-md text-sm text-on-surface">{{ $c->deskripsi }}</p>
             </div>
             @if ($c->order_id)
-            <p class="text-xs text-on-surface-variant">Terkait pesanan <span class="font-mono text-on-surface">#{{ $c->order_id }}</span></p>
+            <p class="text-xs text-on-surface-variant">{{ __('Terkait pesanan') }} <span class="font-mono text-on-surface">#{{ $c->order_id }}</span></p>
             @endif
         </div>
         <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end">
-            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Tutup') }}</button>
         </div>
     </div>
 </div>
@@ -137,16 +137,16 @@
                 </div>
                 <div class="flex items-center gap-2 lg:gap-3 shrink-0 chat-header-item" id="chat-header-actions">
                     <span id="chat-status" class="inline-flex items-center px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wide border bg-surface-container-high text-on-surface-variant border-outline-variant shrink-0 whitespace-nowrap"></span>
-                    <button type="button" onclick="toggleChatSearch()" id="chat-search-toggle" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Cari pesan" aria-label="Cari pesan">
+                    <button type="button" onclick="toggleChatSearch()" id="chat-search-toggle" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Cari pesan') }}" aria-label="{{ __('Cari pesan') }}">
                         <span class="material-symbols-outlined text-[20px]">search</span>
                     </button>
                 </div>
                 <div id="chat-search-panel" class="absolute inset-0 flex items-center gap-2 lg:gap-3 px-6">
-                    <button type="button" id="chat-search-close" onclick="toggleChatSearch()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Tutup pencarian" aria-label="Tutup pencarian">
+                    <button type="button" id="chat-search-close" onclick="toggleChatSearch()" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Tutup pencarian') }}" aria-label="{{ __('Tutup pencarian') }}">
                         <span class="material-symbols-outlined text-[20px]">search</span>
                     </button>
-                    <input id="chat-search-input" type="text" inputmode="search" autocomplete="off" placeholder="Cari pesan..." class="flex-1 min-w-0 bg-transparent font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/70 border-b border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] focus:border-secondary py-2"/>
-                    <button type="button" id="chat-search-clear" onclick="clearChatSearch()" class="hidden w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="Hapus pencarian" aria-label="Hapus pencarian">
+                    <input id="chat-search-input" type="text" inputmode="search" autocomplete="off" placeholder="{{ __('Cari pesan...') }}" class="flex-1 min-w-0 bg-transparent font-body-sm text-body-sm text-on-surface placeholder:text-on-surface-variant/70 border-b border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] focus:border-secondary py-2"/>
+                    <button type="button" id="chat-search-clear" onclick="clearChatSearch()" class="hidden w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0" title="{{ __('Hapus pencarian') }}" aria-label="{{ __('Hapus pencarian') }}">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                     <span id="chat-search-count" class="font-label-sm text-label-sm text-on-surface-variant shrink-0 hidden"></span>
@@ -160,51 +160,51 @@
             </div>
             <div class="relative px-3 lg:px-4 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] pl-[max(0.75rem,env(safe-area-inset-left))] pr-[max(0.75rem,env(safe-area-inset-right))] shrink-0 bg-transparent" id="chat-input-area">
                 <div id="chat-emoji-panel" class="hidden absolute bottom-full mb-3 left-3 lg:left-4 z-10 w-[264px] max-w-[calc(100vw-4rem)] lg:w-[320px] max-h-[220px] overflow-y-auto rounded-xl border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] bg-surface-container-high p-3 shadow-xl"></div>
-                <p id="chat-limit-note" class="hidden text-center font-body-sm text-body-sm text-secondary pb-3">Batas 3 balasan tercapai, menunggu balasan toko.</p>
+                <p id="chat-limit-note" class="hidden text-center font-body-sm text-body-sm text-secondary pb-3">{{ __('Batas 3 balasan tercapai, menunggu balasan toko.') }}</p>
                 <div id="chat-composer" class="flex items-end gap-1 lg:gap-1.5 bg-surface-container-lowest dark:bg-[#1c1c1c] border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-[26px] lg:rounded-[28px] px-2 lg:px-2.5 py-2 lg:py-2.5 shadow-sm transition-colors duration-150 focus-within:border-secondary">
                     <button type="button" onclick="toggleEmojiPanel()" id="chat-emoji-toggle" aria-label="Emoji" title="Emoji" class="w-11 h-11 flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer shrink-0">
                         <span class="material-symbols-outlined text-[20px]">mood</span>
                     </button>
-                    <textarea id="chat-input" rows="1" maxlength="2000" placeholder="Tulis pesan..."
+                    <textarea id="chat-input" rows="1" maxlength="2000" placeholder="{{ __('Tulis pesan...') }}"
                         class="flex-1 min-w-0 bg-transparent border-0 outline-none resize-none px-1 py-2.5 font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant"
-                        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}" aria-label="Tulis pesan"></textarea>
-                    <button type="button" onclick="sendMessage()" id="chat-send" aria-label="Kirim pesan" title="Kirim"
+                        onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMessage();}" aria-label="{{ __('Tulis pesan') }}"></textarea>
+                    <button type="button" onclick="sendMessage()" id="chat-send" aria-label="{{ __('Kirim pesan') }}" title="{{ __('Kirim') }}"
                         class="w-11 h-11 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 active:scale-[0.96] transition-all disabled:opacity-40 rounded-full">
                         <span class="material-symbols-outlined text-[20px]">send</span>
                     </button>
                 </div>
-                <p id="chat-closed-note" class="hidden text-center font-body-sm text-body-sm text-on-surface-variant pt-4">Komplain telah selesai dan tidak dapat dibalas lagi.</p>
+                <p id="chat-closed-note" class="hidden text-center font-body-sm text-body-sm text-on-surface-variant pt-4">{{ __('Komplain telah selesai dan tidak dapat dibalas lagi.') }}</p>
             </div>
             </div><!-- /#chat-content -->
         </div>
     </div>
     <div id="chat-delete-dialog" class="hidden fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeDeleteDialog();}">
         <div class="w-full sm:max-w-sm bg-surface-container-low rounded-t-3xl sm:rounded-2xl p-2 sm:p-4 border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shadow-2xl" onclick="event.stopPropagation()">
-            <p class="font-title-sm text-title-sm text-on-surface px-4 pt-3 pb-2">Hapus pesan ini?</p>
+            <p class="font-title-sm text-title-sm text-on-surface px-4 pt-3 pb-2">{{ __('Hapus pesan ini?') }}</p>
             <button type="button" id="chat-del-opt-all" data-del-per="all" onclick="deleteMessage(deleteDialogMsgId,'all')" class="w-full text-left px-4 py-3 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
-                <span class="block font-body-sm text-body-sm text-on-surface">Hapus untuk semua orang</span>
-                <span class="block font-body-sm text-body-sm text-on-surface-variant/80">Pesan akan dihapus untuk semua peserta chat ini</span>
+                <span class="block font-body-sm text-body-sm text-on-surface">{{ __('Hapus untuk semua orang') }}</span>
+                <span class="block font-body-sm text-body-sm text-on-surface-variant/80">{{ __('Pesan akan dihapus untuk semua peserta chat ini') }}</span>
             </button>
             <button type="button" data-del-per="me" onclick="deleteMessage(deleteDialogMsgId,'me')" class="w-full text-left px-4 py-3 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
-                <span class="block font-body-sm text-body-sm text-on-surface">Hapus untuk diri sendiri</span>
-                <span class="block font-body-sm text-body-sm text-on-surface-variant/80">Pesan hanya dihapus dari perangkat Anda</span>
+                <span class="block font-body-sm text-body-sm text-on-surface">{{ __('Hapus untuk diri sendiri') }}</span>
+                <span class="block font-body-sm text-body-sm text-on-surface-variant/80">{{ __('Pesan hanya dihapus dari perangkat Anda') }}</span>
             </button>
             <button type="button" onclick="closeDeleteDialog()" class="w-full text-left px-4 py-3 mt-1 hover:bg-surface-container-high transition-colors cursor-pointer rounded-xl">
-                <span class="font-body-sm text-body-sm text-secondary">Batal</span>
+                <span class="font-body-sm text-body-sm text-secondary">{{ __('Batal') }}</span>
             </button>
         </div>
     </div>
     <div id="chat-edit-dialog" class="hidden fixed inset-0 z-[80] flex items-end sm:items-center justify-center bg-black/50" onclick="if(event.target===this){event.stopPropagation();closeEditDialog();}">
         <div class="w-full sm:max-w-lg bg-surface-container-low rounded-t-3xl sm:rounded-2xl border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shadow-2xl overflow-hidden flex flex-col max-h-[90dvh]" onclick="event.stopPropagation()">
             <div class="flex items-center gap-3 px-5 py-4 border-b border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] shrink-0">
-                <button type="button" onclick="closeEditDialog()" class="p-2 -ml-2 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer" title="Tutup">
+                <button type="button" onclick="closeEditDialog()" class="p-2 -ml-2 rounded-full text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-colors cursor-pointer" title="{{ __('Tutup') }}">
                     <span class="material-symbols-outlined text-[20px]">close</span>
                 </button>
-                <h3 class="font-title-md text-title-md text-on-surface">Edit pesan</h3>
+                <h3 class="font-title-md text-title-md text-on-surface">{{ __('Edit pesan') }}</h3>
             </div>
             <div id="chat-edit-wallpaper" class="flex-1 min-h-[150px] sm:min-h-[220px] flex items-center justify-end px-6 py-8">
                 <div class="max-w-[90%] rounded-xl px-4 py-2.5 bg-secondary text-white">
-                    <p class="text-xs mb-1 text-white/60 uppercase tracking-wider">Anda</p>
+                    <p class="text-xs mb-1 text-white/60 uppercase tracking-wider">{{ __('Anda') }}</p>
                     <p id="chat-edit-preview" class="font-body-sm text-body-sm whitespace-pre-wrap break-words">-</p>
                 </div>
             </div>
@@ -215,7 +215,7 @@
                         <span class="material-symbols-outlined text-[20px]">mood</span>
                     </button>
                     <textarea id="chat-edit-input" rows="1" maxlength="2000" class="flex-1 bg-surface-container-low border border-[rgba(0,0,0,0.06)] dark:border-[rgba(255,255,255,0.08)] rounded-lg px-4 py-3 font-body-sm text-body-sm text-on-surface placeholder-on-surface-variant resize-none focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary transition-colors" onkeydown="if(event.key==='Enter'&&(event.ctrlKey||event.metaKey)){event.preventDefault();saveEditMessage();}"></textarea>
-                    <button type="button" onclick="saveEditMessage()" id="chat-edit-save" class="w-11 h-11 lg:w-12 lg:h-12 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 transition-opacity disabled:opacity-40 rounded-full" title="Simpan">
+                    <button type="button" onclick="saveEditMessage()" id="chat-edit-save" class="w-11 h-11 lg:w-12 lg:h-12 flex items-center justify-center bg-secondary text-white shrink-0 hover:opacity-80 transition-opacity disabled:opacity-40 rounded-full" title="{{ __('Simpan') }}">
                         <span class="material-symbols-outlined text-[20px]">check</span>
                     </button>
                 </div>
@@ -348,7 +348,7 @@ document.addEventListener('DOMContentLoaded', function(){
       // For tambah buttons, disable if no store
       el.setAttribute('disabled','');
       el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
-      el.title = 'Ajukan toko dulu';
+      el.title = '{{ __('Ajukan toko dulu') }}';
     }
   });
   // More generic: disable all buttons in data-real except those inside pengajuan
@@ -481,7 +481,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                 signal: controller.signal
             });
-            if (!resp.ok) throw new Error('Gagal memuat pesan');
+            if (!resp.ok) throw new Error('{{ __('Gagal memuat pesan') }}');
             const messages = await resp.json();
             const same = messages.length === chatMessages.length &&
                 messages.every(function (m, i) {
@@ -493,7 +493,7 @@ document.addEventListener('DOMContentLoaded', function(){
             if (same) return;
             renderMessages(messages);
         } catch (err) {
-            if (currentChat.id !== null) showChatError(err.name === 'AbortError' ? 'Waktu memuat pesan habis. Coba lagi.' : err.message);
+            if (currentChat.id !== null) showChatError(err.name === 'AbortError' ? '{{ __('Waktu memuat pesan habis. Coba lagi.') }}' : err.message);
         } finally {
             clearTimeout(timer);
         }
@@ -503,7 +503,7 @@ document.addEventListener('DOMContentLoaded', function(){
         const el = document.getElementById('chat-messages');
         el.innerHTML = '<div class="text-center py-8">' +
             '<p class="text-on-surface-variant text-sm">' + escapeHtml(message) + '</p>' +
-            '<p class="text-xs text-on-surface-variant/60 mt-1">Coba muat ulang halaman.</p>' +
+            '<p class="text-xs text-on-surface-variant/60 mt-1">{{ __('Coba muat ulang halaman.') }}</p>' +
             '</div>';
         el.scrollTop = el.scrollHeight;
     }
@@ -523,7 +523,7 @@ document.addEventListener('DOMContentLoaded', function(){
         if (!messages || messages.length === 0) {
             el.innerHTML = '<div class="text-center py-10">' +
                 '<span class="material-symbols-outlined text-[38px] text-outline-variant inline-block mb-2">chat_bubble_outline</span>' +
-                '<p class="font-body-sm text-body-sm text-on-surface-variant">' + escapeHtml('Belum ada pesan. Mulai percakapan.') + '</p>' +
+                '<p class="font-body-sm text-body-sm text-on-surface-variant">' + escapeHtml('{{ __('Belum ada pesan. Mulai percakapan.') }}') + '</p>' +
                 '</div>';
             el.scrollTop = el.scrollHeight;
             return;
@@ -531,7 +531,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
         el.innerHTML = messages.map(function (m) {
             const mine = String(m.sender_id) === String(myId) || (myRole === 'Super Admin' && m.sender?.role === 'Super Admin');
-            const sender = mine ? 'Anda' : (m.sender ? m.sender.nama_lengkap : 'Toko');
+            const sender = mine ? '{{ __('Anda') }}' : (m.sender ? m.sender.nama_lengkap : '{{ __('Toko') }}');
             const roleTag = (function () {
                 if (mine) return '';
                 const r = m.sender ? m.sender.role : null;
@@ -544,7 +544,7 @@ document.addEventListener('DOMContentLoaded', function(){
             const time = mine ? 'text-white/40' : 'text-on-surface-variant/50';
             const bubble = mine ? 'bg-secondary text-white' : 'bg-surface-container-low';
             const meta = mine ? 'text-white/60' : 'text-on-surface-variant';
-            const edited = m.edited_at ? ' <span class="italic">(' + escapeHtml('diedit') + ')</span>' : '';
+            const edited = m.edited_at ? ' <span class="italic">(' + escapeHtml('{{ __('diedit') }}') + ')</span>' : '';
             const actionsOn = !currentChat.done;
             const rowClass = 'flex items-center gap-2 ' + (mine ? 'justify-end' : 'justify-start') + ' group chat-msg';
 
@@ -555,13 +555,13 @@ document.addEventListener('DOMContentLoaded', function(){
                 let delMenu = '';
                 if (actionsOn) {
                     delMenu = chatMenuMarkup(m.complaint_message_id, delBtn) +
-                        '<button type="button" onclick="event.stopPropagation();openDeleteDialog(' + m.complaint_message_id + ',true)" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>' +
+                        '<button type="button" onclick="event.stopPropagation();openDeleteDialog(' + m.complaint_message_id + ',true)" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('{{ __('Hapus pesan') }}') + '</button>' +
                         '</span></span>';
                 }
                 return '<div class="' + rowClass + '" data-mid="' + m.complaint_message_id + '">' +
                     '<div class="max-w-[82%] lg:max-w-[72%] rounded-2xl px-3.5 lg:px-4 pt-2.5 pb-5 relative ' + delBubble + ' shadow-sm" data-bubble>' +
                     '<div class="flex items-center justify-between gap-2">' +
-                    '<p class="font-body-sm text-body-sm italic flex items-center gap-1.5 ' + delText + '"><span class="material-symbols-outlined text-[16px] leading-none shrink-0">block</span>' + escapeHtml('Pesan ini telah dihapus') + '</p>' +
+                    '<p class="font-body-sm text-body-sm italic flex items-center gap-1.5 ' + delText + '"><span class="material-symbols-outlined text-[16px] leading-none shrink-0">block</span>' + escapeHtml('{{ __('Pesan ini telah dihapus') }}') + '</p>' +
                     delMenu +
                     '</div>' +
                     '<span class="absolute bottom-1.5 right-2.5 text-[10px] leading-none ' + time + '">' + formatTime(m.created_at) + '</span>' +
@@ -574,9 +574,9 @@ document.addEventListener('DOMContentLoaded', function(){
                 const canEdit = mine && chatEditAllowed(m.created_at);
                 let items = '';
                 if (canEdit) {
-                    items += '<button type="button" onclick="event.stopPropagation();openEditDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">edit</span>' + escapeHtml('Edit pesan') + '</button>';
+                    items += '<button type="button" onclick="event.stopPropagation();openEditDialog(' + m.complaint_message_id + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-on-surface hover:bg-surface-container-low transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">edit</span>' + escapeHtml('{{ __('Edit pesan') }}') + '</button>';
                 }
-                items += '<button type="button" onclick="event.stopPropagation();openDeleteDialog(' + m.complaint_message_id + ',' + (canAll ? 'false' : 'true') + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('Hapus pesan') + '</button>';
+                items += '<button type="button" onclick="event.stopPropagation();openDeleteDialog(' + m.complaint_message_id + ',' + (canAll ? 'false' : 'true') + ')" class="w-full text-left px-4 py-2.5 font-body-sm text-body-sm text-error hover:bg-error/10 transition-colors cursor-pointer flex items-center gap-2"><span class="material-symbols-outlined text-[16px]">delete</span>' + escapeHtml('{{ __('Hapus pesan') }}') + '</button>';
                 menu = chatMenuMarkup(m.complaint_message_id, mine ? 'text-white/60 hover:text-white' : 'text-on-surface-variant hover:text-on-surface') + items + '</span></span>';
             }
 
@@ -744,7 +744,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 noResults = document.createElement('p');
                 noResults.id = 'chat-search-noresults';
                 noResults.className = 'hidden text-center font-body-sm text-body-sm text-on-surface-variant py-8';
-                noResults.textContent = 'Tidak ada pesan yang cocok.';
+                noResults.textContent = '{{ __('Tidak ada pesan yang cocok.') }}';
                 el.appendChild(noResults);
             }
             noResults.classList.toggle('hidden', shown > 0 || rows.length === 0 || !q);
@@ -828,7 +828,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 closeEditDialog();
                 await loadMessages();
             } else {
-                let msg = 'Gagal menyimpan perubahan';
+                let msg = '{{ __('Gagal menyimpan perubahan') }}';
                 try {
                     const data = await resp.json();
                     if (data && data.message) msg = data.message;
@@ -881,7 +881,7 @@ document.addEventListener('DOMContentLoaded', function(){
             if (resp.ok) {
                 await loadMessages();
             } else {
-                let msg = 'Gagal menghapus pesan';
+                let msg = '{{ __('Gagal menghapus pesan') }}';
                 try {
                     const data = await resp.json();
                     if (data && data.message) msg = data.message;
@@ -1083,7 +1083,7 @@ document.addEventListener('DOMContentLoaded', function(){
             } else {
                 input.value = pesan;
                 if (window.autoGrowChatInput) requestAnimationFrame(function () { autoGrowChatInput(input); });
-                let msg = 'Gagal mengirim pesan';
+                let msg = '{{ __('Gagal mengirim pesan') }}';
                 try {
                     const data = await resp.json();
                     if (data && data.errors) msg = Object.values(data.errors).flat().join('\n');

@@ -34,7 +34,7 @@ class StoreCategoryController extends Controller
         );
 
         return back()->with('toast', [
-            'message' => "Kategori toko \"{$kategori->nama_kategori}\" berhasil ditambahkan.",
+            'message' => __('Kategori toko ":ph16326" berhasil ditambahkan.', ['ph16326' => $kategori->nama_kategori]),
             'icon' => 'task_alt',
         ]);
     }
@@ -65,7 +65,7 @@ class StoreCategoryController extends Controller
         );
 
         return back()->with('toast', [
-            'message' => "Perubahan kategori toko \"{$storeCategory->nama_kategori}\" berhasil disimpan.",
+            'message' => __('Perubahan kategori toko ":ph16325" berhasil disimpan.', ['ph16325' => $storeCategory->nama_kategori]),
             'icon' => 'task_alt',
         ]);
     }
@@ -76,7 +76,7 @@ class StoreCategoryController extends Controller
 
         if ($digunakan > 0) {
             return back()->with('toast', [
-                'message' => "Hapus dibatalkan — kategori toko \"{$storeCategory->nama_kategori}\" masih dipakai oleh {$digunakan} toko.",
+                'message' => __('Hapus dibatalkan — kategori toko ":ph16323" masih dipakai oleh :ph16324 toko.', ['ph16323' => $storeCategory->nama_kategori, 'ph16324' => $digunakan]),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -95,7 +95,7 @@ class StoreCategoryController extends Controller
         $storeCategory->delete();
 
         return back()->with('toast', [
-            'message' => "Kategori toko \"{$lama['nama_kategori']}\" berhasil dihapus.",
+            'message' => __('Kategori toko ":ph16322" berhasil dihapus.', ['ph16322' => $lama['nama_kategori']]),
             'icon' => 'delete',
         ]);
     }
@@ -122,7 +122,7 @@ class StoreCategoryController extends Controller
         }
 
         if ($query->exists()) {
-            return "Kategori toko dengan nama \"{$nama}\" sudah ada.";
+            return __('Kategori toko dengan nama ":ph1" sudah ada.', ['ph1' => $nama]);
         }
 
         return null;

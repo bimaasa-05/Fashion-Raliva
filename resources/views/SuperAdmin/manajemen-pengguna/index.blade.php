@@ -1,11 +1,11 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Manajemen Pengguna')
+@section('title', __('Manajemen Pengguna'))
 
-@section('header-title', 'Manajemen Pengguna')
-@section('header-badge', 'Kelola')
+@section('header-title', __('Manajemen Pengguna'))
+@section('header-badge', __('Kelola'))
 
-@section('header-subtitle', 'Kelola seluruh pengguna terdaftar di platform Raliva.')
+@section('header-subtitle', __('Kelola seluruh pengguna terdaftar di platform Raliva.'))
 
 @push('styles')
 <style>
@@ -89,7 +89,7 @@
         </span>
         <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
-            Data pengguna diperbarui real-time
+            {{ __('Data pengguna diperbarui real-time') }}
         </span>
     </div>
     <!-- Hero Section -->
@@ -101,30 +101,30 @@
                     <div class="flex flex-wrap items-center gap-3 mb-4">
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase tracking-wider border border-secondary/20">
                             <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                            {{ $stats['total'] }} Pengguna
+                            {{ $stats['total'] }} {{ __('Pengguna') }}
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase tracking-wider border border-success/20">
                             <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
-                            {{ $stats['aktif'] }} Aktif
+                            {{ $stats['aktif'] }} {{ __('Aktif') }}
                         </span>
                         @if ($stats['nonaktif'] > 0)
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase tracking-wider border border-error/20">
                                 <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-                                {{ $stats['nonaktif'] }} Non-aktif
+                                {{ $stats['nonaktif'] }} {{ __('Non-aktif') }}
                             </span>
                         @endif
                         @if ($stats['suspend'] > 0)
                             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tertiary-container/30 text-on-tertiary-container text-[10px] font-bold uppercase tracking-wider border border-tertiary-container/50">
                                 <span class="w-1.5 h-1.5 rounded-full bg-tertiary-container"></span>
-                                {{ $stats['suspend'] }} Suspended
+                                {{ $stats['suspend'] }} {{ __('Suspended') }}
                             </span>
                         @endif
                     </div>
-                    <p class="font-body-md text-body-md text-on-surface-variant max-w-lg">Kelola akun pengguna, tetapkan peran, dan pantau status seluruh anggota platform.</p>
+                    <p class="font-body-md text-body-md text-on-surface-variant max-w-lg">{{ __('Kelola akun pengguna, tetapkan peran, dan pantau status seluruh anggota platform.') }}</p>
                 </div>
                 <button type="button" onclick="openCreateModal()" class="bg-gold-accent text-white font-label-sm text-[11px] uppercase px-8 py-4 tracking-widest rounded-lg hover:opacity-90 transition-opacity btn-premium inline-flex items-center gap-2 shrink-0">
                     <span class="material-symbols-outlined text-[18px]">person_add</span>
-                    Tambah Pengguna
+                    {{ __('Tambah Pengguna') }}
                 </button>
             </div>
         </div>
@@ -136,36 +136,36 @@
             <div class="flex flex-col sm:flex-row gap-4">
                 <div class="flex-1 relative">
                     <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                    <input class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="user-search" type="text" placeholder="Cari nama, email, atau nomor telepon..." value="{{ request('search') }}" />
+                    <input class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="user-search" type="text" placeholder="{{ __('Cari nama, email, atau nomor telepon...') }}" value="{{ request('search') }}" />
                     <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
                         <span class="material-symbols-outlined text-[18px]">close</span>
                     </button>
                 </div>
                 <div class="flex items-center gap-2 shrink-0">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest">Urutkan:</span>
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest">{{ __('Urutkan:') }}</span>
                     <div class="relative" id="sort-dd">
                         <button type="button" id="sort-trigger" onclick="toggleDropdown('sort')" aria-haspopup="listbox" aria-expanded="false"
                             class="flex items-center justify-between gap-3 bg-surface-container-low border border-muted-border rounded-lg px-3 py-3 font-label-sm text-[11px] uppercase tracking-wide text-on-surface focus:outline-none focus:border-gold-accent transition-colors min-w-[150px] cursor-pointer text-left">
-                            <span id="sort-label">Nama A-Z</span>
+                            <span id="sort-label">{{ __('Nama A-Z') }}</span>
                             <span class="material-symbols-outlined text-[16px] text-on-surface-variant transition-transform duration-200" id="sort-chevron">expand_more</span>
                         </button>
                         <div id="sort-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
                             class="hidden absolute left-0 top-full mt-2 w-full min-w-[150px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
                             <button type="button" role="option" aria-selected="true" data-sort="nama_asc" onclick="selectSort('nama_asc')"
                                 class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                Nama A-Z<span class="material-symbols-outlined text-[18px] text-gold-accent sort-check">check</span>
+                                {{ __('Nama A-Z') }}<span class="material-symbols-outlined text-[18px] text-gold-accent sort-check">check</span>
                             </button>
                             <button type="button" role="option" aria-selected="false" data-sort="nama_desc" onclick="selectSort('nama_desc')"
                                 class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                Nama Z-A<span class="material-symbols-outlined text-[18px] text-gold-accent sort-check hidden">check</span>
+                                {{ __('Nama Z-A') }}<span class="material-symbols-outlined text-[18px] text-gold-accent sort-check hidden">check</span>
                             </button>
                             <button type="button" role="option" aria-selected="false" data-sort="role" onclick="selectSort('role')"
                                 class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                Peran<span class="material-symbols-outlined text-[18px] text-gold-accent sort-check hidden">check</span>
+                                {{ __('Peran') }}<span class="material-symbols-outlined text-[18px] text-gold-accent sort-check hidden">check</span>
                             </button>
                             <button type="button" role="option" aria-selected="false" data-sort="status" onclick="selectSort('status')"
                                 class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                Status<span class="material-symbols-outlined text-[18px] text-gold-accent sort-check hidden">check</span>
+                                {{ __('Status') }}<span class="material-symbols-outlined text-[18px] text-gold-accent sort-check hidden">check</span>
                             </button>
                         </div>
                     </div>
@@ -175,8 +175,8 @@
             <div class="border-t border-muted-border/60 pt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="flex flex-wrap gap-2 items-center" data-filter-group="role">
                     <span class="text-gold-accent material-symbols-outlined text-[16px]">badge</span>
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest self-center mr-1">Peran:</span>
-                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide active" data-filter="role" data-value="">Semua</button>
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest self-center mr-1">{{ __('Peran:') }}</span>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide active" data-filter="role" data-value="">{{ __('Semua') }}</button>
                     @foreach ($roles as $role)
                         <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="role" data-value="{{ $role->nama_role }}">{{ $role->nama_role }}</button>
                     @endforeach
@@ -184,11 +184,11 @@
 
                 <div class="flex flex-wrap gap-2 items-center" data-filter-group="status">
                     <span class="text-gold-accent material-symbols-outlined text-[16px]">toggle_on</span>
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest self-center mr-1">Status:</span>
-                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide active" data-filter="status" data-value="">Semua</button>
-                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="status" data-value="aktif">Aktif</button>
-                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="status" data-value="nonaktif">Non-aktif</button>
-                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="status" data-value="suspend">Suspend</button>
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest self-center mr-1">{{ __('Status:') }}</span>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide active" data-filter="status" data-value="">{{ __('Semua') }}</button>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="status" data-value="aktif">{{ __('Aktif') }}</button>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="status" data-value="nonaktif">{{ __('Non-aktif') }}</button>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="status" data-value="suspend">{{ __('Suspend') }}</button>
                 </div>
             </div>
         </div>
@@ -198,18 +198,18 @@
     <section class="rise rise-d2">
         <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
             <div class="flex items-center gap-3">
-                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Pengguna</h2>
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Daftar Pengguna') }}</h2>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">
                     <span class="material-symbols-outlined text-[14px]">group</span>
                     {{ $users->total() }} pengguna
                 </span>
             </div>
-            <div class="inline-flex items-center gap-1 p-1 rounded-lg bg-surface-container border border-muted-border" id="view-toggle" role="tablist" aria-label="Mode tampilan">
+            <div class="inline-flex items-center gap-1 p-1 rounded-lg bg-surface-container border border-muted-border" id="view-toggle" role="tablist" aria-label="{{ __('Mode tampilan') }}">
                 <button type="button" data-view="kartu" class="view-toggle-btn inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md font-label-sm text-[11px] uppercase tracking-widest transition-colors" role="tab">
-                    <span class="material-symbols-outlined text-[16px]">grid_view</span> Kartu
+                    <span class="material-symbols-outlined text-[16px]">grid_view</span> {{ __('Kartu') }}
                 </button>
                 <button type="button" data-view="tabel" class="view-toggle-btn inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md font-label-sm text-[11px] uppercase tracking-widest transition-colors" role="tab">
-                    <span class="material-symbols-outlined text-[16px]">table_rows</span> Tabel
+                    <span class="material-symbols-outlined text-[16px]">table_rows</span> {{ __('Tabel') }}
                 </button>
             </div>
         </div>
@@ -244,25 +244,25 @@
                                 <span class="role-badge inline-flex px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide">{{ $u->role->nama_role ?? '-' }}</span>
                                 @if ($u->status === \App\Models\User::STATUS_AKTIF)
                                     <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 text-[9px] font-bold uppercase">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-success status-dot-pulse"></span>Aktif
+                                        <span class="w-1.5 h-1.5 rounded-full bg-success status-dot-pulse"></span>{{ __('Aktif') }}
                                     </span>
                                 @elseif ($u->status === \App\Models\User::STATUS_SUSPEND)
-                                    <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Suspend</span>
+                                    <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">{{ __('Suspend') }}</span>
                                 @else
-                                    <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Non-aktif</span>
+                                    <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">{{ __('Non-aktif') }}</span>
                                 @endif
                                 @if ($u->email_verified_at)
                                     <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-success/10 text-success text-[9px] font-bold uppercase border border-success/20">
-                                        <span class="material-symbols-outlined text-[12px]">verified</span>Verified
+                                        <span class="material-symbols-outlined text-[12px]">verified</span>{{ __('Verified') }}
                                     </span>
                                 @else
                                     <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">
-                                        <span class="material-symbols-outlined text-[12px]">email</span>Belum Verified
+                                        <span class="material-symbols-outlined text-[12px]">email</span>{{ __('Belum Verified') }}
                                     </span>
                                 @endif
                             </div>
                         </div>
-                        <button type="button" onclick="event.stopPropagation(); openEditModal(this.closest('[data-id]'))" class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-gold-accent" title="Edit">
+                        <button type="button" onclick="event.stopPropagation(); openEditModal(this.closest('[data-id]'))" class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-gold-accent" title="{{ __('Edit') }}">
                             <span class="material-symbols-outlined text-[18px]">edit</span>
                         </button>
                     </div>
@@ -271,7 +271,7 @@
                             <span class="material-symbols-outlined text-[14px] shrink-0">key</span>
                             @if ($u->password)
                                 <span class="font-mono break-all" title="{{ $u->password }}">{{ $u->password }}</span>
-                                <button type="button" onclick="event.stopPropagation(); copyPassword(this)" data-pw="{{ $u->password }}" class="hover:text-gold-accent transition-colors shrink-0 ml-auto" title="Salin password (hash DB)">
+                                <button type="button" onclick="event.stopPropagation(); copyPassword(this)" data-pw="{{ $u->password }}" class="hover:text-gold-accent transition-colors shrink-0 ml-auto" title="{{ __('Salin password (hash DB)') }}">
                                     <span class="material-symbols-outlined text-[14px]">content_copy</span>
                                 </button>
                             @else
@@ -283,7 +283,7 @@
                                 <span class="material-symbols-outlined text-[14px]">call</span>
                                 {{ $u->nomor_telepon ?? 'No. telepon -' }}
                             </span>
-                            <button type="button" onclick="event.stopPropagation(); openHapusModal(this.closest('[data-id]'))" class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-lg hover:bg-error/10 text-on-surface-variant hover:text-error" title="Hapus">
+                            <button type="button" onclick="event.stopPropagation(); openHapusModal(this.closest('[data-id]'))" class="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-lg hover:bg-error/10 text-on-surface-variant hover:text-error" title="{{ __('Hapus') }}">
                                 <span class="material-symbols-outlined text-[18px]">delete_outline</span>
                             </button>
                         </div>
@@ -294,7 +294,7 @@
                     <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mx-auto mb-4">
                         <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">group_off</span>
                     </div>
-                    <p class="text-on-surface-variant font-body-md text-sm">Tidak ada pengguna ditemukan.</p>
+                    <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada pengguna ditemukan.') }}</p>
                 </div>
             @endforelse
             {{-- Empty state saat filter tidak cocok (disembunyikan bila ada hasil) --}}
@@ -302,8 +302,8 @@
                 <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mx-auto mb-4">
                     <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada pengguna yang cocok dengan filter.</p>
-                <button type="button" onclick="resetUserFilters()" class="mt-3 px-5 py-2 rounded-lg border border-gold-accent/40 text-gold-accent font-label-sm text-[11px] uppercase tracking-widest hover:bg-gold-accent/10 transition-colors">Reset Filter</button>
+                <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada pengguna yang cocok dengan filter.') }}</p>
+                <button type="button" onclick="resetUserFilters()" class="mt-3 px-5 py-2 rounded-lg border border-gold-accent/40 text-gold-accent font-label-sm text-[11px] uppercase tracking-widest hover:bg-gold-accent/10 transition-colors">{{ __('Reset Filter') }}</button>
             </div>
         </div>
 
@@ -313,14 +313,14 @@
                 <table class="w-full text-left border-collapse premium-table min-w-[900px]">
                     <thead>
                         <tr class="border-b border-muted-border bg-surface-container-low/50">
-                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap text-center w-14">No.</th>
-                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Pengguna</th>
-                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Telepon</th>
-                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Password</th>
-                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Peran</th>
-                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Status</th>
-                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Verifikasi</th>
-                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap text-right">Aksi</th>
+                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap text-center w-14">{{ __('No.') }}</th>
+                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">{{ __('Pengguna') }}</th>
+                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">{{ __('Telepon') }}</th>
+                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">{{ __('Password') }}</th>
+                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">{{ __('Peran') }}</th>
+                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">{{ __('Status') }}</th>
+                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">{{ __('Verifikasi') }}</th>
+                            <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap text-right">{{ __('Aksi') }}</th>
                         </tr>
                     </thead>
                     <tbody id="user-tbody">
@@ -358,7 +358,7 @@
                                     <div class="inline-flex items-center gap-1.5 max-w-[240px]">
                                         @if ($u->password)
                                             <span class="font-mono text-xs text-on-surface whitespace-nowrap overflow-hidden text-ellipsis" title="{{ $u->password }}">{{ $u->password }}</span>
-                                            <button type="button" onclick="event.stopPropagation(); copyPassword(this)" data-pw="{{ $u->password }}" class="text-on-surface-variant hover:text-gold-accent transition-colors shrink-0" title="Salin password (hash DB)">
+                                            <button type="button" onclick="event.stopPropagation(); copyPassword(this)" data-pw="{{ $u->password }}" class="text-on-surface-variant hover:text-gold-accent transition-colors shrink-0" title="{{ __('Salin password (hash DB)') }}">
                                                 <span class="material-symbols-outlined text-[14px]">content_copy</span>
                                             </button>
                                         @else
@@ -370,31 +370,31 @@
                                 <td class="p-4">
                                     @if ($u->status === \App\Models\User::STATUS_AKTIF)
                                         <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 text-[9px] font-bold uppercase">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-success status-dot-pulse"></span>Aktif
+                                            <span class="w-1.5 h-1.5 rounded-full bg-success status-dot-pulse"></span>{{ __('Aktif') }}
                                         </span>
                                     @elseif ($u->status === \App\Models\User::STATUS_SUSPEND)
-                                        <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Suspend</span>
+                                        <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">{{ __('Suspend') }}</span>
                                     @else
-                                        <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Non-aktif</span>
+                                        <span class="inline-flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">{{ __('Non-aktif') }}</span>
                                     @endif
                                 </td>
                                 <td class="p-4">
                                     @if ($u->email_verified_at)
                                         <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-success/10 text-success text-[9px] font-bold uppercase border border-success/20">
-                                            <span class="material-symbols-outlined text-[12px]">verified</span>Verified
+                                            <span class="material-symbols-outlined text-[12px]">verified</span>{{ __('Verified') }}
                                         </span>
                                     @else
                                         <span class="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">
-                                            <span class="material-symbols-outlined text-[12px]">email</span>Belum Verified
+                                            <span class="material-symbols-outlined text-[12px]">email</span>{{ __('Belum Verified') }}
                                         </span>
                                     @endif
                                 </td>
                                 <td class="p-4">
                                     <div class="inline-flex items-center gap-1 justify-end">
-                                        <button type="button" onclick="event.stopPropagation(); openEditModal(this.closest('[data-id]'))" class="p-2 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-gold-accent transition-colors" title="Edit">
+                                        <button type="button" onclick="event.stopPropagation(); openEditModal(this.closest('[data-id]'))" class="p-2 rounded-lg hover:bg-surface-container text-on-surface-variant hover:text-gold-accent transition-colors" title="{{ __('Edit') }}">
                                             <span class="material-symbols-outlined text-[18px]">edit</span>
                                         </button>
-                                        <button type="button" onclick="event.stopPropagation(); openHapusModal(this.closest('[data-id]'))" class="p-2 rounded-lg hover:bg-error/10 text-on-surface-variant hover:text-error transition-colors" title="Hapus">
+                                        <button type="button" onclick="event.stopPropagation(); openHapusModal(this.closest('[data-id]'))" class="p-2 rounded-lg hover:bg-error/10 text-on-surface-variant hover:text-error transition-colors" title="{{ __('Hapus') }}">
                                             <span class="material-symbols-outlined text-[18px]">delete_outline</span>
                                         </button>
                                     </div>
@@ -406,7 +406,7 @@
                                     <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mx-auto mb-4">
                                         <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">group_off</span>
                                     </div>
-                                    <p class="text-on-surface-variant font-body-md text-sm">Tidak ada pengguna ditemukan.</p>
+                                    <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada pengguna ditemukan.') }}</p>
                                 </td>
                             </tr>
                         @endforelse
@@ -415,8 +415,8 @@
                                 <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mx-auto mb-4">
                                     <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
                                 </div>
-                                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada pengguna yang cocok dengan filter.</p>
-                                <button type="button" onclick="resetUserFilters()" class="mt-3 px-5 py-2 rounded-lg border border-gold-accent/40 text-gold-accent font-label-sm text-[11px] uppercase tracking-widest hover:bg-gold-accent/10 transition-colors">Reset Filter</button>
+                                <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada pengguna yang cocok dengan filter.') }}</p>
+                                <button type="button" onclick="resetUserFilters()" class="mt-3 px-5 py-2 rounded-lg border border-gold-accent/40 text-gold-accent font-label-sm text-[11px] uppercase tracking-widest hover:bg-gold-accent/10 transition-colors">{{ __('Reset Filter') }}</button>
                             </td>
                         </tr>
                     </tbody>
@@ -438,7 +438,7 @@
             <button type="button" id="drawer-back" onclick="onDrawerBack()" class="hidden items-center justify-center shrink-0 w-8 h-8 rounded-lg hover:bg-surface-container transition-colors text-on-surface-variant hover:text-gold-accent">
                 <span class="material-symbols-outlined text-[20px]">arrow_back</span>
             </button>
-            <h3 class="font-title-md text-title-md text-on-surface premium-heading">Detail Pengguna</h3>
+            <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Detail Pengguna') }}</h3>
         </div>
         <button type="button" onclick="closeUserDetail()" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
     </div>
@@ -460,32 +460,32 @@
         </div>
 
         <div id="drawer-toko-section" class="space-y-3 hidden">
-            <h5 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Toko yang Dimiliki</h5>
+            <h5 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">{{ __('Toko yang Dimiliki') }}</h5>
             <div id="drawer-toko-list" class="space-y-3"></div>
-            <p id="drawer-no-toko" class="text-on-surface-variant/60 text-sm italic hidden">Belum memiliki toko</p>
+            <p id="drawer-no-toko" class="text-on-surface-variant/60 text-sm italic hidden">{{ __('Belum memiliki toko') }}</p>
         </div>
 
         <div id="drawer-penugasan-section" class="space-y-3 hidden">
-            <h5 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Karyawan di Toko Milik Owner</h5>
+            <h5 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">{{ __('Karyawan di Toko Milik Owner') }}</h5>
             <div id="drawer-penugasan-list" class="space-y-3"></div>
-            <p id="drawer-no-penugasan" class="text-on-surface-variant/60 text-sm italic hidden">Belum ditugaskan ke toko manapun</p>
+            <p id="drawer-no-penugasan" class="text-on-surface-variant/60 text-sm italic hidden">{{ __('Belum ditugaskan ke toko manapun') }}</p>
             <div id="drawer-warehouses-wrap" class="hidden space-y-2 pt-2 border-t border-muted-border/50">
-                <p class="text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">Penugasan Gudang</p>
+                <p class="text-[10px] font-label-sm text-on-surface-variant uppercase tracking-widest">{{ __('Penugasan Gudang') }}</p>
                 <div id="drawer-warehouses-list" class="space-y-2"></div>
             </div>
         </div>
 
         <div class="space-y-3">
-            <h5 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">Aktivitas Terbaru</h5>
+            <h5 class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">{{ __('Aktivitas Terbaru') }}</h5>
             <div id="drawer-aktivitas-list" class="space-y-3"></div>
-            <p id="drawer-no-aktivitas" class="text-on-surface-variant/60 text-sm italic hidden">Belum ada aktivitas</p>
+            <p id="drawer-no-aktivitas" class="text-on-surface-variant/60 text-sm italic hidden">{{ __('Belum ada aktivitas') }}</p>
         </div>
 
         <div class="space-y-3 pt-4 border-t border-muted-border">
             <form method="POST" action="" id="role-form" class="space-y-3">
                 @csrf
                 @method('PUT')
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">Ubah Peran</label>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">{{ __('Ubah Peran') }}</label>
                 <input type="hidden" name="role_id" id="drawer-role-value" value="" />
                 <div class="relative" id="role-dd">
                     <button type="button" id="role-trigger" onclick="toggleDropdown('role')" aria-haspopup="listbox" aria-expanded="false"
@@ -503,13 +503,13 @@
                         @endforeach
                     </div>
                 </div>
-                <button type="submit" class="w-full py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Simpan Perubahan</button>
+                <button type="submit" class="w-full py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">{{ __('Simpan Perubahan') }}</button>
             </form>
 
             <form method="POST" action="" id="nonaktifkan-form" onsubmit="return openConfirmNonaktifkan(event)">
                 @csrf
                 @method('PUT')
-                <button type="submit" id="nonaktifkan-btn" class="w-full py-3 border border-error text-error font-label-sm text-[11px] uppercase tracking-widest rounded hover:bg-error/10 transition-colors">Nonaktifkan</button>
+                <button type="submit" id="nonaktifkan-btn" class="w-full py-3 border border-error text-error font-label-sm text-[11px] uppercase tracking-widest rounded hover:bg-error/10 transition-colors">{{ __('Nonaktifkan') }}</button>
             </form>
         </div>
     </div>
@@ -526,13 +526,13 @@
     'dataModal' => true,
 ])
     <div class="p-6">
-        <h3 id="confirm-nonaktifkan-title" class="font-title-md text-title-md text-on-surface mb-2 text-center">Nonaktifkan Pengguna?</h3>
-        <p id="confirm-nonaktifkan-desc" class="text-on-surface-variant text-sm text-center mb-6">Status akan diubah dan efek cascade akan dijelaskan di sini.</p>
+        <h3 id="confirm-nonaktifkan-title" class="font-title-md text-title-md text-on-surface mb-2 text-center">{{ __('Nonaktifkan Pengguna?') }}</h3>
+        <p id="confirm-nonaktifkan-desc" class="text-on-surface-variant text-sm text-center mb-6">{{ __('Status akan diubah dan efek cascade akan dijelaskan di sini.') }}</p>
     </div>
     @slot('footer')
         <div class="flex space-x-3">
-            <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeConfirmNonaktifkan()">Batal</button>
-            <button type="button" id="confirm-nonaktifkan-submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">Ya, Lanjutkan</button>
+            <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeConfirmNonaktifkan()">{{ __('Batal') }}</button>
+            <button type="button" id="confirm-nonaktifkan-submit" class="flex-1 bg-error text-on-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:opacity-90 transition-opacity rounded-lg btn-premium">{{ __('Ya, Lanjutkan') }}</button>
         </div>
     @endslot
 @endcomponent
@@ -552,20 +552,20 @@
     ])
         <div class="p-6 space-y-5">
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-nama">Nama Lengkap</label>
-                <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-nama" name="nama_lengkap" type="text" maxlength="150" placeholder="Masukkan nama lengkap" required />
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-nama">{{ __('Nama Lengkap') }}</label>
+                <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-nama" name="nama_lengkap" type="text" maxlength="150" placeholder="{{ __('Masukkan nama lengkap') }}" required />
             </div>
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-email">Email</label>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-email">{{ __('Email') }}</label>
                 <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-email" name="email" type="email" maxlength="150" placeholder="nama@email.com" required />
             </div>
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-phone">Nomor Telepon</label>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-phone">{{ __('Nomor Telepon') }}</label>
                 <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-phone" name="nomor_telepon" type="tel" maxlength="30" placeholder="+62 812-3456-7890" />
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-role">Peran</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-role">{{ __('Peran') }}</label>
                     <input type="hidden" name="role_id" id="form-role-value" value="{{ $roles->first()?->role_id }}" />
                     <div class="relative" id="form-role-dd">
                         <button type="button" id="form-role-trigger" onclick="toggleDropdown('form-role')" aria-haspopup="listbox" aria-expanded="false"
@@ -585,12 +585,12 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-status">Status</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-status">{{ __('Status') }}</label>
                     <input type="hidden" name="status" id="form-status-value" value="aktif" />
                     <div class="relative" id="form-status-dd">
                         <button type="button" id="form-status-trigger" onclick="toggleDropdown('form-status')" aria-haspopup="listbox" aria-expanded="false"
                             class="w-full flex items-center justify-between gap-3 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent transition-colors cursor-pointer text-left">
-                            <span id="form-status-label">Aktif</span>
+                            <span id="form-status-label">{{ __('Aktif') }}</span>
                             <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" id="form-status-chevron">expand_more</span>
                         </button>
                         <div id="form-status-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
@@ -607,20 +607,20 @@
             </div>
             <div id="password-fields">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-password">Password</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-password" name="password" type="password" minlength="8" placeholder="Minimal 8 karakter" />
-                    <p id="form-password-hint" class="text-on-surface-variant/60 text-xs mt-1 hidden">Kosongkan jika tidak ingin mengubah password.</p>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-password">{{ __('Password') }}</label>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-password" name="password" type="password" minlength="8" placeholder="{{ __('Minimal 8 karakter') }}" />
+                    <p id="form-password-hint" class="text-on-surface-variant/60 text-xs mt-1 hidden">{{ __('Kosongkan jika tidak ingin mengubah password.') }}</p>
                 </div>
                 <div class="mt-4">
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-password-confirm">Konfirmasi Password</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-password-confirm" name="password_confirmation" type="password" placeholder="Ulangi password" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="form-password-confirm">{{ __('Konfirmasi Password') }}</label>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="form-password-confirm" name="password_confirmation" type="password" placeholder="{{ __('Ulangi password') }}" />
                 </div>
             </div>
             </div>
         @slot('footer')
             <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
-                <button type="button" onclick="closeUserModal()" class="btn-modal btn-modal-ghost">Batal</button>
-                <button type="submit" id="user-submit-btn" class="btn-modal btn-modal-primary">Tambah Pengguna</button>
+                <button type="button" onclick="closeUserModal()" class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                <button type="submit" id="user-submit-btn" class="btn-modal btn-modal-primary">{{ __('Tambah Pengguna') }}</button>
             </div>
         @endslot
     @endcomponent
@@ -637,13 +637,13 @@
         'dataModal' => true,
     ])
         <div class="p-6">
-            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Hapus Pengguna</h3>
-            <p class="text-on-surface-variant text-sm text-center mb-6">Pengguna <span id="hapus-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen dari sistem.</p>
+            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">{{ __('Hapus Pengguna') }}</h3>
+            <p class="text-on-surface-variant text-sm text-center mb-6">{{ __('Pengguna') }} <span id="hapus-nama" class="font-bold text-on-surface">-</span> {{ __('akan dihapus permanen dari sistem.') }}</p>
     </div>
     @slot('footer')
         <div class="flex space-x-3">
-            <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeHapusModal()">Batal</button>
-            <button type="submit" class="flex-1 btn-modal btn-modal-danger">Ya, Hapus</button>
+            <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeHapusModal()">{{ __('Batal') }}</button>
+            <button type="submit" class="flex-1 btn-modal btn-modal-danger">{{ __('Ya, Hapus') }}</button>
         </div>
     @endslot
     @endcomponent
@@ -973,7 +973,7 @@
         return fetch(urls.detail(userId))
             .then(r => { if (!r.ok) throw r; return r.json(); })
             .then(data => renderDrawer(data))
-            .catch(() => { window.showRalivaToast && showRalivaToast('Gagal memuat detail pengguna', 'error'); });
+            .catch(() => { window.showRalivaToast && showRalivaToast('{{ __('Gagal memuat detail pengguna') }}', 'error'); });
     }
 
     function openKaryawanDetail(userId) {
@@ -1042,9 +1042,9 @@
     /* ── Create / Edit Modal ── */
     function openCreateModal() {
         isEditMode = false;
-        document.getElementById('user-modal-title').textContent = 'Tambah Pengguna Baru';
-        document.getElementById('user-modal-sub').textContent = 'Lengkapi data untuk membuat akun baru.';
-        document.getElementById('user-submit-btn').textContent = 'Tambah Pengguna';
+        document.getElementById('user-modal-title').textContent = '{{ __('Tambah Pengguna Baru') }}';
+        document.getElementById('user-modal-sub').textContent = '{{ __('Lengkapi data untuk membuat akun baru.') }}';
+        document.getElementById('user-submit-btn').textContent = '{{ __('Tambah Pengguna') }}';
         document.getElementById('user-form').action = urls.store;
         document.getElementById('user-form').querySelector('[name="_method"]')?.remove();
 
@@ -1066,9 +1066,9 @@
         isEditMode = true;
         const d = card.dataset;
 
-        document.getElementById('user-modal-title').textContent = 'Edit Pengguna';
-        document.getElementById('user-modal-sub').textContent = 'Perbarui data pengguna "' + d.name + '".';
-        document.getElementById('user-submit-btn').textContent = 'Simpan Perubahan';
+        document.getElementById('user-modal-title').textContent = '{{ __('Edit Pengguna') }}';
+        document.getElementById('user-modal-sub').textContent = @js(__('Perbarui data pengguna ":ph1".')).replace(':ph1', d.name);
+        document.getElementById('user-submit-btn').textContent = '{{ __('Simpan Perubahan') }}';
 
         const form = document.getElementById('user-form');
         form.action = urls.update(d.id);
@@ -1302,31 +1302,31 @@
         const modal = document.getElementById('confirmNonaktifkanModal');
 
         if (isAktif) {
-            titleEl.textContent = 'Nonaktifkan Pengguna?';
+            titleEl.textContent = '{{ __('Nonaktifkan Pengguna?') }}';
             if (isOwner) {
                 const info = tokoCount > 0 ? tokoCount + ' toko' : 'toko';
-                descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> akan menjadi <span class="font-bold text-error">nonaktif</span>. Jika ini akun <span class="font-bold">Owner</span>, <span class="font-bold">' + info + ' & staff terkait akan ikut dinonaktifkan</span> (bisa diaktifkan lagi).';
+                descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> {{ __('akan menjadi') }} <span class="font-bold text-error">nonaktif</span>{{ __('. Jika ini akun') }} <span class="font-bold">{{ __('Owner') }}</span>, <span class="font-bold">' + info + ' & staff terkait akan ikut dinonaktifkan</span> (bisa diaktifkan lagi).';
             } else {
-                descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> akan menjadi <span class="font-bold text-error">nonaktif</span>.';
+                descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> {{ __('akan menjadi') }} <span class="font-bold text-error">nonaktif</span>.';
             }
             iconWrap.className = 'w-12 h-12 rounded-full bg-error/25 border border-error/30 flex items-center justify-center';
             iconSym.className = 'material-symbols-outlined text-[24px] text-error';
             iconSym.textContent = 'block';
             submitBtn.className = 'flex-1 btn-modal btn-modal-danger';
-            submitBtn.textContent = 'Ya, Nonaktifkan';
+            submitBtn.textContent = '{{ __('Ya, Nonaktifkan') }}';
         } else {
-            titleEl.textContent = 'Aktifkan Pengguna?';
+            titleEl.textContent = '{{ __('Aktifkan Pengguna?') }}';
             if (isOwner) {
                 const info = tokoCount > 0 ? tokoCount + ' toko' : 'toko';
-                descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> akan menjadi <span class="font-bold text-success">aktif</span>. Jika ini akun <span class="font-bold">Owner</span>, <span class="font-bold">' + info + ' & staff terkait akan ikut diaktifkan</span>.';
+                descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> {{ __('akan menjadi') }} <span class="font-bold text-success">aktif</span>{{ __('. Jika ini akun') }} <span class="font-bold">{{ __('Owner') }}</span>, <span class="font-bold">' + info + ' & staff terkait akan ikut diaktifkan</span>.';
             } else {
-                descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> akan menjadi <span class="font-bold text-success">aktif</span>.';
+                descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> {{ __('akan menjadi') }} <span class="font-bold text-success">aktif</span>.';
             }
             iconWrap.className = 'w-12 h-12 rounded-full bg-success/25 border border-success/30 flex items-center justify-center';
             iconSym.className = 'material-symbols-outlined text-[24px] text-success';
             iconSym.textContent = 'check_circle';
             submitBtn.className = 'flex-1 btn-modal btn-modal-success';
-            submitBtn.textContent = 'Ya, Aktifkan';
+            submitBtn.textContent = '{{ __('Ya, Aktifkan') }}';
         }
 
         _pendingNonaktifkanForm = form;

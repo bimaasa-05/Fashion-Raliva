@@ -82,7 +82,7 @@ class KomisiGlobalController extends Controller
 
         if ($nilaiBaru === $nilaiLama) {
             return back()->with('toast', [
-                'message' => 'Tidak ada perubahan — tarif komisi sudah '.number_format((float) $nilaiBaru, 0, ',', '.').'%.',
+                'message' => __('Tidak ada perubahan — tarif komisi sudah :ph1%.', ['ph1' => number_format((float) $nilaiBaru, 0, ',', '.')]),
                 'icon' => 'info',
             ]);
         }
@@ -101,7 +101,7 @@ class KomisiGlobalController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Tarif Komisi Diubah', sprintf('Tarif komisi global menjadi %s%%.', number_format((float) $nilaiBaru, 0, ',', '.')), route('superadmin.komisi-global'));
 
         return back()->with('toast', [
-            'message' => 'Tarif komisi global berhasil diperbarui menjadi '.number_format((float) $nilaiBaru, 0, ',', '.').'%.',
+            'message' => __('Tarif komisi global berhasil diperbarui menjadi :ph1%.', ['ph1' => number_format((float) $nilaiBaru, 0, ',', '.')]),
             'icon' => 'task_alt',
         ]);
     }

@@ -45,7 +45,7 @@ trait SheetRaliva
 
         if ($this->judulSheet !== '') {
             $sheet->mergeCells("A1:{$lastCol}1");
-            $sheet->setCellValue('A1', $this->judulSheet);
+            $sheet->setCellValue('A1', __($this->judulSheet));
             $sheet->getStyle('A1')->applyFromArray([
                 'font' => ['bold' => true, 'size' => 14, 'color' => ['rgb' => 'C9A24D']],
                 'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
@@ -54,7 +54,7 @@ trait SheetRaliva
 
             if ($this->subtitleSheet !== '') {
                 $sheet->mergeCells("A2:{$lastCol}2");
-                $sheet->setCellValue('A2', $this->subtitleSheet);
+                $sheet->setCellValue('A2', __($this->subtitleSheet));
                 $sheet->getStyle('A2')->applyFromArray([
                     'font' => ['bold' => true, 'size' => 10, 'color' => ['rgb' => '6B7280']],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],

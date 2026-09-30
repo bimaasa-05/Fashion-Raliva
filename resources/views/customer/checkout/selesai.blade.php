@@ -357,7 +357,7 @@
                         <span class="text-emerald-600 font-medium">Rp {{ number_format((float)$payment->jumlah_saldo, 0,',','.') }}</span>
                     </div>
                     <div class="flex justify-between text-sm">
-                        <span class="text-on-surface-variant">{{ __('Transfer (') . ($payment->paymentMethod?->nama_metode ?? __('Metode Kedua')) . ')' }}</span>
+                        <span class="text-on-surface-variant">{{ __('Transfer (:ph1)', ['ph1' => $payment->paymentMethod?->nama_metode ?? __('Metode Kedua')]) }}</span>
                         <span class="text-on-surface">Rp {{ number_format((float)$payment->sisa_transfer, 0,',','.') }}</span>
                     </div>
                     @endif
@@ -446,7 +446,7 @@
                 @endif
                 @if ((float) $payment->jumlah_saldo > 0)
                 <div class="co-bb-row"><span>{{ __('Dibayar Saldo') }}</span><span class="text-emerald-600">Rp {{ number_format((float)$payment->jumlah_saldo, 0, ',', '.') }}</span></div>
-                <div class="co-bb-row"><span>{{ __('Transfer (') . ($payment->paymentMethod?->nama_metode ?? __('Metode Kedua')) . ')' }}</span><span>Rp {{ number_format((float)$payment->sisa_transfer, 0, ',', '.') }}</span></div>
+                <div class="co-bb-row"><span>{{ __('Transfer (:ph1)', ['ph1' => $payment->paymentMethod?->nama_metode ?? __('Metode Kedua')]) }}</span><span>Rp {{ number_format((float)$payment->sisa_transfer, 0, ',', '.') }}</span></div>
                 @endif
                 <div class="co-bb-row total"><span>{{ __('Total Dibayar') }}</span><span>Rp {{ number_format((float)$payment->jumlah, 0, ',', '.') }}</span></div>
             </div>

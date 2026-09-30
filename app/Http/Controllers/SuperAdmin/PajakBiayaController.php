@@ -56,7 +56,7 @@ class PajakBiayaController extends Controller
 
         if ($nilaiBaru === $nilaiLama) {
             return back()->with('toast', [
-                'message' => 'Tidak ada perubahan — tarif pajak sudah '.number_format((float) $nilaiBaru, 0, ',', '.').'%.',
+                'message' => __('Tidak ada perubahan — tarif pajak sudah :ph1%.', ['ph1' => number_format((float) $nilaiBaru, 0, ',', '.')]),
                 'icon' => 'info',
             ]);
         }
@@ -75,7 +75,7 @@ class PajakBiayaController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Tarif Pajak Diubah', sprintf('Tarif pajak menjadi %s%%.', number_format((float) $nilaiBaru, 0, ',', '.')), route('superadmin.pajak-biaya'));
 
         return back()->with('toast', [
-            'message' => 'Tarif pajak berhasil diperbarui menjadi '.number_format((float) $nilaiBaru, 0, ',', '.').'%.',
+            'message' => __('Tarif pajak berhasil diperbarui menjadi :ph1%.', ['ph1' => number_format((float) $nilaiBaru, 0, ',', '.')]),
             'icon' => 'task_alt',
         ]);
     }

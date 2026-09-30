@@ -1,10 +1,10 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Data Produk')
+@section('title', __('Data Produk'))
 
-@section('header-title', 'Data Produk')
-@section('header-badge', 'Lihat')
-@section('header-subtitle', 'Lihat katalog produk dari seluruh toko di platform.')
+@section('header-title', __('Data Produk'))
+@section('header-badge', __('Lihat'))
+@section('header-subtitle', __('Lihat katalog produk dari seluruh toko di platform.'))
 
 @section('content')
 <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
@@ -14,20 +14,20 @@
     </span>
     <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
         <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
-        Katalog produk diperbarui real-time
+        {{ __('Katalog produk diperbarui real-time') }}
     </span>
 </div>
 <section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Katalog Produk Platform</h2>
+        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Katalog Produk Platform') }}</h2>
         <div class="flex items-center gap-3 flex-wrap">
             <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
                 <span class="material-symbols-outlined text-[18px]">tune</span>
-                Filter
+                {{ __('Filter') }}
                 <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
             </button>
             <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">
-                <span class="material-symbols-outlined text-[14px]">visibility</span> Mode Lihat
+                <span class="material-symbols-outlined text-[14px]">visibility</span> {{ __('Mode Lihat') }}
             </span>
         </div>
     </div>
@@ -37,7 +37,7 @@
         <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
             <div class="flex items-center gap-2 shrink-0">
                 <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Status') }}</span>
             </div>
             <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
             <div id="chip-group" class="flex flex-wrap gap-2">
@@ -56,7 +56,7 @@
         <div class="flex flex-col sm:flex-row sm:items-center gap-3">
             <div class="relative flex-1">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                <input id="produk-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama produk, toko, atau kategori..." />
+                <input id="produk-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="{{ __('Cari nama produk, toko, atau kategori...') }}" />
                 <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
                     <span class="material-symbols-outlined text-[20px]">close</span>
                 </button>
@@ -73,14 +73,14 @@
         <table class="w-full min-w-[950px] premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                    <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No.</th>
-                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Foto</th>
-                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Produk</th>
-                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Toko</th>
-                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Kategori</th>
-                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Tipe</th>
-                    <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">Harga</th>
-                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Status Moderasi</th>
+                    <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">{{ __('No.') }}</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Foto') }}</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Produk') }}</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Toko') }}</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Kategori') }}</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Tipe') }}</th>
+                    <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">{{ __('Harga') }}</th>
+                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Status Moderasi') }}</th>
                 </tr>
             </thead>
             <tbody class="font-body-md text-sm">
@@ -119,7 +119,7 @@
                                  data-status-label="{{ $statusLabel[0] }}"
                                  data-images='{{ json_encode($galImgs, JSON_UNESCAPED_SLASHES) }}'
                                  onclick="openProdukGallery(this)"
-                                 title="Lihat semua foto">
+                                 title="{{ __('Lihat semua foto') }}">
                                 @if($imgSrc)
                                     <img src="{{ $imgSrc }}" alt="{{ $produk->nama_produk }}" loading="lazy" class="w-full h-full object-cover pointer-events-none" />
                                     @if($imgCount > 1)
@@ -134,8 +134,8 @@
                             <span class="inline-flex items-center gap-1.5">
                                 {{ $produk->nama_produk }}
                                 @if ($produk->relationLoaded('adSlot') && $produk->adSlot)
-                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[9px] font-bold uppercase tracking-wider" title="Produk sedang tampil di slot iklan peringkat">
-                                        <span class="material-symbols-outlined text-[11px]">workspace_premium</span> Iklan
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[9px] font-bold uppercase tracking-wider" title="{{ __('Produk sedang tampil di slot iklan peringkat') }}">
+                                        <span class="material-symbols-outlined text-[11px]">workspace_premium</span> {{ __('Iklan') }}
                                     </span>
                                 @endif
                             </span>
@@ -148,14 +148,14 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="8" class="p-8 text-center text-on-surface-variant">Belum ada produk terdaftar di platform.</td>
+                        <td colspan="8" class="p-8 text-center text-on-surface-variant">{{ __('Belum ada produk terdaftar di platform.') }}</td>
                     </tr>
                 @endforelse
                 <tr id="empty-search" class="hidden">
                     <td colspan="8" class="p-8 text-center">
                         <div class="flex flex-col items-center gap-2">
                             <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
-                            <p class="text-on-surface-variant font-body-md text-sm">Tidak ada produk yang cocok.</p>
+                            <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada produk yang cocok.') }}</p>
                         </div>
                     </td>
                 </tr>
@@ -192,7 +192,7 @@
                          data-status-label="{{ $statusLabel[0] }}"
                          data-images='{{ json_encode($galImgsM, JSON_UNESCAPED_SLASHES) }}'
                          onclick="openProdukGallery(this)"
-                         title="Lihat semua foto">
+                         title="{{ __('Lihat semua foto') }}">
                         @if($imgSrcM)
                             <img src="{{ $imgSrcM }}" alt="{{ $produk->nama_produk }}" loading="lazy" class="w-full h-full object-cover pointer-events-none" />
                             @if($imgCountM > 1)
@@ -208,8 +208,8 @@
                         <span class="mt-1 inline-flex flex-wrap items-center gap-1.5">
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ ucfirst($produk->tipe_produk) }}</span>
                             @if ($produk->relationLoaded('adSlot') && $produk->adSlot)
-                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[9px] font-bold uppercase tracking-wider" title="Produk sedang tampil di slot iklan peringkat">
-                                    <span class="material-symbols-outlined text-[11px]">workspace_premium</span> Iklan
+                                <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[9px] font-bold uppercase tracking-wider" title="{{ __('Produk sedang tampil di slot iklan peringkat') }}">
+                                    <span class="material-symbols-outlined text-[11px]">workspace_premium</span> {{ __('Iklan') }}
                                 </span>
                             @endif
                         </span>
@@ -218,19 +218,19 @@
                 </div>
                 <dl class="space-y-2 font-body-md text-sm">
                     <div class="flex justify-between gap-3">
-                        <dt class="text-on-surface-variant">Kategori</dt>
+                        <dt class="text-on-surface-variant">{{ __('Kategori') }}</dt>
                         <dd class="text-on-surface text-right">{{ $produk->category->nama_kategori ?? '-' }}</dd>
                     </div>
                     <div class="flex justify-between gap-3">
-                        <dt class="text-on-surface-variant">Harga</dt>
+                        <dt class="text-on-surface-variant">{{ __('Harga') }}</dt>
                         <dd class="font-bold text-gold-accent text-right">Rp {{ number_format((float) $produk->harga_dasar, 0, ',', '.') }}</dd>
                     </div>
                 </dl>
             </article>
         @empty
-            <p class="text-center text-on-surface-variant py-10">Belum ada produk terdaftar di platform.</p>
+            <p class="text-center text-on-surface-variant py-10">{{ __('Belum ada produk terdaftar di platform.') }}</p>
         @endforelse
-        <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada produk yang cocok.</p>
+        <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">{{ __('Tidak ada produk yang cocok.') }}</p>
     </div>
 </section>
 @endsection
