@@ -50,7 +50,7 @@
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                     <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari produk..." class="raliva-search" />
                 </form>
-                <button type="button" data-modal-open="modal-form-produk" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
+                <button type="button" data-modal-open="{{ ($slotHabis ?? false) ? 'modal-slot-habis' : 'modal-form-produk' }}" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
                     <span class="material-symbols-outlined text-[18px]">add</span> Tambah
                 </button>
             </div>
@@ -1493,6 +1493,20 @@ function parseRibuanDecimal(raw) {
 
 
 // Modal open/close + scroll-lock ditangani terpusat di partials/ui-scripts (ralivaOpenModal).
+@if (request('slot_habis') || $errors->hasAny(['store_id', 'jumlah_slot', 'metode_pembayaran', 'file_bukti', 'alasan']))
+document.addEventListener('DOMContentLoaded', () => {
+    @if ($errors->hasAny(['store_id', 'jumlah_slot', 'metode_pembayaran', 'file_bukti', 'alasan']))
+        const target = document.getElementById('modal-slot-beli');
+    @else
+        const target = document.getElementById('modal-slot-habis');
+    @endif
+    if (target && window.ralivaOpenModal) window.ralivaOpenModal(target);
+});
+@endif
 </script>
+@endpush
+
+@push('modals')
+@include('Admin.partials.modal-slot')
 @endpush
 @endsection
