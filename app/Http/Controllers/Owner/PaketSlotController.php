@@ -13,6 +13,7 @@ use App\Models\StoreSlotSubscription;
 use App\Services\NotificationService;
 use App\Support\OwnerContext;
 use App\Support\SlotService;
+use App\Support\DokumenLegal;
 use Illuminate\Http\Request;
 
 class PaketSlotController extends Controller
@@ -77,6 +78,10 @@ class PaketSlotController extends Controller
         $storeId = OwnerContext::firstStoreId();
         if (! $storeId) {
             return back()->with('error', 'Anda belum memiliki toko.');
+        }
+
+        if (! DokumenLegal::satisfied($storeId)) {
+            return back()->withInput()->with('error', DokumenLegal::pesanKurang($storeId));
         }
 
         $data = $request->validate([
