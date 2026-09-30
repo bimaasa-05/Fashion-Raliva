@@ -132,10 +132,10 @@ class PengajuanTokoController extends Controller
             }
         });
 
-        $sa = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
+        $superAdmins = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
             ->where('status', User::STATUS_AKTIF)
-            ->first();
-        if ($sa) {
+            ->get();
+        foreach ($superAdmins as $sa) {
             Notification::create([
                 'user_id' => $sa->user_id,
                 'aktor_id' => $user->user_id,
@@ -190,10 +190,10 @@ class PengajuanTokoController extends Controller
             );
         });
 
-        $sa = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
+        $superAdmins = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))
             ->where('status', User::STATUS_AKTIF)
-            ->first();
-        if ($sa) {
+            ->get();
+        foreach ($superAdmins as $sa) {
             Notification::create([
                 'user_id' => $sa->user_id,
                 'aktor_id' => $user->user_id,
