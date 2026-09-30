@@ -69,6 +69,15 @@ class ProdukController extends Controller
         $sisaSlot = SlotService::availableSlots((int) $storeId);
         $pctSlot = SlotService::progress((int) $storeId);
 
+        // Syarat wajib popup Tambah Slot: minimal salah satu KTP / NIB / NPWP terverifikasi.
+        $dokLegalOk = $storeId ? \App\Support\DokumenLegal::satisfied((int) $storeId) : false;
+        $dokLegalAda = $storeId ? \App\Support\DokumenLegal::namaTersedia((int) $storeId) : '';
+
+        // Data form Kelola Slot di dalam popup (tanpa pindah halaman).
+        $metodeSlot = \App\Models\PaymentMethod::where('status', \App\Models\PaymentMethod::STATUS_AKTIF)
+            ->orderBy('nama_metode')->get(['payment_method_id', 'nama_metode']);
+        $hargaPerSlot = SlotService::hargaPerSlot();
+
         $counts = [
             'total' => Product::where('store_id', $storeId)->count(),
             'aktif' => Product::where('store_id', $storeId)->where('status', 'aktif')->count(),
@@ -83,7 +92,7 @@ class ProdukController extends Controller
             Product::STATUS_DRAFT => [Product::STATUS_DRAFT, Product::STATUS_PENDING],
         ];
 
-        return view('Owner.produk.index', compact('products', 'counts', 'totalSlot', 'usedSlot', 'sisaSlot', 'pctSlot', 'categories', 'categoryOptions', 'statusOptions'));
+        return view('Owner.produk.index', compact('products', 'counts', 'totalSlot', 'usedSlot', 'sisaSlot', 'pctSlot', 'categories', 'categoryOptions', 'statusOptions', 'dokLegalOk', 'dokLegalAda', 'metodeSlot', 'hargaPerSlot'));
     }
 
     public function update(Request $request, Product $product)
