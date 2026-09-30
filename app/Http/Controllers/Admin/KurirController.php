@@ -112,7 +112,7 @@ class KurirController extends Controller
     {
         $storeIds = AdminContext::assignedStoreIds();
         if (! $kurir->store_id || ! in_array($kurir->store_id, $storeIds, true)) {
-            abort(403, 'Hanya kurir milik toko yang bisa diubah. Kurir global dikelola SuperAdmin.');
+            abort(403, __('Hanya kurir milik toko yang bisa diubah. Kurir global dikelola SuperAdmin.'));
         }
 
         $data = $request->validate([
@@ -132,7 +132,7 @@ class KurirController extends Controller
     {
         $storeIds = AdminContext::assignedStoreIds();
         if (! $kurir->store_id || ! in_array($kurir->store_id, $storeIds, true)) {
-            abort(403, 'Hanya kurir milik toko yang bisa dihapus.');
+            abort(403, __('Hanya kurir milik toko yang bisa dihapus.'));
         }
         if ($kurir->shipments()->exists() || $kurir->services()->exists()) {
             return back()->with('error',__('Kurir tidak dapat dihapus karena masih memiliki layanan/pengiriman.'));
@@ -187,7 +187,7 @@ class KurirController extends Controller
     {
         $storeIds = AdminContext::assignedStoreIds();
         if (! $layanan->store_id || ! in_array($layanan->store_id, $storeIds, true)) {
-            abort(403, 'Hanya layanan milik toko yang bisa diubah.');
+            abort(403, __('Hanya layanan milik toko yang bisa diubah.'));
         }
 
         $data = $request->validate([
@@ -212,7 +212,7 @@ class KurirController extends Controller
     {
         $storeIds = AdminContext::assignedStoreIds();
         if (! $layanan->store_id || ! in_array($layanan->store_id, $storeIds, true)) {
-            abort(403, 'Hanya layanan milik toko yang bisa dihapus.');
+            abort(403, __('Hanya layanan milik toko yang bisa dihapus.'));
         }
         if ($layanan->shipments()->exists()) {
             return back()->with('error',__('Layanan tidak dapat dihapus karena sudah dipakai pengiriman.'));

@@ -14,7 +14,7 @@
                 'promo' => 'local_offer',
                 default => 'settings',
             },
-            'html' => '<span class="font-bold">' . e($n->user->nama_lengkap ?? '-') . '</span> — ' . $n->pesan,
+            'html' => '<span class="font-bold">' . e($n->user->nama_lengkap ?? '-') . '</span> — ' . __($n->pesan),
             'time' => $n->created_at->diffForHumans(),
         ])
         ->all();

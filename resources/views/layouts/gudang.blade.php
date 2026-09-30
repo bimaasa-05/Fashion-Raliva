@@ -155,7 +155,7 @@
                                 \App\Models\Notification::TIPE_PROMO => 'local_offer',
                                 default => 'notifications',
                             },
-                            'html' => $n->pesan,
+                            'html' => __($n->pesan),
                             'time' => $n->created_at?->diffForHumans() ?? '-',
                         ];
                     })->all() : [];

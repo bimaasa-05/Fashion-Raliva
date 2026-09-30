@@ -810,7 +810,7 @@ class DataPesananController extends Controller
     public function invoice(Order $pesanan)
     {
         if (! AdminContext::canAccessStore($pesanan->store_id)) {
-            abort(403, 'Pesanan ini di luar scope toko yang Anda tugaskan.');
+            abort(403, __('Pesanan ini di luar scope toko yang Anda tugaskan.'));
         }
 
         $pesanan->load([

@@ -415,7 +415,7 @@
             });
         });
 
-        /* ===== Raliva Motion â€” satu animasi entrance seragam ===== */
+        /* ===== Raliva Motion — satu animasi entrance seragam ===== */
         window.matchReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         const PROGRESS_COLORS = ['bg-secondary', 'bg-gold-accent', 'bg-deep-onyx'];

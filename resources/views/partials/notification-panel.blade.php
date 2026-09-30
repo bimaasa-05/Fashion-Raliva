@@ -31,7 +31,7 @@
                             'promo' => 'local_offer',
                             default => 'notifications',
                         };
-                        $itemHtml = '<span class="font-bold">'.e($item->judul).'</span> — '.e($item->pesan);
+                        $itemHtml = '<span class="font-bold">'.e(__($item->judul)).'</span> — '.e(__($item->pesan));
                         $itemTime = $item->created_at?->diffForHumans() ?? '-';
                         $itemTarget = $item->url;
                         $itemId = $item->getAttribute('notification_id');

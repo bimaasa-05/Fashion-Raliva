@@ -271,7 +271,7 @@ class LaporanController extends Controller
         $callback = function () use ($rows) {
             $out = fopen('php://output', 'w');
             fprintf($out, chr(0xEF) . chr(0xBB) . chr(0xBF)); // BOM for Excel UTF-8
-            fputcsv($out, ['Periode', 'Pesanan', 'Pendapatan', 'Refund', 'Pencairan']);
+            fputcsv($out, [__('Periode'), __('Pesanan'), __('Pendapatan'), __('Refund'), __('Pencairan')]);
             foreach ($rows as $r) {
                 fputcsv($out, [
                     $r[0],

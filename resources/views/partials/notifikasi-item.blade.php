@@ -20,9 +20,9 @@
     </div>
     <div class="flex-1 min-w-0">
         <p class="font-body-md text-sm text-on-surface {{ $notifUnread ? 'font-semibold' : '' }} notif-text truncate">
-            <span class="font-bold">{{ $item->judul }}</span>
+            <span class="font-bold">{{ __($item->judul) }}</span>
         </p>
-        <p class="text-on-surface-variant font-body-md text-[13px] mt-0.5 line-clamp-2">{{ $item->pesan }}</p>
+        <p class="text-on-surface-variant font-body-md text-[13px] mt-0.5 line-clamp-2">{{ __($item->pesan) }}</p>
         <div class="flex items-center gap-3 mt-1.5 flex-wrap">
             <span class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">{{ $notifTime }}</span>
             <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ $notifMeta['label'] }}</span>

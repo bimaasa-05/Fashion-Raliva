@@ -96,7 +96,7 @@ class RiwayatAktivitasController extends Controller
         $callback = function () use ($logs) {
             $out = fopen('php://output', 'w');
             fwrite($out, chr(0xEF).chr(0xBB).chr(0xBF));
-            fputcsv($out, ['Waktu', 'Aksi', 'Pengguna', 'Deskripsi', 'Kategori', 'Perubahan']);
+            fputcsv($out, [__('Waktu'), __('Aksi'), __('Pengguna'), __('Deskripsi'), __('Kategori'), __('Perubahan')]);
 
             $kategoriTagMap = [
                 'user' => 'Pengguna',
@@ -118,7 +118,7 @@ class RiwayatAktivitasController extends Controller
                 $nilaiLama = is_array($log->nilai_lama) ? json_encode($log->nilai_lama) : $log->nilai_lama;
                 $nilaiBaru = is_array($log->nilai_baru) ? json_encode($log->nilai_baru) : $log->nilai_baru;
                 if ($log->nilai_lama || $log->nilai_baru) {
-                    $perubahan = 'Data historis tercatat';
+                    $perubahan = __('Data historis tercatat');
                 }
 
                 fputcsv($out, [
@@ -126,8 +126,8 @@ class RiwayatAktivitasController extends Controller
                     $log->aksi,
                     $log->user?->nama_lengkap ?: '-',
                     strip_tags((string) ($log->deskripsi ?? '-')),
-                    $kategoriTagMap[$prefix] ?? ucfirst($prefix),
-                    $perubahan ? $perubahan.' (lama: '.($nilaiLama ?: '-').' → baru: '.($nilaiBaru ?: '-').')' : '-',
+                    isset($kategoriTagMap[$prefix]) ? __($kategoriTagMap[$prefix]) : ucfirst($prefix),
+                    $perubahan ? $perubahan.__(' (lama: :ph1 → baru: :ph2)', ['ph1' => $nilaiLama ?: '-', 'ph2' => $nilaiBaru ?: '-']) : '-',
                 ]);
             }
             fclose($out);

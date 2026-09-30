@@ -127,7 +127,7 @@ class PengembalianDanaController extends Controller
         $storeIds = AdminContext::assignedStoreIds();
 
         if (! in_array((int) $refund->order?->store_id, array_map('intval', $storeIds), true)) {
-            abort(403, 'Refund ini bukan untuk toko Anda.');
+            abort(403, __('Refund ini bukan untuk toko Anda.'));
         }
     }
 }

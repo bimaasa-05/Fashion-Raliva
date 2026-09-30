@@ -49,7 +49,7 @@ class StokRusakController extends Controller
     public function store(Request $request)
     {
         if (! auth()->user()->hasPermission('warehouse.damage')) {
-            abort(403, 'Anda tidak memiliki izin (warehouse.damage) untuk melakukan tindakan ini.');
+            abort(403, __('Anda tidak memiliki izin (warehouse.damage) untuk melakukan tindakan ini.'));
         }
 
         $warehouse = $this->activeWarehouse();

@@ -98,7 +98,7 @@ class PeringkatIklanController extends Controller
 
     public function store(Request $request)
     {
-        abort(403, 'Pendaftaran slot via Super Admin dinonaktifkan. Gunakan alur Owner (bank+file+bukti).');
+        abort(403, __('Pendaftaran slot via Super Admin dinonaktifkan. Gunakan alur Owner (bank+file+bukti).'));
     }
 
     public function setujui(Request $request, AdSlot $slot)

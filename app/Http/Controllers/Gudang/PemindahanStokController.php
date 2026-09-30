@@ -58,7 +58,7 @@ class PemindahanStokController extends Controller
     public function store(Request $request)
     {
         if (! auth()->user()->hasPermission('warehouse.transfer')) {
-            abort(403, 'Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.');
+            abort(403, __('Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.'));
         }
 
         $warehouse = $this->activeWarehouse();
@@ -140,7 +140,7 @@ class PemindahanStokController extends Controller
     public function approve(Request $request, StockTransfer $transfer)
     {
         if (! auth()->user()->hasPermission('warehouse.transfer')) {
-            abort(403, 'Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.');
+            abort(403, __('Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.'));
         }
 
         $warehouse = $this->activeWarehouse();
@@ -212,7 +212,7 @@ class PemindahanStokController extends Controller
     public function receive(Request $request, StockTransfer $transfer)
     {
         if (! auth()->user()->hasPermission('warehouse.transfer')) {
-            abort(403, 'Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.');
+            abort(403, __('Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.'));
         }
 
         $warehouse = $this->activeWarehouse();
@@ -274,7 +274,7 @@ class PemindahanStokController extends Controller
     public function cancel(Request $request, StockTransfer $transfer)
     {
         if (! auth()->user()->hasPermission('warehouse.transfer')) {
-            abort(403, 'Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.');
+            abort(403, __('Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.'));
         }
 
         $warehouse = $this->activeWarehouse();
@@ -337,7 +337,7 @@ class PemindahanStokController extends Controller
     public function terima(StockTransfer $stockTransfer)
     {
         if (! auth()->user()->hasPermission('warehouse.transfer')) {
-            abort(403, 'Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.');
+            abort(403, __('Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.'));
         }
 
         $warehouse = $this->activeWarehouse();

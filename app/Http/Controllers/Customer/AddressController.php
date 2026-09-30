@@ -174,7 +174,7 @@ class AddressController extends Controller
     protected function authorizeAddress(Address $address)
     {
         if ($address->user_id !== Auth::id()) {
-            abort(403, 'Alamat tidak ditemukan.');
+            abort(403, __('Alamat tidak ditemukan.'));
         }
     }
 

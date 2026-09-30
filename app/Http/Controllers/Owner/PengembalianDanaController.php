@@ -182,13 +182,13 @@ class PengembalianDanaController extends Controller
         $storeId = OwnerContext::firstStoreId();
 
         if (! $storeId) {
-            abort(403, 'Toko tidak ditemukan.');
+            abort(403, __('Toko tidak ditemukan.'));
         }
 
         $order = $refund->order()->select('store_id')->first();
 
         if (! $order || (int) $order->store_id !== (int) $storeId) {
-            abort(403, 'Refund ini bukan untuk toko Anda.');
+            abort(403, __('Refund ini bukan untuk toko Anda.'));
         }
     }
 }

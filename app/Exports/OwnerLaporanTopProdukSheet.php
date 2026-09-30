@@ -60,7 +60,7 @@ class OwnerLaporanTopProdukSheet implements FromCollection, WithHeadings, WithMa
      */
     public function headings(): array
     {
-        return ['No.', 'Nama Produk', 'Terjual (pcs)'];
+        return [__('No.'), __('Nama Produk'), __('Terjual (pcs)')];
     }
 
     /**
@@ -74,6 +74,6 @@ class OwnerLaporanTopProdukSheet implements FromCollection, WithHeadings, WithMa
 
     public function title(): string
     {
-        return 'Top Produk';
+        return __('Top Produk');
     }
 }
