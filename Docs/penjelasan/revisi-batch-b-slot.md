@@ -51,7 +51,7 @@ dengan pilih toko) → `SlotPurchaseRequest pending` → disetujui SuperAdmin
 seperti alur Owner. `Admin/DataProdukController@store` menolak bila kuota
 penuh dan mengarahkan ke Beli Slot.
 
-## 7. Popup gate kuota + syarat dokumen legal (2026-09-30)
+## 6. Popup gate kuota + syarat dokumen legal (2026-09-30)
 
 - **Owner — tombol "Tambah Slot"** (`Owner/produk`) tidak lagi pindah halaman:
   membuka popup 2 opsi (partial `Owner/partials/modal-slot`):
@@ -76,7 +76,7 @@ penuh dan mengarahkan ke Beli Slot.
 - Test: `SlotHabisTest` 12/12 (gate modal Admin, popup Owner, syarat legal,
   banner hijau).
 
-## 6. Batasan jujur
+## 7. Batasan jujur
 
 1. Penyatuan alur paket vs fleksibel (paket bypass verifikasi) **ditunda** —
    butuh kolom paket di request + approve SA baru.
