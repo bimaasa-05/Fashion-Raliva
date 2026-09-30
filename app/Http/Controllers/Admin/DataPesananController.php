@@ -60,7 +60,9 @@ class DataPesananController extends Controller
             ->whereIn('store_id', $storeIds)
             ->orderByDesc('order_id')->limit(20)->get();
 
+        // Isolasi toko: dropdown hanya customer yang punya pesanan di toko admin.
         $customers = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', Role::CUSTOMER))
+            ->whereHas('orders', fn ($q) => $q->whereIn('store_id', $storeIds))
             ->orderByDesc('created_at')->limit(50)->get(['user_id', 'nama_lengkap', 'email', 'nomor_telepon']);
 
         $paymentAccounts = PlatformBankAccount::where('status', PlatformBankAccount::STATUS_AKTIF)
