@@ -4,12 +4,12 @@
 /** @var \Illuminate\Support\Collection<int, array{deskripsi:string,waktu:string}> $aktivitas */
 @endphp
 
-@section('title', 'Dashboard Admin Utama')
+@section('title', __('Dashboard Admin Utama'))
 
-@section('header-title', 'Selamat datang, Super Admin')
-@section('header-badge', 'Kelola & Lihat')
+@section('header-title', __('Selamat datang, Super Admin'))
+@section('header-badge', __('Kelola & Lihat'))
 
-@section('header-subtitle', 'Ringkasan kondisi seluruh platform Raliva.')
+@section('header-subtitle', __('Ringkasan kondisi seluruh platform Raliva.'))
 
 @section('content')
 <div data-reveal class="flex flex-wrap items-center gap-3 -mt-2 mb-2">
@@ -19,33 +19,33 @@
     </span>
     <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
         <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
-        Data platform diperbarui real-time
+        {{ __('Data platform diperbarui real-time') }}
     </span>
 </div>
 
 <section>
-    <h2 data-reveal class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Platform</h2>
+    <h2 data-reveal class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">{{ __('Ringkasan Platform') }}</h2>
     <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Pelanggan</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Pelanggan') }}</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $kpi['pelanggan'] }}">{{ number_format($kpi['pelanggan'], 0, ',', '.') }}</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">account_circle</span>{{ number_format($kpi['akun_internal'], 0, ',', '.') }} akun internal</span>
+            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">account_circle</span>{{ number_format($kpi['akun_internal'], 0, ',', '.') }} {{ __('akun internal') }}</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:70%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:62%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:85%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:78%"></i>
             </div>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">group</span>
         </div>
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Toko</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Toko') }}</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $kpi['toko'] }}">{{ number_format($kpi['toko'], 0, ',', '.') }}</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">verified_user</span>{{ number_format($perhatian['toko'] ?? 0, 0, ',', '.') }} menunggu verifikasi</span>
+            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">verified_user</span>{{ number_format($perhatian['toko'] ?? 0, 0, ',', '.') }} {{ __('menunggu verifikasi') }}</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:30%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:35%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:32%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:38%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:42%"></i>
             </div>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">storefront</span>
         </div>
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Pesanan</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Pesanan') }}</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $kpi['pesanan'] }}">{{ number_format($kpi['pesanan'], 0, ',', '.') }}</span></span>
             <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">dns</span>{{ number_format($kpi['pesanan_proses'], 0, ',', '.') }} proses · {{ number_format($kpi['pesanan_batal'], 0, ',', '.') }} batal/refund</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
@@ -54,16 +54,16 @@
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
         </div>
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Produk</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Produk') }}</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $kpi['produk'] }}">{{ number_format($kpi['produk'], 0, ',', '.') }}</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>real-time</span>
+            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>{{ __('real-time') }}</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:25%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:30%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:28%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:35%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:33%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:38%"></i>
             </div>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">checkroom</span>
         </div>
         <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hover:border-gold-accent transition-colors hero-glow">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Nilai Transaksi</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Nilai Transaksi') }}</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Rp <span data-count="{{ $kpi['nilai_transaksi'] }}" data-count-decimals="0">{{ number_format($kpi['nilai_transaksi'], 0, ',', '.') }}</span></span>
             <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>akumulasi</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
@@ -72,7 +72,7 @@
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
         </div>
         <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hover:border-gold-accent transition-colors hero-glow">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Komisi Raliva</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Komisi Raliva') }}</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold">Rp <span data-count="{{ $kpi['komisi'] }}" data-count-decimals="0">{{ number_format($kpi['komisi'], 0, ',', '.') }}</span></span>
             <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>akumulasi</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
@@ -81,16 +81,16 @@
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">percent</span>
         </div>
         <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hover:border-gold-accent transition-colors hero-glow">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pendapatan Iklan</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Pendapatan Iklan') }}</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold">Rp <span data-count="{{ $kpi['pendapatan_iklan'] }}" data-count-decimals="0">{{ number_format($kpi['pendapatan_iklan'], 0, ',', '.') }}</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">campaign</span>{{ number_format($kpi['iklan_aktif'], 0, ',', '.') }} slot aktif/terjadwal</span>
+            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">campaign</span>{{ number_format($kpi['iklan_aktif'], 0, ',', '.') }} {{ __('slot aktif/terjadwal') }}</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:64%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:58%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:76%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:72%"></i>
             </div>
             <a href="{{ route('superadmin.peringkat-iklan') }}" class="absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true"><span class="material-symbols-outlined">campaign</span></a>
         </div>
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pajak Terkumpul</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Pajak Terkumpul') }}</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">Rp <span data-count="{{ $kpi['pajak'] }}" data-count-decimals="0">{{ number_format($kpi['pajak'], 0, ',', '.') }}</span></span>
             <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>akumulasi</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
@@ -104,17 +104,17 @@
 <section>
     <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
         <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
-            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Omzet Bulan Ini vs Bulan Lalu</p>
+            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">{{ __('Omzet Bulan Ini vs Bulan Lalu') }}</p>
             <div data-donut='[{"value":{{ $targetOmzet['persen'] }},"color":"#8B1E3F","label":"Tercapai"},{"value":{{ 100 - $targetOmzet['persen'] }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Bulan Lalu" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
             <p class="text-[11px] text-on-surface-variant mt-1">Rp {{ number_format($targetOmzet['bulanIni'], 0, ',', '.') }} dari Rp {{ number_format($targetOmzet['bulanLalu'], 0, ',', '.') }} bulan lalu</p>
         </div>
         <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
-            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Kepuasan Pelanggan</p>
+            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">{{ __('Kepuasan Pelanggan') }}</p>
             <div data-donut='[{"value":{{ $kepuasan['persen'] }},"color":"#8B1E3F","label":"Puas"},{"value":{{ 100 - $kepuasan['persen'] }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Rating {{ $kepuasan['rata'] > 0 ? number_format($kepuasan['rata'], 1, ',', '.') : '-' }} / 5" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
             <p class="text-[11px] text-on-surface-variant mt-1">Dari {{ number_format($kepuasan['total'], 0, ',', '.') }} ulasan</p>
         </div>
         <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
-            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">SLA Respons Komplain</p>
+            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">{{ __('SLA Respons Komplain') }}</p>
             <div data-donut='[{"value":{{ $sla['total'] > 0 ? $sla['persen'] : 0 }},"color":"#c03a5a","label":"Tepat SLA"},{"value":{{ $sla['total'] > 0 ? 100 - $sla['persen'] : 100 }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="{{ $sla['total'] > 0 ? 'Target 24 Jam' : 'Belum Ada Data' }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
             <p class="text-[11px] text-on-surface-variant mt-1">{{ $sla['total'] > 0 ? 'Rata-rata balasan dalam '.$sla['rataJam'].' jam • '.number_format($sla['total'], 0, ',', '.').' komplain' : 'Belum ada komplain yang dibalas — tidak dihitung.' }}</p>
         </div>
@@ -123,8 +123,8 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Pesanan per Bulan</h2>
-            <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">6 Bulan Terakhir</span>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Pesanan per Bulan') }}</h2>
+            <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">{{ __('6 Bulan Terakhir') }}</span>
         </div>
         <div class="h-48" data-bars='@json($chartPesananBars)' data-bars-suffix=""></div>
         <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
@@ -135,14 +135,14 @@
 
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Toko</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Top Toko') }}</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">emoji_events</span>
         </div>
         <div data-leaderboard='@json($topToko)'></div>
         <div class="flex items-center justify-center gap-6 mt-4 pt-4 border-t border-muted-border">
-            <a href="{{ route('superadmin.peringkat') }}#toko" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
+            <a href="{{ route('superadmin.peringkat') }}#toko" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">{{ __('Lihat Peringkat Lengkap') }}</a>
             <span class="w-px h-4 bg-muted-border"></span>
-            <a href="{{ route('superadmin.manajemen-toko') }}" class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-widest hover:underline">Kelola Semua Toko</a>
+            <a href="{{ route('superadmin.manajemen-toko') }}" class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-widest hover:underline">{{ __('Kelola Semua Toko') }}</a>
         </div>
     </section>
 </div>
@@ -150,11 +150,11 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading whitespace-nowrap">Kinerja Platform</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading whitespace-nowrap">{{ __('Kinerja Platform') }}</h2>
             <div class="inline-flex self-start sm:self-auto bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
-                <button type="button" data-chart-range="7" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">7 Hari</button>
-                <button type="button" data-chart-range="30" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">30 Hari</button>
-                <button type="button" data-chart-range="90" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">3 Bulan</button>
+                <button type="button" data-chart-range="7" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">{{ __('7 Hari') }}</button>
+                <button type="button" data-chart-range="30" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">{{ __('30 Hari') }}</button>
+                <button type="button" data-chart-range="90" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">{{ __('3 Bulan') }}</button>
             </div>
         </div>
         <div id="chart-wrap" class="relative h-72 md:h-80">
@@ -165,23 +165,23 @@
                 <span class="material-symbols-outlined text-on-error-container">cloud_off</span>
             </div>
             <div>
-                <p class="font-title-md text-title-md text-on-surface">Data gagal dimuat</p>
-                <p class="text-on-surface-variant font-body-md text-sm mt-1">Terjadi masalah saat mengambil data grafik. Silakan coba lagi.</p>
+                <p class="font-title-md text-title-md text-on-surface">{{ __('Data gagal dimuat') }}</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-1">{{ __('Terjadi masalah saat mengambil data grafik. Silakan coba lagi.') }}</p>
             </div>
-            <button type="button" id="chart-retry" class="mt-2 px-5 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium">Coba Lagi</button>
+            <button type="button" id="chart-retry" class="mt-2 px-5 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium">{{ __('Coba Lagi') }}</button>
         </div>
     </section>
 
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-2">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Komposisi Toko</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Komposisi Toko') }}</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">donut_small</span>
         </div>
-        <p class="text-on-surface-variant font-body-md text-xs mb-4">Sebaran status seluruh toko terdaftar.</p>
+        <p class="text-on-surface-variant font-body-md text-xs mb-4">{{ __('Sebaran status seluruh toko terdaftar.') }}</p>
         <div data-donut='@json($komposisiTokoDonut)' data-donut-label="Toko Terdaftar"></div>
         <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
             <span class="material-symbols-outlined text-[14px] text-gold-accent">sync</span>
-            Sinkron dengan Total Toko di ringkasan atas.
+            {{ __('Sinkron dengan Total Toko di ringkasan atas.') }}
         </p>
     </section>
 </div>
@@ -203,7 +203,7 @@
         $perhatianTerlihat = collect($perhatianDef)->filter(fn ($def) => ($perhatian[$def['key']] ?? 0) > 0);
     @endphp
     <section data-reveal class="lg:col-span-1 bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Perlu Perhatian</h2>
+        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">{{ __('Perlu Perhatian') }}</h2>
         @if($perhatianTerlihat->isNotEmpty())
             <ul class="flex flex-col gap-2">
                 @foreach($perhatianTerlihat as $def)
@@ -228,14 +228,14 @@
                 <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center">
                     <span class="material-symbols-outlined text-gold-accent">verified</span>
                 </div>
-                <p class="font-title-md text-title-md text-on-surface">Semua aman</p>
-                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada permintaan yang menunggu tindakan Anda.</p>
+                <p class="font-title-md text-title-md text-on-surface">{{ __('Semua aman') }}</p>
+                <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada permintaan yang menunggu tindakan Anda.') }}</p>
             </div>
         @endif
     </section>
 
     <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Aktivitas Terbaru</h2>
+        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">{{ __('Aktivitas Terbaru') }}</h2>
         <ul class="flex flex-col">
             @forelse($aktivitas as $act)
                 @php
@@ -255,7 +255,7 @@
                     </div>
                 </li>
             @empty
-                <li class="p-4 text-center text-on-surface-variant">Belum ada aktivitas terbaru.</li>
+                <li class="p-4 text-center text-on-surface-variant">{{ __('Belum ada aktivitas terbaru.') }}</li>
             @endforelse
         </ul>
     </section>
@@ -263,39 +263,39 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Kategori</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Top Kategori') }}</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">category</span>
         </div>
         <div data-leaderboard='@json($topKategori)'></div>
-        <a href="{{ route('superadmin.peringkat') }}#kategori" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
+        <a href="{{ route('superadmin.peringkat') }}#kategori" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">{{ __('Lihat Peringkat Lengkap') }}</a>
     </section>
 
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Pelanggan</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Top Pelanggan') }}</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">military_tech</span>
         </div>
         <div data-leaderboard='@json($topPelanggan)'></div>
-        <a href="{{ route('superadmin.peringkat') }}#pelanggan" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
+        <a href="{{ route('superadmin.peringkat') }}#pelanggan" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">{{ __('Lihat Peringkat Lengkap') }}</a>
     </section>
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Produk</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Top Produk') }}</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">local_mall</span>
         </div>
         <div data-leaderboard='@json($topProduk)'></div>
-        <a href="{{ route('superadmin.produk') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Kelola Semua Produk</a>
+        <a href="{{ route('superadmin.produk') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">{{ __('Kelola Semua Produk') }}</a>
     </section>
 
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Produk Iklan</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Top Produk Iklan') }}</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">campaign</span>
         </div>
         <div data-leaderboard='@json($topProdukIklan)'></div>
-        <a href="{{ route('superadmin.peringkat-iklan') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Iklan Lengkap</a>
+        <a href="{{ route('superadmin.peringkat-iklan') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">{{ __('Lihat Iklan Lengkap') }}</a>
     </section>
 </div>
 
@@ -349,8 +349,8 @@
                 data: {
                     labels: data.labels,
                     datasets: [
-                        { label: 'Volume Transaksi', data: data.transaksi, borderColor: '#8B1E3F', backgroundColor: 'rgba(139, 30, 63, 0.12)', fill: true, tension: 0.38, borderWidth: 2, pointBackgroundColor: '#8B1E3F', pointRadius: 3 },
-                        { label: 'Jumlah Pesanan', data: data.pesanan, borderColor: c.tick, backgroundColor: 'transparent', fill: false, tension: 0.38, borderWidth: 2, pointBackgroundColor: c.tick, pointRadius: 3, yAxisID: 'y1' }
+                        { label: '{{ __('Volume Transaksi') }}', data: data.transaksi, borderColor: '#8B1E3F', backgroundColor: 'rgba(139, 30, 63, 0.12)', fill: true, tension: 0.38, borderWidth: 2, pointBackgroundColor: '#8B1E3F', pointRadius: 3 },
+                        { label: '{{ __('Jumlah Pesanan') }}', data: data.pesanan, borderColor: c.tick, backgroundColor: 'transparent', fill: false, tension: 0.38, borderWidth: 2, pointBackgroundColor: c.tick, pointRadius: 3, yAxisID: 'y1' }
                     ]
                 },
                 options: {

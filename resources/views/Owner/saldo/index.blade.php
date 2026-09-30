@@ -8,10 +8,10 @@
     ]);
 @endphp
 
-@section('title', 'Keuangan')
-@section('header-title', 'Keuangan')
-@section('header-badge', 'Keuangan')
-@section('header-subtitle', 'Kelola saldo, pencairan dana, dan pengembalian dana toko Anda dalam satu tempat.')
+@section('title', __('Keuangan'))
+@section('header-title', __('Keuangan'))
+@section('header-badge', __('Keuangan'))
+@section('header-subtitle', __('Kelola saldo, pencairan dana, dan pengembalian dana toko Anda dalam satu tempat.'))
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
@@ -29,22 +29,22 @@
         <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
             <div>
-                <p class="font-bold text-sm">Belum punya toko</p>
-                <p class="text-sm text-on-surface-variant mt-1">Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk akses fitur ini.</p>
+                <p class="font-bold text-sm">{{ __('Belum punya toko') }}</p>
+                <p class="text-sm text-on-surface-variant mt-1">{{ __('Silakan') }} <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">{{ __('ajukan toko') }}</a> {{ __('untuk akses fitur ini.') }}</p>
             </div>
         </div>
     @endif
     @if (! $wallet)
         <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-12 text-center card-premium">
             <span class="material-symbols-outlined text-[48px] text-on-surface-variant">account_balance_wallet</span>
-            <p class="mt-4 font-title-md text-title-md text-on-surface">Belum ada dompet toko</p>
-            <p class="text-on-surface-variant font-body-md text-sm mt-1">Data keuangan akan muncul setelah ada transaksi pada toko ini.</p>
+            <p class="mt-4 font-title-md text-title-md text-on-surface">{{ __('Belum ada dompet toko') }}</p>
+            <p class="text-on-surface-variant font-body-md text-sm mt-1">{{ __('Data keuangan akan muncul setelah ada transaksi pada toko ini.') }}</p>
         </div>
     @else
     {{-- Tab Switcher --}}
     <div class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 overflow-x-auto max-w-full">
-        <button type="button" data-saldo-tab="ringkasan" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">Ringkasan</button>
-        <button type="button" data-saldo-tab="pengeluaran" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Pengeluaran</button>
+        <button type="button" data-saldo-tab="ringkasan" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">{{ __('Ringkasan') }}</button>
+        <button type="button" data-saldo-tab="pengeluaran" class="saldo-tab px-4 py-2 rounded-md text-xs font-semibold transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">{{ __('Pengeluaran') }}</button>
     </div>
 
     {{-- ============ PANEL: RINGKASAN ============ --}}
@@ -53,28 +53,28 @@
         <section data-reveal-group class="grid grid-cols-1 md:grid-cols-3 gap-section-gap">
             <div data-reveal class="bg-deep-onyx text-on-primary rounded-lg p-6 relative overflow-hidden flex flex-col">
                 <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-on-primary/5 pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
-                <p class="raliva-label text-gold-accent relative">Saldo Tersedia</p>
+                <p class="raliva-label text-gold-accent relative">{{ __('Saldo Tersedia') }}</p>
                 <p class="raliva-figure text-[34px] md:text-[42px] mt-4 relative">{{ $fmt($wallet->saldo_tersedia) }}</p>
                 <div class="flex items-center justify-between mt-auto pt-6 relative gap-gutter flex-wrap">
-                    <p class="font-body-md text-xs text-inverse-on-surface/60">Siap dicairkan kapan saja</p>
-                    <a href="#pencairan" class="py-2.5 px-5 bg-gold-accent text-[#111] text-xs font-semibold rounded btn-premium shrink-0">Cairkan</a>
+                    <p class="font-body-md text-xs text-inverse-on-surface/60">{{ __('Siap dicairkan kapan saja') }}</p>
+                    <a href="#pencairan" class="py-2.5 px-5 bg-gold-accent text-[#111] text-xs font-semibold rounded btn-premium shrink-0">{{ __('Cairkan') }}</a>
                 </div>
             </div>
 
             <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col relative overflow-hidden">
                 <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
-                <p class="raliva-label relative">Saldo Tertunda</p>
+                <p class="raliva-label relative">{{ __('Saldo Tertunda') }}</p>
                 <p class="raliva-figure text-[26px] mt-4 text-on-surface relative">{{ $fmt($wallet->saldo_tertahan) }}</p>
-                <p class="text-on-surface-variant font-body-md text-xs mt-auto pt-6 relative">Dana dilepas otomatis menjadi saldo tersedia H+2 setelah pesanan selesai.</p>
+                <p class="text-on-surface-variant font-body-md text-xs mt-auto pt-6 relative">{{ __('Dana dilepas otomatis menjadi saldo tersedia H+2 setelah pesanan selesai.') }}</p>
             </div>
 
             <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col relative overflow-hidden">
                 <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">savings</span>
-                <p class="raliva-label relative">Total Dicairkan</p>
+                <p class="raliva-label relative">{{ __('Total Dicairkan') }}</p>
                 <p class="raliva-figure text-[26px] mt-4 text-secondary relative">{{ $fmt($totalDicairkan) }}</p>
                 <div class="flex items-center justify-between mt-auto pt-6 relative gap-gutter flex-wrap">
-                    <p class="font-body-md text-xs text-on-surface-variant">{{ $withdrawals->count() }} pencairan tercatat</p>
-                    <a href="#pencairan" class="py-2.5 px-5 border border-muted-border text-xs font-semibold rounded-lg hover:border-gold-accent transition-colors shrink-0">Riwayat</a>
+                    <p class="font-body-md text-xs text-on-surface-variant">{{ $withdrawals->count() }} {{ __('pencairan tercatat') }}</p>
+                    <a href="#pencairan" class="py-2.5 px-5 border border-muted-border text-xs font-semibold rounded-lg hover:border-gold-accent transition-colors shrink-0">{{ __('Riwayat') }}</a>
                 </div>
             </div>
         </section>
@@ -83,36 +83,36 @@
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <div class="flex items-center justify-between gap-4 mb-6">
                 <div>
-                    <h2 class="font-title-md text-title-md text-on-surface premium-heading">Perkiraan Keuntungan Toko</h2>
-                    <p class="text-xs text-on-surface-variant mt-1">Estimasi laba dari total penjualan, setelah potong HPP dan pajak.</p>
+                    <h2 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Perkiraan Keuntungan Toko') }}</h2>
+                    <p class="text-xs text-on-surface-variant mt-1">{{ __('Estimasi laba dari total penjualan, setelah potong HPP dan pajak.') }}</p>
                 </div>
-                <span class="text-[10px] uppercase tracking-wider text-on-surface-variant bg-surface-container-low px-2 py-1 rounded">Asumsi: HPP 60% · Pajak 25%</span>
+                <span class="text-[10px] uppercase tracking-wider text-on-surface-variant bg-surface-container-low px-2 py-1 rounded">{{ __('Asumsi: HPP 60% · Pajak 25%') }}</span>
             </div>
             <div data-reveal-group class="grid grid-cols-2 md:grid-cols-5 gap-gutter">
                 <div data-reveal class="min-w-0 bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Total Omzet</span>
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">{{ __('Total Omzet') }}</span>
                     <span class="raliva-figure text-[20px] text-on-surface break-words">{{ $fmt($margin['revenue']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Semua pendapatan kotor</span>
+                    <span class="text-[10px] text-on-surface-variant">{{ __('Semua pendapatan kotor') }}</span>
                 </div>
                 <div data-reveal class="min-w-0 bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Kotor</span>
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">{{ __('Laba Kotor') }}</span>
                     <span class="raliva-figure text-[20px] text-secondary break-words">{{ $fmt($margin['gross']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Setelah potong HPP barang</span>
+                    <span class="text-[10px] text-on-surface-variant">{{ __('Setelah potong HPP barang') }}</span>
                 </div>
                 <div data-reveal class="min-w-0 bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Operasional</span>
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">{{ __('Laba Operasional') }}</span>
                     <span class="raliva-figure text-[20px] text-on-surface break-words">{{ $fmt($margin['ebitda']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Setelah biaya operasional</span>
+                    <span class="text-[10px] text-on-surface-variant">{{ __('Setelah biaya operasional') }}</span>
                 </div>
                 <div data-reveal class="min-w-0 bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Sebelum Pajak</span>
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">{{ __('Laba Sebelum Pajak') }}</span>
                     <span class="raliva-figure text-[20px] text-on-surface break-words">{{ $fmt($margin['ebt']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Setelah biaya pendanaan</span>
+                    <span class="text-[10px] text-on-surface-variant">{{ __('Setelah biaya pendanaan') }}</span>
                 </div>
                 <div data-reveal class="min-w-0 bg-surface-container-low p-4 rounded-lg flex flex-col gap-1 relative overflow-hidden">
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">Laba Bersih</span>
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase">{{ __('Laba Bersih') }}</span>
                     <span class="raliva-figure text-[20px] text-gold-accent break-words">{{ $fmt($margin['net']) }}</span>
-                    <span class="text-[10px] text-on-surface-variant">Uang riil di kantong</span>
+                    <span class="text-[10px] text-on-surface-variant">{{ __('Uang riil di kantong') }}</span>
                 </div>
             </div>
         </section>
@@ -120,28 +120,28 @@
         {{-- Grafik Tren Saldo + Info --}}
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-section-gap">
             <section data-reveal class="lg:col-span-3 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-                <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Tren Saldo — 6 Bulan Terakhir</h2>
+                <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">{{ __('Tren Saldo — 6 Bulan Terakhir') }}</h2>
                 <div id="chart-wrap" class="relative h-64 md:h-72"><canvas id="saldo-chart"></canvas></div>
             </section>
 
             <section data-reveal-group class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-                <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Ringkasan Bulan Ini</h2>
+                <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">{{ __('Ringkasan Bulan Ini') }}</h2>
                 <ul class="space-y-4 font-body-md text-sm">
                     <li data-reveal class="flex items-center justify-between gap-3 pb-4 border-b border-muted-border last:border-0 last:pb-0">
                         <span class="flex items-center gap-3 text-on-surface-variant">
-                            <span class="material-symbols-outlined text-[18px] text-secondary fill">add_circle</span>Pemasukan
+                            <span class="material-symbols-outlined text-[18px] text-secondary fill">add_circle</span>{{ __('Pemasukan') }}
                         </span>
                         <span class="text-secondary font-bold whitespace-nowrap">{{ $fmt($summary['pemasukan']) }}</span>
                     </li>
                     <li data-reveal class="flex items-center justify-between gap-3 pb-4 border-b border-muted-border last:border-0 last:pb-0">
                         <span class="flex items-center gap-3 text-on-surface-variant">
-                            <span class="material-symbols-outlined text-[18px] text-error fill">remove_circle</span>Pengeluaran
+                            <span class="material-symbols-outlined text-[18px] text-error fill">remove_circle</span>{{ __('Pengeluaran') }}
                         </span>
                         <span class="text-error font-bold whitespace-nowrap">− {{ $fmt($summary['pengeluaran']) }}</span>
                     </li>
                 </ul>
                 <div class="mt-6 pt-5 border-t border-muted-border flex items-center justify-between">
-                    <span class="font-title-md text-sm text-on-surface">Perubahan Bersih</span>
+                    <span class="font-title-md text-sm text-on-surface">{{ __('Perubahan Bersih') }}</span>
                     <span class="font-title-md text-base {{ $summary['bersih'] >= 0 ? 'text-secondary' : 'text-error' }}">
                         {{ $summary['bersih'] >= 0 ? '+' : '−' }} {{ $fmt(abs($summary['bersih'])) }}
                     </span>
@@ -151,16 +151,16 @@
 
         {{-- Riwayat Perubahan Saldo --}}
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
-            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Riwayat Perubahan Saldo</h2>
+            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">{{ __('Riwayat Perubahan Saldo') }}</h2>
             <div class="hidden md:block">
             <div data-table-wrap class="overflow-x-auto">
                 <table class="premium-table w-full min-w-[820px] font-body-md text-sm">
                     <thead>
                         <tr class="border-b border-muted-border text-left">
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Waktu</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Keterangan</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Perubahan</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Saldo Akhir</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Waktu') }}</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Keterangan') }}</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">{{ __('Perubahan') }}</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">{{ __('Saldo Akhir') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -175,7 +175,7 @@
                                 <td class="py-3.5 px-4 text-right text-on-surface whitespace-nowrap">{{ $fmt($row->saldo_sesudah) }}</td>
                             </tr>
                         @empty
-                            <tr><td colspan="4" class="py-8 text-center text-on-surface-variant">Belum ada mutasi saldo.</td></tr>
+                            <tr><td colspan="4" class="py-8 text-center text-on-surface-variant">{{ __('Belum ada mutasi saldo.') }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -191,15 +191,15 @@
                         </div>
                         <div class="flex items-center justify-between mt-3 pt-3 border-t border-muted-border text-xs text-on-surface-variant">
                             <span class="whitespace-nowrap">{{ $row->created_at->format('d M Y, H:i') }}</span>
-                            <span>Saldo <strong class="text-on-surface">{{ $fmt($row->saldo_sesudah) }}</strong></span>
+                            <span>{{ __('Saldo') }} <strong class="text-on-surface">{{ $fmt($row->saldo_sesudah) }}</strong></span>
                         </div>
                     </article>
                 @empty
-                    <p class="py-8 text-center text-on-surface-variant">Belum ada mutasi saldo.</p>
+                    <p class="py-8 text-center text-on-surface-variant">{{ __('Belum ada mutasi saldo.') }}</p>
                 @endforelse
             </div>
             <div class="flex items-center justify-between pt-6 mt-2 border-t border-muted-border">
-                <p class="text-xs text-on-surface-variant">Menampilkan {{ $mutations->count() }} dari {{ $mutations->total() }} mutasi</p>
+                <p class="text-xs text-on-surface-variant">{{ __('Menampilkan') }} {{ $mutations->count() }} {{ __('dari') }} {{ $mutations->total() }} {{ __('mutasi') }}</p>
                 {{ $mutations->links() }}
             </div>
         </section>
@@ -208,16 +208,16 @@
         {{-- ============ PANEL: PENGELUARAN ============ --}}
     <div data-saldo-panel="pengeluaran" class="hidden space-y-section-gap">
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Catat Pengeluaran Toko</h2>
+            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">{{ __('Catat Pengeluaran Toko') }}</h2>
             <form method="POST" action="{{ route('owner.keuangan.pengeluaran.store') }}" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 @csrf
                 <div>
-                    <label class="block raliva-label mb-2">Nama Pengeluaran</label>
-                    <input name="nama" type="text" required placeholder="cth. Listrik Toko" class="raliva-input" />
+                    <label class="block raliva-label mb-2">{{ __('Nama Pengeluaran') }}</label>
+                    <input name="nama" type="text" required placeholder="{{ __('cth. Listrik Toko') }}" class="raliva-input" />
                 </div>
                 <div>
-                    <label class="block raliva-label mb-2">Kategori</label>
-                    <input name="kategori" type="text" list="kategori-list" required placeholder="cth. Operasional" class="raliva-input" />
+                    <label class="block raliva-label mb-2">{{ __('Kategori') }}</label>
+                    <input name="kategori" type="text" list="kategori-list" required placeholder="{{ __('cth. Operasional') }}" class="raliva-input" />
                     <datalist id="kategori-list">
                         @foreach ($expenses->pluck('kategori')->unique() as $k)
                             <option value="{{ $k }}">
@@ -225,32 +225,32 @@
                     </datalist>
                 </div>
                 <div>
-                    <label class="block raliva-label mb-2">Nominal (Rp)</label>
+                    <label class="block raliva-label mb-2">{{ __('Nominal (Rp)') }}</label>
                     <input name="nominal" type="number" min="1" required placeholder="500000" class="raliva-input" />
                 </div>
                 <div>
-                    <label class="block raliva-label mb-2">Tanggal</label>
+                    <label class="block raliva-label mb-2">{{ __('Tanggal') }}</label>
                     <input name="tanggal" type="date" required value="{{ date('Y-m-d') }}" class="raliva-input" />
                 </div>
                 <div class="md:col-span-2 flex justify-end">
                     <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined text-[16px]">add</span>Catat Pengeluaran
+                        <span class="material-symbols-outlined text-[16px]">add</span>{{ __('Catat Pengeluaran') }}
                     </button>
                 </div>
             </form>
         </section>
 
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
-            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Daftar Pengeluaran</h2>
+            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">{{ __('Daftar Pengeluaran') }}</h2>
             <div class="hidden md:block">
             <div data-table-wrap class="overflow-x-auto">
                 <table class="premium-table w-full min-w-[720px] font-body-md text-sm">
                     <thead>
                         <tr class="border-b border-muted-border text-left">
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tanggal</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Nama</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Kategori</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Nominal</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Tanggal') }}</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Nama') }}</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Kategori') }}</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">{{ __('Nominal') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -262,7 +262,7 @@
                                 <td class="py-3.5 px-4 text-right font-bold text-error whitespace-nowrap">- {{ $fmt($ex->nominal) }}</td>
                             </tr>
                         @empty
-                            <tr><td colspan="4" class="py-8 text-center text-on-surface-variant">Belum ada pengeluaran tercatat.</td></tr>
+                            <tr><td colspan="4" class="py-8 text-center text-on-surface-variant">{{ __('Belum ada pengeluaran tercatat.') }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -280,7 +280,7 @@
                         </div>
                     </article>
                 @empty
-                    <p class="py-8 text-center text-on-surface-variant">Belum ada pengeluaran tercatat.</p>
+                    <p class="py-8 text-center text-on-surface-variant">{{ __('Belum ada pengeluaran tercatat.') }}</p>
                 @endforelse
             </div>
         </section>
@@ -303,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function(){
       // For tambah buttons, disable if no store
       el.setAttribute('disabled','');
       el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
-      el.title = 'Ajukan toko dulu';
+      el.title = '{{ __('Ajukan toko dulu') }}';
     }
   });
   // More generic: disable all buttons in data-real except those inside pengajuan
@@ -370,7 +370,7 @@ document.addEventListener('DOMContentLoaded', function(){
                 data: {
                     labels: chartLabels,
                     datasets: [
-                        { label: 'Saldo Akhir Bulan', data: chartData, borderColor: '#8B1E3F', backgroundColor: 'rgba(139, 30, 63, 0.12)', fill: true, tension: 0.35, borderWidth: 2, pointBackgroundColor: '#8B1E3F', pointRadius: 3 }
+                        { label: '{{ __('Saldo Akhir Bulan') }}', data: chartData, borderColor: '#8B1E3F', backgroundColor: 'rgba(139, 30, 63, 0.12)', fill: true, tension: 0.35, borderWidth: 2, pointBackgroundColor: '#8B1E3F', pointRadius: 3 }
                     ]
                 },
                 options: {
@@ -383,11 +383,11 @@ document.addEventListener('DOMContentLoaded', function(){
                             backgroundColor: tooltipBg, titleColor: tooltipText, bodyColor: tooltipText,
                             titleFont: { family: 'Manrope', size: 12, weight: '700' }, bodyFont: { family: 'Manrope', size: 14 },
                             padding: 12, cornerRadius: 0,
-                            callbacks: { label: (ctx) => ' Saldo: Rp ' + new Intl.NumberFormat('id-ID').format(ctx.raw) }
+                            callbacks: { label: (ctx) => ' {{ __('Saldo') }}: Rp ' + new Intl.NumberFormat('id-ID').format(ctx.raw) }
                         }
                     },
                     scales: {
-                        y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: tickColor, font: { family: 'Manrope', size: 11 }, callback: (v) => (v / 1000000) + ' jt' } },
+                        y: { beginAtZero: true, grid: { color: gridColor }, ticks: { color: tickColor, font: { family: 'Manrope', size: 11 }, callback: (v) => (v / 1000000) + '{{ __('jt') }}' } },
                         x: { grid: { display: false }, ticks: { color: tickColor, font: { family: 'Manrope', size: 11 } } }
                     }
                 }

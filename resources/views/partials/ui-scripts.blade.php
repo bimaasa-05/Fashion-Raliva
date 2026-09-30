@@ -483,7 +483,7 @@
         const sfx = el.getAttribute('data-donut-suffix') || '';
         center.innerHTML =
             '<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-none">' + total.toLocaleString('id-ID') + sfx + '</span>' +
-            '<span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mt-1.5">' + (el.getAttribute('data-donut-label') || 'Total') + '</span>';
+            '<span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mt-1.5">' + (el.getAttribute('data-donut-label') || '{{ __('Total') }}') + '</span>';
         wrap.appendChild(center);
         el.appendChild(wrap);
 
@@ -512,7 +512,7 @@
             el.classList.add('flex', 'items-center', 'justify-center');
             el.innerHTML = '<div class="w-full flex flex-col items-center justify-center py-6 text-center gap-2 text-on-surface-variant">'
                 + '<span class="material-symbols-outlined text-[28px] opacity-50">bar_chart</span>'
-                + '<p class="font-body-md text-sm">Belum ada data pesanan.</p></div>';
+                + '<p class="font-body-md text-sm">{{ __('Belum ada data pesanan.') }}</p></div>';
             return;
         }
         el.dataset.barsDone = '1';
@@ -556,7 +556,7 @@
             el.classList.add('flex', 'items-center', 'justify-center');
             el.innerHTML = '<div class="w-full flex flex-col items-center justify-center py-6 text-center gap-2 text-on-surface-variant">'
                 + '<span class="material-symbols-outlined text-[28px] opacity-50">emoji_events</span>'
-                + '<p class="font-body-md text-sm">Belum ada toko dengan transaksi.</p></div>';
+                + '<p class="font-body-md text-sm">{{ __('Belum ada toko dengan transaksi.') }}</p></div>';
             return;
         }
         el.dataset.lbDone = '1';

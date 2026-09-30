@@ -1,10 +1,10 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Pengiriman')
+@section('title', __('Pengiriman'))
 
-@section('header-title', 'Pengiriman')
-@section('header-badge', 'Kelola')
-@section('header-subtitle', 'Pantau dan ubah status pengiriman dari seluruh toko di platform.')
+@section('header-title', __('Pengiriman'))
+@section('header-badge', __('Kelola'))
+@section('header-subtitle', __('Pantau dan ubah status pengiriman dari seluruh toko di platform.'))
 
 @push('styles')
 <style>
@@ -23,7 +23,7 @@
         </span>
         <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
-            Pengiriman diperbarui real-time
+            {{ __('Pengiriman diperbarui real-time') }}
         </span>
     </div>
     <!-- Hero Section -->
@@ -35,25 +35,25 @@
                     <div class="flex flex-wrap items-center gap-3 mb-4">
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase tracking-wider border border-secondary/20">
                             <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                            {{ $stats['semua'] }} Total
+                            {{ $stats['semua'] }} {{ __('Total') }}
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase tracking-wider border border-gold-accent/20">
-                            {{ $stats['pending'] }} Pending
+                            {{ $stats['pending'] }} {{ __('Pending') }}
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase tracking-wider border border-amber-500/30">
-                            {{ $stats['diproses'] }} Diproses
+                            {{ $stats['diproses'] }} {{ __('Diproses') }}
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-500/10 text-sky-600 text-[10px] font-bold uppercase tracking-wider border border-sky-500/30">
-                            {{ $stats['dikirim'] }} Dikirim
+                            {{ $stats['dikirim'] }} {{ __('Dikirim') }}
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase tracking-wider border border-success/20">
-                            {{ $stats['diterima'] }} Diterima
+                            {{ $stats['diterima'] }} {{ __('Diterima') }}
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase tracking-wider border border-error/20">
-                            {{ $stats['gagal'] }} Gagal
+                            {{ $stats['gagal'] }} {{ __('Gagal') }}
                         </span>
                     </div>
-                    <p class="font-body-md text-body-md text-on-surface-variant max-w-lg">Pantau dan kelola pengiriman dari seluruh toko. SA dapat mengubah status pengiriman untuk keperluan darurat.</p>
+                    <p class="font-body-md text-body-md text-on-surface-variant max-w-lg">{{ __('Pantau dan kelola pengiriman dari seluruh toko. SA dapat mengubah status pengiriman untuk keperluan darurat.') }}</p>
                 </div>
             </div>
         </div>
@@ -61,10 +61,10 @@
 
     <section data-table-scope data-reveal class="rise rise-d1 bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
-            <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Pengiriman</h2>
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Daftar Pengiriman') }}</h2>
             <button type="button" data-filter-toggle data-filter-target="#pengiriman-filter" class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
                 <span class="material-symbols-outlined text-[18px]">tune</span>
-                Filter
+                {{ __('Filter') }}
                 <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
             </button>
         </div>
@@ -74,16 +74,16 @@
             <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
                 <div class="flex items-center gap-2 shrink-0">
                     <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Status') }}</span>
                 </div>
                 <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
                 <div id="chip-group" class="flex flex-wrap gap-2">
-                    <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua Pengiriman</button>
-                    <button type="button" data-chip="pending" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Pending</button>
-                    <button type="button" data-chip="diproses" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Diproses</button>
-                    <button type="button" data-chip="dikirim" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Dikirim</button>
-                    <button type="button" data-chip="diterima" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Diterima</button>
-                    <button type="button" data-chip="gagal" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Gagal</button>
+                    <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ __('Semua Pengiriman') }}</button>
+                    <button type="button" data-chip="pending" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ __('Pending') }}</button>
+                    <button type="button" data-chip="diproses" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ __('Diproses') }}</button>
+                    <button type="button" data-chip="dikirim" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ __('Dikirim') }}</button>
+                    <button type="button" data-chip="diterima" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ __('Diterima') }}</button>
+                    <button type="button" data-chip="gagal" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ __('Gagal') }}</button>
                 </div>
             </div>
 
@@ -91,7 +91,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div class="relative flex-1">
                     <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                    <input id="searchInput" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nomor pesanan, toko, kurir, atau resi..." />
+                    <input id="searchInput" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="{{ __('Cari nomor pesanan, toko, kurir, atau resi...') }}" />
                     <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
@@ -108,14 +108,14 @@
                 <table class="w-full min-w-full bg-surface-container-lowest rounded-xl overflow-hidden premium-table">
                     <thead>
                         <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
-                            <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">No.</th>
-                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">ID Pesanan</th>
-                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Toko</th>
-                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Kurir</th>
-                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">No. Resi</th>
-                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Ongkir</th>
-                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Status</th>
-                            <th class="px-6 py-4 text-right text-[10px] font-semibold tracking-widest">Aksi</th>
+                            <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">{{ __('No.') }}</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('ID Pesanan') }}</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Toko') }}</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Kurir') }}</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('No. Resi') }}</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Ongkir') }}</th>
+                            <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Status') }}</th>
+                            <th class="px-6 py-4 text-right text-[10px] font-semibold tracking-widest">{{ __('Aksi') }}</th>
                         </tr>
                     </thead>
                     <tbody id="table-body">
@@ -148,19 +148,19 @@ $pelanggan = $s->order?->checkout?->user;
                                             <div id="kirim-{{ $s->shipment_id }}-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
                                                 class="hidden absolute left-0 top-full mt-1 w-full min-w-[140px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
                                                 <button type="button" role="option" aria-selected="{{ $s->status === 'pending' ? 'true' : 'false' }}" data-dd-option="pending" onclick="openConfirmPengiriman('kirim', {{ $s->shipment_id }}, 'pending')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                                    Pending<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'pending' ? '' : 'hidden' }}">check</span>
+                                                    {{ __('Pending') }}<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'pending' ? '' : 'hidden' }}">check</span>
                                                 </button>
                                                 <button type="button" role="option" aria-selected="{{ $s->status === 'diproses' ? 'true' : 'false' }}" data-dd-option="diproses" onclick="openConfirmPengiriman('kirim', {{ $s->shipment_id }}, 'diproses')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                                    Diproses<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'diproses' ? '' : 'hidden' }}">check</span>
+                                                    {{ __('Diproses') }}<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'diproses' ? '' : 'hidden' }}">check</span>
                                                 </button>
                                                 <button type="button" role="option" aria-selected="{{ $s->status === 'dikirim' ? 'true' : 'false' }}" data-dd-option="dikirim" onclick="openConfirmPengiriman('kirim', {{ $s->shipment_id }}, 'dikirim')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                                    Dikirim<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'dikirim' ? '' : 'hidden' }}">check</span>
+                                                    {{ __('Dikirim') }}<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'dikirim' ? '' : 'hidden' }}">check</span>
                                                 </button>
                                                 <button type="button" role="option" aria-selected="{{ $s->status === 'diterima' ? 'true' : 'false' }}" data-dd-option="diterima" onclick="openConfirmPengiriman('kirim', {{ $s->shipment_id }}, 'diterima')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                                    Diterima<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'diterima' ? '' : 'hidden' }}">check</span>
+                                                    {{ __('Diterima') }}<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'diterima' ? '' : 'hidden' }}">check</span>
                                                 </button>
                                                 <button type="button" role="option" aria-selected="{{ $s->status === 'gagal' ? 'true' : 'false' }}" data-dd-option="gagal" onclick="openConfirmPengiriman('kirim', {{ $s->shipment_id }}, 'gagal')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                                    Gagal<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'gagal' ? '' : 'hidden' }}">check</span>
+                                                    {{ __('Gagal') }}<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'gagal' ? '' : 'hidden' }}">check</span>
                                                 </button>
                                             </div>
                                             <input type="hidden" name="status" value="{{ $s->status }}" />
@@ -179,7 +179,7 @@ $pelanggan = $s->order?->checkout?->user;
                                         data-diterima="{{ $s->diterima_pada ? \Carbon\Carbon::parse($s->diterima_pada)->locale('id')->translatedFormat('d M Y H:i') : '-' }}"
                                         data-status="{{ ucfirst($s->status) }}"
                                         data-pelanggan="{{ $pelNama }}">
-                                        <span class="material-symbols-outlined text-[16px]">visibility</span>Detail
+                                        <span class="material-symbols-outlined text-[16px]">visibility</span>{{ __('Detail') }}
                                     </button>
                                 </td>
                             </tr>
@@ -188,7 +188,7 @@ $pelanggan = $s->order?->checkout?->user;
                                 <td colspan="8" class="p-8 text-center">
                                     <div class="flex flex-col items-center gap-2">
                                         <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">inbox</span>
-                                        <p class="text-on-surface-variant font-body-md text-sm">Belum ada data pengiriman.</p>
+                                        <p class="text-on-surface-variant font-body-md text-sm">{{ __('Belum ada data pengiriman.') }}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -197,7 +197,7 @@ $pelanggan = $s->order?->checkout?->user;
                             <td colspan="8" class="p-8 text-center">
                                 <div class="flex flex-col items-center gap-2">
                                     <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
-                                    <p class="text-on-surface-variant font-body-md text-sm">Tidak ada pengiriman yang cocok.</p>
+                                    <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada pengiriman yang cocok.') }}</p>
                                 </div>
                             </td>
                         </tr>
@@ -232,19 +232,19 @@ $pelanggan = $s->order?->checkout?->user;
                                     <div id="kirim-m-{{ $s->shipment_id }}-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
                                         class="hidden absolute left-0 top-full mt-1 w-full min-w-[140px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
                                         <button type="button" role="option" aria-selected="{{ $s->status === 'pending' ? 'true' : 'false' }}" data-dd-option="pending" onclick="openConfirmPengiriman('kirim-m', {{ $s->shipment_id }}, 'pending')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                            Pending<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'pending' ? '' : 'hidden' }}">check</span>
+                                            {{ __('Pending') }}<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'pending' ? '' : 'hidden' }}">check</span>
                                         </button>
                                         <button type="button" role="option" aria-selected="{{ $s->status === 'diproses' ? 'true' : 'false' }}" data-dd-option="diproses" onclick="openConfirmPengiriman('kirim-m', {{ $s->shipment_id }}, 'diproses')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                            Diproses<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'diproses' ? '' : 'hidden' }}">check</span>
+                                            {{ __('Diproses') }}<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'diproses' ? '' : 'hidden' }}">check</span>
                                         </button>
                                         <button type="button" role="option" aria-selected="{{ $s->status === 'dikirim' ? 'true' : 'false' }}" data-dd-option="dikirim" onclick="openConfirmPengiriman('kirim-m', {{ $s->shipment_id }}, 'dikirim')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                            Dikirim<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'dikirim' ? '' : 'hidden' }}">check</span>
+                                            {{ __('Dikirim') }}<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'dikirim' ? '' : 'hidden' }}">check</span>
                                         </button>
                                         <button type="button" role="option" aria-selected="{{ $s->status === 'diterima' ? 'true' : 'false' }}" data-dd-option="diterima" onclick="openConfirmPengiriman('kirim-m', {{ $s->shipment_id }}, 'diterima')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                            Diterima<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'diterima' ? '' : 'hidden' }}">check</span>
+                                            {{ __('Diterima') }}<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'diterima' ? '' : 'hidden' }}">check</span>
                                         </button>
                                         <button type="button" role="option" aria-selected="{{ $s->status === 'gagal' ? 'true' : 'false' }}" data-dd-option="gagal" onclick="openConfirmPengiriman('kirim-m', {{ $s->shipment_id }}, 'gagal')" class="w-full flex items-center justify-between gap-2 text-left px-3 py-2 font-body-md text-xs text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                            Gagal<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'gagal' ? '' : 'hidden' }}">check</span>
+                                            {{ __('Gagal') }}<span data-dd-check class="material-symbols-outlined text-[16px] text-gold-accent {{ $s->status === 'gagal' ? '' : 'hidden' }}">check</span>
                                         </button>
                                     </div>
                                     <input type="hidden" name="status" value="{{ $s->status }}" />
@@ -254,19 +254,19 @@ $pelanggan = $s->order?->checkout?->user;
 
                         <dl class="space-y-2 font-body-md text-sm mb-4">
                             <div class="flex justify-between gap-3">
-                                <dt class="text-on-surface-variant">Kurir</dt>
+                                <dt class="text-on-surface-variant">{{ __('Kurir') }}</dt>
                                 <dd class="text-on-surface text-right">{{ $s->courier->nama_kurir ?? '-' }}</dd>
                             </div>
                             <div class="flex justify-between gap-3">
-                                <dt class="text-on-surface-variant">No. Resi</dt>
+                                <dt class="text-on-surface-variant">{{ __('No. Resi') }}</dt>
                                 <dd class="font-mono text-on-surface-variant text-right text-xs">{{ $s->nomor_resi ?? '-' }}</dd>
                             </div>
                             <div class="flex justify-between gap-3">
-                                <dt class="text-on-surface-variant">Ongkir</dt>
+                                <dt class="text-on-surface-variant">{{ __('Ongkir') }}</dt>
                                 <dd class="text-on-surface text-right">Rp {{ number_format((float) $s->ongkir, 0, ',', '.') }}</dd>
                             </div>
                             <div class="flex justify-between gap-3">
-                                <dt class="text-on-surface-variant">Pelanggan</dt>
+                                <dt class="text-on-surface-variant">{{ __('Pelanggan') }}</dt>
                                 <dd class="text-on-surface text-right">{{ $pelNama }}</dd>
                             </div>
                         </dl>
@@ -282,13 +282,13 @@ $pelanggan = $s->order?->checkout?->user;
                             data-diterima="{{ $s->diterima_pada ? \Carbon\Carbon::parse($s->diterima_pada)->locale('id')->translatedFormat('d M Y H:i') : '-' }}"
                             data-status="{{ ucfirst($s->status) }}"
                             data-pelanggan="{{ $pelNama }}">
-                            <span class="material-symbols-outlined text-[16px]">visibility</span>Detail
+                            <span class="material-symbols-outlined text-[16px]">visibility</span>{{ __('Detail') }}
                         </button>
                     </article>
                 @empty
-                    <p class="text-center text-on-surface-variant py-10">Belum ada data pengiriman.</p>
+                    <p class="text-center text-on-surface-variant py-10">{{ __('Belum ada data pengiriman.') }}</p>
                 @endforelse
-                <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada pengiriman yang cocok.</p>
+                <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">{{ __('Tidak ada pengiriman yang cocok.') }}</p>
             </div>
 
             @if ($shipments->hasPages())
@@ -297,7 +297,7 @@ $pelanggan = $s->order?->checkout?->user;
 
             <p class="text-xs text-on-surface-variant mt-6 pt-5 border-t border-muted-border flex items-start gap-2">
             <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 shrink-0">info</span>
-            SA dapat mengubah status pengiriman untuk keperluan darurat. Perubahan status tercatat di riwayat aktivitas.
+            {{ __('SA dapat mengubah status pengiriman untuk keperluan darurat. Perubahan status tercatat di riwayat aktivitas.') }}
         </p>
     </section>
 </div>
@@ -314,50 +314,50 @@ $pelanggan = $s->order?->checkout?->user;
 ])
     <div class="grid grid-cols-2 gap-4">
         <div>
-            <label class="block text-xs font-medium text-on-surface-variant mb-1">Toko</label>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">{{ __('Toko') }}</label>
             <p id="d-toko" class="text-sm font-semibold text-on-surface">-</p>
         </div>
         <div>
-            <label class="block text-xs font-medium text-on-surface-variant mb-1">Pelanggan</label>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">{{ __('Pelanggan') }}</label>
             <p id="d-pelanggan" class="text-sm font-semibold text-on-surface">-</p>
         </div>
     </div>
     <div class="grid grid-cols-2 gap-4">
         <div>
-            <label class="block text-xs font-medium text-on-surface-variant mb-1">Kurir</label>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">{{ __('Kurir') }}</label>
             <p id="d-kurir" class="text-sm font-semibold text-on-surface">-</p>
         </div>
         <div>
-            <label class="block text-xs font-medium text-on-surface-variant mb-1">No. Resi</label>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">{{ __('No. Resi') }}</label>
             <p id="d-resi" class="text-sm font-semibold text-on-surface font-mono">-</p>
         </div>
     </div>
     <div>
-        <label class="block text-xs font-medium text-on-surface-variant mb-1">Ongkir</label>
+        <label class="block text-xs font-medium text-on-surface-variant mb-1">{{ __('Ongkir') }}</label>
         <p id="d-ongkir" class="text-sm font-bold text-gold-accent">-</p>
     </div>
     <div class="grid grid-cols-2 gap-4">
         <div>
-            <label class="block text-xs font-medium text-on-surface-variant mb-1">Estimasi Tiba</label>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">{{ __('Estimasi Tiba') }}</label>
             <p id="d-estimasi" class="text-sm font-semibold text-on-surface">-</p>
         </div>
         <div>
-            <label class="block text-xs font-medium text-on-surface-variant mb-1">Status</label>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">{{ __('Status') }}</label>
             <p id="d-status" class="text-sm font-semibold">-</p>
         </div>
     </div>
     <div class="grid grid-cols-2 gap-4">
         <div>
-            <label class="block text-xs font-medium text-on-surface-variant mb-1">Dikirim Pada</label>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">{{ __('Dikirim Pada') }}</label>
             <p id="d-dikirim" class="text-sm font-semibold text-on-surface">-</p>
         </div>
         <div>
-            <label class="block text-xs font-medium text-on-surface-variant mb-1">Diterima Pada</label>
+            <label class="block text-xs font-medium text-on-surface-variant mb-1">{{ __('Diterima Pada') }}</label>
             <p id="d-diterima" class="text-sm font-semibold text-on-surface">-</p>
         </div>
     </div>
     @slot('footer')
-        <button type="button" onclick="closeModal()" class="btn-modal btn-modal-ghost w-full">Tutup</button>
+        <button type="button" onclick="closeModal()" class="btn-modal btn-modal-ghost w-full">{{ __('Tutup') }}</button>
     @endslot
 @endcomponent
 
@@ -372,13 +372,13 @@ $pelanggan = $s->order?->checkout?->user;
     'dataModal' => true,
 ])
     <div class="p-6">
-        <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Ubah status pengiriman?</h3>
-        <p class="text-on-surface-variant text-sm text-center mb-6">Status akan diubah menjadi <span id="confirm-pengiriman-status" class="font-bold text-on-surface">-</span>.</p>
+        <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">{{ __('Ubah status pengiriman?') }}</h3>
+        <p class="text-on-surface-variant text-sm text-center mb-6">{{ __('Status akan diubah menjadi') }} <span id="confirm-pengiriman-status" class="font-bold text-on-surface">-</span>.</p>
     </div>
     @slot('footer')
         <div class="flex space-x-3">
-            <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeConfirmPengiriman()">Batal</button>
-            <button type="button" id="confirm-pengiriman-submit" class="flex-1 btn-modal btn-modal-primary">Ya, Ubah</button>
+            <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeConfirmPengiriman()">{{ __('Batal') }}</button>
+            <button type="button" id="confirm-pengiriman-submit" class="flex-1 btn-modal btn-modal-primary">{{ __('Ya, Ubah') }}</button>
         </div>
     @endslot
 @endcomponent

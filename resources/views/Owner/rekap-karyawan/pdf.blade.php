@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Rekap Karyawan {{ $storeName }} - Raliva</title>
+    <title>{{ __('Rekap Karyawan') }} {{ $storeName }} - Raliva</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'DejaVu Sans', sans-serif; font-size: 11px; color: #1B1C1C; }
@@ -47,12 +47,12 @@
             <div class="head-row">
                 <div class="head-left">
                     <div class="brand">Raliva</div>
-                    <h1>Rekap Karyawan</h1>
+                    <h1>{{ __('Rekap Karyawan') }}</h1>
                     <div class="store">{{ $storeName }}</div>
                 </div>
                 <div class="head-right meta">
-                    <div>Sampai: <strong>{{ now()->translatedFormat('d M Y') }}</strong></div>
-                    <div>Dicetak: {{ now()->translatedFormat('d M Y H:i') }}</div>
+                    <div>{{ __('Sampai:') }} <strong>{{ now()->translatedFormat('d M Y') }}</strong></div>
+                    <div>{{ __('Dicetak:') }} {{ now()->translatedFormat('d M Y H:i') }}</div>
                 </div>
             </div>
         </div>
@@ -62,49 +62,49 @@
             $pct = fn ($v) => $v !== null ? number_format($v, 2, ',', '.').'%' : $nullLbl;
             $rp = fn ($v) => $v !== null ? $fmt($v) : $nullLbl;
         @endphp
-        <div class="section-title"><span class="bar"></span>Ringkasan <small>{{ ucfirst($roleFilter) }}{{ !empty($dari) || !empty($sampai) ? ' • '.($dari ?? 'awal').' s/d '.($sampai ?? 'sekarang') : '' }}</small></div>
+        <div class="section-title"><span class="bar"></span>{{ __('Ringkasan') }} <small>{{ ucfirst($roleFilter) }}{{ !empty($dari) || !empty($sampai) ? ' • '.($dari ?? __('awal')).' '.__('s/d').' '.($sampai ?? __('sekarang')) : '' }}</small></div>
         <table class="kpi">
             <tr>
                 @if (($roleFilter ?? 'semua') === 'owner')
                     <td style="width:25%;"><span class="lbl">ROI</span><span class="val">{{ $pct($totals['roi'] ?? null) }}</span></td>
-                    <td style="width:25%;"><span class="lbl">Pendapatan</span><span class="val">{{ $fmt($totals['pendapatan'] ?? 0) }}</span></td>
-                    <td style="width:25%;"><span class="lbl">Investasi</span><span class="val">{{ $fmt($totals['investasi'] ?? 0) }}</span></td>
-                    <td style="width:25%;"><span class="lbl">Bersih</span><span class="val">{{ $fmt($totals['bersih'] ?? 0) }}</span></td>
+                    <td style="width:25%;"><span class="lbl">{{ __('Pendapatan') }}</span><span class="val">{{ $fmt($totals['pendapatan'] ?? 0) }}</span></td>
+                    <td style="width:25%;"><span class="lbl">{{ __('Investasi') }}</span><span class="val">{{ $fmt($totals['investasi'] ?? 0) }}</span></td>
+                    <td style="width:25%;"><span class="lbl">{{ __('Bersih') }}</span><span class="val">{{ $fmt($totals['bersih'] ?? 0) }}</span></td>
                 @elseif (($roleFilter ?? 'semua') === 'admin')
-                    <td style="width:20%;"><span class="lbl">Rata-rata CR</span><span class="val">{{ $pct($totals['cr'] ?? null) }}</span></td>
-                    <td style="width:20%;"><span class="lbl">Rata-rata AOV</span><span class="val">{{ $rp($totals['aov'] ?? null) }}</span></td>
-                    <td style="width:20%;"><span class="lbl">Rata-rata LTV</span><span class="val">{{ $rp($totals['ltv'] ?? null) }}</span></td>
-                    <td style="width:20%;"><span class="lbl">Rata-rata Rating</span><span class="val">{{ ($totals['rating'] ?? null) !== null ? number_format($totals['rating'], 1).' ★' : $nullLbl }}</span></td>
-                    <td style="width:20%;"><span class="lbl">Pesanan</span><span class="val">{{ number_format($totals['pesanan'] ?? 0, 0, ',', '.') }}</span></td>
+                    <td style="width:20%;"><span class="lbl">{{ __('Rata-rata CR') }}</span><span class="val">{{ $pct($totals['cr'] ?? null) }}</span></td>
+                    <td style="width:20%;"><span class="lbl">{{ __('Rata-rata AOV') }}</span><span class="val">{{ $rp($totals['aov'] ?? null) }}</span></td>
+                    <td style="width:20%;"><span class="lbl">{{ __('Rata-rata LTV') }}</span><span class="val">{{ $rp($totals['ltv'] ?? null) }}</span></td>
+                    <td style="width:20%;"><span class="lbl">{{ __('Rata-rata Rating') }}</span><span class="val">{{ ($totals['rating'] ?? null) !== null ? number_format($totals['rating'], 1).' ★' : $nullLbl }}</span></td>
+                    <td style="width:20%;"><span class="lbl">{{ __('Pesanan') }}</span><span class="val">{{ number_format($totals['pesanan'] ?? 0, 0, ',', '.') }}</span></td>
                 @elseif (($roleFilter ?? 'semua') === 'produksi')
-                    <td style="width:25%;"><span class="lbl">Ditugaskan</span><span class="val">{{ number_format($totals['ditugaskan'] ?? 0, 0, ',', '.') }}</span></td>
-                    <td style="width:25%;"><span class="lbl">Selesai</span><span class="val">{{ number_format($totals['selesai'] ?? 0, 0, ',', '.') }}</span></td>
-                    <td style="width:25%;"><span class="lbl">Keberhasilan</span><span class="val">{{ $pct($totals['sukses_persen'] ?? null) }}</span></td>
-                    <td style="width:25%;"><span class="lbl">Karyawan</span><span class="val">{{ count($rows) }}</span></td>
+                    <td style="width:25%;"><span class="lbl">{{ __('Ditugaskan') }}</span><span class="val">{{ number_format($totals['ditugaskan'] ?? 0, 0, ',', '.') }}</span></td>
+                    <td style="width:25%;"><span class="lbl">{{ __('Selesai') }}</span><span class="val">{{ number_format($totals['selesai'] ?? 0, 0, ',', '.') }}</span></td>
+                    <td style="width:25%;"><span class="lbl">{{ __('Keberhasilan') }}</span><span class="val">{{ $pct($totals['sukses_persen'] ?? null) }}</span></td>
+                    <td style="width:25%;"><span class="lbl">{{ __('Karyawan') }}</span><span class="val">{{ count($rows) }}</span></td>
                 @else
-                    <td style="width:25%;"><span class="lbl">Transfer Diminta</span><span class="val">{{ number_format($totals['transfer_diminta'] ?? 0, 0, ',', '.') }}</span></td>
-                    <td style="width:25%;"><span class="lbl">Transfer Selesai</span><span class="val">{{ number_format($totals['transfer_selesai'] ?? 0, 0, ',', '.') }}</span></td>
-                    <td style="width:25%;"><span class="lbl">Akurasi Opname</span><span class="val">{{ $pct($totals['akurasi_persen'] ?? null) }}</span></td>
-                    <td style="width:25%;"><span class="lbl">Unit Rusak</span><span class="val">{{ number_format($totals['kerusakan_qty'] ?? 0, 0, ',', '.') }}</span></td>
+                    <td style="width:25%;"><span class="lbl">{{ __('Transfer Diminta') }}</span><span class="val">{{ number_format($totals['transfer_diminta'] ?? 0, 0, ',', '.') }}</span></td>
+                    <td style="width:25%;"><span class="lbl">{{ __('Transfer Selesai') }}</span><span class="val">{{ number_format($totals['transfer_selesai'] ?? 0, 0, ',', '.') }}</span></td>
+                    <td style="width:25%;"><span class="lbl">{{ __('Akurasi Opname') }}</span><span class="val">{{ $pct($totals['akurasi_persen'] ?? null) }}</span></td>
+                    <td style="width:25%;"><span class="lbl">{{ __('Unit Rusak') }}</span><span class="val">{{ number_format($totals['kerusakan_qty'] ?? 0, 0, ',', '.') }}</span></td>
                 @endif
             </tr>
         </table>
 
-        <div class="section-title"><span class="bar"></span>Rekap per Karyawan <small>{{ ucfirst($roleFilter ?? 'semua') }}</small></div>
+        <div class="section-title"><span class="bar"></span>{{ __('Rekap per Karyawan') }} <small>{{ ucfirst($roleFilter ?? 'semua') }}</small></div>
         <div class="table-scroll">
             <table>
                 <thead>
                     <tr>
                         <th style="width:28px;">No</th>
-                        <th>Karyawan</th>
+                        <th>{{ __('Karyawan') }}</th>
                         @if (($roleFilter ?? 'admin') === 'owner')
-                            <th class="r">ROI</th><th class="r">Pendapatan</th><th class="r">Investasi</th><th class="r">Bersih</th>
+                            <th class="r">ROI</th><th class="r">{{ __('Pendapatan') }}</th><th class="r">{{ __('Investasi') }}</th><th class="r">{{ __('Bersih') }}</th>
                         @elseif (($roleFilter ?? 'admin') === 'admin')
-                            <th class="r">CR</th><th class="r">AOV</th><th class="r">LTV</th><th class="r">Rating</th><th class="r">Pesanan</th>
+                            <th class="r">CR</th><th class="r">AOV</th><th class="r">LTV</th><th class="r">Rating</th><th class="r">{{ __('Pesanan') }}</th>
                         @elseif (($roleFilter ?? 'admin') === 'produksi')
-                            <th class="r">Ditugaskan</th><th class="r">Rata2 Unit</th><th class="r">Rata2 Durasi</th><th class="r">Berhasil</th>
+                            <th class="r">{{ __('Ditugaskan') }}</th><th class="r">{{ __('Rata2 Unit') }}</th><th class="r">{{ __('Rata2 Durasi') }}</th><th class="r">{{ __('Berhasil') }}</th>
                         @else
-                            <th class="r">Transfer</th><th class="r">Rata2 Putaran</th><th class="r">Akurasi</th><th class="r">Rusak</th>
+                            <th class="r">Transfer</th><th class="r">{{ __('Rata2 Putaran') }}</th><th class="r">{{ __('Akurasi') }}</th><th class="r">{{ __('Rusak') }}</th>
                         @endif
                     </tr>
                 </thead>
@@ -127,17 +127,17 @@
                             @elseif (($roleFilter ?? 'admin') === 'produksi')
                                 <td class="r">{{ number_format($r['ditugaskan'] ?? 0, 0, ',', '.') }}</td>
                                 <td class="r">{{ ($r['rata_unit_diminta'] ?? null) !== null ? number_format($r['rata_unit_diminta'], 1, ',', '.') : $nullLbl }}</td>
-                                <td class="r">{{ ($r['rata_durasi_jam'] ?? null) !== null ? number_format($r['rata_durasi_jam'], 1, ',', '.').' jam' : $nullLbl }}</td>
+                                <td class="r">{{ ($r['rata_durasi_jam'] ?? null) !== null ? number_format($r['rata_durasi_jam'], 1, ',', '.').' '.__('jam') : $nullLbl }}</td>
                                 <td class="r fw">{{ $pct($r['sukses_persen'] ?? null) }}</td>
                             @else
                                 <td class="r">{{ number_format($r['transfer_diminta'] ?? 0, 0, ',', '.') }}</td>
-                                <td class="r">{{ ($r['rata_putaran_jam'] ?? null) !== null ? number_format($r['rata_putaran_jam'], 1, ',', '.').' jam' : $nullLbl }}</td>
+                                <td class="r">{{ ($r['rata_putaran_jam'] ?? null) !== null ? number_format($r['rata_putaran_jam'], 1, ',', '.').' '.__('jam') : $nullLbl }}</td>
                                 <td class="r fw">{{ $pct($r['akurasi_persen'] ?? null) }}</td>
                                 <td class="r refund">{{ number_format($r['kerusakan_qty'] ?? 0, 0, ',', '.') }}</td>
                             @endif
                         </tr>
                     @empty
-                        <tr><td colspan="6" style="text-align:center; color:#9a9c9c;">Belum ada data karyawan.</td></tr>
+                        <tr><td colspan="6" style="text-align:center; color:#9a9c9c;">{{ __('Belum ada data karyawan.') }}</td></tr>
                     @endforelse
                 </tbody>
                 <tfoot>
@@ -173,15 +173,15 @@
 
         <div class="footer">
             @if (($roleFilter ?? 'admin') === 'owner')
-                ROI = laba bersih / total investasi (Modal, Investor, biaya iklan) per pemilik toko.
+                {{ __('ROI = laba bersih / total investasi (Modal, Investor, biaya iklan) per pemilik toko.') }}
             @elseif (($roleFilter ?? 'admin') === 'admin')
-                Closing Rate = pesanan selesai / seluruh order yang ditangani. LTV = pendapatan / customer unik yang ditangani. Rating adalah proxy dari ulasan pada order yang diverifikasi karyawan.
+                {{ __('Closing Rate = pesanan selesai / seluruh order yang ditangani. LTV = pendapatan / customer unik yang ditangani. Rating adalah proxy dari ulasan pada order yang diverifikasi karyawan.') }}
             @elseif (($roleFilter ?? 'admin') === 'produksi')
-                Metrik dihitung dari production order yang ditugaskan (assigned_to). Durasi hanya dari order selesai bertanggal valid.
+                {{ __('Metrik dihitung dari production order yang ditugaskan (assigned_to). Durasi hanya dari order selesai bertanggal valid.') }}
             @else
-                Transfer diatribusikan ke peminta. Akurasi = opname tanpa selisih / total opname.
+                {{ __('Transfer diatribusikan ke peminta. Akurasi = opname tanpa selisih / total opname.') }}
             @endif
-            Dokumen ini dihasilkan otomatis oleh sistem Raliva &mdash; {{ $storeName }} &mdash; {{ now()->translatedFormat('d M Y') }}
+            {{ __('Dokumen ini dihasilkan otomatis oleh sistem Raliva') }} &mdash; {{ $storeName }} &mdash; {{ now()->translatedFormat('d M Y') }}
         </div>
     </div>
 </body>

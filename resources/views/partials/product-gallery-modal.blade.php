@@ -18,18 +18,18 @@
             <div class="grid md:grid-cols-2 gap-0">
                 <div class="bg-surface-container-low min-h-[220px] p-3 flex flex-col gap-3">
                     <div class="flex items-center justify-between">
-                        <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Foto Produk (<span id="mod-photo-count">0</span>)</span>
+                        <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Foto Produk') }} (<span id="mod-photo-count">0</span>)</span>
                         <span id="mod-photo-counter" class="font-body-md text-body-md font-bold text-gold-accent">-</span>
                     </div>
-                    <img id="mod-img" class="w-full h-[280px] object-cover rounded-lg cursor-zoom-in border border-muted-border" src="" alt="Foto produk" onclick="openLightbox(this.src)" />
+                    <img id="mod-img" class="w-full h-[280px] object-cover rounded-lg cursor-zoom-in border border-muted-border" src="" alt="{{ __('Foto produk') }}" onclick="openLightbox(this.src)" />
                     <div id="mod-thumbs" class="grid grid-cols-3 gap-2"></div>
                 </div>
                 <div class="p-6 space-y-4">
-                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Tipe Produk</span><span id="mod-tipe" class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">-</span></div>
-                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Kategori</span><span id="mod-category" class="font-body-md text-body-md text-on-surface">-</span></div>
-                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Varian (Warna & Ukuran)</span><span id="mod-variants" class="font-body-md text-body-md text-on-surface">-</span></div>
-                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Status</span><span id="mod-status" class="font-body-md text-body-md text-on-surface">-</span></div>
-                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Deskripsi</span><p id="mod-desc" class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-sm">-</p></div>
+                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">{{ __('Tipe Produk') }}</span><span id="mod-tipe" class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">-</span></div>
+                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">{{ __('Kategori') }}</span><span id="mod-category" class="font-body-md text-body-md text-on-surface">-</span></div>
+                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">{{ __('Varian (Warna & Ukuran)') }}</span><span id="mod-variants" class="font-body-md text-body-md text-on-surface">-</span></div>
+                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">{{ __('Status') }}</span><span id="mod-status" class="font-body-md text-body-md text-on-surface">-</span></div>
+                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">{{ __('Deskripsi') }}</span><p id="mod-desc" class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-sm">-</p></div>
                 </div>
             </div>
         </div>
@@ -38,7 +38,7 @@
 
 <!-- Lightbox Foto -->
 <div class="fixed inset-0 z-[80] hidden items-center justify-center p-4 bg-black/80" id="lightbox" onclick="if (event.target === this) closeLightbox()">
-    <img id="lightbox-img" class="max-w-[90vw] max-h-[90vh] object-contain rounded-lg" src="" alt="Foto produk" />
+    <img id="lightbox-img" class="max-w-[90vw] max-h-[90vh] object-contain rounded-lg" src="" alt="{{ __('Foto produk') }}" />
     <span id="lightbox-counter" class="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-xs font-bold bg-black/50 px-2.5 py-1 rounded-full">-</span>
     <button type="button" class="absolute top-4 right-4 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors z-10" onclick="closeLightbox()"><span class="material-symbols-outlined">close</span></button>
 </div>
@@ -91,7 +91,7 @@
                 const resolved = resolveSrc(src);
                 const thumb = document.createElement('img');
                 thumb.src = resolved;
-                thumb.alt = 'Foto ' + (idx + 1);
+                thumb.alt = '{{ __('Foto') }} ' + (idx + 1);
                 thumb.loading = 'lazy';
                 thumb.className = 'aspect-square w-full object-cover rounded-lg border cursor-pointer hover:border-gold-accent transition-colors ' + (idx === 0 ? 'border-gold-accent ring-2 ring-gold-accent' : 'border-muted-border');
                 thumb.onclick = () => {

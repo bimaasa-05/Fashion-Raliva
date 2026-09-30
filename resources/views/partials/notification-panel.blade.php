@@ -8,14 +8,14 @@
         : '#';
 @endphp
 <div class="relative" data-notification-container>
-    <button type="button" data-notification-toggle class="relative text-on-surface hover:text-secondary transition-colors" aria-label="Notifikasi">
+    <button type="button" data-notification-toggle class="relative text-on-surface hover:text-secondary transition-colors" aria-label="{{ __('Notifikasi') }}">
         <span class="material-symbols-outlined">notifications</span>
         <span data-notif-badge class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 items-center justify-center bg-error text-white text-[10px] font-bold leading-none rounded-full {{ $unreadCount > 0 ? 'flex' : 'hidden' }}">{{ $unreadLabel }}</span>
     </button>
     <div data-notification-menu class="hidden absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-[60] overflow-hidden">
         <div class="flex items-center justify-between px-4 py-3 border-b border-muted-border">
-            <p class="font-label-sm text-sm text-on-surface uppercase tracking-wider">Notifikasi</p>
-            <button type="button" data-mark-all-read class="font-label-sm text-[10px] text-gold-accent uppercase hover:underline">Tandai Dibaca</button>
+            <p class="font-label-sm text-sm text-on-surface uppercase tracking-wider">{{ __('Notifikasi') }}</p>
+            <button type="button" data-mark-all-read class="font-label-sm text-[10px] text-gold-accent uppercase hover:underline">{{ __('Tandai Dibaca') }}</button>
         </div>
         <ul class="max-h-80 overflow-y-auto" data-notif-list>
             @forelse ($notificationItems as $item)
@@ -54,11 +54,11 @@
                     </div>
                 </li>
             @empty
-                <li class="px-4 py-8 text-center text-sm text-on-surface-variant">Belum ada notifikasi.</li>
+                <li class="px-4 py-8 text-center text-sm text-on-surface-variant">{{ __('Belum ada notifikasi.') }}</li>
             @endforelse
         </ul>
         @if ($lihatSemuaUrl !== '#')
-            <a href="{{ $lihatSemuaUrl }}" class="block text-center px-4 py-3 font-label-sm text-label-sm text-gold-accent uppercase tracking-widest hover:bg-surface-container-low transition-colors border-t border-muted-border">Lihat Semua Notifikasi</a>
+            <a href="{{ $lihatSemuaUrl }}" class="block text-center px-4 py-3 font-label-sm text-label-sm text-gold-accent uppercase tracking-widest hover:bg-surface-container-low transition-colors border-t border-muted-border">{{ __('Lihat Semua Notifikasi') }}</a>
         @endif
     </div>
 </div>
@@ -116,7 +116,7 @@
             if (!notifications || !notifications.length) {
                 var empty = document.createElement('li');
                 empty.className = 'px-4 py-8 text-center text-sm text-on-surface-variant';
-                empty.textContent = 'Belum ada notifikasi.';
+                empty.textContent = @js(__('Belum ada notifikasi.'));
                 ul.appendChild(empty);
                 return;
             }
@@ -129,7 +129,7 @@
                 var unread = n.status === 0;
                 var html = '<span class="material-symbols-outlined text-[20px] text-gold-accent mt-0.5 shrink-0">' + esc(n.icon || 'notifications') + '</span>' +
                     '<div class="min-w-0 flex-1">' +
-                    '<p class="font-body-md text-sm ' + (unread ? 'font-bold ' : '') + 'text-on-surface"><span class="font-bold">' + esc(n.judul || 'Notifikasi') + '</span> — ' + esc(n.isi || '') + '</p>' +
+                    '<p class="font-body-md text-sm ' + (unread ? 'font-bold ' : '') + 'text-on-surface"><span class="font-bold">' + esc(n.judul || @js(__('Notifikasi'))) + '</span> — ' + esc(n.isi || '') + '</p>' +
                     '<p class="font-label-sm text-[10px] text-on-surface-variant uppercase mt-1">' + esc(n.waktu || '') + '</p>' +
                     '</div>';
                 if (unread) {
@@ -176,7 +176,7 @@
                         headers: { 'X-CSRF-TOKEN': csrf(), 'Content-Type': 'application/json', 'Accept': 'application/json' },
                     }).then(function (res) {
                         if (!res.ok) return;
-                        if (window.showRalivaToast) window.showRalivaToast('Semua notifikasi ditandai sudah dibaca.', 'done_all');
+                        if (window.showRalivaToast) window.showRalivaToast(@js(__('Semua notifikasi ditandai sudah dibaca.')), 'done_all');
                         refreshListAndBadge(container);
                     });
                 });

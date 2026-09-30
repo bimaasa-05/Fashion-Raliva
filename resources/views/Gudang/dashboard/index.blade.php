@@ -1,9 +1,9 @@
 @extends('layouts.gudang')
 
-@section('title', 'Dashboard Gudang')
+@section('title', __('Dashboard Gudang'))
 
-@section('header-title', 'Dashboard Gudang')
-@section('header-subtitle', 'Pantau persediaan dan aktivitas gudang Anda.')
+@section('header-title', __('Dashboard Gudang'))
+@section('header-subtitle', __('Pantau persediaan dan aktivitas gudang Anda.'))
 
 @section('content')
 @php
@@ -37,7 +37,7 @@
                 <span class="material-symbols-outlined text-gold-accent">warehouse</span>
             </div>
             <div>
-                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Gudang Aktif</p>
+                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Gudang Aktif') }}</p>
                 <p class="font-title-md text-title-md text-on-surface leading-tight">{{ $warehouse->nama_gudang ?? 'Belum ada gudang' }}</p>
             </div>
         </div>
@@ -47,10 +47,10 @@
     </section>
 
     <section class="rise">
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Gudang</h2>
+        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">{{ __('Ringkasan Gudang') }}</h2>
         <div class="grid grid-cols-2 xl:grid-cols-3 gap-gutter">
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Produk</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Produk') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $stats->total_produk ?? 0 }}">{{ $stats->total_produk ?? 0 }}</span></span>
                 <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">inventory_2</span>SKU aktif</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
@@ -59,7 +59,7 @@
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">checkroom</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Stok</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Stok') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $stats->total_stok ?? 0 }}">{{ number_format($stats->total_stok ?? 0, 0, ',', '.') }}</span></span>
                 <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">inventory_2</span>unit tersedia</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
@@ -68,7 +68,7 @@
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">inventory_2</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Barang Masuk Hari Ini</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Barang Masuk Hari Ini') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary"><span data-count="{{ $stats->masuk_hari_ini ?? 0 }}">{{ $stats->masuk_hari_ini ?? 0 }}</span></span>
                 <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">archive</span>unit masuk</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
@@ -77,7 +77,7 @@
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">archive</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Barang Keluar Hari Ini</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Barang Keluar Hari Ini') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary"><span data-count="{{ $stats->keluar_hari_ini ?? 0 }}">{{ $stats->keluar_hari_ini ?? 0 }}</span></span>
                 <span class="inline-flex items-center gap-1 text-xs text-error"><span class="material-symbols-outlined text-[14px]">unarchive</span>unit keluar</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
@@ -86,7 +86,7 @@
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">unarchive</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Stok Menipis & Kritis</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Stok Menipis & Kritis') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent"><span data-count="{{ ($stats->menipis ?? 0) + ($stats->kritis ?? 0) }}">{{ ($stats->menipis ?? 0) + ($stats->kritis ?? 0) }}</span></span>
                 <span class="inline-flex items-center gap-1 text-xs text-error"><span class="material-symbols-outlined text-[14px]">north</span>perlu restock</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
@@ -95,7 +95,7 @@
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">warning</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-error/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Stok Habis</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Stok Habis') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-error"><span data-count="{{ $stats->habis ?? 0 }}">{{ $stats->habis ?? 0 }}</span></span>
                 <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">report</span>varian habis</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
@@ -109,18 +109,18 @@
     <section class="rise">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
-                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Target Penerimaan Hari Ini</p>
-                <div data-donut='[{"value":{{ $targetPenerimaan["pct"] ?? 0 }},"color":"#8B1E3F","label":"Tercapai"},{"value":{{ 100 - ($targetPenerimaan["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Target" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">{{ __('Target Penerimaan Hari Ini') }}</p>
+                <div data-donut='[{"value":{{ $targetPenerimaan["pct"] ?? 0 }},"color":"#8B1E3F","label":"{{ __('Tercapai') }}"},{"value":{{ 100 - ($targetPenerimaan["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="{{ __('dari Target') }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
                 <p class="text-[11px] text-on-surface-variant mt-1">{{ $targetPenerimaan["masuk"] ?? 0 }} dari {{ $targetPenerimaan["target"] ?? 0 }} unit hari ini</p>
             </div>
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
-                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">Akurasi Stok</p>
-                <div data-donut='[{"value":{{ $akurasi["pct"] ?? 0 }},"color":"#8B1E3F","label":"Akurat"},{"value":{{ 100 - ($akurasi["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Akurasi" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">{{ __('Akurasi Stok') }}</p>
+                <div data-donut='[{"value":{{ $akurasi["pct"] ?? 0 }},"color":"#8B1E3F","label":"{{ __('Akurat') }}"},{"value":{{ 100 - ($akurasi["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="{{ __('Akurasi') }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
                 <p class="text-[11px] text-on-surface-variant mt-1">{{ $akurasi["tersedia"] ?? 0 }} dari {{ $akurasi["total"] ?? 0 }} varian stok tersedia</p>
             </div>
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
-                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">SLA Pemenuhan Pesanan</p>
-                <div data-donut='[{"value":{{ $sla["pct"] ?? 0 }},"color":"#c03a5a","label":"Tepat SLA"},{"value":{{ 100 - ($sla["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Stok Tersedia" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">{{ __('SLA Pemenuhan Pesanan') }}</p>
+                <div data-donut='[{"value":{{ $sla["pct"] ?? 0 }},"color":"#c03a5a","label":"{{ __('Tepat SLA') }}"},{"value":{{ 100 - ($sla["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="{{ __('Stok Tersedia') }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
                 <p class="text-[11px] text-on-surface-variant mt-1">{{ $sla["tersedia"] ?? 0 }} dari {{ $sla["total"] ?? 0 }} pesanan stok tersedia</p>
             </div>
         </div>
@@ -129,11 +129,11 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <section class="rise lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
             <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
-                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Pergerakan Stok</h2>
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Pergerakan Stok') }}</h2>
                 <div class="inline-flex bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
-                    <button type="button" data-chart-range="7" class="chart-range-btn px-3 py-1.5 rounded-md font-label-sm text-[11px] uppercase tracking-wide transition-colors bg-deep-onyx text-on-primary">7 Hari</button>
-                    <button type="button" data-chart-range="30" class="chart-range-btn px-3 py-1.5 rounded-md font-label-sm text-[11px] uppercase tracking-wide transition-colors text-on-surface-variant hover:text-on-surface">30 Hari</button>
-                    <button type="button" data-chart-range="90" class="chart-range-btn px-3 py-1.5 rounded-md font-label-sm text-[11px] uppercase tracking-wide transition-colors text-on-surface-variant hover:text-on-surface">3 Bulan</button>
+                    <button type="button" data-chart-range="7" class="chart-range-btn px-3 py-1.5 rounded-md font-label-sm text-[11px] uppercase tracking-wide transition-colors bg-deep-onyx text-on-primary">{{ __('7 Hari') }}</button>
+                    <button type="button" data-chart-range="30" class="chart-range-btn px-3 py-1.5 rounded-md font-label-sm text-[11px] uppercase tracking-wide transition-colors text-on-surface-variant hover:text-on-surface">{{ __('30 Hari') }}</button>
+                    <button type="button" data-chart-range="90" class="chart-range-btn px-3 py-1.5 rounded-md font-label-sm text-[11px] uppercase tracking-wide transition-colors text-on-surface-variant hover:text-on-surface">{{ __('3 Bulan') }}</button>
                 </div>
             </div>
             <div id="chart-wrap" class="relative h-72 md:h-80">
@@ -144,29 +144,29 @@
                     <span class="material-symbols-outlined text-on-error-container">cloud_off</span>
                 </div>
                 <div>
-                    <p class="font-title-md text-title-md text-on-surface">Data gagal dimuat</p>
-                    <p class="text-on-surface-variant font-body-md text-sm mt-1">Terjadi masalah saat mengambil data grafik. Silakan coba lagi.</p>
+                    <p class="font-title-md text-title-md text-on-surface">{{ __('Data gagal dimuat') }}</p>
+                    <p class="text-on-surface-variant font-body-md text-sm mt-1">{{ __('Terjadi masalah saat mengambil data grafik. Silakan coba lagi.') }}</p>
                 </div>
-                <button type="button" id="chart-retry" class="mt-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Coba Lagi</button>
+                <button type="button" id="chart-retry" class="mt-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">{{ __('Coba Lagi') }}</button>
             </div>
         </section>
 
         <section class="rise bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
             <div class="flex items-center justify-between mb-2">
-                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Status Stok</h2>
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Status Stok') }}</h2>
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">donut_small</span>
             </div>
             <p class="text-on-surface-variant font-body-md text-xs mb-4">Sebaran kondisi {{ $stats->total_produk ?? 0 }} produk.</p>
-            <div data-donut='[{"value":{{ $statusDist['aman'] ?? 0 }},"color":"#8B1E3F","label":"Aman"},{"value":{{ $statusDist['menipis'] ?? 0 }},"color":"#c03a5a","label":"Menipis"},{"value":{{ $statusDist['kritis'] ?? 0 }},"color":"#BA1A26","label":"Kritis"},{"value":{{ $statusDist['habis'] ?? 0 }},"color":"#7f1010","label":"Habis"}]' data-donut-label="Produk"></div>
-            <a href="{{ route('gudang.stok') }}" class="block text-center mt-5 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Data Stok</a>
+            <div data-donut='[{"value":{{ $statusDist['aman'] ?? 0 }},"color":"#8B1E3F","label":"{{ __('Aman') }}"},{"value":{{ $statusDist['menipis'] ?? 0 }},"color":"#c03a5a","label":"{{ __('Menipis') }}"},{"value":{{ $statusDist['kritis'] ?? 0 }},"color":"#BA1A26","label":"{{ __('Kritis') }}"},{"value":{{ $statusDist['habis'] ?? 0 }},"color":"#7f1010","label":"{{ __('Habis') }}"}]' data-donut-label="{{ __('Produk') }}"></div>
+            <a href="{{ route('gudang.stok') }}" class="block text-center mt-5 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">{{ __('Lihat Data Stok') }}</a>
         </section>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <section class="rise lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
-                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Unit Masuk per Hari</h2>
-                <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">7 Hari Terakhir</span>
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Unit Masuk per Hari') }}</h2>
+                <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">{{ __('7 Hari Terakhir') }}</span>
             </div>
             <div class="h-48" data-bars='@json($barsData)'></div>
             <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
@@ -177,31 +177,31 @@
 
         <section class="rise bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Kategori Stok Terbesar</h2>
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Kategori Stok Terbesar') }}</h2>
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">emoji_events</span>
             </div>
             <div data-leaderboard='@json($leaderboardData)'></div>
-            <a href="{{ route('gudang.stok') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Semua Kategori</a>
+            <a href="{{ route('gudang.stok') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">{{ __('Lihat Semua Kategori') }}</a>
         </section>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <section class="rise lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Stok Menipis</h2>
-                <a href="{{ route('gudang.stok') }}" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline self-start sm:self-auto">Lihat Semua Stok</a>
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Stok Menipis') }}</h2>
+                <a href="{{ route('gudang.stok') }}" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline self-start sm:self-auto">{{ __('Lihat Semua Stok') }}</a>
             </div>
             <div class="overflow-x-auto hidden md:block">
                 <table class="w-full min-w-[750px] premium-table">
                     <thead>
                         <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
                             <th class="p-4 text-center w-12">No.</th>
-                            <th class="p-4 text-left">Produk</th>
+                            <th class="p-4 text-left">{{ __('Produk') }}</th>
                             <th class="p-4 text-center">SKU</th>
-                            <th class="p-4 text-center">Stok</th>
-                            <th class="p-4 text-center">Minimum Stok</th>
+                            <th class="p-4 text-center">{{ __('Stok') }}</th>
+                            <th class="p-4 text-center">{{ __('Minimum Stok') }}</th>
                             <th class="p-4 text-center">Status</th>
-                            <th class="p-4 text-center">Action</th>
+                            <th class="p-4 text-center">{{ __('Action') }}</th>
                         </tr>
                     </thead>
                     <tbody class="font-body-md text-sm">
@@ -217,15 +217,15 @@
                                     @if ($item->status === 'kritis' || $item->status === 'habis')
                                         <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20">{{ $item->status === 'habis' ? 'Habis' : 'Kritis' }}</span>
                                     @else
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Menipis</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">{{ __('Menipis') }}</span>
                                     @endif
                                 </td>
                                 <td class="p-4 text-center">
-                                    <button type="button" onclick="showRalivaToast('Permintaan restock untuk {{ $item->nama_produk }} dikirim ke Admin Toko.', 'local_shipping')" class="px-3 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors btn-premium">Ajukan Restock</button>
+                                    <button type="button" onclick="showRalivaToast('Permintaan restock untuk {{ $item->nama_produk }} dikirim ke Admin Toko.', 'local_shipping')" class="px-3 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors btn-premium">{{ __('Ajukan Restock') }}</button>
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="7" class="p-8 text-center text-on-surface-variant">Tidak ada produk dengan stok menipis.</td></tr>
+                            <tr><td colspan="7" class="p-8 text-center text-on-surface-variant">{{ __('Tidak ada produk dengan stok menipis.') }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -244,17 +244,17 @@
                             @if ($item->status === 'kritis' || $item->status === 'habis')
                                 <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20 shrink-0">{{ $item->status === 'habis' ? 'Habis' : 'Kritis' }}</span>
                             @else
-                                <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30 shrink-0">Menipis</span>
+                                <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30 shrink-0">{{ __('Menipis') }}</span>
                             @endif
                         </div>
 
                         <div class="grid grid-cols-2 gap-gutter mb-4">
                             <div class="bg-surface-container-low border border-muted-border rounded-lg p-3">
-                                <p class="raliva-label">Stok</p>
+                                <p class="raliva-label">{{ __('Stok') }}</p>
                                 <p class="font-title-md text-lg leading-tight {{ $item->status === 'kritis' || $item->status === 'habis' ? 'text-error' : 'text-on-surface' }}">{{ $item->jumlah_stok }}</p>
                             </div>
                             <div class="bg-surface-container-low border border-muted-border rounded-lg p-3">
-                                <p class="raliva-label">Minimum Stok</p>
+                                <p class="raliva-label">{{ __('Minimum Stok') }}</p>
                                 <p class="font-title-md text-lg text-on-surface leading-tight">{{ $item->stok_minimum }}</p>
                             </div>
                         </div>
@@ -264,13 +264,13 @@
                         </button>
                     </article>
                 @empty
-                    <p class="text-center text-on-surface-variant py-10">Tidak ada produk dengan stok menipis.</p>
+                    <p class="text-center text-on-surface-variant py-10">{{ __('Tidak ada produk dengan stok menipis.') }}</p>
                 @endforelse
             </div>
         </section>
 
         <section class="rise bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
-            <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Aktivitas Terbaru</h2>
+            <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">{{ __('Aktivitas Terbaru') }}</h2>
             <ul class="flex flex-col gap-4 flex-grow">
                 @forelse ($recentActivity as $act)
                     @php
@@ -297,10 +297,10 @@
                         <span class="font-label-sm text-xs text-on-surface-variant shrink-0">{{ $act->created_at?->format('H:i') ?? '-' }}</span>
                     </li>
                 @empty
-                    <li class="text-center text-on-surface-variant py-4">Belum ada aktivitas.</li>
+                    <li class="text-center text-on-surface-variant py-4">{{ __('Belum ada aktivitas.') }}</li>
                 @endforelse
             </ul>
-            <a href="{{ route('gudang.riwayat-stok') }}" class="block text-center mt-6 w-full py-3 border border-muted-border rounded-lg font-label-sm text-label-sm text-gold-accent uppercase tracking-widest hover:bg-gold-accent/10 hover:border-gold-accent/40 transition-colors">Lihat Riwayat Lengkap</a>
+            <a href="{{ route('gudang.riwayat-stok') }}" class="block text-center mt-6 w-full py-3 border border-muted-border rounded-lg font-label-sm text-label-sm text-gold-accent uppercase tracking-widest hover:bg-gold-accent/10 hover:border-gold-accent/40 transition-colors">{{ __('Lihat Riwayat Lengkap') }}</a>
         </section>
     </div>
 </div>
@@ -335,8 +335,8 @@
             data: {
                 labels: data.labels,
                 datasets: [
-                    { label: 'Barang Masuk', data: data.masuk, borderColor: '#8B1E3F', backgroundColor: 'rgba(139, 30, 63, 0.1)', fill: true, tension: 0.35, borderWidth: 2, pointBackgroundColor: '#8B1E3F', pointRadius: 3 },
-                    { label: 'Barang Keluar', data: data.keluar, borderColor: tickColor, backgroundColor: 'transparent', fill: false, tension: 0.35, borderWidth: 2, pointBackgroundColor: tickColor, pointRadius: 3 }
+                    { label: '{{ __('Barang Masuk') }}', data: data.masuk, borderColor: '#8B1E3F', backgroundColor: 'rgba(139, 30, 63, 0.1)', fill: true, tension: 0.35, borderWidth: 2, pointBackgroundColor: '#8B1E3F', pointRadius: 3 },
+                    { label: '{{ __('Barang Keluar') }}', data: data.keluar, borderColor: tickColor, backgroundColor: 'transparent', fill: false, tension: 0.35, borderWidth: 2, pointBackgroundColor: tickColor, pointRadius: 3 }
                 ]
             },
             options: {

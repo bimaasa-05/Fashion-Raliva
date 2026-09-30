@@ -44,7 +44,7 @@
     <div class="relative mx-auto w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl max-h-[85vh] overflow-y-auto" onclick="event.stopPropagation()">
         <div class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
             <div>
-                <h3 class="font-title-md text-title-md text-on-surface">Detail Produksi</h3>
+                <h3 class="font-title-md text-title-md text-on-surface">{{ __('Detail Produksi') }}</h3>
                 <p class="text-on-surface-variant font-mono text-xs uppercase tracking-wider mt-1">{{ $o->nomor_order }}</p>
             </div>
             <button type="button" onclick="closeDetailProduksi('{{ $o->order_id }}')" class="text-on-surface-variant hover:text-on-surface transition-colors"><span class="material-symbols-outlined">close</span></button>
@@ -53,11 +53,11 @@
         <div class="p-6 space-y-5 font-body-md text-sm">
             {{-- Info dasar pesanan --}}
             <div class="bg-surface-container-low rounded-lg p-4 space-y-2">
-                <div class="flex justify-between gap-4"><span class="text-on-surface-variant">Pelanggan</span><span class="text-on-surface text-right">{{ $o->checkout?->nama_penerima ?? $o->checkout?->user?->nama_lengkap ?? '-' }}</span></div>
-                <div class="flex justify-between gap-4"><span class="text-on-surface-variant">Toko</span><span class="text-on-surface text-right">{{ $o->store?->nama_toko ?? '-' }}</span></div>
-                <div class="flex justify-between gap-4"><span class="text-on-surface-variant">Status</span><span class="text-on-surface text-right capitalize">{{ str_replace('_', ' ', $o->status) }}</span></div>
+                <div class="flex justify-between gap-4"><span class="text-on-surface-variant">{{ __('Pelanggan') }}</span><span class="text-on-surface text-right">{{ $o->checkout?->nama_penerima ?? $o->checkout?->user?->nama_lengkap ?? '-' }}</span></div>
+                <div class="flex justify-between gap-4"><span class="text-on-surface-variant">{{ __('Toko') }}</span><span class="text-on-surface text-right">{{ $o->store?->nama_toko ?? '-' }}</span></div>
+                <div class="flex justify-between gap-4"><span class="text-on-surface-variant">{{ __('Status') }}</span><span class="text-on-surface text-right capitalize">{{ str_replace('_', ' ', $o->status) }}</span></div>
                 <div>
-                    <p class="text-on-surface-variant mb-1">Produk &amp; Jumlah</p>
+                    <p class="text-on-surface-variant mb-1">{{ __('Produk & Jumlah') }}</p>
                     <ul class="space-y-1">
                         @forelse ($o->items as $item)
                             <li class="flex justify-between gap-3 text-on-surface">
@@ -65,21 +65,21 @@
                                 <span class="text-on-surface-variant shrink-0">× {{ $item->quantity }}</span>
                             </li>
                         @empty
-                            <li class="text-on-surface-variant text-xs">Tidak ada item.</li>
+                            <li class="text-on-surface-variant text-xs">{{ __('Tidak ada item.') }}</li>
                         @endforelse
                     </ul>
                 </div>
                 @if ($o->bahanList->isNotEmpty())
                     <div>
-                        <p class="text-on-surface-variant mb-1">Bahan Produksi</p>
+                        <p class="text-on-surface-variant mb-1">{{ __('Bahan Produksi') }}</p>
                         <ul class="space-y-1">
                             @foreach ($o->bahanList as $bahan)
                                 <li class="flex justify-between gap-3 text-on-surface">
                                     <span>{{ $bahan->nama_bahan }}
                                         @if ($bahan->isDariProduksi())
-                                            <span class="text-[10px] uppercase text-secondary">(Produksi)</span>
+                                            <span class="text-[10px] uppercase text-secondary">{{ __('(Produksi)') }}</span>
                                         @else
-                                            <span class="text-[10px] uppercase text-on-surface-variant">(Admin)</span>
+                                            <span class="text-[10px] uppercase text-on-surface-variant">{{ __('(Admin)') }}</span>
                                         @endif
                                     </span>
                                     <span class="text-on-surface-variant shrink-0">{{ $bahan->jumlah }} {{ $bahan->satuan }}</span>
@@ -90,30 +90,30 @@
                 @endif
                 @if ($o->catatan)
                     <div class="pt-2 border-t border-muted-border">
-                        <p class="text-on-surface-variant mb-1">Catatan Customer</p>
+                        <p class="text-on-surface-variant mb-1">{{ __('Catatan Customer') }}</p>
                         <p class="text-on-surface italic">“{{ $o->catatan }}”</p>
                     </div>
                 @endif
                 @if ($qcRow)
                     <div class="flex justify-between gap-4 pt-2 border-t border-muted-border">
-                        <span class="text-on-surface-variant">Hasil QC</span>
-                        <span class="text-on-surface text-right"><span class="text-secondary font-bold">{{ $qcRow->jumlah_lulus }}</span> lulus • <span class="text-error">{{ $qcRow->jumlah_gagal }}</span> gagal</span>
+                        <span class="text-on-surface-variant">{{ __('Hasil QC') }}</span>
+                        <span class="text-on-surface text-right"><span class="text-secondary font-bold">{{ $qcRow->jumlah_lulus }}</span> {{ __('lulus') }} • <span class="text-error">{{ $qcRow->jumlah_gagal }}</span> {{ __('gagal') }}</span>
                     </div>
                 @endif
                 @if (($o->kekurangan_gudang ?? 0) > 0)
                     <div class="flex justify-between gap-4 pt-2 border-t border-muted-border">
-                        <span class="text-on-surface-variant">Kekurangan Gudang</span>
-                        <span class="text-gold-accent text-right font-bold">{{ $o->kekurangan_gudang }} pcs dari stok gudang</span>
+                        <span class="text-on-surface-variant">{{ __('Kekurangan Gudang') }}</span>
+                        <span class="text-gold-accent text-right font-bold">{{ $o->kekurangan_gudang }} {{ __('pcs dari stok gudang') }}</span>
                     </div>
                 @endif
             </div>
 
             {{-- Perbandingan durasi --}}
             <div>
-                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">Durasi Pengerjaan</p>
+                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">{{ __('Durasi Pengerjaan') }}</p>
                 <div class="grid grid-cols-2 gap-3">
                     <div class="bg-surface-container-low rounded-lg p-3">
-                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Target (Admin)</p>
+                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Target (Admin)') }}</p>
                         <p class="text-on-surface font-bold mt-1">{{ $durTarget !== null ? produksiFmtDetik($durTarget) : '-' }}</p>
                         @if ($stepJadwalAkhir)
                             @if ($produksiSelesai)
@@ -125,24 +125,24 @@
                                     <p class="text-xs mt-1 {{ $selisihDetik <= 0 ? 'text-secondary' : 'text-error' }}">
                                         @if ($selisihDetik <= 0)
                                             @if (abs($selisihDetik) < 60)
-                                                Selesai tepat waktu.
+                                                {{ __('Selesai tepat waktu.') }}
                                             @else
-                                                Selesai lebih cepat {{ produksiFmtDetik(abs($selisihDetik)) }} dari deadline.
+                                                {{ __('Selesai lebih cepat :durasi dari deadline.', ['durasi' => produksiFmtDetik(abs($selisihDetik))]) }}
                                             @endif
                                         @else
-                                            Terlambat {{ produksiFmtDetik($selisihDetik) }} dari deadline.
+                                            {{ __('Terlambat :durasi dari deadline.', ['durasi' => produksiFmtDetik($selisihDetik)]) }}
                                         @endif
                                     </p>
                                 @else
-                                    <p class="text-xs text-on-surface-variant mt-1">Produksi selesai · Menunggu QC</p>
+                                    <p class="text-xs text-on-surface-variant mt-1">{{ __('Produksi selesai · Menunggu QC') }}</p>
                                 @endif
                             @else
-                                <p class="text-xs text-on-surface-variant mt-1 countdown-badge" data-live-countdown-end="{{ $stepJadwalAkhir->timestamp }}" data-live-countdown-start="{{ $stepJadwalAwal?->timestamp }}">Memuat...</p>
+                                <p class="text-xs text-on-surface-variant mt-1 countdown-badge" data-live-countdown-end="{{ $stepJadwalAkhir->timestamp }}" data-live-countdown-start="{{ $stepJadwalAwal?->timestamp }}">{{ __('Memuat...') }}</p>
                             @endif
                         @endif
                     </div>
                     <div class="bg-surface-container-low rounded-lg p-3">
-                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Aktual (Produksi)</p>
+                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Aktual (Produksi)') }}</p>
                         <p class="text-on-surface font-bold mt-1"
                            @if ($stepDiterima)
                            data-live-elapsed-start="{{ $stepDiterima->timestamp }}"
@@ -155,12 +155,12 @@
 
             {{-- Timeline --}}
             <div>
-                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-3">Timeline Pengerjaan</p>
+                <p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-3">{{ __('Timeline Pengerjaan') }}</p>
                 <ol class="relative space-y-5 border-l-2 border-muted-border ml-[18px]">
                     @if ($stepDibuat)
                     <li class="pl-6 relative">
                         <span class="absolute -left-[22px] top-0">{!! $stepBadge('bg-gold-accent/15 text-gold-accent border-gold-accent/30', 'shopping_bag') !!}</span>
-                        <p class="text-on-surface font-bold">Pesanan Dibuat</p>
+                        <p class="text-on-surface font-bold">{{ __('Pesanan Dibuat') }}</p>
                         <p class="text-xs text-on-surface-variant mt-0.5">{{ $stepDibuat->translatedFormat('d M Y H:i') }}</p>
                     </li>
                     @endif
@@ -168,7 +168,7 @@
                     @if ($stepJadwalAwal)
                     <li class="pl-6 relative">
                         <span class="absolute -left-[22px] top-0">{!! $stepBadge('bg-surface-container-high text-on-surface-variant border-outline-variant', 'calendar_month') !!}</span>
-                        <p class="text-on-surface font-bold">Jadwal Produksi (Admin)</p>
+                        <p class="text-on-surface font-bold">{{ __('Jadwal Produksi (Admin)') }}</p>
                         <p class="text-xs text-on-surface-variant mt-0.5">
                             {{ $stepJadwalAwal->translatedFormat('d M H:i') }} → {{ $stepJadwalAkhir?->translatedFormat('d M H:i') ?? '-' }}
                         </p>
@@ -180,10 +180,10 @@
                         <span class="absolute -left-[22px] top-0 {!! $o->status === \App\Models\Order::STATUS_DIPROSES ? 'bg-gold-accent/15 text-gold-accent border-gold-accent/30' : 'bg-secondary-container/20 text-secondary border-secondary/25' !!}">
                             <span class="w-9 h-9 rounded-full border flex items-center justify-center"><span class="material-symbols-outlined text-[18px]">precision_manufacturing</span></span>
                         </span>
-                        <p class="text-on-surface font-bold">Produksi Dimulai</p>
+                        <p class="text-on-surface font-bold">{{ __('Produksi Dimulai') }}</p>
                         <p class="text-xs text-on-surface-variant mt-0.5">{{ $stepDiterima->translatedFormat('d M Y H:i') }}</p>
                         @if ($o->produksi_catatan_tolak)
-                            <p class="text-xs text-error mt-1">⚠ Ditolak: {{ $o->produksi_catatan_tolak }}</p>
+                            <p class="text-xs text-error mt-1">⚠ {{ __('Ditolak') }}: {{ $o->produksi_catatan_tolak }}</p>
                         @endif
                     </li>
                     @endif
@@ -191,7 +191,7 @@
                     @if ($o->produksi_selesai_pada)
                     <li class="pl-6 relative">
                         <span class="absolute -left-[22px] top-0"><span class="w-9 h-9 rounded-full border border-secondary/25 bg-secondary-container/20 flex items-center justify-center"><span class="material-symbols-outlined text-[18px] text-secondary">handyman</span></span></span>
-                        <p class="text-on-surface font-bold">Produksi Selesai</p>
+                        <p class="text-on-surface font-bold">{{ __('Produksi Selesai') }}</p>
                         <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->produksi_selesai_pada->translatedFormat('d M Y H:i') }}</p>
                     </li>
                     @endif
@@ -199,15 +199,15 @@
                     @if ($stepQc)
                     <li class="pl-6 relative">
                         <span class="absolute -left-[22px] top-0"><span class="w-9 h-9 rounded-full border border-secondary/25 bg-secondary-container/20 flex items-center justify-center"><span class="material-symbols-outlined text-[18px] text-secondary">verified</span></span></span>
-                        <p class="text-on-surface font-bold">QC + Packing</p>
-                        <p class="text-xs text-on-surface-variant mt-0.5">{{ $stepQc->translatedFormat('d M Y H:i') }}@if ($o->tanggal_packing) • Packing {{ $o->tanggal_packing->translatedFormat('d M H:i') }}@endif</p>
+                        <p class="text-on-surface font-bold">{{ __('QC + Packing') }}</p>
+                        <p class="text-xs text-on-surface-variant mt-0.5">{{ $stepQc->translatedFormat('d M Y H:i') }}@if ($o->tanggal_packing) • {{ __('Packing') }} {{ $o->tanggal_packing->translatedFormat('d M H:i') }}@endif</p>
                     </li>
                     @endif
 
                     @if ($stepKirim)
                     <li class="pl-6 relative">
                         <span class="absolute -left-[22px] top-0"><span class="w-9 h-9 rounded-full border border-sky-500/25 bg-sky-500/10 flex items-center justify-center"><span class="material-symbols-outlined text-[18px] text-sky-600">local_shipping</span></span></span>
-                        <p class="text-on-surface font-bold">Dikirim</p>
+                        <p class="text-on-surface font-bold">{{ __('Dikirim') }}</p>
                         <p class="text-xs text-on-surface-variant mt-0.5">{{ $stepKirim->translatedFormat('d M Y H:i') }}</p>
                     </li>
                     @endif
@@ -215,8 +215,8 @@
                     @if ($isSelesai)
                     <li class="pl-6 relative">
                         <span class="absolute -left-[22px] top-0"><span class="w-9 h-9 rounded-full border border-secondary/25 bg-secondary-container/20 flex items-center justify-center"><span class="material-symbols-outlined text-[18px] text-secondary">check_circle</span></span></span>
-                        <p class="text-on-surface font-bold">Selesai</p>
-                        <p class="text-xs text-on-surface-variant mt-0.5">Pesanan diterima customer.</p>
+                        <p class="text-on-surface font-bold">{{ __('Selesai') }}</p>
+                        <p class="text-xs text-on-surface-variant mt-0.5">{{ __('Pesanan diterima customer.') }}</p>
                     </li>
                     @endif
                 </ol>
@@ -224,7 +224,7 @@
         </div>
 
         <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end gap-3">
-            <button type="button" onclick="closeDetailProduksi('{{ $o->order_id }}')" class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+            <button type="button" onclick="closeDetailProduksi('{{ $o->order_id }}')" class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Tutup') }}</button>
         </div>
     </div>
 </div>
@@ -261,11 +261,11 @@
             const m = Math.floor((totalSec % 3600) / 60);
             const s = Math.floor(totalSec % 60);
             const parts = [];
-            if (h > 0) parts.push(h + 'h');
-            if (j > 0) parts.push(j + 'j');
-            if (m > 0) parts.push(m + 'm');
-            if (s > 0) parts.push(s + 'd');
-            return parts.length ? parts.join(' ') : '< 1 menit';
+            if (h > 0) parts.push(h + '{{ __('hari_u') }}');
+            if (j > 0) parts.push(j + '{{ __('jam_u') }}');
+            if (m > 0) parts.push(m + '{{ __('menit_u') }}');
+            if (s > 0) parts.push(s + '{{ __('detik_u') }}');
+            return parts.length ? parts.join(' ') : @js(__('< 1 menit'));
         }
 
         function tickLiveDurations() {
@@ -277,18 +277,18 @@
                 const startRaw = el.dataset.liveCountdownStart;
                 const start = startRaw ? parseInt(startRaw, 10) * 1000 : null;
                 if (start && now < start) {
-                    el.textContent = 'Mulai dalam ' + liveDurFmt(Math.floor((start - now) / 1000));
+                    el.textContent = '{{ __('Mulai dalam') }} ' + liveDurFmt(Math.floor((start - now) / 1000));
                     el.classList.add('text-secondary');
                     el.classList.remove('text-error', 'font-bold', 'text-on-surface-variant');
                     return;
                 }
                 const diff = Math.floor((end - now) / 1000);
                 if (diff < 0) {
-                    el.textContent = 'Terlambat ' + liveDurFmt(Math.abs(diff));
+                    el.textContent = '{{ __('Terlambat ') }}' + liveDurFmt(Math.abs(diff));
                     el.classList.add('text-error', 'font-bold');
                     el.classList.remove('text-on-surface-variant', 'text-secondary');
                 } else {
-                    el.textContent = 'Sisa ' + liveDurFmt(diff);
+                    el.textContent = '{{ __('Sisa ') }}' + liveDurFmt(diff);
                     el.classList.add('text-on-surface-variant');
                     el.classList.remove('text-error', 'font-bold', 'text-secondary');
                 }

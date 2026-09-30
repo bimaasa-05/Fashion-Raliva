@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>RALIVA - Akses Ditolak</title>
+    <title>RALIVA - {{ __('Akses Ditolak') }}</title>
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
@@ -19,22 +19,22 @@
                  style="background:#fde8e8;">
                 <span class="material-symbols-outlined text-[36px]" style="color:#8B1E1E;">gpp_maybe</span>
             </div>
-            <h1 class="font-bold text-2xl mb-2" style="font-family:'Playfair Display',serif;">Akses Ditolak</h1>
+            <h1 class="font-bold text-2xl mb-2" style="font-family:'Playfair Display',serif;">{{ __('Akses Ditolak') }}</h1>
             <p class="text-on-surface-variant text-sm leading-relaxed mb-6" style="color:#5f5f5f;">
-                {{ $message ?? 'Anda tidak memiliki izin untuk membuka halaman ini. Silakan kembali ke beranda sesuai peran Anda.' }}
+                {{ $message ?? __('Anda tidak memiliki izin untuk membuka halaman ini. Silakan kembali ke beranda sesuai peran Anda.') }}
             </p>
             <div class="flex flex-col sm:flex-row gap-3 justify-center">
                 <a href="{{ route($homeRoute ?? 'login') }}"
                    class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full font-semibold text-white"
                    style="background:#8B1E1E;">
                     <span class="material-symbols-outlined text-[20px]">home</span>
-                    Kembali ke Beranda
+                    {{ __('Kembali ke Beranda') }}
                 </a>
                 <button type="button" onclick="history.back()"
                         class="inline-flex items-center justify-center gap-2 h-12 px-6 rounded-full font-semibold border"
                         style="border-color:#8B1E1E;color:#8B1E1E;">
                     <span class="material-symbols-outlined text-[20px]">arrow_back</span>
-                    Kembali
+                    {{ __('Kembali') }}
                 </button>
             </div>
         </div>

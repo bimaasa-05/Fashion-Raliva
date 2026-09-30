@@ -1,9 +1,9 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Ulasan Produk Toko')
-@section('header-title', 'Ulasan Produk Toko')
-@section('header-badge', 'Pantau')
-@section('header-subtitle', 'Pantau semua ulasan produk dari seluruh toko di platform')
+@section('title', __('Ulasan Produk Toko'))
+@section('header-title', __('Ulasan Produk Toko'))
+@section('header-badge', __('Pantau'))
+@section('header-subtitle', __('Pantau semua ulasan produk dari seluruh toko di platform'))
 
 @push('styles')
 <style>
@@ -31,25 +31,25 @@
                     <div class="flex flex-wrap items-center gap-3 mb-4">
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase tracking-wider border border-secondary/20">
                             <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                            {{ $stats['total'] }} Ulasan
+                            {{ $stats['total'] }} {{ __('Ulasan') }}
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase tracking-wider border border-success/20">
                             <span class="w-1.5 h-1.5 rounded-full bg-success"></span>
-                            {{ $stats['aktif'] }} Aktif
+                            {{ $stats['aktif'] }} {{ __('Aktif') }}
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase tracking-wider border border-error/20">
                             <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-                            {{ $stats['nonaktif'] }} Nonaktif
+                            {{ $stats['nonaktif'] }} {{ __('Nonaktif') }}
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-tertiary-container/30 text-on-tertiary-container text-[10px] font-bold uppercase tracking-wider border border-tertiary-container/50">
                             <span class="material-symbols-outlined text-[12px]">star</span>
-                            {{ $stats['rata_rating'] }} Rata-rata
+                            {{ $stats['rata_rating'] }} {{ __('Rata-rata') }}
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase tracking-wider border border-outline-variant">
-                            {{ $stats['total_toko'] }} Toko
+                            {{ $stats['total_toko'] }} {{ __('Toko') }}
                         </span>
                     </div>
-                    <p class="font-body-md text-body-md text-on-surface-variant max-w-lg">Lihat semua ulasan dari seluruh toko. Tinjau kualitas produk dan layanan toko di platform Raliva.</p>
+                    <p class="font-body-md text-body-md text-on-surface-variant max-w-lg">{{ __('Lihat semua ulasan dari seluruh toko. Tinjau kualitas produk dan layanan toko di platform Raliva.') }}</p>
                 </div>
             </div>
         </div>
@@ -61,16 +61,16 @@
             <!-- Status chips -->
             <div class="flex flex-wrap gap-2 items-center" data-filter-group="status">
                 <span class="text-gold-accent material-symbols-outlined text-[16px]">filter_list</span>
-                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest self-center mr-1">Status:</span>
-                <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide active" data-filter="status" data-value="">Semua</button>
-                <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="status" data-value="aktif">Aktif</button>
-                <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="status" data-value="nonaktif">Nonaktif</button>
+                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest self-center mr-1">{{ __('Status:') }}</span>
+                <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide active" data-filter="status" data-value="">{{ __('Semua') }}</button>
+                <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="status" data-value="aktif">{{ __('Aktif') }}</button>
+                <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="status" data-value="nonaktif">{{ __('Nonaktif') }}</button>
             </div>
             <!-- Rating chips -->
             <div class="flex flex-wrap gap-2 items-center" data-filter-group="rating">
                 <span class="text-gold-accent material-symbols-outlined text-[16px]">star</span>
-                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest self-center mr-1">Rating:</span>
-                <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide active" data-filter="rating" data-value="">Semua</button>
+                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest self-center mr-1">{{ __('Rating:') }}</span>
+                <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide active" data-filter="rating" data-value="">{{ __('Semua') }}</button>
                 <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="rating" data-value="5">5★</button>
                 <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="rating" data-value="4">4★</button>
                 <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="rating" data-value="3">3★</button>
@@ -80,7 +80,7 @@
             <!-- Search -->
             <div class="relative flex-1 min-w-[200px] lg:ml-auto">
                 <span class="absolute left-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-on-surface-variant/50 text-[20px]">search</span>
-                <input type="text" id="searchInput" placeholder="Cari produk, toko, atau reviewer..." class="w-full bg-transparent border border-muted-border rounded-lg pl-10 pr-4 py-2.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" oninput="applyFilter()" />
+                <input type="text" id="searchInput" placeholder="{{ __('Cari produk, toko, atau reviewer...') }}" class="w-full bg-transparent border border-muted-border rounded-lg pl-10 pr-4 py-2.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" oninput="applyFilter()" />
             </div>
         </div>
     </section>
@@ -88,7 +88,7 @@
     <!-- Review Grid -->
     <section class="rise rise-d2">
         <div class="flex justify-between items-center flex-wrap gap-2 mb-4">
-            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Daftar Ulasan</h2>
+            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">{{ __('Daftar Ulasan') }}</h2>
             <span id="review-count" class="text-on-surface-variant font-body-md text-sm">{{ $reviews->count() }} ulasan</span>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-gutter" id="review-grid">
@@ -116,12 +116,12 @@
                             @if($review->status === 'aktif')
                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success/10 text-success text-[9px] font-bold uppercase border border-success/20 shrink-0">
                                     <span class="w-1 h-1 rounded-full bg-success"></span>
-                                    Aktif
+                                    {{ __('Aktif') }}
                                 </span>
                             @else
                                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20 shrink-0">
                                     <span class="w-1 h-1 rounded-full bg-error"></span>
-                                    Nonaktif
+                                    {{ __('Nonaktif') }}
                                 </span>
                             @endif
                         </div>
@@ -148,7 +148,7 @@
                     <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mx-auto mb-4">
                         <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">reviews</span>
                     </div>
-                    <p class="text-on-surface-variant font-body-md text-sm">Belum ada ulasan.</p>
+                    <p class="text-on-surface-variant font-body-md text-sm">{{ __('Belum ada ulasan.') }}</p>
                 </div>
             @endforelse
             <!-- Filter empty state -->
@@ -156,8 +156,8 @@
                 <div class="w-16 h-16 rounded-full bg-surface-container-high flex items-center justify-center mx-auto mb-4">
                     <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada ulasan yang cocok dengan filter.</p>
-                <button onclick="resetFilters()" class="mt-3 px-4 py-2 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant hover:border-gold-accent hover:text-gold-accent transition-colors">Reset Filter</button>
+                <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada ulasan yang cocok dengan filter.') }}</p>
+                <button onclick="resetFilters()" class="mt-3 px-4 py-2 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant hover:border-gold-accent hover:text-gold-accent transition-colors">{{ __('Reset Filter') }}</button>
             </div>
         </div>
     </section>
@@ -189,11 +189,11 @@
     <!-- Product & Store -->
     <div class="grid grid-cols-2 gap-3">
         <div class="p-3 border border-muted-border rounded-lg">
-            <p class="text-on-surface-variant text-[10px] uppercase tracking-widest font-label-sm mb-1">Toko</p>
+            <p class="text-on-surface-variant text-[10px] uppercase tracking-widest font-label-sm mb-1">{{ __('Toko') }}</p>
             <p id="modal-store" class="text-on-surface font-body-md text-sm truncate">-</p>
         </div>
         <div class="p-3 border border-muted-border rounded-lg">
-            <p class="text-on-surface-variant text-[10px] uppercase tracking-widest font-label-sm mb-1">Produk</p>
+            <p class="text-on-surface-variant text-[10px] uppercase tracking-widest font-label-sm mb-1">{{ __('Produk') }}</p>
             <p id="modal-product" class="text-on-surface font-body-md text-sm truncate">-</p>
         </div>
     </div>
@@ -204,7 +204,7 @@
     </div>
     <!-- Ulasan -->
     <div>
-        <p class="text-on-surface-variant text-[10px] uppercase tracking-widest font-label-sm mb-2">Ulasan</p>
+        <p class="text-on-surface-variant text-[10px] uppercase tracking-widest font-label-sm mb-2">{{ __('Ulasan') }}</p>
         <p id="modal-ulasan" class="text-on-surface font-body-md text-sm leading-relaxed">-</p>
     </div>
     <!-- Date -->
@@ -229,7 +229,7 @@
     'dataModal' => true,
 ])
     <div class="p-6">
-        <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center" id="toggle-title">Ubah Status Ulasan</h3>
+        <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center" id="toggle-title">{{ __('Ubah Status Ulasan') }}</h3>
         <p class="text-on-surface-variant text-sm text-center mb-6" id="toggle-message">-</p>
     </div>
     @slot('footer')
@@ -237,8 +237,8 @@
             @csrf
             @method('PUT')
             <div class="flex space-x-3">
-                <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeToggleModal()">Batal</button>
-                <button type="submit" class="flex-1 btn-modal btn-modal-primary">Ya, Ubah</button>
+                <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeToggleModal()">{{ __('Batal') }}</button>
+                <button type="submit" class="flex-1 btn-modal btn-modal-primary">{{ __('Ya, Ubah') }}</button>
             </div>
         </form>
     @endslot
@@ -364,7 +364,7 @@
     function openToggleModal(id, action, reviewer) {
         const isActive = action === 'aktifkan';
         document.getElementById('toggle-title').textContent = isActive ? 'Aktifkan Ulasan' : 'Nonaktifkan Ulasan';
-        document.getElementById('toggle-message').textContent = 'Ulasan dari ' + reviewer + ' akan di' + (isActive ? 'aktifkan kembali' : 'nonaktifkan') + '.';
+        document.getElementById('toggle-message').textContent = '{{ __('Ulasan dari') }} ' + reviewer + ' {{ __('akan di') }}' + (isActive ? 'aktifkan kembali' : 'nonaktifkan') + '.';
         document.getElementById('toggle-form').action = '{{ url("superadmin/ulasan-produk-toko") }}/' + id + '/' + action;
         const modal = document.getElementById('toggleModal');
         modal.classList.remove('hidden');

@@ -23,20 +23,20 @@
         </div>
         @if ($cSelesaiAktual)
             @if ($cSelesaiTepat)
-                <p class="[font-variant-numeric:tabular-nums] mt-1.5 text-xs text-on-surface-variant">Selesai tepat waktu</p>
+                <p class="[font-variant-numeric:tabular-nums] mt-1.5 text-xs text-on-surface-variant">{{ __('Selesai tepat waktu') }}</p>
             @else
-                <p class="[font-variant-numeric:tabular-nums] mt-1.5 text-xs text-error font-bold">Terlambat {{ produksiFmtDetik((int) $cSelesaiAktual->timestamp - (int) $cSelesai->timestamp) }}</p>
+                <p class="[font-variant-numeric:tabular-nums] mt-1.5 text-xs text-error font-bold">{{ __('Terlambat ') }}{{ produksiFmtDetik((int) $cSelesaiAktual->timestamp - (int) $cSelesai->timestamp) }}</p>
             @endif
         @else
-            <p class="[font-variant-numeric:tabular-nums] mt-1.5 text-xs {{ $cBelum ? 'text-secondary' : ($cLambat ? 'text-error font-bold' : 'text-on-surface-variant') }}" data-countdown-start="{{ $cStartTs }}" data-countdown-end="{{ $cEndTs }}" data-countdown-progress="{{ $cPct }}">{{ $cBelum ? 'Mulai dalam...' : ($cLambat ? 'Terlambat...' : 'Memuat...') }}</p>
+            <p class="[font-variant-numeric:tabular-nums] mt-1.5 text-xs {{ $cBelum ? 'text-secondary' : ($cLambat ? 'text-error font-bold' : 'text-on-surface-variant') }}" data-countdown-start="{{ $cStartTs }}" data-countdown-end="{{ $cEndTs }}" data-countdown-progress="{{ $cPct }}">{{ $cBelum ? __('Mulai dalam...') : ($cLambat ? __('Terlambat...') : __('Memuat...')) }}</p>
         @endif
         @if ($cAktualMulai || $cAktualSelesai)
             <div class="[font-variant-numeric:tabular-nums] mt-1.5 pt-1.5 border-t border-muted-border/60 text-[10px] leading-relaxed">
                 @if ($cAktualMulai)
-                    <p class="whitespace-nowrap"><span class="text-on-surface-variant">Mulai</span> <span class="font-bold text-on-surface">{{ $cAktualMulai->translatedFormat('d M H:i') }}</span></p>
+                    <p class="whitespace-nowrap"><span class="text-on-surface-variant">{{ __('Mulai') }}</span> <span class="font-bold text-on-surface">{{ $cAktualMulai->translatedFormat('d M H:i') }}</span></p>
                 @endif
                 @if ($cAktualSelesai)
-                    <p class="whitespace-nowrap"><span class="text-on-surface-variant">Selesai</span> <span class="font-bold text-on-surface">{{ $cAktualSelesai->translatedFormat('d M H:i') }}</span></p>
+                    <p class="whitespace-nowrap"><span class="text-on-surface-variant">{{ __('Selesai') }}</span> <span class="font-bold text-on-surface">{{ $cAktualSelesai->translatedFormat('d M H:i') }}</span></p>
                 @endif
             </div>
         @endif

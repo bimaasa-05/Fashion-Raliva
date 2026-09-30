@@ -1,10 +1,10 @@
 @extends('layouts.produksi')
 
-@section('title', 'Produk Selesai')
+@section('title', __('Produk Selesai'))
 
-@section('header-title', 'Produk Selesai')
-@section('header-badge', $stats['siap_kirim'] . ' Siap Kirim')
-@section('header-subtitle', 'Produk yang sudah lulus QC + packing, siap dikirim oleh Admin.')
+@section('header-title', __('Produk Selesai'))
+@section('header-badge', $stats['siap_kirim'] . ' ' . __('Siap Kirim'))
+@section('header-subtitle', __('Produk yang sudah lulus QC + packing, siap dikirim oleh Admin.'))
 
 @section('content')
 @include('partials.flash-toast')
@@ -13,12 +13,12 @@
     {{-- Stats --}}
     <section class="grid grid-cols-2 gap-gutter">
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Siap Dikirim</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Siap Dikirim') }}</span>
             <span class="raliva-figure text-[26px] text-secondary">{{ $stats['siap_kirim'] }}</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">local_shipping</span>
         </div>
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Sudah Dikirim</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Sudah Dikirim') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $stats['dikirim'] }}</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">check_circle</span>
         </div>
@@ -30,13 +30,13 @@
             <table class="premium-table w-full min-w-[900px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">No. Pesanan</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Produk &amp; Jumlah</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Lulus QC</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Gagal QC</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tanggal QC</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('No. Pesanan') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Produk &amp; Jumlah') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">{{ __('Lulus QC') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">{{ __('Gagal QC') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Tanggal QC') }}</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Aksi</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">{{ __('Aksi') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -63,16 +63,16 @@
                             <td class="py-3.5 px-4 text-center text-error">{{ $qc?->jumlah_gagal ?? $o->jumlah_gagal ?? 0 }}</td>
                             <td class="py-3.5 px-4 text-on-surface-variant">{{ $o->tanggal_qc?->translatedFormat('d M Y H:i') ?? '-' }}</td>
                             <td class="py-3.5 px-4 text-center">
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Siap Kirim</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">{{ __('Siap Kirim') }}</span>
                             </td>
                             <td class="py-3.5 px-4 text-right">
-                                <button type="button" onclick="openDetailProduksi('{{ $o->order_id }}')" title="Detail produksi" class="inline-flex items-center justify-center px-2.5 py-2 border border-muted-border text-on-surface-variant rounded hover:border-gold-accent hover:text-gold-accent transition-colors">
+                                <button type="button" onclick="openDetailProduksi('{{ $o->order_id }}')" title="{{ __('Detail produksi') }}" class="inline-flex items-center justify-center px-2.5 py-2 border border-muted-border text-on-surface-variant rounded hover:border-gold-accent hover:text-gold-accent transition-colors">
                                     <span class="material-symbols-outlined text-[16px]">timeline</span>
                                 </button>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" class="py-12 text-center text-on-surface-variant">Belum ada produk siap dikirim.</td></tr>
+                        <tr><td colspan="7" class="py-12 text-center text-on-surface-variant">{{ __('Belum ada produk siap dikirim.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>

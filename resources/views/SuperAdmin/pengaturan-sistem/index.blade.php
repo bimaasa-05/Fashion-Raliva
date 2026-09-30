@@ -1,10 +1,10 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Pengaturan Sistem')
+@section('title', __('Pengaturan Sistem'))
 
-@section('header-title', 'Pengaturan Sistem')
-@section('header-badge', 'Kelola')
-@section('header-subtitle', 'Konfigurasi aturan global platform Raliva, terpisah dari pengaturan toko.')
+@section('header-title', __('Pengaturan Sistem'))
+@section('header-badge', __('Kelola'))
+@section('header-subtitle', __('Konfigurasi aturan global platform Raliva, terpisah dari pengaturan toko.'))
 
 @section('content')
 @include('partials.flash-toast')
@@ -49,19 +49,19 @@
                 </div>
                 <div class="min-w-0">
                     <div class="flex items-center gap-3 flex-wrap">
-                        <h2 class="font-headline-md text-headline-md text-white tracking-wide">Kelola Platform Raliva</h2>
+                        <h2 class="font-headline-md text-headline-md text-white tracking-wide">{{ __('Kelola Platform Raliva') }}</h2>
                         <span class="banner-badge {{ $maintenanceOn ? 'is-on' : 'is-off' }}"><span class="dot"></span>{{ $maintenanceOn ? 'Mode Pemeliharaan Aktif' : 'Semua Sistem Aktif' }}</span>
                     </div>
-                    <p class="banner-desc mt-2 max-w-2xl">Konfigurasi aturan global platform — tarif, ambang pencairan, moderasi, batas transaksi, hingga dokumen legal. Terpisah dari pengaturan tiap toko.</p>
+                    <p class="banner-desc mt-2 max-w-2xl">{{ __('Konfigurasi aturan global platform — tarif, ambang pencairan, moderasi, batas transaksi, hingga dokumen legal. Terpisah dari pengaturan tiap toko.') }}</p>
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-3 lg:ml-auto shrink-0">
                 <div class="stat-chip">
-                    <span class="stat-chip-label">Komisi Default</span>
+                    <span class="stat-chip-label">{{ __('Komisi Default') }}</span>
                     <span class="stat-chip-value">{{ $settings['komisi_persen_default'] }}%</span>
                 </div>
                 <div class="stat-chip">
-                    <span class="stat-chip-label">Biaya Layanan</span>
+                    <span class="stat-chip-label">{{ __('Biaya Layanan') }}</span>
                     <span class="stat-chip-value">Rp {{ number_format((int) $settings['biaya_layanan']) }}</span>
                 </div>
             </div>
@@ -69,14 +69,14 @@
     </section>
 
     {{--=== Quick Nav ===--}}
-    <nav class="quick-nav min-w-0" aria-label="Navigasi cepat pengaturan">
+    <nav class="quick-nav min-w-0" aria-label="{{ __('Navigasi cepat pengaturan') }}">
         <div class="flex items-center gap-2 overflow-x-auto no-scrollbar rounded-xl border border-muted-border bg-surface-container-lowest shadow-sm p-2 -mx-4 px-4 md:mx-0 md:px-0">
-            <a href="#kartu-umum" data-scroll-link="umum" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">tune</span> Umum</a>
-            <a href="#kartu-keuangan" data-scroll-link="keuangan" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">payments</span> Keuangan</a>
-            <a href="#kartu-moderasi" data-scroll-link="moderasi" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">fact_check</span> Moderasi</a>
-            <a href="#kartu-batas" data-scroll-link="batas" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">speed</span> Batas</a>
-            <a href="#kartu-legal" data-scroll-link="legal" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">verified_user</span> Dokumen Legal</a>
-            <a href="#kartu-help" data-scroll-link="help" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">help_center</span> Pusat Bantuan</a>
+            <a href="#kartu-umum" data-scroll-link="umum" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">tune</span> {{ __('Umum') }}</a>
+            <a href="#kartu-keuangan" data-scroll-link="keuangan" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">payments</span> {{ __('Keuangan') }}</a>
+            <a href="#kartu-moderasi" data-scroll-link="moderasi" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">fact_check</span> {{ __('Moderasi') }}</a>
+            <a href="#kartu-batas" data-scroll-link="batas" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">speed</span> {{ __('Batas') }}</a>
+            <a href="#kartu-legal" data-scroll-link="legal" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">verified_user</span> {{ __('Dokumen Legal') }}</a>
+            <a href="#kartu-help" data-scroll-link="help" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">help_center</span> {{ __('Pusat Bantuan') }}</a>
         </div>
     </nav>
 
@@ -85,28 +85,28 @@
         <form id="kartu-umum" data-scroll-section="umum" method="POST" action="{{ route('superadmin.pengaturan-sistem.update') }}" class="snap-anchor bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 space-y-gutter card-premium" data-save-form>
             @csrf @method('PUT')
             <div>
-                <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">tune</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Umum</h2></div>
-                <p class="font-body-md text-sm text-on-surface-variant mt-2">Identitas platform dan kontak dukungan customer.</p>
+                <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">tune</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">{{ __('Umum') }}</h2></div>
+                <p class="font-body-md text-sm text-on-surface-variant mt-2">{{ __('Identitas platform dan kontak dukungan customer.') }}</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="nama_platform">Nama Platform</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="nama_platform">{{ __('Nama Platform') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="nama_platform" name="nama_platform" type="text" value="{{ $settings['nama_platform'] }}" required />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="email_support">Email Dukungan</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="email_support">{{ __('Email Dukungan') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="email_support" name="email_support" type="email" value="{{ $settings['email_support'] }}" required />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="whatsapp_support">WhatsApp Dukungan</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="whatsapp_support">{{ __('WhatsApp Dukungan') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="whatsapp_support" name="whatsapp_support" type="text" maxlength="20" inputmode="tel" value="{{ $settings['whatsapp_support'] }}" placeholder="6281234567890" />
-                    <p class="font-body-md text-xs text-on-surface-variant mt-2">Format internasional tanpa tanda +. Ditampilkan sebagai tombol hubungi saat toko ditangguhkan.</p>
+                    <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Format internasional tanpa tanda +. Ditampilkan sebagai tombol hubungi saat toko ditangguhkan.') }}</p>
                 </div>
             </div>
             <div class="flex items-center justify-between gap-4 p-4 border border-muted-border rounded-lg hover:bg-surface-container-low transition-colors">
                 <div>
-                    <p class="font-title-md text-sm text-on-surface">Mode Pemeliharaan</p>
-                    <p class="font-body-md text-xs text-on-surface-variant mt-1">Nonaktifkan akses publik sementara saat perbaikan sistem.</p>
+                    <p class="font-title-md text-sm text-on-surface">{{ __('Mode Pemeliharaan') }}</p>
+                    <p class="font-body-md text-xs text-on-surface-variant mt-1">{{ __('Nonaktifkan akses publik sementara saat perbaikan sistem.') }}</p>
                 </div>
                 <label class="raliva-toggle">
                     <input type="hidden" name="mode_maintenance" value="0" />
@@ -116,7 +116,7 @@
                 </label>
             </div>
             <div class="flex justify-end pt-gutter border-t border-muted-border">
-                <button type="submit" data-save-button class="px-8 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">Simpan Pengaturan Umum</button>
+                <button type="submit" data-save-button class="px-8 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">{{ __('Simpan Pengaturan Umum') }}</button>
             </div>
         </form>
 
@@ -124,33 +124,33 @@
         <form id="kartu-keuangan" data-scroll-section="keuangan" method="POST" action="{{ route('superadmin.pengaturan-sistem.update') }}" class="snap-anchor bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 space-y-gutter card-premium" data-save-form>
             @csrf @method('PUT')
             <div>
-                <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">payments</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Keuangan</h2></div>
-                <p class="font-body-md text-sm text-on-surface-variant mt-2">Sumber pendapatan Raliva dan ambang pencairan dana Owner.</p>
+                <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">payments</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">{{ __('Keuangan') }}</h2></div>
+                <p class="font-body-md text-sm text-on-surface-variant mt-2">{{ __('Sumber pendapatan Raliva dan ambang pencairan dana Owner.') }}</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="komisi_persen_default">Komisi Default (%)</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="komisi_persen_default">{{ __('Komisi Default (%)') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="komisi_persen_default" name="komisi_persen_default" type="number" min="0" max="100" step="0.5" value="{{ $settings['komisi_persen_default'] }}" required />
-                    <p class="font-body-md text-xs text-on-surface-variant mt-2">Sumber pendapatan Raliva dari setiap transaksi berhasil.</p>
+                    <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Sumber pendapatan Raliva dari setiap transaksi berhasil.') }}</p>
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="biaya_layanan">Biaya Layanan Default (Rp)</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="biaya_layanan">{{ __('Biaya Layanan Default (Rp)') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="biaya_layanan" name="biaya_layanan" type="number" min="0" value="{{ $settings['biaya_layanan'] }}" required />
-                    <p class="font-body-md text-xs text-on-surface-variant mt-2">Ditampilkan ke customer secara transparan saat checkout.</p>
+                    <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Ditampilkan ke customer secara transparan saat checkout.') }}</p>
                 </div>
             </div>
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="min_pencairan">Minimal Pencairan (Rp)</label>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="min_pencairan">{{ __('Minimal Pencairan (Rp)') }}</label>
                 <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="min_pencairan" name="min_pencairan" type="number" min="0" value="{{ $settings['min_pencairan'] }}" required />
-                <p class="font-body-md text-xs text-on-surface-variant mt-2">Batas minimal saldo Owner untuk mengajukan pencairan dana.</p>
+                <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Batas minimal saldo Owner untuk mengajukan pencairan dana.') }}</p>
             </div>
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="biaya_penarikan_saldo">Biaya Penarikan Saldo Customer (%, persen)</label>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="biaya_penarikan_saldo">{{ __('Biaya Penarikan Saldo Customer (%, persen)') }}</label>
                 <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="biaya_penarikan_saldo" name="biaya_penarikan_saldo" type="number" min="0" max="100" step="0.5" value="{{ $settings['biaya_penarikan_saldo'] ?? 0 }}" required />
-                <p class="font-body-md text-xs text-on-surface-variant mt-2">Fee persen per penarikan saldo customer; diterima bersih = nominal − fee%.</p>
+                <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Fee persen per penarikan saldo customer; diterima bersih = nominal − fee%.') }}</p>
             </div>
             <div class="flex justify-end pt-gutter border-t border-muted-border">
-                <button type="submit" data-save-button class="px-8 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">Simpan Pengaturan Keuangan</button>
+                <button type="submit" data-save-button class="px-8 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">{{ __('Simpan Pengaturan Keuangan') }}</button>
             </div>
         </form>
 
@@ -159,11 +159,11 @@
             @csrf @method('PUT')
             <div>
                 <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">fact_check</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Moderasi &amp; Konten</h2></div>
-                <p class="font-body-md text-sm text-on-surface-variant mt-2">Alur persetujuan produk baru sebelum tampil ke publik.</p>
+                <p class="font-body-md text-sm text-on-surface-variant mt-2">{{ __('Alur persetujuan produk baru sebelum tampil ke publik.') }}</p>
             </div>
             <div class="flex items-center justify-between gap-4 p-4 border border-muted-border rounded-lg hover:bg-surface-container-low transition-colors">
                 <div>
-                    <p class="font-title-md text-sm text-on-surface">Moderasi Otomatis</p>
+                    <p class="font-title-md text-sm text-on-surface">{{ __('Moderasi Otomatis') }}</p>
                     <p class="font-body-md text-xs text-on-surface-variant mt-1">Tandai produk baru sebagai "pending" sebelum ditinjau Super Admin.</p>
                 </div>
                 <label class="raliva-toggle">
@@ -174,7 +174,7 @@
                 </label>
             </div>
             <div class="flex justify-end pt-gutter border-t border-muted-border">
-                <button type="submit" data-save-button class="px-8 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">Simpan Pengaturan Moderasi</button>
+                <button type="submit" data-save-button class="px-8 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">{{ __('Simpan Pengaturan Moderasi') }}</button>
             </div>
         </form>
 
@@ -183,24 +183,24 @@
             @csrf @method('PUT')
             <div>
                 <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">speed</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Batas &amp; Limit</h2></div>
-                <p class="font-body-md text-sm text-on-surface-variant mt-2">Ambang operasional harian, jendela refund transaksi, dan auto-konfirmasi pesanan selesai.</p>
+                <p class="font-body-md text-sm text-on-surface-variant mt-2">{{ __('Ambang operasional harian, jendela refund transaksi, dan auto-konfirmasi pesanan selesai.') }}</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="maks_pengajuan_pencairan">Maks Pengajuan Pencairan per Hari</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="maks_pengajuan_pencairan">{{ __('Maks Pengajuan Pencairan per Hari') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="maks_pengajuan_pencairan" name="maks_pengajuan_pencairan" type="number" min="1" value="{{ $settings['maks_pengajuan_pencairan'] }}" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="batas_waktu_refund">Batas Waktu Refund (hari)</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="batas_waktu_refund">{{ __('Batas Waktu Refund (hari)') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="batas_waktu_refund" name="batas_waktu_refund" type="number" min="1" value="{{ $settings['batas_waktu_refund'] }}" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="konfirmasi_selesai_hari">Auto Konfirmasi Selesai (hari)</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="konfirmasi_selesai_hari">{{ __('Auto Konfirmasi Selesai (hari)') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="konfirmasi_selesai_hari" name="konfirmasi_selesai_hari" type="number" min="1" value="{{ $settings['konfirmasi_selesai_hari'] }}" />
                 </div>
             </div>
             <div class="flex justify-end pt-gutter border-t border-muted-border">
-                <button type="submit" data-save-button class="px-8 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">Simpan Pengaturan Batas</button>
+                <button type="submit" data-save-button class="px-8 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">{{ __('Simpan Pengaturan Batas') }}</button>
             </div>
         </form>
     </div>
@@ -214,33 +214,33 @@
                     <div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">verified_user</span></div>
                     <h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Syarat &amp; Ketentuan &amp; Kebijakan Privasi</h2>
                 </div>
-                <p class="font-body-md text-sm text-on-surface-variant mt-2">Dokumen yang tampil saat Customer mendaftar. Gunakan baris baru untuk memisahkan paragraf.</p>
+                <p class="font-body-md text-sm text-on-surface-variant mt-2">{{ __('Dokumen yang tampil saat Customer mendaftar. Gunakan baris baru untuk memisahkan paragraf.') }}</p>
             </div>
-            <span class="inline-flex items-center px-3 py-1 rounded-full bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-[10px] uppercase tracking-wider">Ditampilkan saat Customer mendaftar</span>
+            <span class="inline-flex items-center px-3 py-1 rounded-full bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-[10px] uppercase tracking-wider">{{ __('Ditampilkan saat Customer mendaftar') }}</span>
         </div>
 
         <div>
             <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="syaratKetentuan">Syarat &amp; Ketentuan</label>
             <textarea name="syarat_ketentuan" id="syaratKetentuan" rows="8" required minlength="10"
                 class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md leading-relaxed focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors"
-                placeholder="Tuliskan syarat dan ketentuan penggunaan platform Raliva...">{{ old('syarat_ketentuan', $syaratKetentuan) }}</textarea>
+                placeholder="{{ __('Tuliskan syarat dan ketentuan penggunaan platform Raliva...') }}">{{ old('syarat_ketentuan', $syaratKetentuan) }}</textarea>
             @error('syarat_ketentuan')<p class="font-body-md text-xs text-error mt-2">{{ $message }}</p>@enderror
         </div>
 
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="kebijakanPrivasi">Kebijakan Privasi</label>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="kebijakanPrivasi">{{ __('Kebijakan Privasi') }}</label>
             <textarea name="kebijakan_privasi" id="kebijakanPrivasi" rows="8" required minlength="10"
                 class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md leading-relaxed focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors"
-                placeholder="Tuliskan kebijakan privasi platform Raliva...">{{ old('kebijakan_privasi', $kebijakanPrivasi) }}</textarea>
+                placeholder="{{ __('Tuliskan kebijakan privasi platform Raliva...') }}">{{ old('kebijakan_privasi', $kebijakanPrivasi) }}</textarea>
             @error('kebijakan_privasi')<p class="font-body-md text-xs text-error mt-2">{{ $message }}</p>@enderror
         </div>
 
         <div class="flex items-center justify-between gap-4 pt-gutter border-t border-muted-border flex-wrap">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
                 <span class="material-symbols-outlined text-[14px] text-gold-accent">history</span>
-                Perubahan tercatat di riwayat aktivitas
+                {{ __('Perubahan tercatat di riwayat aktivitas') }}
             </p>
-            <button type="submit" data-save-button class="bg-deep-onyx text-on-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">Simpan Konten Legal</button>
+            <button type="submit" data-save-button class="bg-deep-onyx text-on-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">{{ __('Simpan Konten Legal') }}</button>
         </div>
     </form>
 
@@ -248,10 +248,10 @@
     <section id="kartu-help" data-scroll-section="help" class="snap-anchor bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 space-y-gutter card-premium">
         <div class="flex items-center justify-between gap-4 flex-wrap">
             <div>
-                <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">help_center</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Pusat Bantuan</h2></div>
+                <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">help_center</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">{{ __('Pusat Bantuan') }}</h2></div>
                 <p class="font-body-md text-sm text-on-surface-variant mt-2">Konten halaman Pusat Bantuan Customer: hero, kategori, dan FAQ. Info kontak memakai Email &amp; WhatsApp dari kartu Umum.</p>
             </div>
-            <span class="inline-flex items-center px-3 py-1 rounded-full bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-[10px] uppercase tracking-wider">Tampil di halaman Help Center</span>
+            <span class="inline-flex items-center px-3 py-1 rounded-full bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-[10px] uppercase tracking-wider">{{ __('Tampil di halaman Help Center') }}</span>
         </div>
 
         {{-- Hero + jam WhatsApp --}}
@@ -260,20 +260,20 @@
             <p class="font-title-md text-sm text-on-surface">Teks Hero &amp; Jam Layanan</p>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="help_hero_title">Judul Hero</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="help_hero_title">{{ __('Judul Hero') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="help_hero_title" name="help_hero_title" type="text" maxlength="150" value="{{ $helpHero['title'] }}" required />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="help_hero_subtitle">Subjudul Hero</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="help_hero_subtitle">{{ __('Subjudul Hero') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="help_hero_subtitle" name="help_hero_subtitle" type="text" maxlength="255" value="{{ $helpHero['subtitle'] }}" required />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="help_hero_search">Placeholder Pencarian</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="help_hero_search">{{ __('Placeholder Pencarian') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="help_hero_search" name="help_hero_search" type="text" maxlength="100" value="{{ $helpHero['search'] }}" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="help_whatsapp_hours">Jam Operasional WhatsApp</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="help_whatsapp_hours" name="help_whatsapp_hours" type="text" maxlength="100" value="{{ $helpWhatsappHours }}" placeholder="Mon–Fri, 09.00–17.00 WIB" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="help_whatsapp_hours">{{ __('Jam Operasional WhatsApp') }}</label>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="help_whatsapp_hours" name="help_whatsapp_hours" type="text" maxlength="100" value="{{ $helpWhatsappHours }}" placeholder="{{ __('Mon–Fri, 09.00–17.00 WIB') }}" />
                 </div>
             </div>
             <div class="flex justify-end border-t border-muted-border pt-gutter">
@@ -285,22 +285,22 @@
         <div class="space-y-gutter border border-muted-border rounded-lg p-4">
             <div class="flex items-center justify-between gap-4 flex-wrap">
                 <div>
-                    <p class="font-title-md text-sm text-on-surface">Kategori Bantuan</p>
-                    <p class="font-body-md text-xs text-on-surface-variant mt-1">Kartu kategori yang tampil di bawah hero.</p>
+                    <p class="font-title-md text-sm text-on-surface">{{ __('Kategori Bantuan') }}</p>
+                    <p class="font-body-md text-xs text-on-surface-variant mt-1">{{ __('Kartu kategori yang tampil di bawah hero.') }}</p>
                 </div>
-                <button type="button" onclick="openHelpModal('modal-help-cat-tambah')" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">+ Tambah Kategori</button>
+                <button type="button" onclick="openHelpModal('modal-help-cat-tambah')" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">{{ __('+ Tambah Kategori') }}</button>
             </div>
             <div class="overflow-x-auto hidden md:block">
                 <table class="w-full min-w-[640px] premium-table">
                     <thead>
                         <tr class="border-b bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                            <th class="px-3 py-3 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
-                            <th class="px-3 py-3 text-center w-16 text-[10px] font-semibold tracking-widest">Ikon</th>
-                            <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">Judul</th>
-                            <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">Subjudul</th>
-                            <th class="px-3 py-3 text-center w-16 text-[10px] font-semibold tracking-widest">Urutan</th>
-                            <th class="px-3 py-3 text-center text-[10px] font-semibold tracking-widest">Status</th>
-                            <th class="px-3 py-3 text-right text-[10px] font-semibold tracking-widest">Aksi</th>
+                            <th class="px-3 py-3 text-center w-12 text-[10px] font-semibold tracking-widest">{{ __('No') }}</th>
+                            <th class="px-3 py-3 text-center w-16 text-[10px] font-semibold tracking-widest">{{ __('Ikon') }}</th>
+                            <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">{{ __('Judul') }}</th>
+                            <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">{{ __('Subjudul') }}</th>
+                            <th class="px-3 py-3 text-center w-16 text-[10px] font-semibold tracking-widest">{{ __('Urutan') }}</th>
+                            <th class="px-3 py-3 text-center text-[10px] font-semibold tracking-widest">{{ __('Status') }}</th>
+                            <th class="px-3 py-3 text-right text-[10px] font-semibold tracking-widest">{{ __('Aksi') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -314,13 +314,13 @@
                                 <td class="p-3 text-center"><span class="inline-flex px-2 py-1 rounded-full text-[11px] font-bold border {{ $c->is_active ? \App\Support\StatusStyle::badgeClass('aktif') : \App\Support\StatusStyle::badgeClass('nonaktif') }}">{{ $c->is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
                                 <td class="p-3 text-right">
                                     <div class="flex items-center justify-end gap-1">
-                                        <button type="button" onclick="openHelpCategoryEdit({{ $c->help_category_id }}, @js($c->icon), @js($c->judul), @js($c->subjudul), {{ $c->is_active ? 'true' : 'false' }})" class="px-2.5 py-1.5 border border-gold-accent/40 rounded-lg text-[11px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">Edit</button>
-<button type="button" onclick="openHelpCategoryDelete({{ $c->help_category_id }}, @js($c->judul))" class="px-2.5 py-1.5 border border-error/30 rounded-lg text-[11px] font-bold uppercase text-error hover:bg-error/10">Hapus</button>
+                                        <button type="button" onclick="openHelpCategoryEdit({{ $c->help_category_id }}, @js($c->icon), @js($c->judul), @js($c->subjudul), {{ $c->is_active ? 'true' : 'false' }})" class="px-2.5 py-1.5 border border-gold-accent/40 rounded-lg text-[11px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">{{ __('Edit') }}</button>
+<button type="button" onclick="openHelpCategoryDelete({{ $c->help_category_id }}, @js($c->judul))" class="px-2.5 py-1.5 border border-error/30 rounded-lg text-[11px] font-bold uppercase text-error hover:bg-error/10">{{ __('Hapus') }}</button>
                                     </div>
                                 </td>
                             </tr>
                         @empty
-                            <tr class="hidden md:table-row"><td colspan="7" class="p-8 text-center text-on-surface-variant">Belum ada kategori bantuan.</td></tr>
+                            <tr class="hidden md:table-row"><td colspan="7" class="p-8 text-center text-on-surface-variant">{{ __('Belum ada kategori bantuan.') }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -343,15 +343,15 @@
                             <span class="inline-flex px-2 py-1 rounded-full text-[10px] font-bold border shrink-0 {{ $c->is_active ? \App\Support\StatusStyle::badgeClass('aktif') : \App\Support\StatusStyle::badgeClass('nonaktif') }}">{{ $c->is_active ? 'Aktif' : 'Nonaktif' }}</span>
                         </div>
                         <div class="flex items-center justify-between gap-3 mt-3">
-                            <span class="font-label-sm text-xs text-on-surface-variant">Urutan <span class="font-mono text-on-surface font-bold">{{ $c->urutan }}</span></span>
+                            <span class="font-label-sm text-xs text-on-surface-variant">{{ __('Urutan') }} <span class="font-mono text-on-surface font-bold">{{ $c->urutan }}</span></span>
                             <div class="flex items-center gap-2">
-                                <button type="button" onclick="openHelpCategoryEdit({{ $c->help_category_id }}, @js($c->icon), @js($c->judul), @js($c->subjudul), {{ $c->is_active ? 'true' : 'false' }})" class="px-3 py-1.5 border border-gold-accent/40 rounded-lg text-[11px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">Edit</button>
-                                <button type="button" onclick="openHelpCategoryDelete({{ $c->help_category_id }}, @js($c->judul))" class="px-3 py-1.5 border border-error/30 rounded-lg text-[11px] font-bold uppercase text-error hover:bg-error/10">Hapus</button>
+                                <button type="button" onclick="openHelpCategoryEdit({{ $c->help_category_id }}, @js($c->icon), @js($c->judul), @js($c->subjudul), {{ $c->is_active ? 'true' : 'false' }})" class="px-3 py-1.5 border border-gold-accent/40 rounded-lg text-[11px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">{{ __('Edit') }}</button>
+                                <button type="button" onclick="openHelpCategoryDelete({{ $c->help_category_id }}, @js($c->judul))" class="px-3 py-1.5 border border-error/30 rounded-lg text-[11px] font-bold uppercase text-error hover:bg-error/10">{{ __('Hapus') }}</button>
                             </div>
                         </div>
                     </div>
                 @empty
-                    <p class="text-center font-body-md text-sm text-on-surface-variant py-6 border border-dashed border-muted-border rounded-lg">Belum ada kategori bantuan.</p>
+                    <p class="text-center font-body-md text-sm text-on-surface-variant py-6 border border-dashed border-muted-border rounded-lg">{{ __('Belum ada kategori bantuan.') }}</p>
                 @endforelse
             </div>
         </div>
@@ -360,22 +360,22 @@
         <div class="space-y-gutter border border-muted-border rounded-lg p-4">
             <div class="flex items-center justify-between gap-4 flex-wrap">
                 <div>
-                    <p class="font-title-md text-sm text-on-surface">Daftar FAQ</p>
-                    <p class="font-body-md text-xs text-on-surface-variant mt-1">Pertanyaan dan jawaban yang tampil di bagian Frequently Asked Questions.</p>
+                    <p class="font-title-md text-sm text-on-surface">{{ __('Daftar FAQ') }}</p>
+                    <p class="font-body-md text-xs text-on-surface-variant mt-1">{{ __('Pertanyaan dan jawaban yang tampil di bagian Frequently Asked Questions.') }}</p>
                 </div>
-                <button type="button" onclick="openHelpModal('modal-help-faq-tambah')" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">+ Tambah FAQ</button>
+                <button type="button" onclick="openHelpModal('modal-help-faq-tambah')" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">{{ __('+ Tambah FAQ') }}</button>
             </div>
             <div class="overflow-x-auto hidden md:block">
                 <table class="w-full min-w-[820px] premium-table">
                     <thead>
                         <tr class="border-b bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                            <th class="px-3 py-3 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
-                            <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">Kategori</th>
-                            <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">Pertanyaan</th>
-                            <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">Jawaban</th>
-                            <th class="px-3 py-3 text-center w-16 text-[10px] font-semibold tracking-widest">Urutan</th>
-                            <th class="px-3 py-3 text-center text-[10px] font-semibold tracking-widest">Status</th>
-                            <th class="px-3 py-3 text-right text-[10px] font-semibold tracking-widest">Aksi</th>
+                            <th class="px-3 py-3 text-center w-12 text-[10px] font-semibold tracking-widest">{{ __('No') }}</th>
+                            <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">{{ __('Kategori') }}</th>
+                            <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">{{ __('Pertanyaan') }}</th>
+                            <th class="px-3 py-3 text-left text-[10px] font-semibold tracking-widest">{{ __('Jawaban') }}</th>
+                            <th class="px-3 py-3 text-center w-16 text-[10px] font-semibold tracking-widest">{{ __('Urutan') }}</th>
+                            <th class="px-3 py-3 text-center text-[10px] font-semibold tracking-widest">{{ __('Status') }}</th>
+                            <th class="px-3 py-3 text-right text-[10px] font-semibold tracking-widest">{{ __('Aksi') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -389,13 +389,13 @@
                                 <td class="p-3 text-center"><span class="inline-flex px-2 py-1 rounded-full text-[11px] font-bold border {{ $f->is_active ? \App\Support\StatusStyle::badgeClass('aktif') : \App\Support\StatusStyle::badgeClass('nonaktif') }}">{{ $f->is_active ? 'Aktif' : 'Nonaktif' }}</span></td>
                                 <td class="p-3 text-right">
                                     <div class="flex items-center justify-end gap-1">
-                                        <button type="button" onclick="openHelpFaqEdit({{ $f->help_faq_id }}, {{ (int) $f->help_category_id }}, @js($f->pertanyaan), @js($f->jawaban), {{ $f->is_active ? 'true' : 'false' }})" class="px-2.5 py-1.5 border border-gold-accent/40 rounded-lg text-[11px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">Edit</button>
-                                        <button type="button" onclick="openHelpFaqDelete({{ $f->help_faq_id }}, @js($f->pertanyaan))" class="px-2.5 py-1.5 border border-error/30 rounded-lg text-[11px] font-bold uppercase text-error hover:bg-error/10">Hapus</button>
+                                        <button type="button" onclick="openHelpFaqEdit({{ $f->help_faq_id }}, {{ (int) $f->help_category_id }}, @js($f->pertanyaan), @js($f->jawaban), {{ $f->is_active ? 'true' : 'false' }})" class="px-2.5 py-1.5 border border-gold-accent/40 rounded-lg text-[11px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">{{ __('Edit') }}</button>
+                                        <button type="button" onclick="openHelpFaqDelete({{ $f->help_faq_id }}, @js($f->pertanyaan))" class="px-2.5 py-1.5 border border-error/30 rounded-lg text-[11px] font-bold uppercase text-error hover:bg-error/10">{{ __('Hapus') }}</button>
                                     </div>
                                 </td>
                             </tr>
                         @empty
-                            <tr class="hidden md:table-row"><td colspan="7" class="p-8 text-center text-on-surface-variant">Belum ada FAQ.</td></tr>
+                            <tr class="hidden md:table-row"><td colspan="7" class="p-8 text-center text-on-surface-variant">{{ __('Belum ada FAQ.') }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -410,15 +410,15 @@
                         <span class="inline-flex items-center gap-1 text-[11px] font-semibold text-on-surface-variant mt-1.5"><span class="material-symbols-outlined text-[14px]">{{ $f->category?->icon ?: 'help' }}</span>{{ $f->category?->judul ?: 'Tanpa Kategori' }}</span>
                         <p class="font-body-md text-xs text-on-surface-variant leading-relaxed mt-1.5 line-clamp-2">{{ $f->jawaban }}</p>
                         <div class="flex items-center justify-between gap-3 mt-3">
-                            <span class="font-label-sm text-xs text-on-surface-variant">Urutan <span class="font-mono text-on-surface font-bold">{{ $f->urutan }}</span></span>
+                            <span class="font-label-sm text-xs text-on-surface-variant">{{ __('Urutan') }} <span class="font-mono text-on-surface font-bold">{{ $f->urutan }}</span></span>
                             <div class="flex items-center gap-2">
-                                <button type="button" onclick="openHelpFaqEdit({{ $f->help_faq_id }}, {{ (int) $f->help_category_id }}, @js($f->pertanyaan), @js($f->jawaban), {{ $f->is_active ? 'true' : 'false' }})" class="px-3 py-1.5 border border-gold-accent/40 rounded-lg text-[11px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">Edit</button>
-                                <button type="button" onclick="openHelpFaqDelete({{ $f->help_faq_id }}, @js($f->pertanyaan))" class="px-3 py-1.5 border border-error/30 rounded-lg text-[11px] font-bold uppercase text-error hover:bg-error/10">Hapus</button>
+                                <button type="button" onclick="openHelpFaqEdit({{ $f->help_faq_id }}, {{ (int) $f->help_category_id }}, @js($f->pertanyaan), @js($f->jawaban), {{ $f->is_active ? 'true' : 'false' }})" class="px-3 py-1.5 border border-gold-accent/40 rounded-lg text-[11px] font-bold uppercase text-gold-accent hover:bg-gold-accent/10">{{ __('Edit') }}</button>
+                                <button type="button" onclick="openHelpFaqDelete({{ $f->help_faq_id }}, @js($f->pertanyaan))" class="px-3 py-1.5 border border-error/30 rounded-lg text-[11px] font-bold uppercase text-error hover:bg-error/10">{{ __('Hapus') }}</button>
                             </div>
                         </div>
                     </div>
                 @empty
-                    <p class="text-center font-body-md text-sm text-on-surface-variant py-6 border border-dashed border-muted-border rounded-lg">Belum ada FAQ.</p>
+                    <p class="text-center font-body-md text-sm text-on-surface-variant py-6 border border-dashed border-muted-border rounded-lg">{{ __('Belum ada FAQ.') }}</p>
                 @endforelse
             </div>
         </div>
@@ -457,27 +457,27 @@
     <form method="POST" action="{{ route('superadmin.pengaturan-sistem.help.kategori.store') }}" id="form-help-cat-tambah" class="space-y-4">
         @csrf
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Ikon (Material Symbols)</label>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Ikon (Material Symbols)') }}</label>
             <div class="relative">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gold-accent text-[18px] pointer-events-none">list</span>
                 <input type="text" name="icon" list="help-icon-list" required maxlength="50" class="w-full bg-surface-container-low border border-muted-border rounded-xl pl-11 pr-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" placeholder="local_shipping" />
             </div>
         </div>
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Judul</label>
-            <input type="text" name="judul" required maxlength="100" class="w-full bg-surface-container-low border border-muted-border rounded-xl px-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" placeholder="Shipping" />
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Judul') }}</label>
+            <input type="text" name="judul" required maxlength="100" class="w-full bg-surface-container-low border border-muted-border rounded-xl px-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" placeholder="{{ __('Shipping') }}" />
         </div>
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Subjudul</label>
-            <input type="text" name="subjudul" maxlength="150" class="w-full bg-surface-container-low border border-muted-border rounded-xl px-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" placeholder="Track & delivery" />
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Subjudul') }}</label>
+            <input type="text" name="subjudul" maxlength="150" class="w-full bg-surface-container-low border border-muted-border rounded-xl px-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" placeholder="{{ __('Track & delivery') }}" />
         </div>
         <div class="flex items-center justified gap-4 p-4 border border-gold-accent/25 rounded-xl bg-gold-accent/5">
-            <p class="font-label-sm text-xs text-on-surface-variant inline-flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">auto_awesome</span>Urutan diatur otomatis sesuai urutan pembuatan.</p>
+            <p class="font-label-sm text-xs text-on-surface-variant inline-flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">auto_awesome</span>{{ __('Urutan diatur otomatis sesuai urutan pembuatan.') }}</p>
         </div>
         @slot('footer')
             <div class="flex items-center justify-end gap-3">
-                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-                <button type="submit" form="form-help-cat-tambah" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">add</span>Tambah</button>
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                <button type="submit" form="form-help-cat-tambah" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">add</span>{{ __('Tambah') }}</button>
             </div>
         @endslot
     </form>
@@ -494,22 +494,22 @@
     <form id="form-help-cat-edit" method="POST" action="" class="space-y-4">
         @csrf @method('PUT')
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Ikon (Material Symbols)</label>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Ikon (Material Symbols)') }}</label>
             <div class="relative">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gold-accent text-[18px] pointer-events-none">list</span>
                 <input type="text" name="icon" id="edit-help-cat-icon" list="help-icon-list" required maxlength="50" class="w-full bg-surface-container-low border border-muted-border rounded-xl pl-11 pr-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
             </div>
         </div>
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Judul</label>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Judul') }}</label>
             <input type="text" name="judul" id="edit-help-cat-judul" required maxlength="100" class="w-full bg-surface-container-low border border-muted-border rounded-xl px-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
         </div>
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Subjudul</label>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Subjudul') }}</label>
             <input type="text" name="subjudul" id="edit-help-cat-subjudul" maxlength="150" class="w-full bg-surface-container-low border border-muted-border rounded-xl px-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
         </div>
         <div class="flex items-center justify-between gap-4 p-4 border border-muted-border rounded-xl bg-surface-container-low">
-            <p class="font-title-md text-sm text-on-surface">Tampilkan kategori</p>
+            <p class="font-title-md text-sm text-on-surface">{{ __('Tampilkan kategori') }}</p>
             <label class="raliva-toggle">
                 <input type="hidden" name="is_active" value="0" />
                 <input type="checkbox" name="is_active" id="edit-help-cat-active" value="1" class="sr-only peer" />
@@ -519,8 +519,8 @@
         </div>
         @slot('footer')
             <div class="flex items-center justify-end gap-3">
-                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-                <button type="submit" form="form-help-cat-edit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                <button type="submit" form="form-help-cat-edit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>{{ __('Simpan') }}</button>
             </div>
         @endslot
     </form>
@@ -538,12 +538,12 @@
     <form method="POST" action="{{ route('superadmin.pengaturan-sistem.help.faq.store') }}" id="form-help-faq-tambah" class="space-y-4">
         @csrf
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Kategori</label>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Kategori') }}</label>
             <div class="relative" id="helpAddCat-dd">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gold-accent text-[18px] pointer-events-none z-10">category</span>
                 <button type="button" data-dd-trigger id="helpAddCat-trigger" onclick="toggleDropdown('helpAddCat')" aria-haspopup="listbox" aria-expanded="false"
                     class="w-full flex items-center justify-between gap-2 appearance-none bg-surface-container-low border border-muted-border rounded-xl pl-11 pr-4 py-3.5 font-body-md text-sm text-on-surface-variant focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
-                    <span id="helpAddCat-label" class="truncate">Pilih kategori...</span>
+                    <span id="helpAddCat-label" class="truncate">{{ __('Pilih kategori...') }}</span>
                     <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="helpAddCat-chevron">expand_more</span>
                 </button>
                 <div id="helpAddCat-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
@@ -558,20 +558,20 @@
             </div>
         </div>
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Pertanyaan</label>
-            <input type="text" name="pertanyaan" required maxlength="255" class="w-full bg-surface-container-low border border-muted-border rounded-xl px-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" placeholder="How do I track my order?" />
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Pertanyaan') }}</label>
+            <input type="text" name="pertanyaan" required maxlength="255" class="w-full bg-surface-container-low border border-muted-border rounded-xl px-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" placeholder="{{ __('How do I track my order?') }}" />
         </div>
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Jawaban</label>
-            <textarea name="jawaban" rows="4" required minlength="3" class="w-full bg-surface-container-low border border-muted-border rounded-xl p-4 font-body-md text-sm leading-relaxed focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" placeholder="Tuliskan jawaban..."></textarea>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Jawaban') }}</label>
+            <textarea name="jawaban" rows="4" required minlength="3" class="w-full bg-surface-container-low border border-muted-border rounded-xl p-4 font-body-md text-sm leading-relaxed focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" placeholder="{{ __('Tuliskan jawaban...') }}"></textarea>
         </div>
         <div class="flex items-center justify-between gap-4 p-4 border border-gold-accent/25 rounded-xl bg-gold-accent/5">
-            <p class="font-label-sm text-xs text-on-surface-variant inline-flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">auto_awesome</span>Urutan diatur otomatis sesuai urutan pembuatan.</p>
+            <p class="font-label-sm text-xs text-on-surface-variant inline-flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">auto_awesome</span>{{ __('Urutan diatur otomatis sesuai urutan pembuatan.') }}</p>
         </div>
         @slot('footer')
             <div class="flex items-center justify-end gap-3">
-                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-                <button type="submit" form="form-help-faq-tambah" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">add</span>Tambah</button>
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                <button type="submit" form="form-help-faq-tambah" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">add</span>{{ __('Tambah') }}</button>
             </div>
         @endslot
     </form>
@@ -589,12 +589,12 @@
     <form id="form-help-faq-edit" method="POST" action="" class="space-y-4">
         @csrf @method('PUT')
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Kategori</label>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Kategori') }}</label>
             <div class="relative" id="helpEditCat-dd">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gold-accent text-[18px] pointer-events-none z-10">category</span>
                 <button type="button" data-dd-trigger id="helpEditCat-trigger" onclick="toggleDropdown('helpEditCat')" aria-haspopup="listbox" aria-expanded="false"
                     class="w-full flex items-center justify-between gap-2 appearance-none bg-surface-container-low border border-muted-border rounded-xl pl-11 pr-4 py-3.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
-                    <span id="helpEditCat-label" class="truncate">Pilih kategori...</span>
+                    <span id="helpEditCat-label" class="truncate">{{ __('Pilih kategori...') }}</span>
                     <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="helpEditCat-chevron">expand_more</span>
                 </button>
                 <div id="helpEditCat-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
@@ -609,15 +609,15 @@
             </div>
         </div>
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Pertanyaan</label>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Pertanyaan') }}</label>
             <input type="text" name="pertanyaan" id="edit-help-faq-pertanyaan" required maxlength="255" class="w-full bg-surface-container-low border border-muted-border rounded-xl px-4 py-3.5 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" />
         </div>
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Jawaban</label>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Jawaban') }}</label>
             <textarea name="jawaban" id="edit-help-faq-jawaban" rows="4" required minlength="3" class="w-full bg-surface-container-low border border-muted-border rounded-xl p-4 font-body-md text-sm leading-relaxed focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors"></textarea>
         </div>
         <div class="flex items-center justify-between gap-4 p-4 border border-muted-border rounded-xl bg-surface-container-low">
-            <p class="font-title-md text-sm text-on-surface">Tampilkan FAQ</p>
+            <p class="font-title-md text-sm text-on-surface">{{ __('Tampilkan FAQ') }}</p>
             <label class="raliva-toggle">
                 <input type="hidden" name="is_active" value="0" />
                 <input type="checkbox" name="is_active" id="edit-help-faq-active" value="1" class="sr-only peer" />
@@ -627,8 +627,8 @@
         </div>
         @slot('footer')
             <div class="flex items-center justify-end gap-3">
-                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-                <button type="submit" form="form-help-faq-edit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                <button type="submit" form="form-help-faq-edit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>{{ __('Simpan') }}</button>
             </div>
         @endslot
     </form>
@@ -645,13 +645,13 @@
     <form id="form-help-kat-hapus" method="POST" action="" class="space-y-4">
         @csrf @method('DELETE')
         <div class="p-4 border border-error/25 rounded-xl bg-error/5">
-            <p class="font-body-md text-sm text-on-surface">Hapus kategori <span id="help-kat-hapus-nama" class="font-bold text-error">…</span>?</p>
+            <p class="font-body-md text-sm text-on-surface">{{ __('Hapus kategori') }} <span id="help-kat-hapus-nama" class="font-bold text-error">…</span>?</p>
         </div>
-        <p class="font-body-md text-xs text-on-surface-variant inline-flex items-start gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent mt-[1px]">info</span>Kategori yang masih dipakai oleh FAQ tidak bisa dihapus.</p>
+        <p class="font-body-md text-xs text-on-surface-variant inline-flex items-start gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent mt-[1px]">info</span>{{ __('Kategori yang masih dipakai oleh FAQ tidak bisa dihapus.') }}</p>
         @slot('footer')
             <div class="flex items-center justify-end gap-3">
-                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-                <button type="submit" form="form-help-kat-hapus" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                <button type="submit" form="form-help-kat-hapus" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>{{ __('Hapus') }}</button>
             </div>
         @endslot
     </form>
@@ -668,13 +668,13 @@
     <form id="form-help-faq-hapus" method="POST" action="" class="space-y-4">
         @csrf @method('DELETE')
         <div class="p-4 border border-error/25 rounded-xl bg-error/5">
-            <p class="font-body-md text-sm text-on-surface">Hapus FAQ <span id="help-faq-hapus-teks" class="font-bold text-error">…</span>?</p>
+            <p class="font-body-md text-sm text-on-surface">{{ __('Hapus FAQ') }} <span id="help-faq-hapus-teks" class="font-bold text-error">…</span>?</p>
         </div>
-        <p class="font-body-md text-xs text-on-surface-variant inline-flex items-start gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent mt-[1px]">info</span>FAQ yang sudah dihapus tidak bisa dikembalikan.</p>
+        <p class="font-body-md text-xs text-on-surface-variant inline-flex items-start gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent mt-[1px]">info</span>{{ __('FAQ yang sudah dihapus tidak bisa dikembalikan.') }}</p>
         @slot('footer')
             <div class="flex items-center justify-end gap-3">
-                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-                <button type="submit" form="form-help-faq-hapus" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                <button type="submit" form="form-help-faq-hapus" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>{{ __('Hapus') }}</button>
             </div>
         @endslot
     </form>
@@ -703,7 +703,7 @@
     document.getElementById('form-help-faq-tambah')?.addEventListener('submit', (e) => {
         if (!document.getElementById('helpAddCategory').value) {
             e.preventDefault();
-            window.showRalivaToast?.('Pilih kategori bantuan terlebih dahulu.', 'error');
+            window.showRalivaToast?.('{{ __('Pilih kategori bantuan terlebih dahulu.') }}', 'error');
         }
     });
 

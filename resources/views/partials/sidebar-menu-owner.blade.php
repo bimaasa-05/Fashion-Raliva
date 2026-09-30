@@ -65,13 +65,13 @@
             @if ($collapsible)
                 <button type="button" data-sidebar-group-button aria-expanded="{{ $isActive ? 'true' : 'false' }}" class="w-full flex items-center justify-between px-2 py-2 text-[10px] font-label-sm uppercase tracking-widest text-gold-accent/70 hover:text-gold-accent transition-colors">
                     <span class="flex items-center gap-2 min-w-0">
-                        <span data-group-label>{{ $group['label'] }}</span>
+                        <span data-group-label>{{ __($group['label']) }}</span>
                         <span data-sidebar-group-dot data-group-badges="{{ $groupBadgeKeys->implode(',') }}" class="w-2 h-2 rounded-full bg-error shrink-0 {{ $groupHasBadges ? '' : 'hidden' }}"></span>
                     </span>
                     <span class="material-symbols-outlined text-[18px] transition-transform duration-200 {{ $isActive ? 'rotate-180' : '' }}">keyboard_arrow_down</span>
                 </button>
             @else
-                <div class="px-2 py-2 text-[10px] font-label-sm uppercase tracking-widest text-gold-accent/70"><span data-group-label>{{ $group['label'] }}</span></div>
+                <div class="px-2 py-2 text-[10px] font-label-sm uppercase tracking-widest text-gold-accent/70"><span data-group-label>{{ __($group['label']) }}</span></div>
             @endif
             <div class="{{ $collapsible ? 'grid transition-[grid-template-rows] duration-300 ease-out ' . ($isActive ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]') : 'space-y-1' }}" @if ($collapsible) data-sidebar-group @endif>
                 <div class="{{ $collapsible ? 'min-h-0 overflow-hidden' : '' }}">
@@ -82,14 +82,14 @@
                         $lockedBySuspend = $storeLocked && $item['route'] !== 'owner.dashboard';
                         $lockedByNoStore = $noStore && ! $storeLocked && $item['route'] === 'owner.data-toko';
                         $locked = $lockedBySuspend || $lockedByNoStore;
-                        $lockTitle = $lockedByNoStore ? 'Menu terkunci — ajukan toko dulu' : 'Menu terkunci — toko sedang ditangguhkan';
+                        $lockTitle = $lockedByNoStore ? __('Menu terkunci — ajukan toko dulu') : __('Menu terkunci — toko sedang ditangguhkan');
                         $isActive = request()->routeIs($item['route'], ...($item['aliases'] ?? []));
                     @endphp
                     @if ($locked)
                         <div class="group flex items-center gap-2.5 py-2.5 px-3 rounded-lg text-on-sidebar/35 border-l-[3px] border-transparent cursor-not-allowed" title="{{ $lockTitle }}">
                             <span class="material-symbols-outlined text-[20px] text-on-sidebar/30">{{ $item['icon'] }}</span>
-                            <span class="sidebar-tip">{{ $item['text'] }} (terkunci)</span>
-                            <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate">{{ $item['text'] }}</span>
+                            <span class="sidebar-tip">{{ __($item['text']) }} ({{ __('terkunci') }})</span>
+                            <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate">{{ __($item['text']) }}</span>
                             <span class="material-symbols-outlined text-[16px] text-gold-accent/60">lock</span>
                         </div>
                     @else
@@ -103,8 +103,8 @@
                         <span class="material-symbols-outlined text-[20px] @if($isActive) fill text-gold-accent @else text-on-sidebar/60 @endif transition-colors">
                             {{ $item['icon'] }}
                         </span>
-                        <span class="sidebar-tip">{{ $item['text'] }}</span>
-                        <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate" title="{{ $item['text'] }}">{{ $item['text'] }}</span>
+                        <span class="sidebar-tip">{{ __($item['text']) }}</span>
+                        <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate" title="{{ __($item['text']) }}">{{ __($item['text']) }}</span>
                         @if (! empty($item['badge']) && (($sidebarBadges[$item['badge']] ?? 0) > 0))
                             <span data-sidebar-badge="{{ $item['badge'] }}" class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-gold-accent text-white text-[10px] font-bold shrink-0">{{ min(99, $sidebarBadges[$item['badge']]) }}</span>
                         @elseif (! empty($item['badge']))

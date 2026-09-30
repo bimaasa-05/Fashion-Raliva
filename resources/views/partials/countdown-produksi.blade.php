@@ -10,11 +10,11 @@
         const mnt = Math.floor((abs % 3600) / 60);
         const dtk = abs % 60;
         const parts = [];
-        if (hari > 0) parts.push(hari + 'h');
-        if (hari > 0 || jam > 0) parts.push(jam + 'j');
-        if (hari > 0 || jam > 0 || mnt > 0) parts.push(mnt + 'm');
-        parts.push(dtk + 'd');
-        return parts.join(' ') || '0d';
+        if (hari > 0) parts.push(hari + '{{ __('hari_u') }}');
+        if (hari > 0 || jam > 0) parts.push(jam + '{{ __('jam_u') }}');
+        if (hari > 0 || jam > 0 || mnt > 0) parts.push(mnt + '{{ __('menit_u') }}');
+        parts.push(dtk + '{{ __('detik_u') }}');
+        return parts.join(' ') || '0' + '{{ __('detik_u') }}';
     }
 
     function countdownProduksiLive(el) {
@@ -50,18 +50,18 @@
             const live = countdownProduksiLive(el) || { state: '', pct: 0 };
             if (start && now < start) {
                 const wait = Math.floor((start - now) / 1000);
-                el.textContent = 'Mulai dalam ' + countdownProduksiFmt(wait);
+                el.textContent = '{{ __('Mulai dalam') }} ' + countdownProduksiFmt(wait);
                 el.classList.add('text-secondary');
                 el.classList.remove('text-error', 'font-bold', 'text-on-surface-variant');
                 return;
             }
             const diff = Math.floor((end - now) / 1000);
             if (diff < 0) {
-                el.textContent = 'Terlambat ' + countdownProduksiFmt(diff);
+                el.textContent = '{{ __('Terlambat ') }}' + countdownProduksiFmt(diff);
                 el.classList.add('text-error', 'font-bold');
                 el.classList.remove('text-on-surface-variant', 'text-secondary');
             } else {
-                el.textContent = 'Sisa ' + countdownProduksiFmt(diff) + ' (' + live.pct + '%)';
+                el.textContent = '{{ __('Sisa ') }}' + countdownProduksiFmt(diff) + ' (' + live.pct + '%)';
                 el.classList.add('text-on-surface-variant');
                 el.classList.remove('text-error', 'font-bold', 'text-secondary');
             }

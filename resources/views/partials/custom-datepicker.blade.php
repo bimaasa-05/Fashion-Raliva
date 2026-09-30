@@ -11,13 +11,13 @@
     if (window.__ralivaDatePickerStarted) return;
     window.__ralivaDatePickerStarted = true;
 
-    var MONTHS = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-    var DAYS = ['Min','Sen','Sel','Rab','Kam','Jum','Sab'];
+    var MONTHS = ['{{ __('Januari') }}','{{ __('Februari') }}','{{ __('Maret') }}','{{ __('April') }}','{{ __('Mei') }}','{{ __('Juni') }}','{{ __('Juli') }}','{{ __('Agustus') }}','{{ __('September') }}','{{ __('Oktober') }}','{{ __('November') }}','{{ __('Desember') }}'];
+    var DAYS = ['{{ __('Min') }}','{{ __('Sen') }}','{{ __('Sel') }}','{{ __('Rab') }}','{{ __('Kam') }}','{{ __('Jum') }}','{{ __('Sab') }}'];
 
     function pad(n) { return String(n).padStart(2, '0'); }
     function isoDate(y, m, d) { return y + '-' + pad(m) + '-' + pad(d); }
     function fmtDisplay(iso) {
-        if (!iso) return '-- Pilih --';
+        if (!iso) return '{{ __('-- Pilih --') }}';
         var p = iso.split('T');
         var d = p[0].split('-');
         var out = d[2] + '-' + d[1] + '-' + d[0];
@@ -54,14 +54,14 @@
 
     function stepCol(kind, label) {
         var col = newEl('div', 'flex-1 flex flex-col items-center gap-1');
-        var up = stepBtn(kind, 1, 'expand_less', 'Naik ' + label);
+        var up = stepBtn(kind, 1, 'expand_less', '{{ __('Naik') }} ' + label);
         var val = document.createElement('input');
         val.type = 'text';
         val.inputMode = 'numeric';
         val.maxLength = 2;
         val.className = 'rdp-val w-14 h-10 text-center text-lg font-bold text-on-surface rounded-lg border border-muted-border bg-surface-container-low focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent';
         val.dataset.kind = kind;
-        val.setAttribute('aria-label', 'Masukkan ' + label.toLowerCase());
+        val.setAttribute('aria-label', '{{ __('Masukkan') }} ' + label.toLowerCase());
         val.addEventListener('input', function () {
             var clean = this.value.replace(/\D/g, '').slice(0, 2);
             if (this.value !== clean) this.value = clean;
@@ -70,7 +70,7 @@
         val.addEventListener('keydown', function (e) {
             if (e.key === 'Enter') { e.preventDefault(); clampTyped(kind); }
         });
-        var down = stepBtn(kind, -1, 'expand_more', 'Turun ' + label);
+        var down = stepBtn(kind, -1, 'expand_more', '{{ __('Turun') }} ' + label);
         col.appendChild(up);
         col.appendChild(val);
         col.appendChild(down);
@@ -116,7 +116,7 @@
         panel.querySelectorAll('.rdp-val[data-kind="h"]').forEach(function (el) { el.value = active.timeH; });
         panel.querySelectorAll('.rdp-val[data-kind="m"]').forEach(function (el) { el.value = active.timeM; });
         var st = panel.querySelector('.rdp-date-status');
-        if (st) st.textContent = active.pendingDate ? 'Dipilih: ' + fmtDisplay(active.pendingDate) : '';
+        if (st) st.textContent = active.pendingDate ? '{{ __('Dipilih') }}: ' + fmtDisplay(active.pendingDate) : '';
     }
 
     var panel = null;
@@ -163,12 +163,12 @@
         var header = newEl('div', 'flex items-center justify-between gap-2 mb-2');
         var prev = newEl('button', 'rdp-nav w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-high text-on-surface-variant transition-colors cursor-pointer');
         prev.type = 'button';
-        prev.setAttribute('aria-label', 'Bulan sebelumnya');
+        prev.setAttribute('aria-label', '{{ __('Bulan sebelumnya') }}');
         prev.appendChild(iconSpan('chevron_left'));
         var title = newEl('div', 'rdp-title font-label-sm text-label-sm uppercase tracking-wider text-on-surface text-center flex-1 truncate');
         var next = newEl('button', 'rdp-nav w-8 h-8 flex items-center justify-center rounded-lg hover:bg-surface-container-high text-on-surface-variant transition-colors cursor-pointer');
         next.type = 'button';
-        next.setAttribute('aria-label', 'Bulan berikutnya');
+        next.setAttribute('aria-label', '{{ __('Bulan berikutnya') }}');
         next.appendChild(iconSpan('chevron_right'));
         header.appendChild(prev);
         header.appendChild(title);
@@ -185,26 +185,26 @@
 
         var timeRow = newEl('div', 'rdp-time hidden mt-3 pt-3 border-t border-muted-border');
         timeRow.appendChild(newEl('div', 'rdp-date-status font-body-md text-body-md text-on-surface mb-2'));
-        timeRow.appendChild(newEl('div', 'font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mb-2', 'Jam'));
+        timeRow.appendChild(newEl('div', 'font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant mb-2', '{{ __('Jam') }}'));
         var timeSel = newEl('div', 'flex items-start justify-center gap-3');
-        timeSel.appendChild(stepCol('h', 'Jam'));
+        timeSel.appendChild(stepCol('h', '{{ __('Jam') }}'));
         timeSel.appendChild(newEl('span', 'text-xl font-bold text-on-surface-variant pt-7', ':'));
-        timeSel.appendChild(stepCol('m', 'Menit'));
+        timeSel.appendChild(stepCol('m', '{{ __('Menit') }}'));
         timeRow.appendChild(timeSel);
         var saveBtn = newEl('button', 'rdp-save mt-3 block w-full btn-modal btn-modal-primary py-2 text-center');
         saveBtn.type = 'button';
-        saveBtn.textContent = 'Simpan';
+        saveBtn.textContent = '{{ __('Simpan') }}';
         timeRow.appendChild(saveBtn);
         panel.appendChild(timeRow);
 
         var foot = newEl('div', 'flex items-center justify-between mt-3 pt-2 border-t border-muted-border');
         var todayBtn = newEl('button', 'rdp-today text-xs font-bold text-gold-accent hover:underline cursor-pointer');
         todayBtn.type = 'button';
-        todayBtn.textContent = 'Hari Ini';
+        todayBtn.textContent = '{{ __('Hari Ini') }}';
         foot.appendChild(todayBtn);
         var okBtn = newEl('button', 'rdp-ok text-xs font-bold text-gold-accent hover:underline cursor-pointer');
         okBtn.type = 'button';
-        okBtn.textContent = 'Tutup';
+        okBtn.textContent = '{{ __('Tutup') }}';
         foot.appendChild(okBtn);
         panel.appendChild(foot);
 
@@ -404,7 +404,7 @@
         var m = form.querySelector('[name="mulai_pada"]');
         var msg = null;
         if (b && m && b.value && m.value && b.value < m.value) {
-            msg = 'Tanggal berakhir harus setelah tanggal mulai.';
+            msg = '{{ __('Tanggal berakhir harus setelah tanggal mulai.') }}';
         }
         removeError(inst);
         if (msg) {

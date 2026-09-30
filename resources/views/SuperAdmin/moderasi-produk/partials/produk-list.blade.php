@@ -48,7 +48,7 @@
                 @endif
                 <div class="absolute top-2 right-2 p-1 bg-surface/80 rounded"><span class="material-symbols-outlined text-[18px] text-on-surface">{{ $statusIconMap[$product->status] ?? 'pending' }}</span></div>
                 @if ($product->status === \App\Models\Product::STATUS_DITOLAK)
-                    <div class="absolute bottom-2 left-2 right-2 px-2 py-1 bg-error/90 text-on-error text-[9px] font-bold uppercase tracking-widest rounded text-center">Ditolak • Lihat Alasan</div>
+                    <div class="absolute bottom-2 left-2 right-2 px-2 py-1 bg-error/90 text-on-error text-[9px] font-bold uppercase tracking-widest rounded text-center">{{ __('Ditolak • Lihat Alasan') }}</div>
                 @endif
             </div>
             @if (count($fotos) > 1)
@@ -73,7 +73,7 @@
             </div>
         </div>
     @empty
-        <p id="moderasi-kosong" class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-16">Belum ada produk pada status ini.</p>
+        <p id="moderasi-kosong" class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-16">{{ __('Belum ada produk pada status ini.') }}</p>
     @endforelse
 </div>
-<p id="moderasi-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-16">Tidak ada produk yang cocok.</p>
+<p id="moderasi-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-16">{{ __('Tidak ada produk yang cocok.') }}</p>

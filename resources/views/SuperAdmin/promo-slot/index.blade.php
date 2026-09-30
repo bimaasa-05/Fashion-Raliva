@@ -1,9 +1,9 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Promo Slot')
-@section('header-title', 'Promo Slot')
-@section('header-badge', 'Kelola')
-@section('header-subtitle', 'Buat dan kelola diskon pembelian paket slot untuk toko')
+@section('title', __('Promo Slot'))
+@section('header-title', __('Promo Slot'))
+@section('header-badge', __('Kelola'))
+@section('header-subtitle', __('Buat dan kelola diskon pembelian paket slot untuk toko'))
 
 @section('content')
 @include('partials.flash-toast')
@@ -13,12 +13,12 @@
         <div class="flex items-center gap-3">
             <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">local_offer</span></div>
             <div>
-                <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Promo Slot</h2>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Diskon pembelian paket slot untuk toko.</p>
+                <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">{{ __('Promo Slot') }}</h2>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">{{ __('Diskon pembelian paket slot untuk toko.') }}</p>
             </div>
         </div>
         <button type="button" onclick="openPromoForm()" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
-            <span class="material-symbols-outlined text-[18px]">add</span> Buat Promo
+            <span class="material-symbols-outlined text-[18px]">add</span> {{ __('Buat Promo') }}
         </button>
     </section>
 
@@ -27,7 +27,7 @@
         <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 space-y-4">
             <div class="flex items-center gap-2 shrink-0">
                 <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Promo</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Promo') }}</span>
             </div>
             <div id="promo-chip-group" class="flex flex-wrap gap-2">
                 <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $promos->count() }})</button>
@@ -37,7 +37,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div class="relative flex-1">
                     <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                    <input id="promo-search" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama promo, kode, paket slot..." />
+                    <input id="promo-search" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="{{ __('Cari nama promo, kode, paket slot...') }}" />
                     <button type="button" id="promo-clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
@@ -52,12 +52,12 @@
             <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Paket Slot</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Promo</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Diskon</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Berlaku</th>
-                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
-                        <th class="px-6 py-4 text-right text-[10px] font-semibold tracking-widest">Aksi</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Paket Slot') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Promo') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Diskon') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Berlaku') }}</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Status') }}</th>
+                        <th class="px-6 py-4 text-right text-[10px] font-semibold tracking-widest">{{ __('Aksi') }}</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -96,28 +96,28 @@
                             </td>
                             <td class="p-6 text-center">
                                 @if ($promo->status === 'aktif' && now()->between($promo->mulai_pada, $promo->berakhir_pada))
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/20 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Aktif</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/20 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">{{ __('Aktif') }}</span>
                                 @elseif ($promo->status === 'aktif')
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Terjadwal</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">{{ __('Terjadwal') }}</span>
                                 @else
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Nonaktif</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ __('Nonaktif') }}</span>
                                 @endif
                             </td>
                             <td class="p-6 text-right whitespace-nowrap">
-                                <button type="button" onclick="openPromoForm(this.closest('tr'))" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                                <button type="button" onclick="openPromoForm(this.closest('tr'))" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="{{ __('Edit') }}">
                                     <span class="material-symbols-outlined text-[20px]">edit</span>
                                 </button>
-                                <button type="button" onclick="openHapusPromo(this.closest('tr'))" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
+                                <button type="button" onclick="openHapusPromo(this.closest('tr'))" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="{{ __('Hapus') }}">
                                     <span class="material-symbols-outlined text-[20px]">delete</span>
                                 </button>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="6" class="py-12 text-center text-on-surface-variant">Belum ada promo slot dibuat.</td></tr>
+                        <tr><td colspan="6" class="py-12 text-center text-on-surface-variant">{{ __('Belum ada promo slot dibuat.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
-            <p id="promo-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-8">Tidak ada promo yang cocok.</p>
+            <p id="promo-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-8">{{ __('Tidak ada promo yang cocok.') }}</p>
         </div>
 
         <!-- Mobile cards -->
@@ -140,11 +140,11 @@
                             <p class="text-on-surface-variant text-xs">{{ $promo->package?->jumlah_slot ?? '-' }} slot</p>
                         </div>
                         @if ($promo->status === 'aktif' && now()->between($promo->mulai_pada, $promo->berakhir_pada))
-                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/20 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Aktif</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/20 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">{{ __('Aktif') }}</span>
                         @elseif ($promo->status === 'aktif')
-                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">Terjadwal</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">{{ __('Terjadwal') }}</span>
                         @else
-                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">Nonaktif</span>
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ __('Nonaktif') }}</span>
                         @endif
                     </div>
                     <p class="text-on-surface font-semibold mt-3">{{ $promo->nama_promo }} <span class="font-mono text-xs text-gold-accent">{{ $promo->kode_promo }}</span></p>
@@ -152,13 +152,13 @@
                     <div class="flex items-center justify-between pt-3 mt-3 border-t border-muted-border">
                         <p class="text-on-surface-variant text-xs">{{ $sisaHari > 0 ? 'Sisa '.$sisaHari.' hari' : 'Berakhir' }}</p>
                         <div class="flex gap-1">
-                            <button type="button" onclick="openPromoForm(this.closest('[data-promo-row]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit"><span class="material-symbols-outlined text-[20px]">edit</span></button>
-                            <button type="button" onclick="openHapusPromo(this.closest('[data-promo-row]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+                            <button type="button" onclick="openPromoForm(this.closest('[data-promo-row]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="{{ __('Edit') }}"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+                            <button type="button" onclick="openHapusPromo(this.closest('[data-promo-row]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="{{ __('Hapus') }}"><span class="material-symbols-outlined text-[20px]">delete</span></button>
                         </div>
                     </div>
                 </div>
             @empty
-                <div class="text-center text-on-surface-variant font-body-md text-sm py-8">Belum ada promo slot dibuat.</div>
+                <div class="text-center text-on-surface-variant font-body-md text-sm py-8">{{ __('Belum ada promo slot dibuat.') }}</div>
             @endforelse
         </div>
     </section>
@@ -178,7 +178,7 @@
             @csrf
             <input type="hidden" name="_method" id="promo-method-input" value="" />
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="slot_package_id">Paket Slot</label>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="slot_package_id">{{ __('Paket Slot') }}</label>
                 <select class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="slot_package_id" name="slot_package_id" required>
                     <option value="">-- Pilih Paket --</option>
                     @foreach ($packages as $pkg)
@@ -189,19 +189,19 @@
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="nama_promo">Nama Promo</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="nama_promo" name="nama_promo" type="text" placeholder="Misal: Promo Ramadhan" value="{{ old('nama_promo') }}" required />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="nama_promo">{{ __('Nama Promo') }}</label>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="nama_promo" name="nama_promo" type="text" placeholder="{{ __('Misal: Promo Ramadhan') }}" value="{{ old('nama_promo') }}" required />
                     @error('nama_promo')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="kode_promo">Kode Promo</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="kode_promo">{{ __('Kode Promo') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="kode_promo" name="kode_promo" type="text" placeholder="PROMO-RAMADHAN" value="{{ old('kode_promo') }}" required />
                     @error('kode_promo')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="tipe_diskon">Tipe Diskon</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="tipe_diskon">{{ __('Tipe Diskon') }}</label>
                     <div class="relative" id="promoTipe-dd">
                         <button type="button" data-dd-trigger id="promoTipe-trigger" onclick="toggleDropdown('promoTipe')" aria-haspopup="listbox" aria-expanded="false"
                             class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
@@ -211,10 +211,10 @@
                         <div id="promoTipe-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
                             class="hidden absolute left-0 top-full mt-2 w-full min-w-[180px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
                             <button type="button" role="option" aria-selected="false" data-dd-option="persen" onclick="selectPromoTipe('persen')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                Persen (%)<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                                {{ __('Persen (%)') }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
                             </button>
                             <button type="button" role="option" aria-selected="false" data-dd-option="nominal" onclick="selectPromoTipe('nominal')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                                Nominal (Rp)<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                                {{ __('Nominal (Rp)') }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
                             </button>
                         </div>
                         <input type="hidden" name="tipe_diskon" id="tipe_diskon" data-dd-value value="" />
@@ -222,47 +222,47 @@
                     @error('tipe_diskon')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="nilai_diskon">Nilai Diskon</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="nilai_diskon">{{ __('Nilai Diskon') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="nilai_diskon" name="nilai_diskon" type="number" min="1" step="0.5" value="{{ old('nilai_diskon', 10) }}" required />
                     @error('nilai_diskon')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
             </div>
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="maksimal_diskon">Maksimal Diskon (Rp) <span class="normal-case font-normal">— wajib bila tipe persen</span></label>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="maksimal_diskon">{{ __('Maksimal Diskon (Rp)') }} <span class="normal-case font-normal">{{ __('— wajib bila tipe persen') }}</span></label>
                 <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="maksimal_diskon" name="maksimal_diskon" type="number" min="0" value="{{ old('maksimal_diskon') }}" />
                 @error('maksimal_diskon')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
             </div>
             <div class="grid grid-cols-2 gap-4">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="mulai_pada">Mulai</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="mulai_pada">{{ __('Mulai') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="mulai_pada" name="mulai_pada" type="date" value="{{ old('mulai_pada') }}" required />
                     @error('mulai_pada')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="berakhir_pada">Berakhir</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="berakhir_pada">{{ __('Berakhir') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="berakhir_pada" name="berakhir_pada" type="date" value="{{ old('berakhir_pada') }}" required />
                     @error('berakhir_pada')<p class="text-error text-xs mt-1">{{ $message }}</p>@enderror
                 </div>
             </div>
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsi">Deskripsi</label>
-                <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="deskripsi" name="deskripsi" rows="3" placeholder="Deskripsi singkat promo ini">{{ old('deskripsi') }}</textarea>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsi">{{ __('Deskripsi') }}</label>
+                <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="deskripsi" name="deskripsi" rows="3" placeholder="{{ __('Deskripsi singkat promo ini') }}">{{ old('deskripsi') }}</textarea>
             </div>
             <div id="promo-status-wrap" class="hidden">
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">Status</label>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2">{{ __('Status') }}</label>
                 <div class="relative" id="promoStatus-dd">
                     <button type="button" data-dd-trigger id="promoStatus-trigger" onclick="toggleDropdown('promoStatus')" aria-haspopup="listbox" aria-expanded="false"
                         class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
-                        <span id="promoStatus-label" data-dd-label class="truncate">Aktif</span>
+                        <span id="promoStatus-label" data-dd-label class="truncate">{{ __('Aktif') }}</span>
                         <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="promoStatus-chevron">expand_more</span>
                     </button>
                     <div id="promoStatus-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
                         class="hidden absolute left-0 top-full mt-2 w-full min-w-[140px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
                         <button type="button" role="option" aria-selected="true" data-dd-option="aktif" onclick="selectPromoStatus('aktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                            Aktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                            {{ __('Aktif') }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
                         </button>
                         <button type="button" role="option" aria-selected="false" data-dd-option="nonaktif" onclick="selectPromoStatus('nonaktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                            Nonaktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                            {{ __('Nonaktif') }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
                         </button>
                     </div>
                     <input type="hidden" name="status" id="promo_status" data-dd-value value="aktif" />
@@ -270,8 +270,8 @@
             </div>
             @slot('footer')
                 <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4">
-                    <button type="button" data-modal-close class="btn-modal btn-modal-ghost">Batal</button>
-                    <button type="submit" form="promo-form" id="promo-submit-btn" class="btn-modal btn-modal-primary">Buat Promo</button>
+                    <button type="button" data-modal-close class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                    <button type="submit" form="promo-form" id="promo-submit-btn" class="btn-modal btn-modal-primary">{{ __('Buat Promo') }}</button>
                 </div>
             @endslot
         </form>
@@ -288,14 +288,14 @@
             @csrf
             @method('DELETE')
             <div class="text-center">
-                <h3 class="font-title-md text-title-md text-on-surface">Hapus Promo Slot</h3>
-                <p class="text-on-surface-variant text-sm mt-2">Promo <span id="hapus-promo-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.</p>
+                <h3 class="font-title-md text-title-md text-on-surface">{{ __('Hapus Promo Slot') }}</h3>
+                <p class="text-on-surface-variant text-sm mt-2">{{ __('Promo') }} <span id="hapus-promo-nama" class="font-bold text-on-surface">-</span> {{ __('akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.') }}</p>
             </div>
         </form>
         @slot('footer')
             <div class="flex space-x-3">
-                <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusPromo()">Batal</button>
-                <button type="submit" form="hapus-promo-form" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
+                <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusPromo()">{{ __('Batal') }}</button>
+                <button type="submit" form="hapus-promo-form" class="btn-modal btn-modal-danger flex-1">{{ __('Ya, Hapus') }}</button>
             </div>
         @endslot
     @endcomponent
@@ -360,9 +360,9 @@
         if (isEdit) {
             const id = row.getAttribute('data-id');
             const nama = row.getAttribute('data-name') || '';
-            document.getElementById('promo-modal-title').textContent = 'Ubah Promo Slot';
-            document.getElementById('promo-modal-sub').textContent = 'Perubahan berlaku saat Owner membeli paket slot terkait.';
-            document.getElementById('promo-submit-btn').textContent = 'Simpan Perubahan';
+            document.getElementById('promo-modal-title').textContent = '{{ __('Ubah Promo Slot') }}';
+            document.getElementById('promo-modal-sub').textContent = '{{ __('Perubahan berlaku saat Owner membeli paket slot terkait.') }}';
+            document.getElementById('promo-submit-btn').textContent = '{{ __('Simpan Perubahan') }}';
 
             fetch(promoUrls.detail(id), { headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
                 .then((res) => res.json())
@@ -380,12 +380,12 @@
                     document.getElementById('promo-method-input').value = 'PUT';
                 })
                 .catch(() => {
-                    document.getElementById('promo-modal-title').textContent = 'Ubah Promo Slot (' + nama + ')';
+                    document.getElementById('promo-modal-title').textContent = '{{ __('Ubah Promo Slot (') }}' + nama + ')';
                 });
         } else {
-            document.getElementById('promo-modal-title').textContent = 'Buat Promo Slot';
-            document.getElementById('promo-modal-sub').textContent = 'Diskon berlaku saat Owner membeli paket slot ini.';
-            document.getElementById('promo-submit-btn').textContent = 'Buat Promo';
+            document.getElementById('promo-modal-title').textContent = '{{ __('Buat Promo Slot') }}';
+            document.getElementById('promo-modal-sub').textContent = '{{ __('Diskon berlaku saat Owner membeli paket slot ini.') }}';
+            document.getElementById('promo-submit-btn').textContent = '{{ __('Buat Promo') }}';
             form.action = promoUrls.store;
         }
 

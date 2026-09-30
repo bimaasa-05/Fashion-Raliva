@@ -1,11 +1,11 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Data Bank')
+@section('title', __('Data Bank'))
 
-@section('header-title', 'Data Bank')
-@section('header-badge', 'Kelola')
+@section('header-title', __('Data Bank'))
+@section('header-badge', __('Kelola'))
 
-@section('header-subtitle', 'Kelola rekening bank, e-wallet, dan QRIS platform')
+@section('header-subtitle', __('Kelola rekening bank, e-wallet, dan QRIS platform'))
 
 @push('styles')
 <style>
@@ -45,23 +45,23 @@
                 </div>
                 <div class="min-w-0">
                     <div class="flex items-center gap-3 flex-wrap">
-                        <h2 class="font-headline-md text-headline-md text-white tracking-wide">Data Bank Platform</h2>
-                        <span class="banner-badge is-on"><span class="dot"></span>{{ $stats['aktif'] }} Bank Aktif</span>
+                        <h2 class="font-headline-md text-headline-md text-white tracking-wide">{{ __('Data Bank Platform') }}</h2>
+                        <span class="banner-badge is-on"><span class="dot"></span>{{ $stats['aktif'] }} {{ __('Bank Aktif') }}</span>
                     </div>
-                    <p class="banner-desc mt-2 max-w-2xl">Kelola rekening penerimaan pembayaran — bank transfer, e-wallet, dan QRIS yang dipakai pelanggan saat checkout.</p>
+                    <p class="banner-desc mt-2 max-w-2xl">{{ __('Kelola rekening penerimaan pembayaran — bank transfer, e-wallet, dan QRIS yang dipakai pelanggan saat checkout.') }}</p>
                 </div>
             </div>
             <div class="flex flex-wrap items-center gap-3 lg:ml-auto shrink-0">
                 <div class="stat-chip">
-                    <span class="stat-chip-label">Bank Terdaftar</span>
+                    <span class="stat-chip-label">{{ __('Bank Terdaftar') }}</span>
                     <span class="stat-chip-value">{{ $stats['total'] }}</span>
                 </div>
                 <div class="stat-chip">
-                    <span class="stat-chip-label">Rekening Platform</span>
+                    <span class="stat-chip-label">{{ __('Rekening Platform') }}</span>
                     <span class="stat-chip-value">{{ $stats['rekening'] }}</span>
                 </div>
                 <div class="stat-chip">
-                    <span class="stat-chip-label">E-Wallet</span>
+                    <span class="stat-chip-label">{{ __('E-Wallet') }}</span>
                     <span class="stat-chip-value">{{ $ewalletCount }}</span>
                 </div>
             </div>
@@ -71,13 +71,13 @@
     {{--=== Tabs premium ===--}}
     <div class="flex flex-wrap items-center gap-1.5 rounded-xl border border-muted-border bg-surface-container-lowest shadow-sm p-1.5 w-fit no-scrollbar overflow-x-auto max-w-full">
         <button class="tab-btn active" data-tab="bank" onclick="switchTab('bank')">
-            <span class="material-symbols-outlined text-[18px]">account_balance</span> Bank Transfer
+            <span class="material-symbols-outlined text-[18px]">account_balance</span> {{ __('Bank Transfer') }}
         </button>
         <button class="tab-btn" data-tab="ewallet" onclick="switchTab('ewallet')">
-            <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span> E-Wallet
+            <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span> {{ __('E-Wallet') }}
         </button>
         <button class="tab-btn" data-tab="qris" onclick="switchTab('qris')">
-            <span class="material-symbols-outlined text-[18px]">qr_code_2</span> QRIS
+            <span class="material-symbols-outlined text-[18px]">qr_code_2</span> {{ __('QRIS') }}
         </button>
     </div>
 
@@ -90,23 +90,23 @@
                         <span class="material-symbols-outlined text-[20px] text-gold-accent">account_balance</span>
                     </div>
                     <div>
-                        <h3 class="font-title-md text-title-md text-on-surface premium-heading">Bank Transfer</h3>
-                        <p class="text-on-surface-variant font-body-md text-xs mt-0.5">Rekening bank tujuan transfer pembayaran pelanggan.</p>
+                        <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Bank Transfer') }}</h3>
+                        <p class="text-on-surface-variant font-body-md text-xs mt-0.5">{{ __('Rekening bank tujuan transfer pembayaran pelanggan.') }}</p>
                     </div>
                 </div>
                 <button type="button" onclick="openBankForm()" class="inline-flex items-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded-lg btn-premium w-fit">
-                    <span class="material-symbols-outlined text-[18px]">add</span> Tambah Bank
+                    <span class="material-symbols-outlined text-[18px]">add</span> {{ __('Tambah Bank') }}
                 </button>
             </div>
             <div class="hidden md:block overflow-x-auto">
                 <table class="premium-table w-full text-sm">
                     <thead>
                         <tr class="text-left text-on-surface-variant border-b border-muted-border">
-                            <th class="py-3 px-5 font-label-sm text-[10px] font-semibold uppercase tracking-widest">Bank</th>
-                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">No. Rekening</th>
-                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">Pemilik</th>
-                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">Status</th>
-                            <th class="py-3 px-5 font-label-sm text-[10px] font-semibold uppercase tracking-widest text-right">Aksi</th>
+                            <th class="py-3 px-5 font-label-sm text-[10px] font-semibold uppercase tracking-widest">{{ __('Bank') }}</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">{{ __('No. Rekening') }}</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">{{ __('Pemilik') }}</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">{{ __('Status') }}</th>
+                            <th class="py-3 px-5 font-label-sm text-[10px] font-semibold uppercase tracking-widest text-right">{{ __('Aksi') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -129,20 +129,20 @@
                                 <td class="py-4 px-4">
                                     @if ($bank->status === 'aktif')
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-success/10 text-success border-success/20">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
+                                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>{{ __('Aktif') }}
                                         </span>
                                     @else
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-error/10 text-error border-error/20">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Nonaktif
+                                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>{{ __('Nonaktif') }}
                                         </span>
                                     @endif
                                 </td>
                                 <td class="py-4 px-5">
                                     <div class="flex items-center gap-1 justify-end">
-                                        <button onclick="editBank({{ $bank->bank_id }})" title="Edit bank" class="w-9 h-9 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-on-surface-variant hover:text-gold-accent flex items-center justify-center transition-colors">
+                                        <button onclick="editBank({{ $bank->bank_id }})" title="{{ __('Edit bank') }}" class="w-9 h-9 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-on-surface-variant hover:text-gold-accent flex items-center justify-center transition-colors">
                                             <span class="material-symbols-outlined text-[18px]">edit</span>
                                         </button>
-                                        <button type="button" onclick="confirmDeleteBank({{ $bank->bank_id }}, @js($bank->nama_bank))" title="Hapus bank" class="w-9 h-9 rounded-lg border border-transparent hover:border-error/30 hover:bg-error/10 text-on-surface-variant hover:text-error flex items-center justify-center transition-colors">
+                                        <button type="button" onclick="confirmDeleteBank({{ $bank->bank_id }}, @js($bank->nama_bank))" title="{{ __('Hapus bank') }}" class="w-9 h-9 rounded-lg border border-transparent hover:border-error/30 hover:bg-error/10 text-on-surface-variant hover:text-error flex items-center justify-center transition-colors">
                                             <span class="material-symbols-outlined text-[18px]">delete</span>
                                         </button>
                                     </div>
@@ -179,29 +179,29 @@
                             </div>
                             @if ($bank->status === 'aktif')
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-success/10 text-success border-success/20 shrink-0">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>{{ __('Aktif') }}
                                 </span>
                             @else
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-error/10 text-error border-error/20 shrink-0">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Nonaktif
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>{{ __('Nonaktif') }}
                                 </span>
                             @endif
                         </div>
                         <div class="grid grid-cols-2 gap-3 mt-4">
                             <div class="rounded-lg border border-muted-border bg-surface-container-low px-3 py-2.5 min-w-0">
-                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">No. Rekening</p>
+                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">{{ __('No. Rekening') }}</p>
                                 <p class="text-sm font-semibold text-on-surface mt-0.5 tabular-nums break-all">{{ $rek?->nomor_rekening ?? '-' }}</p>
                             </div>
                             <div class="rounded-lg border border-muted-border bg-surface-container-low px-3 py-2.5 min-w-0">
-                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">Pemilik</p>
+                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">{{ __('Pemilik') }}</p>
                                 <p class="text-sm font-semibold text-on-surface mt-0.5 truncate">{{ $rek?->nama_pemilik ?? '-' }}</p>
                             </div>
                         </div>
                         <div class="flex items-center justify-end gap-1 mt-4 pt-3 border-t border-muted-border">
-                            <button onclick="editBank({{ $bank->bank_id }})" title="Edit bank" class="w-10 h-10 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-on-surface-variant hover:text-gold-accent flex items-center justify-center transition-colors">
+                            <button onclick="editBank({{ $bank->bank_id }})" title="{{ __('Edit bank') }}" class="w-10 h-10 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-on-surface-variant hover:text-gold-accent flex items-center justify-center transition-colors">
                                 <span class="material-symbols-outlined text-[20px]">edit</span>
                             </button>
-                            <button type="button" onclick="confirmDeleteBank({{ $bank->bank_id }}, @js($bank->nama_bank))" title="Hapus bank" class="w-10 h-10 rounded-lg border border-transparent hover:border-error/30 hover:bg-error/10 text-on-surface-variant hover:text-error flex items-center justify-center transition-colors">
+                            <button type="button" onclick="confirmDeleteBank({{ $bank->bank_id }}, @js($bank->nama_bank))" title="{{ __('Hapus bank') }}" class="w-10 h-10 rounded-lg border border-transparent hover:border-error/30 hover:bg-error/10 text-on-surface-variant hover:text-error flex items-center justify-center transition-colors">
                                 <span class="material-symbols-outlined text-[20px]">delete</span>
                             </button>
                         </div>
@@ -229,23 +229,23 @@
                         <span class="material-symbols-outlined text-[20px] text-gold-accent">account_balance_wallet</span>
                     </div>
                     <div>
-                        <h3 class="font-title-md text-title-md text-on-surface premium-heading">E-Wallet</h3>
-                        <p class="text-on-surface-variant font-body-md text-xs mt-0.5">Dompet digital yang bisa dipilih pelanggan saat checkout.</p>
+                        <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('E-Wallet') }}</h3>
+                        <p class="text-on-surface-variant font-body-md text-xs mt-0.5">{{ __('Dompet digital yang bisa dipilih pelanggan saat checkout.') }}</p>
                     </div>
                 </div>
                 <button type="button" onclick="openEwalletForm()" class="inline-flex items-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded-lg btn-premium w-fit">
-                    <span class="material-symbols-outlined text-[18px]">add</span> Tambah E-Wallet
+                    <span class="material-symbols-outlined text-[18px]">add</span> {{ __('Tambah E-Wallet') }}
                 </button>
             </div>
             <div class="hidden md:block overflow-x-auto">
                 <table class="premium-table w-full text-sm">
                     <thead>
                         <tr class="text-left text-on-surface-variant border-b border-muted-border">
-                            <th class="py-3 px-5 font-label-sm text-[10px] font-semibold uppercase tracking-widest">Nama</th>
-                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">No. Telepon</th>
-                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">Pemilik</th>
-                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">Status</th>
-                            <th class="py-3 px-5 font-label-sm text-[10px] font-semibold uppercase tracking-widest text-right">Aksi</th>
+                            <th class="py-3 px-5 font-label-sm text-[10px] font-semibold uppercase tracking-widest">{{ __('Nama') }}</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">{{ __('No. Telepon') }}</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">{{ __('Pemilik') }}</th>
+                            <th class="py-3 px-4 font-label-sm text-[10px] font-semibold uppercase tracking-widest">{{ __('Status') }}</th>
+                            <th class="py-3 px-5 font-label-sm text-[10px] font-semibold uppercase tracking-widest text-right">{{ __('Aksi') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -267,20 +267,20 @@
                                 <td class="py-4 px-4">
                                     @if ($ew->status === 'aktif')
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-success/10 text-success border-success/20">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
+                                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>{{ __('Aktif') }}
                                         </span>
                                     @else
                                         <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-error/10 text-error border-error/20">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Nonaktif
+                                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>{{ __('Nonaktif') }}
                                         </span>
                                     @endif
                                 </td>
                                 <td class="py-4 px-5">
                                     <div class="flex items-center gap-1 justify-end">
-                                        <button onclick="editEwallet({{ $ew->platform_bank_account_id }})" title="Edit e-wallet" class="w-9 h-9 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-on-surface-variant hover:text-gold-accent flex items-center justify-center transition-colors">
+                                        <button onclick="editEwallet({{ $ew->platform_bank_account_id }})" title="{{ __('Edit e-wallet') }}" class="w-9 h-9 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-on-surface-variant hover:text-gold-accent flex items-center justify-center transition-colors">
                                             <span class="material-symbols-outlined text-[18px]">edit</span>
                                         </button>
-                                        <button type="button" onclick="confirmDeleteEwallet({{ $ew->platform_bank_account_id }}, @js($ew->nama))" title="Hapus e-wallet" class="w-9 h-9 rounded-lg border border-transparent hover:border-error/30 hover:bg-error/10 text-on-surface-variant hover:text-error flex items-center justify-center transition-colors">
+                                        <button type="button" onclick="confirmDeleteEwallet({{ $ew->platform_bank_account_id }}, @js($ew->nama))" title="{{ __('Hapus e-wallet') }}" class="w-9 h-9 rounded-lg border border-transparent hover:border-error/30 hover:bg-error/10 text-on-surface-variant hover:text-error flex items-center justify-center transition-colors">
                                             <span class="material-symbols-outlined text-[18px]">delete</span>
                                         </button>
                                     </div>
@@ -316,29 +316,29 @@
                             </div>
                             @if ($ew->status === 'aktif')
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-success/10 text-success border-success/20 shrink-0">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>{{ __('Aktif') }}
                                 </span>
                             @else
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-error/10 text-error border-error/20 shrink-0">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Nonaktif
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>{{ __('Nonaktif') }}
                                 </span>
                             @endif
                         </div>
                         <div class="grid grid-cols-2 gap-3 mt-4">
                             <div class="rounded-lg border border-muted-border bg-surface-container-low px-3 py-2.5 min-w-0">
-                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">No. Telepon</p>
+                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">{{ __('No. Telepon') }}</p>
                                 <p class="text-sm font-semibold text-on-surface mt-0.5 tabular-nums break-all">{{ $ew->nomor_rekening ?? '-' }}</p>
                             </div>
                             <div class="rounded-lg border border-muted-border bg-surface-container-low px-3 py-2.5 min-w-0">
-                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">Pemilik</p>
+                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">{{ __('Pemilik') }}</p>
                                 <p class="text-sm font-semibold text-on-surface mt-0.5 truncate">{{ $ew->nama_pemilik ?? '-' }}</p>
                             </div>
                         </div>
                         <div class="flex items-center justify-end gap-1 mt-4 pt-3 border-t border-muted-border">
-                            <button onclick="editEwallet({{ $ew->platform_bank_account_id }})" title="Edit e-wallet" class="w-10 h-10 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-on-surface-variant hover:text-gold-accent flex items-center justify-center transition-colors">
+                            <button onclick="editEwallet({{ $ew->platform_bank_account_id }})" title="{{ __('Edit e-wallet') }}" class="w-10 h-10 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-on-surface-variant hover:text-gold-accent flex items-center justify-center transition-colors">
                                 <span class="material-symbols-outlined text-[20px]">edit</span>
                             </button>
-                            <button type="button" onclick="confirmDeleteEwallet({{ $ew->platform_bank_account_id }}, @js($ew->nama))" title="Hapus e-wallet" class="w-10 h-10 rounded-lg border border-transparent hover:border-error/30 hover:bg-error/10 text-on-surface-variant hover:text-error flex items-center justify-center transition-colors">
+                            <button type="button" onclick="confirmDeleteEwallet({{ $ew->platform_bank_account_id }}, @js($ew->nama))" title="{{ __('Hapus e-wallet') }}" class="w-10 h-10 rounded-lg border border-transparent hover:border-error/30 hover:bg-error/10 text-on-surface-variant hover:text-error flex items-center justify-center transition-colors">
                                 <span class="material-symbols-outlined text-[20px]">delete</span>
                             </button>
                         </div>
@@ -366,17 +366,17 @@
                         <span class="material-symbols-outlined text-[20px] text-gold-accent">qr_code_2</span>
                     </div>
                     <div>
-                        <h3 class="font-title-md text-title-md text-on-surface premium-heading">QRIS</h3>
-                        <p class="text-on-surface-variant font-body-md text-xs mt-0.5">Kode QR pembayaran universal yang dipakai pelanggan.</p>
+                        <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('QRIS') }}</h3>
+                        <p class="text-on-surface-variant font-body-md text-xs mt-0.5">{{ __('Kode QR pembayaran universal yang dipakai pelanggan.') }}</p>
                     </div>
                 </div>
                 @if ($qris)
                     <button type="button" onclick="editQris({{ $qris->platform_bank_account_id }})" class="inline-flex items-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded-lg btn-premium w-fit">
-                        <span class="material-symbols-outlined text-[18px]">edit</span> Edit QRIS
+                        <span class="material-symbols-outlined text-[18px]">edit</span> {{ __('Edit QRIS') }}
                     </button>
                 @else
                     <button type="button" onclick="openQrisForm()" class="inline-flex items-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded-lg btn-premium w-fit">
-                        <span class="material-symbols-outlined text-[18px]">add</span> Tambah QRIS
+                        <span class="material-symbols-outlined text-[18px]">add</span> {{ __('Tambah QRIS') }}
                     </button>
                 @endif
             </div>
@@ -392,11 +392,11 @@
                             <h4 class="font-title-md text-title-md text-on-surface">{{ $qris->nama }}</h4>
                             @if ($qris->status === 'aktif')
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-success/10 text-success border-success/20">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Aktif
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>{{ __('Aktif') }}
                                 </span>
                             @else
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-error/10 text-error border-error/20">
-                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>Nonaktif
+                                    <span class="w-1.5 h-1.5 rounded-full bg-current"></span>{{ __('Nonaktif') }}
                                 </span>
                             @endif
                         </div>
@@ -405,11 +405,11 @@
                         @endif
                         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
                             <div class="rounded-xl border border-muted-border bg-surface-container-low px-4 py-3">
-                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">Nama Pemilik</p>
+                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">{{ __('Nama Pemilik') }}</p>
                                 <p class="text-sm font-semibold text-on-surface mt-0.5">{{ $qris->nama_pemilik ?? '-' }}</p>
                             </div>
                             <div class="rounded-xl border border-muted-border bg-surface-container-low px-4 py-3">
-                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">Kode</p>
+                                <p class="font-label-sm text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant">{{ __('Kode') }}</p>
                                 <p class="text-sm font-semibold text-on-surface mt-0.5 uppercase">{{ $qris->kode }}</p>
                             </div>
                         </div>
@@ -421,7 +421,7 @@
                         <span class="material-symbols-outlined text-[26px] text-on-surface-variant">qr_code_2</span>
                     </div>
                     <div>
-                        <p class="font-body-md text-sm text-on-surface">Belum ada akun QRIS</p>
+                        <p class="font-body-md text-sm text-on-surface">{{ __('Belum ada akun QRIS') }}</p>
                         <p class="font-body-md text-xs text-on-surface-variant mt-1">Klik "Tambah QRIS" untuk membuat kode QR pembayaran platform.</p>
                     </div>
                 </div>
@@ -443,8 +443,8 @@
                         <span class="material-symbols-outlined text-[22px] text-white">account_balance</span>
                     </div>
                     <div class="min-w-0 flex-1">
-                        <h3 id="bank-modal-title" class="font-title-md text-title-md text-white">Tambah Bank</h3>
-                        <p class="font-body-md text-xs text-white/70 mt-0.5">Rekening tujuan transfer pembayaran pelanggan.</p>
+                        <h3 id="bank-modal-title" class="font-title-md text-title-md text-white">{{ __('Tambah Bank') }}</h3>
+                        <p class="font-body-md text-xs text-white/70 mt-0.5">{{ __('Rekening tujuan transfer pembayaran pelanggan.') }}</p>
                     </div>
                     <button type="button" onclick="closeBankForm()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white shrink-0 transition-colors"><span class="material-symbols-outlined text-[18px]">close</span></button>
                 </div>
@@ -454,44 +454,44 @@
                 <input type="hidden" name="_method" value="POST" id="bank-method" />
                 <input type="hidden" name="bank_id" id="bank-id" />
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Nama Bank</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Nama Bank') }}</label>
                     <input type="text" name="nama_bank" id="bank-nama" required maxlength="100" class="raliva-input" placeholder="Bank Central Asia (BCA)" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Kode Bank</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Kode Bank') }}</label>
                     <input type="text" name="kode_bank" id="bank-kode" required maxlength="20" class="raliva-input" placeholder="bca" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Nomor Rekening</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Nomor Rekening') }}</label>
                     <input type="text" name="nomor_rekening" id="bank-rekening" required maxlength="50" class="raliva-input" placeholder="1234567890" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Nama Pemilik</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Nama Pemilik') }}</label>
                     <input type="text" name="nama_pemilik" id="bank-pemilik" required maxlength="150" class="raliva-input" placeholder="RALIVA Fashion" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Status') }}</label>
                     <div class="relative" id="bankStatus-dd">
                     <button type="button" data-dd-trigger id="bankStatus-trigger" onclick="toggleDropdown('bankStatus')" aria-haspopup="listbox" aria-expanded="false"
                         class="w-full flex items-center justify-between gap-2 bg-surface-container-lowest border border-muted-border rounded-lg pl-3.5 pr-3.5 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10 transition-all duration-200 cursor-pointer text-left">
-                        <span id="bankStatus-label" class="truncate">Aktif</span>
+                        <span id="bankStatus-label" class="truncate">{{ __('Aktif') }}</span>
                         <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="bankStatus-chevron">expand_more</span>
                     </button>
                     <div id="bankStatus-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
                         class="hidden absolute left-0 top-full mt-2 w-full min-w-[160px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
                         <button type="button" role="option" aria-selected="true" data-dd-option="aktif" onclick="selectBankStatus('aktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                            Aktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                            {{ __('Aktif') }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
                         </button>
                         <button type="button" role="option" aria-selected="false" data-dd-option="nonaktif" onclick="selectBankStatus('nonaktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                            Nonaktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                            {{ __('Nonaktif') }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
                         </button>
                     </div>
                     <input type="hidden" name="status" id="bank-status" value="aktif" />
                 </div>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
-                    <button type="button" onclick="closeBankForm()" class="btn-modal btn-modal-ghost">Batal</button>
-                    <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+                    <button type="button" onclick="closeBankForm()" class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                    <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>{{ __('Simpan') }}</button>
                 </div>
             </form>
         </div>
@@ -511,8 +511,8 @@
                         <span class="material-symbols-outlined text-[22px] text-white">account_balance_wallet</span>
                     </div>
                     <div class="min-w-0 flex-1">
-                        <h3 id="ewallet-modal-title" class="font-title-md text-title-md text-white">Tambah E-Wallet</h3>
-                        <p class="font-body-md text-xs text-white/70 mt-0.5">Dompet digital yang ditampilkan ke pelanggan.</p>
+                        <h3 id="ewallet-modal-title" class="font-title-md text-title-md text-white">{{ __('Tambah E-Wallet') }}</h3>
+                        <p class="font-body-md text-xs text-white/70 mt-0.5">{{ __('Dompet digital yang ditampilkan ke pelanggan.') }}</p>
                     </div>
                     <button type="button" onclick="closeEwalletForm()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white shrink-0 transition-colors"><span class="material-symbols-outlined text-[18px]">close</span></button>
                 </div>
@@ -522,54 +522,54 @@
                 <input type="hidden" name="jenis" value="ewallet" />
                 <input type="hidden" name="account_id" id="ewallet-id" />
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Nama</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Nama') }}</label>
                     <input type="text" name="nama" id="ewallet-nama" required maxlength="100" class="raliva-input" placeholder="DANA" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Kode</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Kode') }}</label>
                     <input type="text" name="kode" id="ewallet-kode" required maxlength="50" class="raliva-input" placeholder="dana" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">No. Telepon</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('No. Telepon') }}</label>
                     <input type="text" name="nomor_rekening" id="ewallet-rekening" maxlength="50" class="raliva-input" placeholder="08XXXXXXXXXX" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Nama Pemilik</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Nama Pemilik') }}</label>
                     <input type="text" name="nama_pemilik" id="ewallet-pemilik" maxlength="150" class="raliva-input" value="RALIVA Fashion" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Deskripsi</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Deskripsi') }}</label>
                     <textarea name="deskripsi" id="ewallet-deskripsi" rows="2" maxlength="255" class="raliva-textarea"></textarea>
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Logo</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Logo') }}</label>
                     <div class="flex items-center gap-3">
                         <input type="file" name="file_gambar" accept="image/*" class="block w-full text-sm text-on-surface-variant file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-surface-container-low file:text-sm file:text-gold-accent file:cursor-pointer file:font-semibold hover:file:bg-surface-container-high" />
                     </div>
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Status') }}</label>
                     <div class="relative" id="ewalletStatus-dd">
                     <button type="button" data-dd-trigger id="ewalletStatus-trigger" onclick="toggleDropdown('ewalletStatus')" aria-haspopup="listbox" aria-expanded="false"
                         class="w-full flex items-center justify-between gap-2 bg-surface-container-lowest border border-muted-border rounded-lg pl-3.5 pr-3.5 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10 transition-all duration-200 cursor-pointer text-left">
-                        <span id="ewalletStatus-label" class="truncate">Aktif</span>
+                        <span id="ewalletStatus-label" class="truncate">{{ __('Aktif') }}</span>
                         <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="ewalletStatus-chevron">expand_more</span>
                     </button>
                     <div id="ewalletStatus-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
                         class="hidden absolute left-0 top-full mt-2 w-full min-w-[160px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
                         <button type="button" role="option" aria-selected="true" data-dd-option="aktif" onclick="selectEwalletStatus('aktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                            Aktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                            {{ __('Aktif') }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
                         </button>
                         <button type="button" role="option" aria-selected="false" data-dd-option="nonaktif" onclick="selectEwalletStatus('nonaktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                            Nonaktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                            {{ __('Nonaktif') }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
                         </button>
                     </div>
                     <input type="hidden" name="status" id="ewallet-status" value="aktif" />
                 </div>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
-                    <button type="button" onclick="closeEwalletForm()" class="btn-modal btn-modal-ghost">Batal</button>
-                    <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+                    <button type="button" onclick="closeEwalletForm()" class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                    <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>{{ __('Simpan') }}</button>
                 </div>
             </form>
         </div>
@@ -589,8 +589,8 @@
                         <span class="material-symbols-outlined text-[22px] text-white">qr_code_2</span>
                     </div>
                     <div class="min-w-0 flex-1">
-                        <h3 id="qris-modal-title" class="font-title-md text-title-md text-white">Tambah QRIS</h3>
-                        <p class="font-body-md text-xs text-white/70 mt-0.5">Kode QR pembayaran universal untuk pelanggan.</p>
+                        <h3 id="qris-modal-title" class="font-title-md text-title-md text-white">{{ __('Tambah QRIS') }}</h3>
+                        <p class="font-body-md text-xs text-white/70 mt-0.5">{{ __('Kode QR pembayaran universal untuk pelanggan.') }}</p>
                     </div>
                     <button type="button" onclick="closeQrisForm()" class="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 border border-white/20 flex items-center justify-center text-white shrink-0 transition-colors"><span class="material-symbols-outlined text-[18px]">close</span></button>
                 </div>
@@ -600,48 +600,48 @@
                 <input type="hidden" name="jenis" value="qris" />
                 <input type="hidden" name="account_id" id="qris-id" />
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Nama</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Nama') }}</label>
                     <input type="text" name="nama" id="qris-nama" required maxlength="100" class="raliva-input" value="QRIS RALIVA" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Kode</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Kode') }}</label>
                     <input type="text" name="kode" id="qris-kode" required maxlength="50" class="raliva-input" value="qris" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Nama Pemilik</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Nama Pemilik') }}</label>
                     <input type="text" name="nama_pemilik" id="qris-pemilik" maxlength="150" class="raliva-input" value="RALIVA Fashion" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Deskripsi</label>
-                    <textarea name="deskripsi" id="qris-deskripsi" rows="2" maxlength="255" class="raliva-textarea">Scan kode QR dengan aplikasi apa pun (GoPay, OVO, DANA, ShopeePay, m-Banking).</textarea>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Deskripsi') }}</label>
+                    <textarea name="deskripsi" id="qris-deskripsi" rows="2" maxlength="255" class="raliva-textarea">{{ __('Scan kode QR dengan aplikasi apa pun (GoPay, OVO, DANA, ShopeePay, m-Banking).') }}</textarea>
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Gambar QR</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Gambar QR') }}</label>
                     <input type="file" name="file_gambar" accept="image/*" class="block w-full text-sm text-on-surface-variant file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-surface-container-low file:text-sm file:text-gold-accent file:cursor-pointer file:font-semibold hover:file:bg-surface-container-high" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">Status</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Status') }}</label>
                     <div class="relative" id="qrisStatus-dd">
                     <button type="button" data-dd-trigger id="qrisStatus-trigger" onclick="toggleDropdown('qrisStatus')" aria-haspopup="listbox" aria-expanded="false"
                         class="w-full flex items-center justify-between gap-2 bg-surface-container-lowest border border-muted-border rounded-lg pl-3.5 pr-3.5 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10 transition-all duration-200 cursor-pointer text-left">
-                        <span id="qrisStatus-label" class="truncate">Aktif</span>
+                        <span id="qrisStatus-label" class="truncate">{{ __('Aktif') }}</span>
                         <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="qrisStatus-chevron">expand_more</span>
                     </button>
                     <div id="qrisStatus-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
                         class="hidden absolute left-0 top-full mt-2 w-full min-w-[160px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
                         <button type="button" role="option" aria-selected="true" data-dd-option="aktif" onclick="selectQrisStatus('aktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                            Aktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                            {{ __('Aktif') }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
                         </button>
                         <button type="button" role="option" aria-selected="false" data-dd-option="nonaktif" onclick="selectQrisStatus('nonaktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                            Nonaktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                            {{ __('Nonaktif') }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
                         </button>
                     </div>
                     <input type="hidden" name="status" id="qris-status" value="aktif" />
                 </div>
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-4 border-t border-muted-border">
-                    <button type="button" onclick="closeQrisForm()" class="btn-modal btn-modal-ghost">Batal</button>
-                    <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>Simpan</button>
+                    <button type="button" onclick="closeQrisForm()" class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                    <button type="submit" class="btn-modal btn-modal-primary"><span class="material-symbols-outlined text-[18px]">save</span>{{ __('Simpan') }}</button>
                 </div>
             </form>
         </div>
@@ -665,12 +665,12 @@
             <form id="form-hapus-bank" method="POST" action="" class="p-6 space-y-4">
                 @csrf
                 <div class="text-center">
-                    <h3 class="font-title-md text-title-md text-on-surface">Hapus Bank Ini?</h3>
+                    <h3 class="font-title-md text-title-md text-on-surface">{{ __('Hapus Bank Ini?') }}</h3>
                     <p id="hapus-bank-text" class="font-body-md text-sm text-on-surface-variant mt-2"></p>
                 </div>
                 <div class="flex items-center justify-center gap-3 pt-2">
-                    <button type="button" onclick="closeDeleteBank()" class="btn-modal btn-modal-ghost">Batal</button>
-                    <button type="submit" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
+                    <button type="button" onclick="closeDeleteBank()" class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                    <button type="submit" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>{{ __('Hapus') }}</button>
                 </div>
             </form>
         </div>
@@ -694,12 +694,12 @@
             <form id="form-hapus-ewallet" method="POST" action="" class="p-6 space-y-4">
                 @csrf
                 <div class="text-center">
-                    <h3 class="font-title-md text-title-md text-on-surface">Hapus E-Wallet Ini?</h3>
+                    <h3 class="font-title-md text-title-md text-on-surface">{{ __('Hapus E-Wallet Ini?') }}</h3>
                     <p id="hapus-ewallet-text" class="font-body-md text-sm text-on-surface-variant mt-2"></p>
                 </div>
                 <div class="flex items-center justify-center gap-3 pt-2">
-                    <button type="button" onclick="closeDeleteEwallet()" class="btn-modal btn-modal-ghost">Batal</button>
-                    <button type="submit" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>Hapus</button>
+                    <button type="button" onclick="closeDeleteEwallet()" class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                    <button type="submit" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>{{ __('Hapus') }}</button>
                 </div>
             </form>
         </div>
@@ -738,7 +738,7 @@
 
     // Bank modal
     function openBankForm() {
-        document.getElementById('bank-modal-title').textContent = 'Tambah Bank';
+        document.getElementById('bank-modal-title').textContent = '{{ __('Tambah Bank') }}';
         document.getElementById('form-bank').action = '{{ route('superadmin.data-bank.store') }}';
         document.getElementById('bank-id').value = '';
         document.getElementById('bank-nama').value = '';
@@ -760,7 +760,7 @@
         fetch(`/superadmin/data-bank/${id}/edit`)
             .then(r => r.json())
             .then(d => {
-                document.getElementById('bank-modal-title').textContent = 'Edit Bank';
+                document.getElementById('bank-modal-title').textContent = '{{ __('Edit Bank') }}';
                 document.getElementById('form-bank').action = '{{ route('superadmin.data-bank.update', ['bank' => ':ID']) }}'.replace(':ID', id);
                 document.getElementById('bank-id').value = id;
                 document.getElementById('bank-nama').value = d.nama_bank;
@@ -772,12 +772,12 @@
                 document.getElementById('modal-bank').classList.remove('hidden');
                 document.getElementById('modal-bank').classList.add('flex');
             })
-            .catch(() => window.showRalivaToast('Gagal memuat data bank.', 'error'));
+            .catch(() => window.showRalivaToast('{{ __('Gagal memuat data bank.') }}', 'error'));
     }
 
     // E-Wallet modal
     function openEwalletForm() {
-        document.getElementById('ewallet-modal-title').textContent = 'Tambah E-Wallet';
+        document.getElementById('ewallet-modal-title').textContent = '{{ __('Tambah E-Wallet') }}';
         document.getElementById('form-ewallet').action = '{{ route('superadmin.data-bank.account.store') }}';
         document.getElementById('ewallet-id').value = '';
         document.getElementById('ewallet-nama').value = '';
@@ -800,7 +800,7 @@
         fetch(`/superadmin/data-bank/account/${id}/edit`)
             .then(r => r.json())
             .then(d => {
-                document.getElementById('ewallet-modal-title').textContent = 'Edit E-Wallet';
+                document.getElementById('ewallet-modal-title').textContent = '{{ __('Edit E-Wallet') }}';
                 document.getElementById('form-ewallet').action = '{{ route('superadmin.data-bank.account.update', ['account' => ':ID']) }}'.replace(':ID', id);
                 document.getElementById('ewallet-id').value = id;
                 document.getElementById('ewallet-nama').value = d.nama;
@@ -813,12 +813,12 @@
                 document.getElementById('modal-ewallet').classList.remove('hidden');
                 document.getElementById('modal-ewallet').classList.add('flex');
             })
-            .catch(() => window.showRalivaToast('Gagal memuat data e-wallet.', 'error'));
+            .catch(() => window.showRalivaToast('{{ __('Gagal memuat data e-wallet.') }}', 'error'));
     }
 
     // QRIS modal
     function openQrisForm() {
-        document.getElementById('qris-modal-title').textContent = 'Tambah QRIS';
+        document.getElementById('qris-modal-title').textContent = '{{ __('Tambah QRIS') }}';
         document.getElementById('form-qris').action = '{{ route('superadmin.data-bank.account.store') }}';
         document.getElementById('qris-id').value = '';
         document.getElementById('qris-status').value = 'aktif';
@@ -836,7 +836,7 @@
         fetch(`/superadmin/data-bank/account/${id}/edit`)
             .then(r => r.json())
             .then(d => {
-                document.getElementById('qris-modal-title').textContent = 'Edit QRIS';
+                document.getElementById('qris-modal-title').textContent = '{{ __('Edit QRIS') }}';
                 document.getElementById('form-qris').action = '{{ route('superadmin.data-bank.account.update', ['account' => ':ID']) }}'.replace(':ID', id);
                 document.getElementById('qris-id').value = id;
                 document.getElementById('qris-nama').value = d.nama;
@@ -848,13 +848,13 @@
                 document.getElementById('modal-qris').classList.remove('hidden');
                 document.getElementById('modal-qris').classList.add('flex');
             })
-            .catch(() => window.showRalivaToast('Gagal memuat data QRIS.', 'error'));
+            .catch(() => window.showRalivaToast('{{ __('Gagal memuat data QRIS.') }}', 'error'));
     }
 
     // Hapus Bank
     function confirmDeleteBank(id, nama) {
         document.getElementById('form-hapus-bank').action = '{{ route('superadmin.data-bank.hapus', ['bank' => ':ID']) }}'.replace(':ID', id);
-        document.getElementById('hapus-bank-text').textContent = 'Bank "' + nama + '" beserta rekening platform-nya akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.';
+        document.getElementById('hapus-bank-text').textContent = '{{ __('Bank "') }}' + nama + '{{ __('" beserta rekening platform-nya akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.') }}';
         document.getElementById('modal-hapus-bank').classList.remove('hidden');
         document.getElementById('modal-hapus-bank').classList.add('flex');
     }
@@ -867,7 +867,7 @@
     // Hapus E-Wallet
     function confirmDeleteEwallet(id, nama) {
         document.getElementById('form-hapus-ewallet').action = '{{ route('superadmin.data-bank.account.hapus', ['account' => ':ID']) }}'.replace(':ID', id);
-        document.getElementById('hapus-ewallet-text').textContent = 'E-wallet "' + nama + '" akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.';
+        document.getElementById('hapus-ewallet-text').textContent = '{{ __('E-wallet "') }}' + nama + '{{ __('" akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.') }}';
         document.getElementById('modal-hapus-ewallet').classList.remove('hidden');
         document.getElementById('modal-hapus-ewallet').classList.add('flex');
     }

@@ -1,10 +1,10 @@
 @extends('layouts.produksi')
 
-@section('title', 'Pelaporan Produksi')
+@section('title', __('Pelaporan Produksi'))
 
-@section('header-title', 'Pelaporan Produksi')
+@section('header-title', __('Pelaporan Produksi'))
 @section('header-badge', $stats['selesai'].' Selesai')
-@section('header-subtitle', 'Detail produksi: target vs hasil, bahan terpakai, hasil QC, dan barang rusak.')
+@section('header-subtitle', __('Detail produksi: target vs hasil, bahan terpakai, hasil QC, dan barang rusak.'))
 
 @section('content')
 @php
@@ -23,25 +23,25 @@
     {{-- Ringkasan --}}
     <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Unit Diminta</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Unit Diminta') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ number_format($stats['unit_diminta'], 0, ',', '.') }}</span>
-            <span class="font-label-sm text-[11px] text-on-surface-variant">target produksi</span>
+            <span class="font-label-sm text-[11px] text-on-surface-variant">{{ __('target produksi') }}</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">track_changes</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Layak Masuk Gudang</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Layak Masuk Gudang') }}</span>
             <span class="raliva-figure text-[26px] text-secondary">{{ number_format($stats['unit_layak'], 0, ',', '.') }}</span>
             <span class="font-label-sm text-[11px] text-secondary">{{ $jelasRate }}% target</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">verified</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Barang Rusak</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Barang Rusak') }}</span>
             <span class="raliva-figure text-[26px] text-error">{{ number_format($stats['unit_gagal'], 0, ',', '.') }}</span>
-            <span class="font-label-sm text-[11px] text-on-surface-variant">gagal QC — detail per produksi</span>
+            <span class="font-label-sm text-[11px] text-on-surface-variant">{{ __('gagal QC — detail per produksi') }}</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">report</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Order</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Order') }}</span>
             <span class="raliva-figure text-[26px] text-gold-accent">{{ $stats['selesai'] }}<span class="text-[14px] font-normal text-on-surface-variant"> / {{ $stats['selesai'] + $stats['dibatalkan'] }}</span></span>
             <span class="font-label-sm text-[11px] text-on-surface-variant">{{ $stats['dibatalkan'] }} dibatalkan</span>
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">summarize</span>
@@ -65,9 +65,9 @@
                 <input type="hidden" name="status" value="{{ $status }}" />
                 <div class="relative flex-1 min-w-[200px]">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                    <input type="text" name="cari" value="{{ $cari }}" placeholder="Cari kode / produk..." class="raliva-search !pl-10" />
+                    <input type="text" name="cari" value="{{ $cari }}" placeholder="{{ __('Cari kode / produk...') }}" class="raliva-search !pl-10" />
                 </div>
-                <button type="submit" class="px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors shrink-0">Cari</button>
+                <button type="submit" class="px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors shrink-0">{{ __('Cari') }}</button>
             </form>
         </div>
 
@@ -75,12 +75,12 @@
             <table class="premium-table w-full min-w-[900px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Kode</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Produk / Target</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Layak</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Rusak</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Tercapai</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Selesai</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Kode') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Produk / Target') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">{{ __('Layak') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">{{ __('Rusak') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">{{ __('Tercapai') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Selesai') }}</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Detail</th>
                     </tr>
                 </thead>
@@ -115,9 +115,9 @@
                                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
                                     {{-- Bahan terpakai --}}
                                     <div class="bg-surface-container-low border border-muted-border rounded-lg p-4">
-                                        <h4 class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-3">Bahan Terpakai</h4>
+                                        <h4 class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-3">{{ __('Bahan Terpakai') }}</h4>
                                         @if ($order->materials->isEmpty())
-                                            <p class="text-xs text-on-surface-variant/60">Tidak ada bahan tercatat.</p>
+                                            <p class="text-xs text-on-surface-variant/60">{{ __('Tidak ada bahan tercatat.') }}</p>
                                         @else
                                             <ul class="space-y-2">
                                                 @foreach ($order->materials as $mat)
@@ -132,9 +132,9 @@
 
                                     {{-- Hasil QC --}}
                                     <div class="bg-surface-container-low border border-muted-border rounded-lg p-4">
-                                        <h4 class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-3">Hasil QC</h4>
+                                        <h4 class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-3">{{ __('Hasil QC') }}</h4>
                                         @if ($order->qualityChecks->isEmpty())
-                                            <p class="text-xs text-on-surface-variant/60">Belum ada pemeriksaan.</p>
+                                            <p class="text-xs text-on-surface-variant/60">{{ __('Belum ada pemeriksaan.') }}</p>
                                         @else
                                             <ul class="space-y-2">
                                                 @foreach ($order->qualityChecks as $qc)
@@ -166,9 +166,9 @@
 
                                     {{-- Barang rusak --}}
                                     <div class="bg-surface-container-low border border-muted-border rounded-lg p-4">
-                                        <h4 class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-3">Barang Rusak</h4>
+                                        <h4 class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-3">{{ __('Barang Rusak') }}</h4>
                                         @if ($order->barang_rusak->isEmpty())
-                                            <p class="text-xs text-secondary">Tidak ada defect — semua unit layak.</p>
+                                            <p class="text-xs text-secondary">{{ __('Tidak ada defect — semua unit layak.') }}</p>
                                         @else
                                             <ul class="space-y-2">
                                                 @foreach ($order->barang_rusak as $qc)
@@ -193,7 +193,7 @@
                                     <div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center">
                                         <span class="material-symbols-outlined text-[28px] text-on-surface-variant">search_off</span>
                                     </div>
-                                    <p class="text-on-surface-variant font-body-md text-sm">Tidak ada laporan produksi.</p>
+                                    <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada laporan produksi.') }}</p>
                                 </div>
                             </td>
                         </tr>

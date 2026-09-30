@@ -1,9 +1,9 @@
 ﻿@extends('layouts.admin')
 
-@section('title', 'Data Pesanan')
-@section('header-title', 'Data Pesanan')
-@section('header-badge', 'Kelola')
-@section('header-subtitle', 'Lihat detail dan proses pesanan sesuai alur status.')
+@section('title', __('Data Pesanan'))
+@section('header-title', __('Data Pesanan'))
+@section('header-badge', __('Kelola'))
+@section('header-subtitle', __('Lihat detail dan proses pesanan sesuai alur status.'))
 
 @php
     $badgeMap = [
@@ -36,7 +36,7 @@
             <span
                 class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none"
                 aria-hidden="true">shopping_bag</span>
-            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Total Pesanan</span>
+            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">{{ __('Total Pesanan') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface relative">{{ $orders->count() }}</span>
         </div>
         <div data-reveal
@@ -44,7 +44,7 @@
             <span
                 class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none"
                 aria-hidden="true">payments</span>
-            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Menunggu / Baru</span>
+            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">{{ __('Menunggu / Baru') }}</span>
             <span
                 class="raliva-figure text-[26px] text-gold-accent relative">{{ $orders->whereIn('status', ['pending_payment', 'dibayar'])->count() }}</span>
         </div>
@@ -53,7 +53,7 @@
             <span
                 class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none"
                 aria-hidden="true">local_shipping</span>
-            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Diproses / Dikirim</span>
+            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">{{ __('Diproses / Dikirim') }}</span>
             <span
                 class="raliva-figure text-[26px] text-secondary relative">{{ $orders->whereIn('status', ['diproses', 'dikirim'])->count() }}</span>
         </div>
@@ -62,7 +62,7 @@
             <span
                 class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none"
                 aria-hidden="true">task_alt</span>
-            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Selesai</span>
+            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">{{ __('Selesai') }}</span>
             <span
                 class="raliva-figure text-[26px] text-secondary relative">{{ $orders->where('status', 'selesai')->count() }}</span>
         </div>
@@ -70,10 +70,10 @@
 
     <section data-table-scope class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-6">
-            <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Pesanan Toko</h2>
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Daftar Pesanan Toko') }}</h2>
             <button type="button" data-modal-open="modal-tambah-pesanan"
                 class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
-                <span class="material-symbols-outlined text-[18px]">add</span> Tambah Pesanan
+                <span class="material-symbols-outlined text-[18px]">add</span> {{ __('Tambah Pesanan') }}
             </button>
         </div>
 
@@ -81,13 +81,12 @@
             class="mb-6 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
             <div class="flex items-center gap-2 shrink-0">
                 <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter
-                    Status</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Status') }}</span>
             </div>
             <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
             <div class="flex flex-wrap gap-2">
                 <a href="{{ route('admin.pesanan') }}"
-                    class="px-4 py-2 rounded-lg font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200 {{ $activeStatus === 'semua' ? 'bg-deep-onyx text-on-primary border border-deep-onyx' : 'border border-muted-border text-on-surface-variant hover:bg-surface-container-high' }}">Semua</a>
+                    class="px-4 py-2 rounded-lg font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200 {{ $activeStatus === 'semua' ? 'bg-deep-onyx text-on-primary border border-deep-onyx' : 'border border-muted-border text-on-surface-variant hover:bg-surface-container-high' }}">{{ __('Semua') }}</a>
                 @foreach ($statuses as $key => $label)
                     <a href="{{ route('admin.pesanan', ['status' => $key]) }}"
                         class="px-4 py-2 rounded-lg font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200 {{ $activeStatus === $key ? 'bg-deep-onyx text-on-primary border border-deep-onyx' : 'border border-muted-border text-on-surface-variant hover:bg-surface-container-high' }}">{{ $label }}</a>
@@ -100,13 +99,13 @@
                 <thead>
                     <tr
                         class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="p-4 text-left">ID Pesanan</th>
-                        <th class="p-4 text-left">Pelanggan</th>
-                        <th class="p-4 text-left">Produk</th>
-                        <th class="p-4 text-left">Produksi</th>
-                        <th class="p-4 text-right">Total</th>
-                        <th class="p-4 text-center">Status</th>
-                        <th class="p-4 text-right">Aksi</th>
+                        <th class="p-4 text-left">{{ __('ID Pesanan') }}</th>
+                        <th class="p-4 text-left">{{ __('Pelanggan') }}</th>
+                        <th class="p-4 text-left">{{ __('Produk') }}</th>
+                        <th class="p-4 text-left">{{ __('Produksi') }}</th>
+                        <th class="p-4 text-right">{{ __('Total') }}</th>
+                        <th class="p-4 text-center">{{ __('Status') }}</th>
+                        <th class="p-4 text-right">{{ __('Aksi') }}</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -164,7 +163,7 @@
                             </td>
                             <td class="p-4 text-on-surface"
                                 title="{{ $pesanan->items->pluck('nama_produk_snapshot')->implode(', ') }}">
-                                {{ $pesanan->items->count() }} produk &#8226;
+                                {{ $pesanan->items->count() }} {{ __('produk') }} &#8226;
                                 {{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->first(), 28) }}
                             </td>
                             <td class="p-4">@include('partials.produksi-waktu', ['produksiOrder' => $pesanan])</td>
@@ -179,43 +178,39 @@
                                 @endif
                                 @if ($pesanan->isAmbil())
                                     <span
-                                        class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-secondary/10 border-secondary/25 text-secondary">Ambil
-                                        di Toko</span>
+                                        class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-secondary/10 border-secondary/25 text-secondary">{{ __('Ambil di Toko') }}</span>
                                 @endif
                                 @if ($pesanan->checkout?->payment?->status === \App\Models\Payment::STATUS_DITOLAK)
                                     <span
-                                        class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-error/10 border-error/20 text-error">Bayar
-                                        Ditolak</span>
+                                        class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-error/10 border-error/20 text-error">{{ __('Bayar Ditolak') }}</span>
                                 @endif
                                 @if ($pesanan->qc_perlu_admin_pada)
-                                    <span title="Keterangan Produksi: {{ $pesanan->qc_perlu_admin_catatan }}"
-                                        class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-error/10 border-error/20 text-error">QC
-                                        Gagal</span>
+                                    <span title="{{ __('Keterangan Produksi:') }} {{ $pesanan->qc_perlu_admin_catatan }}"
+                                        class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-error/10 border-error/20 text-error">{{ __('QC Gagal') }}</span>
                                 @endif
                             </td>
                             <td class="p-4 text-right whitespace-nowrap">
                                 @if (in_array($pesanan->status, [\App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIBAYAR], true))
                                     <button type="button" data-modal-open="modal-proses-{{ $pesanan->order_id }}"
-                                        class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Proses</button>
+                                        class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">{{ __('Proses') }}</button>
                                 @endif
                                 @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM && $pesanan->isAmbil())
                                     <button type="button" data-modal-open="modal-selesai-{{ $pesanan->order_id }}"
-                                        class="px-3 py-1.5 ml-1 bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-[10px] uppercase rounded hover:bg-secondary-container/30 transition-colors">Selesai</button>
+                                        class="px-3 py-1.5 ml-1 bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-[10px] uppercase rounded hover:bg-secondary-container/30 transition-colors">{{ __('Selesai') }}</button>
                                 @endif
 
                                 @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM
                                     && $pesanan->shipments->where('status', '!=', \App\Models\Shipment::STATUS_GAGAL)->isEmpty())
                                     <button type="button" data-modal-open="modal-alihkan-{{ $pesanan->order_id }}"
                                         class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors"
-                                        title="{{ $pesanan->isAmbil() ? 'Alihkan ke diantar kurir' : 'Alihkan ke ambil di toko' }}">Alihkan</button>
+                                        title="{{ $pesanan->isAmbil() ? __('Alihkan ke diantar kurir') : __('Alihkan ke ambil di toko') }}">{{ __('Alihkan') }}</button>
                                 @endif
                                 @if ($pesanan->qc_perlu_admin_pada && $pesanan->status === \App\Models\Order::STATUS_MENUNGGU_QC)
                                     <button type="button" data-modal-open="modal-qctanggapan-{{ $pesanan->order_id }}"
-                                        class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Tanggapi
-                                        QC</button>
+                                        class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">{{ __('Tanggapi QC') }}</button>
                                 @endif
                                 @if ($waLink)
-                                    <a href="{{ $waLink }}" target="_blank" title="Chat WhatsApp customer"
+                                    <a href="{{ $waLink }}" target="_blank" title="{{ __('Chat WhatsApp customer') }}"
                                         class="inline-flex items-center justify-center w-8 h-8 ml-1 rounded-lg bg-[#25D366]/10 border border-[#25D366]/30 text-[#1da851] hover:bg-[#25D366]/20 transition-colors align-middle">
                                         <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
                                             <path
@@ -224,15 +219,14 @@
                                     </a>
                                 @endif
                                 <button type="button" data-modal-open="modal-detail-{{ $pesanan->order_id }}"
-                                    class="px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
+                                    class="px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">{{ __('Detail') }}</button>
                                 <button type="button" onclick="openDetailProduksi('{{ $pesanan->order_id }}')"
-                                    class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">Produksi</button>
+                                    class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">{{ __('Produksi') }}</button>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="7" class="py-12 text-center text-on-surface-variant">Tidak ada pesanan pada
-                                filter ini.</td>
+                            <td colspan="7" class="py-12 text-center text-on-surface-variant">{{ __('Tidak ada pesanan pada filter ini.') }}</td>
                         </tr>
                     @endforelse
                 </tbody>
@@ -297,30 +291,27 @@
                             @endif
                             @if ($pesanan->isAmbil())
                                 <span
-                                    class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-secondary/10 border-secondary/25 text-secondary">Ambil
-                                    di Toko</span>
+                                    class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-secondary/10 border-secondary/25 text-secondary">{{ __('Ambil di Toko') }}</span>
                             @endif
                             @if ($pesanan->checkout?->payment?->status === \App\Models\Payment::STATUS_DITOLAK)
                                 <span
-                                    class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-error/10 border-error/20 text-error">Bayar
-                                    Ditolak</span>
+                                    class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-error/10 border-error/20 text-error">{{ __('Bayar Ditolak') }}</span>
                             @endif
                             @if ($pesanan->qc_perlu_admin_pada)
-                                <span title="Keterangan Produksi: {{ $pesanan->qc_perlu_admin_catatan }}"
-                                    class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-error/10 border-error/20 text-error">QC
-                                    Gagal</span>
+                                <span title="{{ __('Keterangan Produksi:') }} {{ $pesanan->qc_perlu_admin_catatan }}"
+                                    class="ml-1 inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase border bg-error/10 border-error/20 text-error">{{ __('QC Gagal') }}</span>
                             @endif
                         </div>
                     </div>
                     <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-muted-border">
                         <div>
-                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Produk</p>
-                            <p class="text-sm text-on-surface mt-0.5">{{ $pesanan->items->count() }} produk &#8226;
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Produk') }}</p>
+                            <p class="text-sm text-on-surface mt-0.5">{{ $pesanan->items->count() }} {{ __('produk') }} &#8226;
                                 {{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->first(), 24) }}
                             </p>
                         </div>
                         <div class="text-right">
-                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Total</p>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Total') }}</p>
                             <p class="font-bold text-gold-accent mt-0.5">Rp
                                 {{ number_format((float) ($pesanan->grand_total ?? 0), 0, ',', '.') }}</p>
                         </div>
@@ -328,26 +319,25 @@
                     <div class="mt-3 pt-3 border-t border-muted-border flex justify-end gap-1.5 flex-wrap">
                         @if (in_array($pesanan->status, [\App\Models\Order::STATUS_MENUNGGU_PRODUKSI, \App\Models\Order::STATUS_DIBAYAR], true))
                             <button type="button" data-modal-open="modal-proses-{{ $pesanan->order_id }}"
-                                class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Proses</button>
+                                class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">{{ __('Proses') }}</button>
                         @endif
                         @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM && $pesanan->isAmbil())
                             <button type="button" data-modal-open="modal-selesai-{{ $pesanan->order_id }}"
-                                class="px-3 py-1.5 ml-1 bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-[10px] uppercase rounded hover:bg-secondary-container/30 transition-colors">Selesai</button>
+                                class="px-3 py-1.5 ml-1 bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-[10px] uppercase rounded hover:bg-secondary-container/30 transition-colors">{{ __('Selesai') }}</button>
                         @endif
 
                         @if ($pesanan->status === \App\Models\Order::STATUS_SIAP_KIRIM
                             && $pesanan->shipments->where('status', '!=', \App\Models\Shipment::STATUS_GAGAL)->isEmpty())
                             <button type="button" data-modal-open="modal-alihkan-{{ $pesanan->order_id }}"
                                 class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors"
-                                title="{{ $pesanan->isAmbil() ? 'Alihkan ke diantar kurir' : 'Alihkan ke ambil di toko' }}">Alihkan</button>
+                                title="{{ $pesanan->isAmbil() ? __('Alihkan ke diantar kurir') : __('Alihkan ke ambil di toko') }}">{{ __('Alihkan') }}</button>
                         @endif
                         @if ($pesanan->qc_perlu_admin_pada && $pesanan->status === \App\Models\Order::STATUS_MENUNGGU_QC)
                             <button type="button" data-modal-open="modal-qctanggapan-{{ $pesanan->order_id }}"
-                                class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">Tanggapi
-                                QC</button>
+                                class="px-3 py-1.5 ml-1 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase rounded hover:bg-error/20 transition-colors">{{ __('Tanggapi QC') }}</button>
                         @endif
                         @if ($waLink)
-                            <a href="{{ $waLink }}" target="_blank" title="Chat WhatsApp customer"
+                            <a href="{{ $waLink }}" target="_blank" title="{{ __('Chat WhatsApp customer') }}"
                                 class="inline-flex items-center justify-center w-8 h-8 ml-1 rounded-lg bg-[#25D366]/10 border border-[#25D366]/30 text-[#1da851] hover:bg-[#25D366]/20 transition-colors align-middle">
                                 <svg viewBox="0 0 24 24" fill="currentColor" class="w-4 h-4">
                                     <path
@@ -356,15 +346,15 @@
                             </a>
                         @endif
                         <a href="{{ route('admin.pesanan.invoice', $pesanan->order_id) }}" target="_blank"
-                            class="inline-block px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">Invoice</a>
+                            class="inline-block px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">{{ __('Invoice') }}</a>
                         <button type="button" data-modal-open="modal-detail-{{ $pesanan->order_id }}"
-                            class="px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
+                            class="px-3 py-1.5 ml-1 border border-muted-border text-on-surface font-label-sm text-[10px] uppercase rounded hover:bg-surface-container-low transition-colors">{{ __('Detail') }}</button>
                         <button type="button" onclick="openDetailProduksi('{{ $pesanan->order_id }}')"
-                            class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">Produksi</button>
+                            class="px-3 py-1.5 ml-1 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">{{ __('Produksi') }}</button>
                     </div>
                 </article>
             @empty
-                <p class="text-on-surface-variant text-sm py-6 text-center">Tidak ada pesanan pada filter ini.</p>
+                <p class="text-on-surface-variant text-sm py-6 text-center">{{ __('Tidak ada pesanan pada filter ini.') }}</p>
             @endforelse
         </div>
     </section>
@@ -379,7 +369,7 @@
                 <div
                     class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
                     <div>
-                        <h3 class="font-title-md text-title-md text-on-surface premium-heading">Detail Pesanan</h3>
+                        <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Detail Pesanan') }}</h3>
                         <p class="text-on-surface-variant font-mono text-xs uppercase tracking-wider mt-1">
                             {{ $pesanan->nomor_order ?? '#' . $pesanan->order_id }}</p>
                     </div>
@@ -389,7 +379,7 @@
                 </div>
                 <div class="p-6 space-y-4 font-body-md text-sm">
                     <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
-                        <dt class="text-on-surface-variant shrink-0">Pelanggan</dt>
+                        <dt class="text-on-surface-variant shrink-0">{{ __('Pelanggan') }}</dt>
                         <dd class="text-on-surface text-right">
                             {{ $pesanan->checkout?->nama_penerima ?? ($pesanan->checkout?->user?->nama_lengkap ?? '-') }}
                             @if ($pesanan->checkout?->nomor_telepon)
@@ -399,17 +389,17 @@
                         </dd>
                     </div>
                     <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
-                        <dt class="text-on-surface-variant shrink-0">Toko</dt>
+                        <dt class="text-on-surface-variant shrink-0">{{ __('Toko') }}</dt>
                         <dd class="text-on-surface text-right">{{ $pesanan->store?->nama_toko ?? '-' }}</dd>
                     </div>
                     <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
-                        <dt class="text-on-surface-variant shrink-0">Tanggal Pesanan</dt>
+                        <dt class="text-on-surface-variant shrink-0">{{ __('Tanggal Pesanan') }}</dt>
                         <dd class="text-on-surface text-right">
                             {{ $pesanan->created_at?->translatedFormat('d M Y H:i') ?? '-' }}</dd>
                     </div>
                     @if ($pesanan->tgl_mulai_produksi || $pesanan->tgl_berakhir_produksi)
                         <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
-                            <dt class="text-on-surface-variant shrink-0">Jadwal Produksi</dt>
+                            <dt class="text-on-surface-variant shrink-0">{{ __('Jadwal Produksi') }}</dt>
                             <dd class="text-on-surface text-right">
                                 {{ $pesanan->tgl_mulai_produksi?->translatedFormat('d M Y H:i') ?? '-' }} &rarr;
                                 {{ $pesanan->tgl_berakhir_produksi?->translatedFormat('d M Y H:i') ?? '-' }}</dd>
@@ -417,12 +407,12 @@
                     @endif
                     @if ($pesanan->catatan)
                         <div class="pb-3 border-b border-muted-border">
-                            <dt class="text-on-surface-variant mb-1">Catatan Pelanggan</dt>
+                            <dt class="text-on-surface-variant mb-1">{{ __('Catatan Pelanggan') }}</dt>
                             <dd class="text-on-surface">{{ $pesanan->catatan }}</dd>
                         </div>
                     @endif
                     <div>
-                        <p class="text-[10px] uppercase text-on-surface-variant mb-2">Item Pesanan</p>
+                        <p class="text-[10px] uppercase text-on-surface-variant mb-2">{{ __('Item Pesanan') }}</p>
                         <ul class="space-y-2">
                             @foreach ($pesanan->items as $it)
                                 <li class="flex justify-between gap-3 bg-surface-container-low rounded-lg p-3">
@@ -434,13 +424,13 @@
                         </ul>
                     </div>
                     <div class="flex justify-between gap-4 pt-3 border-t border-muted-border">
-                        <dt class="text-on-surface-variant shrink-0">Total</dt>
+                        <dt class="text-on-surface-variant shrink-0">{{ __('Total') }}</dt>
                         <dd class="text-gold-accent font-bold text-right">Rp
                             {{ number_format((float) ($pesanan->grand_total ?? 0), 0, ',', '.') }}</dd>
                     </div>
                     @if ($pesanan->checkout?->payment?->proofs && $pesanan->checkout->payment->proofs->isNotEmpty())
                         <div class="pt-3 border-t border-muted-border">
-                            <p class="text-[10px] uppercase text-on-surface-variant mb-2">Bukti Bayar</p>
+                            <p class="text-[10px] uppercase text-on-surface-variant mb-2">{{ __('Bukti Bayar') }}</p>
                             @foreach ($pesanan->checkout->payment->proofs as $proof)
                                 <a href="{{ asset('storage/' . $proof->file_bukti) }}" target="_blank"
                                     class="flex items-center gap-3 p-3 bg-surface-container-low rounded-lg border border-muted-border hover:border-gold-accent transition-colors">
@@ -450,7 +440,7 @@
                                             {{ \Illuminate\Support\Str::afterLast($proof->file_bukti, '/') }}</p>
                                         <p class="text-xs text-on-surface-variant">
                                             {{ $proof->uploaded_at?->translatedFormat('d M Y H:i') ?? '-' }} •
-                                            {{ $pesanan->checkout->payment->paymentMethod->nama_metode ?? 'Transfer' }} •
+                                            {{ $pesanan->checkout->payment->paymentMethod->nama_metode ?? __('Transfer') }} •
                                             Rp
                                             {{ number_format((float) ($pesanan->checkout->payment->jumlah ?? 0), 0, ',', '.') }}
                                             @if ((float) ($pesanan->checkout->payment->jumlah_saldo ?? 0) > 0)
@@ -467,7 +457,7 @@
                         </div>
                     @endif
                     <div class="flex justify-between gap-4">
-                        <dt class="text-on-surface-variant shrink-0">Status</dt>
+                        <dt class="text-on-surface-variant shrink-0">{{ __('Status') }}</dt>
                         <dd class="text-on-surface text-right">
                             {{ $badgeMap[$pesanan->status]['label'] ?? ucfirst($pesanan->status) }}</dd>
                     </div>
@@ -475,10 +465,9 @@
                 <div
                     class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end gap-3">
                     <a href="{{ route('admin.pesanan.invoice', $pesanan->order_id) }}" target="_blank"
-                        class="px-5 py-2.5 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium">Lihat
-                        Invoice</a>
+                        class="px-5 py-2.5 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium">{{ __('Lihat Invoice') }}</a>
                     <button type="button" data-modal-close
-                        class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+                        class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Tutup') }}</button>
                 </div>
             </div>
         </div>
@@ -492,33 +481,30 @@
                     <div
                         class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
                         <div>
-                            <h3 class="font-title-md text-title-md text-on-surface premium-heading">Proses Pesanan</h3>
+                            <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Proses Pesanan') }}</h3>
                             <p class="text-on-surface-variant font-mono text-xs uppercase tracking-wider mt-1">
                                 {{ $pesanan->nomor_order ?? '#' . $pesanan->order_id }}</p>
                         </div>
                         <button type="button" data-modal-close
                             class="text-on-surface-variant hover:text-on-surface transition-colors shrink-0"
-                            aria-label="Tutup">
+                            aria-label="{{ __('Tutup') }}">
                             <span class="material-symbols-outlined">close</span>
                         </button>
                     </div>
                     <div class="p-6 space-y-4">
-                        <p class="text-xs text-on-surface-variant">Atur jadwal produksi, lalu teruskan ke tim Produksi.
-                            Input kebutuhan bahan dilakukan oleh Produksi.</p>
+                        <p class="text-xs text-on-surface-variant">{{ __('Atur jadwal produksi, lalu teruskan ke tim Produksi. Input kebutuhan bahan dilakukan oleh Produksi.') }}</p>
                         <div>
-                            <p class="text-xs font-medium text-gold-accent mb-2">Jadwal Produksi</p>
+                            <p class="text-xs font-medium text-gold-accent mb-2">{{ __('Jadwal Produksi') }}</p>
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                 <div>
                                     <label
-                                        class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Tgl
-                                        Mulai Produksi *</label>
+                                        class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">{{ __('Tgl Mulai Produksi') }} *</label>
                                     <input type="datetime-local" name="tgl_mulai_produksi" required
                                         data-rdp-chain="tgl_berakhir_produksi" class="raliva-input w-full" />
                                 </div>
                                 <div>
                                     <label
-                                        class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Tgl
-                                        Berakhir Produksi *</label>
+                                        class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">{{ __('Tgl Berakhir Produksi') }} *</label>
                                     <input type="datetime-local" name="tgl_berakhir_produksi" required
                                         class="raliva-input w-full" />
                                 </div>
@@ -527,10 +513,9 @@
                     </div>
                     <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex gap-3">
                         <button type="button" data-modal-close
-                            class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                            class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Batal') }}</button>
                         <button type="submit"
-                            class="flex-1 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded-lg btn-premium">Proses
-                            Pesanan</button>
+                            class="flex-1 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded-lg btn-premium">{{ __('Proses Pesanan') }}</button>
                     </div>
                 </form>
             </div>
@@ -546,20 +531,18 @@
                         class="w-14 h-14 rounded-full bg-secondary-container/20 border border-secondary/25 flex items-center justify-center mx-auto mb-5">
                         <span class="material-symbols-outlined text-secondary text-[28px]">storefront</span>
                     </div>
-                    <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Selesai — Sudah Diambil</h3>
-                    <p class="text-on-surface-variant text-sm text-center mb-4">Pesanan
+                    <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">{{ __('Selesai — Sudah Diambil') }}</h3>
+                    <p class="text-on-surface-variant text-sm text-center mb-4">{{ __('Pesanan') }}
                         {{ $pesanan->isOffline() ? 'offline' : 'online' }} <span
                             class="font-mono font-bold text-on-surface">{{ $pesanan->nomor_order ?? '#' . $pesanan->order_id }}</span>
-                        akan ditandai <b>Selesai</b> dan dana penjualan masuk ke saldo toko. Konfirmasi bahwa customer sudah
-                        mengambil barangnya.</p>
+                        {{ __('akan ditandai') }} <b>{{ __('Selesai') }}</b> {{ __('dan dana penjualan masuk ke saldo toko. Konfirmasi bahwa customer sudah mengambil barangnya.') }}</p>
                     <input type="text" name="catatan" maxlength="500" class="raliva-input"
-                        placeholder="Catatan (opsional)" />
+                        placeholder="{{ __('Catatan (opsional)') }}" />
                     <div class="flex space-x-3 mt-4">
                         <button type="button" data-modal-close
-                            class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg">Batal</button>
+                            class="flex-1 bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg">{{ __('Batal') }}</button>
                         <button type="submit"
-                            class="flex-1 bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-secondary-container/30 transition-colors rounded-lg btn-premium">Konfirmasi
-                            Selesai</button>
+                            class="flex-1 bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-secondary-container/30 transition-colors rounded-lg btn-premium">{{ __('Konfirmasi Selesai') }}</button>
                     </div>
                 </form>
             </div>
@@ -580,29 +563,25 @@
                         class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-5">
                         <span class="material-symbols-outlined text-gold-accent text-[28px]">swap_horiz</span>
                     </div>
-                    <h3 class="font-title-md text-title-md text-on-surface mb-1 text-center">Ubah Tipe Pengiriman</h3>
+                    <h3 class="font-title-md text-title-md text-on-surface mb-1 text-center">{{ __('Ubah Tipe Pengiriman') }}</h3>
                     <p class="text-on-surface-variant text-sm text-center font-mono mb-3">
                         {{ $pesanan->nomor_order ?? '#' . $pesanan->order_id }}</p>
                     @if (!$pesanan->isAmbil())
-                        <p class="text-on-surface-variant text-sm text-center mb-4">Pilih <b>Ambil di Toko</b> — ongkir Rp
-                            {{ number_format($ongkirLama, 0, ',', '.') }} akan <b>dibatalkan</b> dan total jadi <b>Rp
-                                {{ number_format($grandBaru, 0, ',', '.') }}</b>. Customer dinotifikasi.</p>
+                        <p class="text-on-surface-variant text-sm text-center mb-4">{{ __('Pilih') }} <b>{{ __('Ambil di Toko') }}</b> &mdash; {{ __('ongkir Rp') }}
+                            {{ number_format($ongkirLama, 0, ',', '.') }} {{ __('akan') }} <b>{{ __('dibatalkan') }}</b> {{ __('dan total jadi') }} <b>Rp
+                                {{ number_format($grandBaru, 0, ',', '.') }}</b>. {{ __('Customer dinotifikasi.') }}</p>
                     @else
-                        <p class="text-on-surface-variant text-sm text-center mb-4">Pilih <b>Diantar</b> — ongkir tidak
-                            dipulihkan otomatis (saat ini Rp {{ number_format($ongkirLama, 0, ',', '.') }}). Customer
-                            dinotifikasi.</p>
+                        <p class="text-on-surface-variant text-sm text-center mb-4">{{ __('Pilih') }} <b>{{ __('Diantar') }}</b> &mdash; {{ __('ongkir tidak dipulihkan otomatis (saat ini Rp') }} {{ number_format($ongkirLama, 0, ',', '.') }}). {{ __('Customer dinotifikasi.') }}</p>
                     @endif
                     <div class="flex flex-wrap gap-3 mt-4">
                         <button type="submit" name="fulfillment" value="diantar"
                             @disabled(!$pesanan->isAmbil())
-                            class="flex-1 min-w-[7.5rem] {{ !$pesanan->isAmbil() ? 'bg-surface-container-low border border-muted-border text-on-surface-variant cursor-not-allowed opacity-60' : 'bg-gold-accent/90 text-deep-onyx btn-premium' }} font-label-sm text-label-sm py-3 uppercase tracking-widest rounded-lg transition-opacity">Diantar
-                            (Kurir)</button>
+                            class="flex-1 min-w-[7.5rem] {{ !$pesanan->isAmbil() ? 'bg-surface-container-low border border-muted-border text-on-surface-variant cursor-not-allowed opacity-60' : 'bg-gold-accent/90 text-deep-onyx btn-premium' }} font-label-sm text-label-sm py-3 uppercase tracking-widest rounded-lg transition-opacity">{{ __('Diantar (Kurir)') }}</button>
                         <button type="submit" name="fulfillment" value="ambil"
                             @disabled($pesanan->isAmbil())
-                            class="flex-1 min-w-[7.5rem] {{ $pesanan->isAmbil() ? 'bg-surface-container-low border border-muted-border text-on-surface-variant cursor-not-allowed opacity-60' : 'bg-gold-accent/90 text-deep-onyx btn-premium' }} font-label-sm text-label-sm py-3 uppercase tracking-widest rounded-lg transition-opacity">Ambil
-                            di Toko</button>
+                            class="flex-1 min-w-[7.5rem] {{ $pesanan->isAmbil() ? 'bg-surface-container-low border border-muted-border text-on-surface-variant cursor-not-allowed opacity-60' : 'bg-gold-accent/90 text-deep-onyx btn-premium' }} font-label-sm text-label-sm py-3 uppercase tracking-widest rounded-lg transition-opacity">{{ __('Ambil di Toko') }}</button>
                         <button type="button" data-modal-close
-                            class="flex-1 min-w-[7.5rem] bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg">Batal</button>
+                            class="flex-1 min-w-[7.5rem] bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg">{{ __('Batal') }}</button>
                     </div>
                 </form>
             </div>
@@ -618,27 +597,25 @@
                         class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-5">
                         <span class="material-symbols-outlined text-error text-[28px]">report</span>
                     </div>
-                    <h3 class="font-title-md text-title-md text-on-surface mb-1 text-center">Tanggapan QC Gagal</h3>
+                    <h3 class="font-title-md text-title-md text-on-surface mb-1 text-center">{{ __('Tanggapan QC Gagal') }}</h3>
                     <p class="text-on-surface-variant text-sm text-center font-mono mb-3">
                         {{ $pesanan->nomor_order ?? '#' . $pesanan->order_id }}</p>
                     <div
                         class="bg-error/5 border border-error/20 rounded-lg p-3 mb-4 text-xs text-on-surface space-y-1">
-                        <p><span class="font-bold uppercase text-error">Keterangan Produksi:</span>
+                        <p><span class="font-bold uppercase text-error">{{ __('Keterangan Produksi:') }}</span>
                             {{ $pesanan->qc_perlu_admin_catatan }}</p>
-                        <p class="text-on-surface-variant">Sejak
+                        <p class="text-on-surface-variant">{{ __('Sejak') }}
                             {{ $pesanan->qc_perlu_admin_pada?->translatedFormat('d M Y H:i') }}</p>
                     </div>
                     <textarea name="catatan" rows="2" maxlength="500" class="raliva-textarea mb-4"
-                        placeholder="Catatan untuk tim Produksi (opsional)"></textarea>
+                        placeholder="{{ __('Catatan untuk tim Produksi (opsional)') }}"></textarea>
                     <div class="flex flex-wrap gap-3">
                         <button type="submit" name="aksi" value="rework"
-                            class="flex-1 min-w-[7.5rem] bg-error/10 border border-error/20 text-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-error/20 transition-colors rounded-lg">Rework
-                            Produksi</button>
+                            class="flex-1 min-w-[7.5rem] bg-error/10 border border-error/20 text-error font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-error/20 transition-colors rounded-lg">{{ __('Rework Produksi') }}</button>
                         <button type="submit" name="aksi" value="lanjut"
-                            class="flex-1 min-w-[7.5rem] bg-gold-accent/90 text-deep-onyx font-label-sm text-label-sm py-3 uppercase tracking-widest btn-premium rounded-lg">Lanjut
-                            QC</button>
+                            class="flex-1 min-w-[7.5rem] bg-gold-accent/90 text-deep-onyx font-label-sm text-label-sm py-3 uppercase tracking-widest btn-premium rounded-lg">{{ __('Lanjut QC') }}</button>
                         <button type="button" data-modal-close
-                            class="flex-1 min-w-[7.5rem] bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg">Batal</button>
+                            class="flex-1 min-w-[7.5rem] bg-transparent border border-outline text-on-surface font-label-sm text-label-sm py-3 uppercase tracking-widest hover:bg-surface-container-low transition-colors rounded-lg">{{ __('Batal') }}</button>
                     </div>
                 </form>
             </div>
@@ -654,9 +631,9 @@
             <div
                 class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
                 <div>
-                    <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Pesanan</h3>
-                    <p class="text-on-surface-variant text-sm mt-1">Pilih status customer (<b>Online</b> = user terdaftar,
-                        <b>Offline</b> = tamu). Cara terima barang ditentukan belakangan di Pengiriman.</p>
+                    <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Tambah Pesanan') }}</h3>
+                    <p class="text-on-surface-variant text-sm mt-1">{{ __('Pilih status customer') }} (<b>Online</b> = {{ __('user terdaftar') }},
+                        <b>Offline</b> = {{ __('tamu') }}). {{ __('Cara terima barang ditentukan belakangan di Pengiriman.') }}</p>
                 </div>
                 <button type="button" data-modal-close
                     class="text-on-surface-variant hover:text-on-surface transition-colors"><span
@@ -665,19 +642,19 @@
             <div class="p-6 space-y-5">
                 {{-- Status customer: Online / Offline --}}
                 <div>
-                    <span class="raliva-label">Status Customer</span>
+                    <span class="raliva-label">{{ __('Status Customer') }}</span>
                     <div class="grid grid-cols-2 gap-3 mt-2">
                         <label
                             class="flex flex-col items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                             <input type="radio" class="sr-only" name="tipe_pesanan" value="online" checked
                                 onchange="toggleTipePesanan()" /> Online <span
-                                class="text-[9px] normal-case font-normal opacity-70 mt-0.5">user terdaftar</span>
+                                class="text-[9px] normal-case font-normal opacity-70 mt-0.5">{{ __('user terdaftar') }}</span>
                         </label>
                         <label
                             class="flex flex-col items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                             <input type="radio" class="sr-only" name="tipe_pesanan" value="offline"
                                 onchange="toggleTipePesanan()" /> Offline <span
-                                class="text-[9px] normal-case font-normal opacity-70 mt-0.5">tamu / walk-in</span>
+                                class="text-[9px] normal-case font-normal opacity-70 mt-0.5">{{ __('tamu') }} / walk-in</span>
                         </label>
                     </div>
                 </div>
@@ -685,9 +662,9 @@
                 {{-- Online: pilih customer --}}
                 <div id="online-fields" class="space-y-4">
                     <div>
-                        <label class="raliva-label" for="tp-cust">Customer <span class="text-error">*</span></label>
+                        <label class="raliva-label" for="tp-cust">{{ __('Customer') }} <span class="text-error">*</span></label>
                         <select id="tp-cust" name="user_id" class="raliva-select" required>
-                            <option value="">— Pilih Customer —</option>
+                            <option value="">{{ __('— Pilih Customer —') }}</option>
                             @foreach ($customers as $c)
                                 <option value="{{ $c->user_id }}">{{ $c->nama_lengkap }} ({{ $c->email }})
                                 </option>
@@ -700,51 +677,51 @@
                 <div id="offline-fields" class="space-y-4 hidden">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div>
-                            <label class="raliva-label" for="tp-nama">Nama Penerima <span
+                            <label class="raliva-label" for="tp-nama">{{ __('Nama Penerima') }} <span
                                     class="text-error">*</span></label>
                             <input id="tp-nama" name="nama_penerima" type="text" class="raliva-input"
-                                placeholder="Nama lengkap penerima" />
+                                placeholder="{{ __('Nama lengkap penerima') }}" />
                         </div>
                         <div>
-                            <label class="raliva-label" for="tp-telp">Nomor Telepon <span
+                            <label class="raliva-label" for="tp-telp">{{ __('Nomor Telepon') }} <span
                                     class="text-error">*</span></label>
                             <input id="tp-telp" name="nomor_telepon" type="text" class="raliva-input"
                                 placeholder="08xxxxxxxxxx" />
                         </div>
                     </div>
                     <div>
-                        <label class="raliva-label" for="tp-email">Email Pelanggan</label>
+                        <label class="raliva-label" for="tp-email">{{ __('Email Pelanggan') }}</label>
                         <input id="tp-email" name="email_pelanggan" type="email" class="raliva-input"
                             placeholder="email@contoh.com (opsional)" />
                     </div>
                     <div>
-                        <label class="raliva-label" for="tp-alamat">Alamat <span class="text-error">*</span></label>
+                        <label class="raliva-label" for="tp-alamat">{{ __('Alamat') }} <span class="text-error">*</span></label>
                         <textarea id="tp-alamat" name="alamat" rows="2" class="raliva-textarea"
-                            placeholder="Alamat lengkap penerima"></textarea>
+                            placeholder="{{ __('Alamat lengkap penerima') }}"></textarea>
                     </div>
 
                     {{-- Pembayaran offline --}}
                     <div class="pt-3 border-t border-muted-border">
-                        <span class="raliva-label">Metode Pembayaran</span>
+                        <span class="raliva-label">{{ __('Metode Pembayaran') }}</span>
                         <div class="grid grid-cols-2 gap-3 mt-2">
                             <label
                                 class="flex items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                                 <input type="radio" class="sr-only" name="metode_bayar" value="tunai" checked
-                                    onchange="toggleMetodeBayar()" /> Tunai
+                                    onchange="toggleMetodeBayar()" /> {{ __('Tunai') }}
                             </label>
                             <label
                                 class="flex items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
                                 <input type="radio" class="sr-only" name="metode_bayar" value="transfer"
-                                    onchange="toggleMetodeBayar()" /> Transfer
+                                    onchange="toggleMetodeBayar()" /> {{ __('Transfer') }}
                             </label>
                         </div>
                     </div>
                     <div id="transfer-fields" class="space-y-3 hidden">
                         <div>
-                            <label class="raliva-label" for="tp-acc">Rekening Tujuan <span
+                            <label class="raliva-label" for="tp-acc">{{ __('Rekening Tujuan') }} <span
                                     class="text-error">*</span></label>
                             <select id="tp-acc" name="payment_account_id" class="raliva-select">
-                                <option value="">— Pilih Rekening —</option>
+                                <option value="">{{ __('— Pilih Rekening —') }}</option>
                                 @foreach ($paymentAccounts as $acc)
                                     <option value="{{ $acc->platform_bank_account_id }}">{{ $acc->nama }} •
                                         {{ $acc->nomor_rekening }} ({{ $acc->nama_pemilik }})</option>
@@ -752,45 +729,43 @@
                             </select>
                         </div>
                         <div>
-                            <label class="raliva-label" for="tp-bukti">Bukti Transfer <span
+                            <label class="raliva-label" for="tp-bukti">{{ __('Bukti Transfer') }} <span
                                     class="text-error">*</span></label>
                             <input id="tp-bukti" name="bukti" type="file" accept="image/jpeg,image/png,image/jpg"
                                 class="raliva-input" />
-                            <p class="text-xs text-on-surface-variant mt-1">Format jpg/png, maks 4MB.</p>
+                            <p class="text-xs text-on-surface-variant mt-1">{{ __('Format jpg/png, maks 4MB.') }}</p>
                         </div>
                     </div>
                 </div>
 
                 {{-- Item produk --}}
                 <div class="pt-3 border-t border-muted-border">
-                    <p class="text-xs font-medium text-gold-accent">Item Produk (minimal 1 baris)</p>
+                    <p class="text-xs font-medium text-gold-accent">{{ __('Item Produk (minimal 1 baris)') }}</p>
                     <div id="item-container" class="space-y-3 mt-3"></div>
                     <button type="button" onclick="addItemRow()"
                         class="mt-2 w-full py-2.5 border border-dashed border-outline-variant rounded-lg text-xs font-semibold text-on-surface-variant hover:border-gold-accent hover:text-gold-accent transition-colors flex items-center justify-center gap-1.5">
-                        <span class="material-symbols-outlined text-[16px]">add</span> Tambah Produk
+                        <span class="material-symbols-outlined text-[16px]">add</span> {{ __('Tambah Produk') }}
                     </button>
                 </div>
 
                 <div>
-                    <label class="raliva-label" for="tp-catatan">Catatan untuk Pelanggan</label>
+                    <label class="raliva-label" for="tp-catatan">{{ __('Catatan untuk Pelanggan') }}</label>
                     <textarea id="tp-catatan" name="catatan" rows="2" maxlength="1000" class="raliva-textarea"
-                        placeholder="Catatan pesanan, mis. request khusus customer (opsional)"></textarea>
+                        placeholder="{{ __('Catatan pesanan, mis. request khusus customer (opsional)') }}"></textarea>
                 </div>
 
                 <div class="pt-3 border-t border-muted-border flex justify-between gap-4">
-                    <dt class="text-on-surface-variant shrink-0">Total</dt>
+                    <dt class="text-on-surface-variant shrink-0">{{ __('Total') }}</dt>
                     <dd class="text-gold-accent font-bold text-right">Rp <span id="grand-total">0</span></dd>
                 </div>
-                <p class="text-xs text-on-surface-variant">Subtotal, ongkir (Rp 0), dan grand total dihitung ulang
-                    otomatis. Status awal Menunggu Pembayaran.</p>
+                <p class="text-xs text-on-surface-variant">{{ __('Subtotal, ongkir (Rp 0), dan grand total dihitung ulang otomatis. Status awal Menunggu Pembayaran.') }}</p>
             </div>
             <div
                 class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end gap-3">
                 <button type="button" data-modal-close
-                    class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+                    class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Batal') }}</button>
                 <button type="submit"
-                    class="px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Buat
-                    Pesanan</button>
+                    class="px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">{{ __('Buat Pesanan') }}</button>
             </div>
         </form>
     </div>

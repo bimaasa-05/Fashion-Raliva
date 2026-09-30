@@ -8,12 +8,12 @@
 /** @var array{total:int,aktif:int,induk:int} $stats */
 ?>
 
-@section('title', 'Kategori')
+@section('title', __('Kategori'))
 
-@section('header-title', 'Kategori')
-@section('header-badge', 'Kelola')
+@section('header-title', __('Kategori'))
+@section('header-badge', __('Kelola'))
 
-@section('header-subtitle', 'Kelola semua kategori global yang digunakan oleh semua toko')
+@section('header-subtitle', __('Kelola semua kategori global yang digunakan oleh semua toko'))
 
 @push('styles')
 <style>
@@ -32,7 +32,7 @@
         </span>
         <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
-            Data kategori diperbarui real-time
+            {{ __('Data kategori diperbarui real-time') }}
         </span>
     </div>
     <!-- Toolbar -->
@@ -43,28 +43,28 @@
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 rounded-xl bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0 shadow-sm"><span class="material-symbols-outlined text-gold-accent text-[22px]">category</span></div>
                 <div>
-                    <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Semua Kategori</h2>
-                    <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Kelola semua kategori global yang digunakan semua toko.</p>
+                    <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">{{ __('Semua Kategori') }}</h2>
+                    <p class="text-on-surface-variant font-body-md text-sm mt-0.5">{{ __('Kelola semua kategori global yang digunakan semua toko.') }}</p>
                 </div>
             </div>
             <button type="button" id="kategori-toolbar-btn" onclick="openKategoriForm()" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0 shadow-sm">
-                <span id="kategori-toolbar-icon" class="material-symbols-outlined text-[18px]">add</span> <span id="kategori-toolbar-label">Tambah Kategori</span>
+                <span id="kategori-toolbar-icon" class="material-symbols-outlined text-[18px]">add</span> <span id="kategori-toolbar-label">{{ __('Tambah Kategori') }}</span>
             </button>
         </div>
     </section>
 
     <!-- Tab navigation -->
     <div data-kategori-tabs class="bg-surface-container-low border border-muted-border rounded-xl p-1.5 flex flex-wrap gap-1.5">
-        <button type="button" data-tab="produk" class="kategori-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Produk<span class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-gold-accent/25 text-gold-accent text-[10px] font-bold">{{ $stats['total'] }}</span></button>
-        <button type="button" data-tab="komplain" class="kategori-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Komplain<span class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold">{{ $kategoriKomplain->count() }}</span></button>
-        <button type="button" data-tab="pengeluaran" class="kategori-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Pengeluaran<span class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold">{{ $kategoriPengeluaran->count() }}</span></button>
-        <button type="button" data-tab="toko" class="kategori-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kategori Toko<span class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold">{{ $kategoriToko->count() }}</span></button>
+        <button type="button" data-tab="produk" class="kategori-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ __('Kategori Produk') }}<span class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-gold-accent/25 text-gold-accent text-[10px] font-bold">{{ $stats['total'] }}</span></button>
+        <button type="button" data-tab="komplain" class="kategori-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ __('Kategori Komplain') }}<span class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold">{{ $kategoriKomplain->count() }}</span></button>
+        <button type="button" data-tab="pengeluaran" class="kategori-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ __('Kategori Pengeluaran') }}<span class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold">{{ $kategoriPengeluaran->count() }}</span></button>
+        <button type="button" data-tab="toko" class="kategori-tab-btn inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ __('Kategori Toko') }}<span class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full bg-gold-accent/15 text-gold-accent text-[10px] font-bold">{{ $kategoriToko->count() }}</span></button>
     </div>
 
     <!-- Categories Grid -->
     <section data-tab-panel="produk" data-table-scope class="space-y-gutter">
         <div class="flex justify-between items-center flex-wrap gap-2">
-            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Daftar Kategori</h2>
+            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">{{ __('Daftar Kategori') }}</h2>
             <div class="flex items-center flex-wrap gap-2">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[10px] font-bold uppercase tracking-wider"><span class="material-symbols-outlined text-[14px]">check_circle</span>{{ $stats['aktif'] }} aktif</span>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/15 text-secondary border border-secondary/25 text-[10px] font-bold uppercase tracking-wider"><span class="material-symbols-outlined text-[14px]">account_tree</span>{{ $stats['induk'] }} induk</span>
@@ -75,7 +75,7 @@
         <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 space-y-4">
             <div class="flex items-center gap-2 shrink-0">
                 <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Kategori</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Kategori') }}</span>
             </div>
             <div id="kategori-chip-group" class="flex flex-wrap gap-2">
                 <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['total'] }})</button>
@@ -86,7 +86,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div class="relative flex-1">
                     <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                    <input id="kategori-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent focus:bg-surface-container-lowest transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama kategori atau deskripsi..." />
+                    <input id="kategori-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent focus:bg-surface-container-lowest transition-colors placeholder-on-surface-variant/50" type="text" placeholder="{{ __('Cari nama kategori atau deskripsi...') }}" />
                     <button type="button" id="kategori-clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
@@ -122,7 +122,7 @@
                             <div class="flex items-center gap-2 flex-wrap">
                                 <h3 class="font-title-md text-title-md text-on-surface group-hover:text-gold-accent transition-colors truncate">{{ $kategori->nama_kategori }}</h3>
                                 @if ($kategori->status !== \App\Models\Category::STATUS_AKTIF)
-                                    <span class="inline-flex px-2 py-0.5 rounded-full bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Nonaktif</span>
+                                    <span class="inline-flex px-2 py-0.5 rounded-full bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">{{ __('Nonaktif') }}</span>
                                 @endif
                             </div>
                             <div class="flex items-center gap-3 text-sm mt-1.5 flex-wrap">
@@ -140,10 +140,10 @@
                         </div>
                     </div>
                     <div class="relative flex items-center justify-between pt-4 border-t border-muted-border mt-auto">
-                        <button type="button" onclick="openKategoriForm(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                        <button type="button" onclick="openKategoriForm(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="{{ __('Edit') }}">
                             <span class="material-symbols-outlined text-[20px]">edit</span>
                         </button>
-                        <button type="button" onclick="openHapusKategori(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
+                        <button type="button" onclick="openHapusKategori(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="{{ __('Hapus') }}">
                             <span class="material-symbols-outlined text-[20px]">delete</span>
                         </button>
                     </div>
@@ -151,15 +151,15 @@
             @empty
                 <div class="col-span-full flex flex-col items-center justify-center py-16 text-center bg-surface-container-lowest border border-dashed border-muted-border rounded-xl">
                     <div class="w-16 h-16 rounded-2xl bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mb-4 shadow-sm"><span class="material-symbols-outlined text-gold-accent text-[32px]">category</span></div>
-                    <p class="font-title-md text-title-md text-on-surface mb-1">Belum ada kategori</p>
-                    <p class="text-on-surface-variant text-sm mb-6 max-w-sm">Tambahkan kategori pertama Anda agar toko dapat mengelompokkan produknya dengan rapi.</p>
-                    <button type="button" onclick="openKategoriForm()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium"><span class="material-symbols-outlined text-[18px]">add</span> Tambah Kategori</button>
+                    <p class="font-title-md text-title-md text-on-surface mb-1">{{ __('Belum ada kategori') }}</p>
+                    <p class="text-on-surface-variant text-sm mb-6 max-w-sm">{{ __('Tambahkan kategori pertama Anda agar toko dapat mengelompokkan produknya dengan rapi.') }}</p>
+                    <button type="button" onclick="openKategoriForm()" class="inline-flex items-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium"><span class="material-symbols-outlined text-[18px]">add</span> {{ __('Tambah Kategori') }}</button>
                 </div>
             @endforelse
         </div>
         <p id="kategori-empty-search" class="hidden flex flex-col items-center justify-center text-center text-on-surface-variant font-body-md text-sm py-14">
             <span class="material-symbols-outlined text-[40px] text-gold-accent/30 mb-3">search_off</span>
-            Tidak ada kategori yang cocok.
+            {{ __('Tidak ada kategori yang cocok.') }}
         </p>
     </section>
 
@@ -170,7 +170,7 @@
                 <div class="flex items-center gap-3.5">
                     <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">category</span></div>
                     <div>
-                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Kategori Komplain</p>
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">{{ __('Kategori Komplain') }}</p>
                         <p class="font-title-md text-title-md text-on-surface">{{ $kategoriKomplain->count() }}</p>
                     </div>
                 </div>
@@ -179,7 +179,7 @@
                 <div class="flex items-center gap-3.5">
                     <div class="w-11 h-11 rounded-lg bg-secondary-container/20 border border-secondary/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-secondary text-[20px]">report</span></div>
                     <div>
-                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Total Komplain</p>
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">{{ __('Total Komplain') }}</p>
                         <p class="font-title-md text-title-md text-on-surface">{{ $kategoriKomplain->sum('total') }}</p>
                     </div>
                 </div>
@@ -188,7 +188,7 @@
                 <div class="flex items-center gap-3.5">
                     <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">priority_high</span></div>
                     <div class="min-w-0">
-                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Top Kategori</p>
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">{{ __('Top Kategori') }}</p>
                         <p class="font-title-md text-title-md text-on-surface capitalize truncate">{{ $kategoriKomplain->sortByDesc('total')->first()?->kategori ?? '—' }}</p>
                     </div>
                 </div>
@@ -199,9 +199,9 @@
             <table class="w-full premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
-                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Kategori Komplain</th>
-                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Total Komplain</th>
+                        <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">{{ __('No') }}</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Kategori Komplain') }}</th>
+                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Total Komplain') }}</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -214,7 +214,7 @@
                     @empty
                         <tr>
                             <td colspan="3" class="p-10 text-center text-on-surface-variant">
-                                <span class="material-symbols-outlined text-[36px] text-gold-accent/30 align-middle mr-2">inbox</span>Belum ada data kategori komplain.
+                                <span class="material-symbols-outlined text-[36px] text-gold-accent/30 align-middle mr-2">inbox</span>{{ __('Belum ada data kategori komplain.') }}
                             </td>
                         </tr>
                     @endforelse
@@ -230,7 +230,7 @@
                 <div class="flex items-center gap-3.5">
                     <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">category</span></div>
                     <div>
-                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Kategori Pengeluaran</p>
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">{{ __('Kategori Pengeluaran') }}</p>
                         <p class="font-title-md text-title-md text-on-surface">{{ $kategoriPengeluaran->count() }}</p>
                     </div>
                 </div>
@@ -239,7 +239,7 @@
                 <div class="flex items-center gap-3.5">
                     <div class="w-11 h-11 rounded-lg bg-secondary-container/20 border border-secondary/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-secondary text-[20px]">receipt_long</span></div>
                     <div>
-                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Total Transaksi</p>
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">{{ __('Total Transaksi') }}</p>
                         <p class="font-title-md text-title-md text-on-surface">{{ $kategoriPengeluaran->sum('total') }}</p>
                     </div>
                 </div>
@@ -248,7 +248,7 @@
                 <div class="flex items-center gap-3.5">
                     <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">payments</span></div>
                     <div>
-                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Total Nominal</p>
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">{{ __('Total Nominal') }}</p>
                         <p class="font-title-md text-title-md text-on-surface">Rp {{ number_format((float) $kategoriPengeluaran->sum('total_nominal'), 0, ',', '.') }}</p>
                     </div>
                 </div>
@@ -259,10 +259,10 @@
             <table class="w-full premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
-                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Kategori Pengeluaran</th>
-                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Total Transaksi</th>
-                        <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">Total Nominal</th>
+                        <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">{{ __('No') }}</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Kategori Pengeluaran') }}</th>
+                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Total Transaksi') }}</th>
+                        <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">{{ __('Total Nominal') }}</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -276,7 +276,7 @@
                     @empty
                         <tr>
                             <td colspan="4" class="p-10 text-center text-on-surface-variant">
-                                <span class="material-symbols-outlined text-[36px] text-gold-accent/30 align-middle mr-2">inbox</span>Belum ada data kategori pengeluaran.
+                                <span class="material-symbols-outlined text-[36px] text-gold-accent/30 align-middle mr-2">inbox</span>{{ __('Belum ada data kategori pengeluaran.') }}
                             </td>
                         </tr>
                     @endforelse
@@ -288,7 +288,7 @@
     <!-- Panel: Kategori Toko -->
     <section data-tab-panel="toko" class="hidden space-y-gutter">
         <div class="flex justify-between items-center flex-wrap gap-2">
-            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Master Kategori Toko</h2>
+            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">{{ __('Master Kategori Toko') }}</h2>
             <div class="flex items-center flex-wrap gap-2">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/15 text-secondary border border-secondary/25 text-[10px] font-bold uppercase tracking-wider"><span class="material-symbols-outlined text-[14px]">check_circle</span>{{ $kategoriToko->where('status', \App\Models\StoreCategory::STATUS_AKTIF)->count() }} aktif</span>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-lowest text-on-surface-variant border border-muted-border text-[10px] font-bold uppercase tracking-wider"><span class="material-symbols-outlined text-[14px]">storefront</span>total {{ $kategoriToko->count() }}</span>
@@ -298,7 +298,7 @@
         <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 space-y-4">
             <div class="flex items-center gap-2 shrink-0">
                 <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Kategori Toko</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Kategori Toko') }}</span>
             </div>
             <div id="toko-chip-group" class="flex flex-wrap gap-2">
                 <button type="button" data-toko-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $kategoriToko->count() }})</button>
@@ -308,14 +308,14 @@
             <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div class="relative flex-1">
                     <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                    <input id="toko-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent focus:bg-surface-container-lowest transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama atau deskripsi kategori toko..." />
+                    <input id="toko-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent focus:bg-surface-container-lowest transition-colors placeholder-on-surface-variant/50" type="text" placeholder="{{ __('Cari nama atau deskripsi kategori toko...') }}" />
                     <button type="button" id="toko-clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
                 </div>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
                     <span class="material-symbols-outlined text-[14px]">storefront</span>
-                    <span id="toko-result-count">{{ $kategoriToko->count() }}</span> kategori toko
+                    <span id="toko-result-count">{{ $kategoriToko->count() }}</span> {{ __('kategori toko') }}
                 </span>
             </div>
         </div>
@@ -325,12 +325,12 @@
             <table class="w-full min-w-[720px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No</th>
-                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Kategori Toko</th>
-                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Deskripsi</th>
-                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
-                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Total Toko</th>
-                        <th class="px-4 py-4 text-center w-24 text-[10px] font-semibold tracking-widest">Aksi</th>
+                        <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">{{ __('No') }}</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Kategori Toko') }}</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Deskripsi') }}</th>
+                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Status') }}</th>
+                        <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Total Toko') }}</th>
+                        <th class="px-4 py-4 text-center w-24 text-[10px] font-semibold tracking-widest">{{ __('Aksi') }}</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -347,15 +347,15 @@
                             <td class="p-4 text-center text-on-surface font-bold">{{ $k->stores_count }}</td>
                             <td class="p-4">
                                 <div class="flex items-center justify-center gap-1">
-                                    <button type="button" onclick="openKategoriTokoForm(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit"><span class="material-symbols-outlined text-[20px]">edit</span></button>
-                                    <button type="button" onclick="openHapusKategoriToko(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+                                    <button type="button" onclick="openKategoriTokoForm(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="{{ __('Edit') }}"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+                                    <button type="button" onclick="openHapusKategoriToko(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="{{ __('Hapus') }}"><span class="material-symbols-outlined text-[20px]">delete</span></button>
                                 </div>
                             </td>
                         </tr>
                     @empty
                         <tr>
                             <td colspan="6" class="p-10 text-center text-on-surface-variant">
-                                <span class="material-symbols-outlined text-[36px] text-gold-accent/30 align-middle mr-2">storefront</span>Belum ada kategori toko.
+                                <span class="material-symbols-outlined text-[36px] text-gold-accent/30 align-middle mr-2">storefront</span>{{ __('Belum ada kategori toko.') }}
                             </td>
                         </tr>
                     @endforelse
@@ -365,7 +365,7 @@
         </div>
         <p id="toko-empty-search" class="hidden flex flex-col items-center justify-center text-center text-on-surface-variant font-body-md text-sm py-14">
             <span class="material-symbols-outlined text-[40px] text-gold-accent/30 mb-3">search_off</span>
-            Tidak ada kategori toko yang cocok.
+            {{ __('Tidak ada kategori toko yang cocok.') }}
         </p>
     </section>
 </div>
@@ -385,21 +385,21 @@
     <form method="POST" action="" id="kategori-form" onsubmit="closeKategoriModal()">
         @csrf
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKategori">Nama Kategori</label>
-            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaKategori" name="nama_kategori" type="text" maxlength="100" placeholder="Misal: Pakaian, Aksesoris" required />
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKategori">{{ __('Nama Kategori') }}</label>
+            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaKategori" name="nama_kategori" type="text" maxlength="100" placeholder="{{ __('Misal: Pakaian, Aksesoris') }}" required />
         </div>
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="parentId">Kategori Induk (opsional)</label>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="parentId">{{ __('Kategori Induk (opsional)') }}</label>
             <div class="relative" id="parentId-dd">
             <button type="button" data-dd-trigger id="parentId-trigger" onclick="toggleDropdown('parentId')" aria-haspopup="listbox" aria-expanded="false"
                 class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
-                <span id="parentId-label" class="truncate">— Tanpa induk (kategori utama) —</span>
+                <span id="parentId-label" class="truncate">{{ __('— Tanpa induk (kategori utama) —') }}</span>
                 <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="parentId-chevron">expand_more</span>
             </button>
             <div id="parentId-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
                 class="hidden absolute left-0 top-full mt-2 w-full min-w-[240px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-y-auto max-h-64 py-1">
                 <button type="button" role="option" aria-selected="true" data-dd-option="" onclick="selectParentId('')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                    — Tanpa induk (kategori utama) —<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                    {{ __('— Tanpa induk (kategori utama) —') }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
                 </button>
                 @foreach ($parents as $induk)
                     <button type="button" role="option" aria-selected="false" data-dd-option="{{ $induk->category_id }}" onclick="selectParentId('{{ $induk->category_id }}')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
@@ -411,13 +411,13 @@
         </div>
         </div>
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsiKategori">Deskripsi</label>
-            <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="deskripsiKategori" name="deskripsi" rows="3" maxlength="500" placeholder="Deskripsi kategori..."></textarea>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsiKategori">{{ __('Deskripsi') }}</label>
+            <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="deskripsiKategori" name="deskripsi" rows="3" maxlength="500" placeholder="{{ __('Deskripsi kategori...') }}"></textarea>
         </div>
         @slot('footer')
             <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4">
-                <button type="button" onclick="closeKategoriModal()" class="btn-modal btn-modal-ghost">Batal</button>
-                <button type="submit" form="kategori-form" id="kategori-submit-btn" class="btn-modal btn-modal-primary">Tambah Kategori</button>
+                <button type="button" onclick="closeKategoriModal()" class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                <button type="submit" form="kategori-form" id="kategori-submit-btn" class="btn-modal btn-modal-primary">{{ __('Tambah Kategori') }}</button>
             </div>
         @endslot
     </form>
@@ -432,15 +432,15 @@
     <form method="POST" action="" id="hapus-kategori-form" onsubmit="closeHapusModal()" class="p-6 space-y-4">
         @csrf
         <div class="text-center">
-            <h3 class="font-title-md text-title-md text-on-surface">Hapus Kategori</h3>
-            <p class="text-on-surface-variant text-sm mt-2 mb-4">Kategori <span id="hapus-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.</p>
+            <h3 class="font-title-md text-title-md text-on-surface">{{ __('Hapus Kategori') }}</h3>
+            <p class="text-on-surface-variant text-sm mt-2 mb-4">{{ __('Kategori') }} <span id="hapus-nama" class="font-bold text-on-surface">-</span> {{ __('akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.') }}</p>
         </div>
         <div id="hapus-warning" class="hidden"></div>
     </form>
     @slot('footer')
         <div class="flex space-x-3">
-            <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusModal()">Batal</button>
-            <button type="submit" form="hapus-kategori-form" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
+            <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusModal()">{{ __('Batal') }}</button>
+            <button type="submit" form="hapus-kategori-form" class="btn-modal btn-modal-danger flex-1">{{ __('Ya, Hapus') }}</button>
         </div>
     @endslot
 @endcomponent
@@ -460,28 +460,28 @@
     <form method="POST" action="" id="kategori-toko-form" onsubmit="closeKategoriTokoModal()">
         @csrf
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKategoriToko">Nama Kategori Toko</label>
-            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaKategoriToko" name="nama_kategori" type="text" maxlength="100" placeholder="Misal: Fashion & Lifestyle" required />
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKategoriToko">{{ __('Nama Kategori Toko') }}</label>
+            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaKategoriToko" name="nama_kategori" type="text" maxlength="100" placeholder="{{ __('Misal: Fashion & Lifestyle') }}" required />
         </div>
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsiKategoriToko">Deskripsi</label>
-            <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="deskripsiKategoriToko" name="deskripsi" rows="3" maxlength="500" placeholder="Deskripsi kategori toko..."></textarea>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="deskripsiKategoriToko">{{ __('Deskripsi') }}</label>
+            <textarea class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="deskripsiKategoriToko" name="deskripsi" rows="3" maxlength="500" placeholder="{{ __('Deskripsi kategori toko...') }}"></textarea>
         </div>
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="statusKategoriToko">Status</label>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="statusKategoriToko">{{ __('Status') }}</label>
             <div class="relative" id="katTokoStatus-dd">
                 <button type="button" data-dd-trigger id="katTokoStatus-trigger" onclick="toggleDropdown('katTokoStatus')" aria-haspopup="listbox" aria-expanded="false"
                     class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
-                    <span id="katTokoStatus-label" class="truncate">Aktif</span>
+                    <span id="katTokoStatus-label" class="truncate">{{ __('Aktif') }}</span>
                     <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="katTokoStatus-chevron">expand_more</span>
                 </button>
                 <div id="katTokoStatus-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
                     class="hidden absolute left-0 top-full mt-2 w-full min-w-[140px] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden py-1">
                     <button type="button" role="option" aria-selected="true" data-dd-option="aktif" onclick="selectKatTokoStatus('aktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                        Aktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
+                        {{ __('Aktif') }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent">check</span>
                     </button>
                     <button type="button" role="option" aria-selected="false" data-dd-option="nonaktif" onclick="selectKatTokoStatus('nonaktif')" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-body-md text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
-                        Nonaktif<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
+                        {{ __('Nonaktif') }}<span data-dd-check class="material-symbols-outlined text-[18px] text-gold-accent hidden">check</span>
                     </button>
                 </div>
                 <input type="hidden" name="status" id="statusKategoriToko" value="aktif" />
@@ -489,8 +489,8 @@
         </div>
         @slot('footer')
             <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4">
-                <button type="button" onclick="closeKategoriTokoModal()" class="btn-modal btn-modal-ghost">Batal</button>
-                <button type="submit" form="kategori-toko-form" id="kategori-toko-submit-btn" class="btn-modal btn-modal-primary">Tambah Kategori Toko</button>
+                <button type="button" onclick="closeKategoriTokoModal()" class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                <button type="submit" form="kategori-toko-form" id="kategori-toko-submit-btn" class="btn-modal btn-modal-primary">{{ __('Tambah Kategori Toko') }}</button>
             </div>
         @endslot
     </form>
@@ -505,15 +505,15 @@
     <form method="POST" action="" id="hapus-kategori-toko-form" onsubmit="closeHapusKategoriTokoModal()" class="p-6 space-y-4">
         @csrf
         <div class="text-center">
-            <h3 class="font-title-md text-title-md text-on-surface">Hapus Kategori Toko</h3>
-            <p class="text-on-surface-variant text-sm mt-2 mb-4">Kategori toko <span id="hapus-toko-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.</p>
+            <h3 class="font-title-md text-title-md text-on-surface">{{ __('Hapus Kategori Toko') }}</h3>
+            <p class="text-on-surface-variant text-sm mt-2 mb-4">{{ __('Kategori toko') }} <span id="hapus-toko-nama" class="font-bold text-on-surface">-</span> {{ __('akan dihapus permanen. Tindakan ini tidak dapat dibatalkan.') }}</p>
         </div>
         <div id="hapus-toko-warning" class="hidden"></div>
     </form>
     @slot('footer')
         <div class="flex space-x-3">
-            <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusKategoriTokoModal()">Batal</button>
-            <button type="submit" form="hapus-kategori-toko-form" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
+            <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusKategoriTokoModal()">{{ __('Batal') }}</button>
+            <button type="submit" form="hapus-kategori-toko-form" class="btn-modal btn-modal-danger flex-1">{{ __('Ya, Hapus') }}</button>
         </div>
     @endslot
 @endcomponent
@@ -542,23 +542,23 @@
 
         if (isEdit) {
             const d = card.dataset;
-            document.getElementById('kategori-modal-title').textContent = 'Ubah Kategori';
-            document.getElementById('kategori-modal-sub').textContent = 'Perubahan berlaku pada seluruh produk dalam kategori ini.';
+            document.getElementById('kategori-modal-title').textContent = '{{ __('Ubah Kategori') }}';
+            document.getElementById('kategori-modal-sub').textContent = '{{ __('Perubahan berlaku pada seluruh produk dalam kategori ini.') }}';
             document.getElementById('namaKategori').value = d.nama;
             document.getElementById('deskripsiKategori').value = d.deskripsi || '';
             document.getElementById('parentId').value = d.parent || '';
             selectParentId(d.parent || '');
             form.action = kategoriUrls.update(d.id);
-            document.getElementById('kategori-submit-btn').textContent = 'Simpan Perubahan';
+            document.getElementById('kategori-submit-btn').textContent = '{{ __('Simpan Perubahan') }}';
         } else {
-            document.getElementById('kategori-modal-title').textContent = 'Tambah Kategori Baru';
-            document.getElementById('kategori-modal-sub').textContent = 'Kategori berlaku untuk seluruh toko di platform.';
+            document.getElementById('kategori-modal-title').textContent = '{{ __('Tambah Kategori Baru') }}';
+            document.getElementById('kategori-modal-sub').textContent = '{{ __('Kategori berlaku untuk seluruh toko di platform.') }}';
             document.getElementById('namaKategori').value = '';
             document.getElementById('deskripsiKategori').value = '';
             document.getElementById('parentId').value = '';
             selectParentId('');
             form.action = kategoriUrls.store;
-            document.getElementById('kategori-submit-btn').textContent = 'Tambah Kategori';
+            document.getElementById('kategori-submit-btn').textContent = '{{ __('Tambah Kategori') }}';
         }
 
         document.getElementById('modal-form-kategori').classList.remove('hidden');
@@ -581,7 +581,7 @@
             if (parseInt(d.produk) > 0) alasan.push(d.produk + ' produk');
             if (parseInt(d.sub) > 0) alasan.push(d.sub + ' sub-kategori');
             warningBox.className = 'mb-4 bg-error/5 border border-error/25 rounded-lg p-3 text-xs text-on-surface';
-            warningBox.textContent = '⚠️ Kategori ini masih ' + alasan.join(' dan ') + '. Penghapusan akan ditolak sistem.';
+            warningBox.textContent = '{{ __('⚠️ Kategori ini masih') }} ' + alasan.join(' dan ') + '{{ __('. Penghapusan akan ditolak sistem.') }}';
         } else {
             warningBox.className = 'hidden';
             warningBox.textContent = '';
@@ -718,23 +718,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (isEdit) {
             const d = row.dataset;
-            document.getElementById('kategori-toko-modal-title').textContent = 'Ubah Kategori Toko';
-            document.getElementById('kategori-toko-modal-sub').textContent = 'Perubahan akan berpengaruh ke dropdown kategori di halaman Owner.';
+            document.getElementById('kategori-toko-modal-title').textContent = '{{ __('Ubah Kategori Toko') }}';
+            document.getElementById('kategori-toko-modal-sub').textContent = '{{ __('Perubahan akan berpengaruh ke dropdown kategori di halaman Owner.') }}';
             document.getElementById('namaKategoriToko').value = d.nama;
             document.getElementById('deskripsiKategoriToko').value = d.deskripsi || '';
             document.getElementById('statusKategoriToko').value = d.status || 'aktif';
             selectKatTokoStatus(d.status || 'aktif');
             form.action = kategoriTokoUrls.update(d.id);
-            document.getElementById('kategori-toko-submit-btn').textContent = 'Simpan Perubahan';
+            document.getElementById('kategori-toko-submit-btn').textContent = '{{ __('Simpan Perubahan') }}';
         } else {
-            document.getElementById('kategori-toko-modal-title').textContent = 'Tambah Kategori Toko';
-            document.getElementById('kategori-toko-modal-sub').textContent = 'Kategori toko yang owner harus pilih saat mengisi data toko.';
+            document.getElementById('kategori-toko-modal-title').textContent = '{{ __('Tambah Kategori Toko') }}';
+            document.getElementById('kategori-toko-modal-sub').textContent = '{{ __('Kategori toko yang owner harus pilih saat mengisi data toko.') }}';
             document.getElementById('namaKategoriToko').value = '';
             document.getElementById('deskripsiKategoriToko').value = '';
             document.getElementById('statusKategoriToko').value = 'aktif';
             selectKatTokoStatus('aktif');
             form.action = kategoriTokoUrls.store;
-            document.getElementById('kategori-toko-submit-btn').textContent = 'Tambah Kategori Toko';
+            document.getElementById('kategori-toko-submit-btn').textContent = '{{ __('Tambah Kategori Toko') }}';
         }
 
         document.getElementById('modal-form-kategori-toko').classList.remove('hidden');
@@ -754,7 +754,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (parseInt(d.toko) > 0) {
             warningBox.className = 'mb-4 bg-error/5 border border-error/25 rounded-lg p-3 text-xs text-on-surface';
-            warningBox.textContent = '⚠️ Kategori ini masih dipakai ' + d.toko + ' toko. Penghapusan akan ditolak sistem.';
+            warningBox.textContent = '{{ __('⚠️ Kategori ini masih dipakai') }} ' + d.toko + ' {{ __('toko. Penghapusan akan ditolak sistem.') }}';
         } else {
             warningBox.className = 'hidden';
             warningBox.textContent = '';

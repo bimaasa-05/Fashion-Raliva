@@ -1,16 +1,16 @@
 @extends('layouts.admin')
 
-@section('title', 'Riwayat Aktivitas')
+@section('title', __('Riwayat Aktivitas'))
 
-@section('header-title', 'Riwayat Aktivitas')
-@section('header-badge', 'Terbatas')
-@section('header-subtitle', 'Catatan aktivitas dalam scope tugasmu sebagai Admin Toko.')
+@section('header-title', __('Riwayat Aktivitas'))
+@section('header-badge', __('Terbatas'))
+@section('header-subtitle', __('Catatan aktivitas dalam scope tugasmu sebagai Admin Toko.'))
 
 @section('content')
 <div class="space-y-section-gap">
     <div class="flex items-start gap-3 p-4 border border-gold-accent/30 bg-gold-accent/10 rounded-lg">
         <span class="material-symbols-outlined text-gold-accent text-[20px] mt-0.5">lock</span>
-        <p class="font-body-md text-sm text-on-surface">Riwayat ini hanya mencakup aktivitas yang berkaitan dengan tugas operasionalmu di toko yang ditugaskan.</p>
+        <p class="font-body-md text-sm text-on-surface">{{ __('Riwayat ini hanya mencakup aktivitas yang berkaitan dengan tugas operasionalmu di toko yang ditugaskan.') }}</p>
     </div>
 
     <section class="space-y-6">
@@ -54,7 +54,7 @@
             </div>
         </div>
         @empty
-        <p class="text-on-surface-variant text-sm py-8 text-center">Belum ada aktivitas.</p>
+        <p class="text-on-surface-variant text-sm py-8 text-center">{{ __('Belum ada aktivitas.') }}</p>
         @endforelse
 
         @if ($logs->hasPages())

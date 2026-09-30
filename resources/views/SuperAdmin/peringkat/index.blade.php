@@ -1,10 +1,10 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Peringkat')
+@section('title', __('Peringkat'))
 
-@section('header-title', 'Peringkat')
-@section('header-badge', 'Pantau')
-@section('header-subtitle', 'Leaderboard toko, kategori, dan pelanggan berdasarkan total transaksi.')
+@section('header-title', __('Peringkat'))
+@section('header-badge', __('Pantau'))
+@section('header-subtitle', __('Leaderboard toko, kategori, dan pelanggan berdasarkan total transaksi.'))
 
 @section('content')
 <div class="space-y-6">
@@ -14,17 +14,17 @@
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">emoji_events</span>
             </div>
             <div>
-                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Leaderboard Platform</h2>
-                <p class="text-on-surface-variant text-xs mt-0.5">Peringkat berdasarkan total transaksi sukses.</p>
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Leaderboard Platform') }}</h2>
+                <p class="text-on-surface-variant text-xs mt-0.5">{{ __('Peringkat berdasarkan total transaksi sukses.') }}</p>
             </div>
         </div>
         <div class="inline-flex self-start sm:self-auto bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
             <a href="{{ route('superadmin.peringkat', ['periode' => 'all']) }}"
-               class="periode-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors {{ $periode === 'all' ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">Semua</a>
+               class="periode-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors {{ $periode === 'all' ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">{{ __('Semua') }}</a>
             <a href="{{ route('superadmin.peringkat', ['periode' => '7']) }}"
-               class="periode-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors {{ $periode === '7' ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">7 Hari</a>
+               class="periode-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors {{ $periode === '7' ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">{{ __('7 Hari') }}</a>
             <a href="{{ route('superadmin.peringkat', ['periode' => '30']) }}"
-               class="periode-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors {{ $periode === '30' ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">30 Hari</a>
+               class="periode-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors {{ $periode === '30' ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">{{ __('30 Hari') }}</a>
         </div>
     </div>
 
@@ -52,7 +52,7 @@
                         <p class="text-on-surface-variant text-xs mt-0.5">{{ $pd['items'][0]['sub_meta'] ?? $pd['items'][0]['meta'] }}</p>
                     </div>
                     <span class="font-headline-lg-mobile text-headline-lg-mobile text-black leading-none">{{ $pd['items'][0]['display'] }}</span>
-                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/15 text-amber-500 text-[10px] font-bold uppercase border border-amber-400/40"><span class="material-symbols-outlined text-[12px]">check_circle</span>Posisi Teratas</span>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/15 text-amber-500 text-[10px] font-bold uppercase border border-amber-400/40"><span class="material-symbols-outlined text-[12px]">check_circle</span>{{ __('Posisi Teratas') }}</span>
                 </div>
                 @endif
                 @if(isset($pd['items'][1]))
@@ -63,7 +63,7 @@
                         <p class="text-on-surface-variant text-xs mt-0.5">{{ $pd['items'][1]['sub_meta'] ?? $pd['items'][1]['meta'] }}</p>
                     </div>
                     <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-none">{{ $pd['items'][1]['display'] }}</span>
-                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-400/25 text-on-surface-variant text-[10px] font-bold uppercase border border-slate-400/60">Posisi 2</span>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-400/25 text-on-surface-variant text-[10px] font-bold uppercase border border-slate-400/60">{{ __('Posisi 2') }}</span>
                 </div>
                 @endif
                 @if(isset($pd['items'][2]))
@@ -74,7 +74,7 @@
                         <p class="text-on-surface-variant text-xs mt-0.5">{{ $pd['items'][2]['sub_meta'] ?? $pd['items'][2]['meta'] }}</p>
                     </div>
                     <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-none">{{ $pd['items'][2]['display'] }}</span>
-                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Posisi 3</span>
+                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">{{ __('Posisi 3') }}</span>
                 </div>
                 @endif
             </div>
@@ -84,35 +84,35 @@
 
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Toko</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Top Toko') }}</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">storefront</span>
         </div>
         <div data-leaderboard='@json($topToko)'></div>
         @if(count($topToko) === 0)
-            <p class="text-on-surface-variant text-sm text-center py-8">Belum ada data toko.</p>
+            <p class="text-on-surface-variant text-sm text-center py-8">{{ __('Belum ada data toko.') }}</p>
         @endif
     </section>
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Kategori</h2>
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Top Kategori') }}</h2>
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">category</span>
             </div>
             <div data-leaderboard='@json($topKategori)'></div>
             @if(count($topKategori) === 0)
-                <p class="text-on-surface-variant text-sm text-center py-8">Belum ada data kategori.</p>
+                <p class="text-on-surface-variant text-sm text-center py-8">{{ __('Belum ada data kategori.') }}</p>
             @endif
         </section>
 
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <div class="flex items-center justify-between mb-4">
-                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Pelanggan</h2>
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Top Pelanggan') }}</h2>
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">military_tech</span>
             </div>
             <div data-leaderboard='@json($topPelanggan)'></div>
             @if(count($topPelanggan) === 0)
-                <p class="text-on-surface-variant text-sm text-center py-8">Belum ada data pelanggan.</p>
+                <p class="text-on-surface-variant text-sm text-center py-8">{{ __('Belum ada data pelanggan.') }}</p>
             @endif
         </section>
     </div>

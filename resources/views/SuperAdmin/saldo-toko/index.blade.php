@@ -1,10 +1,10 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Saldo Toko')
+@section('title', __('Saldo Toko'))
 
-@section('header-title', 'Saldo Toko')
-@section('header-badge', 'Lihat')
-@section('header-subtitle', 'Pantau saldo dan mutasi keuangan seluruh toko di platform.')
+@section('header-title', __('Saldo Toko'))
+@section('header-badge', __('Lihat'))
+@section('header-subtitle', __('Pantau saldo dan mutasi keuangan seluruh toko di platform.'))
 
 @section('content')
 <div class="space-y-section-gap">
@@ -15,39 +15,39 @@
         </span>
         <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
-            Saldo diperbarui real-time
+            {{ __('Saldo diperbarui real-time') }}
         </span>
     </div>
     <section>
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Saldo</h2>
+        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">{{ __('Ringkasan Saldo') }}</h2>
         <div data-reveal-group class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
             <div data-reveal class="bg-surface-container-lowest border border-gold-accent/25 rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium hover:border-gold-accent transition-colors hero-glow">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Saldo Tersedia</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Saldo Tersedia') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold break-words">Rp {{ number_format($totalTersedia, 0, ',', '.') }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">dapat digunakan toko</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('dapat digunakan toko') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Saldo Tertahan</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Saldo Tertahan') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">Rp {{ number_format($totalTertahan, 0, ',', '.') }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">dalam proses</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('dalam proses') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">lock</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Jumlah Toko</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Jumlah Toko') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">{{ $jumlahToko }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">toko terdaftar</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('toko terdaftar') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">storefront</span>
             </div>
         </div>
     </section>
 
     <section data-wallet-scope>
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Saldo per Toko</h2>
+        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">{{ __('Saldo per Toko') }}</h2>
         <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
             <div class="relative flex-1">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                <input id="wallet-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama toko..." />
+                <input id="wallet-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="{{ __('Cari nama toko...') }}" />
                 <button type="button" id="wallet-clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
                     <span class="material-symbols-outlined text-[20px]">close</span>
                 </button>
@@ -66,42 +66,42 @@
                     </div>
                     <div class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">Rp {{ number_format((float)$wallet->saldo_tersedia, 0, ',', '.') }}</div>
                     <div class="pt-4 border-t border-muted-border flex justify-between font-body-md text-sm">
-                        <span class="text-on-surface-variant">Menunggu Cair</span>
+                        <span class="text-on-surface-variant">{{ __('Menunggu Cair') }}</span>
                         <span class="text-on-surface font-bold">Rp {{ number_format((float)$wallet->saldo_tertahan, 0, ',', '.') }}</span>
                     </div>
                 </div>
             @empty
                 <div class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-8">
-                    Belum ada data saldo toko.
+                    {{ __('Belum ada data saldo toko.') }}
                 </div>
             @endforelse
         </div>
         @if ($wallets->hasPages())
             <div class="mt-6 flex justify-center">{{ $wallets->links() }}</div>
         @endif
-        <p id="wallet-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-8">Tidak ada toko yang cocok.</p>
+        <p id="wallet-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-8">{{ __('Tidak ada toko yang cocok.') }}</p>
     </section>
 
     <section data-mutasi-scope data-reveal class="space-y-gutter">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Mutasi Terbaru</h2>
+        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Mutasi Terbaru') }}</h2>
 
         <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 space-y-4">
             <div class="flex items-center gap-2 shrink-0">
                 <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Mutasi</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Mutasi') }}</span>
             </div>
             <div id="mutasi-chip-group" class="flex flex-wrap gap-2">
-                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua</button>
-                <button type="button" data-chip="penjualan_masuk" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Penjualan</button>
-                <button type="button" data-chip="komisi_masuk" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Komisi</button>
-                <button type="button" data-chip="penyesuaian" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Penyesuaian</button>
-                <button type="button" data-chip="refund_keluar" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Refund</button>
-                <button type="button" data-chip="withdrawal" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Withdrawal</button>
+                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ __('Semua') }}</button>
+                <button type="button" data-chip="penjualan_masuk" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ __('Penjualan') }}</button>
+                <button type="button" data-chip="komisi_masuk" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ __('Komisi') }}</button>
+                <button type="button" data-chip="penyesuaian" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ __('Penyesuaian') }}</button>
+                <button type="button" data-chip="refund_keluar" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ __('Refund') }}</button>
+                <button type="button" data-chip="withdrawal" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ __('Withdrawal') }}</button>
             </div>
             <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div class="relative flex-1">
                     <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                    <input id="mutasi-search" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari toko atau keterangan..." />
+                    <input id="mutasi-search" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="{{ __('Cari toko atau keterangan...') }}" />
                     <button type="button" id="mutasi-clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
@@ -116,14 +116,14 @@
             <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No.</th>
-                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Toko</th>
-                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Jenis Transaksi</th>
-                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Keterangan</th>
-                        <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">Saldo Awal</th>
-                        <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">Nominal</th>
-                        <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">Saldo Akhir</th>
-                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Waktu</th>
+                        <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">{{ __('No.') }}</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Toko') }}</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Jenis Transaksi') }}</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Keterangan') }}</th>
+                        <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">{{ __('Saldo Awal') }}</th>
+                        <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">{{ __('Nominal') }}</th>
+                        <th class="px-4 py-4 text-right text-[10px] font-semibold tracking-widest">{{ __('Saldo Akhir') }}</th>
+                        <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Waktu') }}</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -146,11 +146,11 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="8" class="p-8 text-center text-on-surface-variant">Belum ada mutasi tercatat.</td>
+                            <td colspan="8" class="p-8 text-center text-on-surface-variant">{{ __('Belum ada mutasi tercatat.') }}</td>
                         </tr>
                     @endforelse
                     <tr id="mutasi-empty-search" class="hidden">
-                        <td colspan="8" class="p-8 text-center text-on-surface-variant">Tidak ada mutasi yang cocok.</td>
+                        <td colspan="8" class="p-8 text-center text-on-surface-variant">{{ __('Tidak ada mutasi yang cocok.') }}</td>
                     </tr>
             </tbody>
         </table>
@@ -173,27 +173,27 @@
                     </div>
                     <dl class="space-y-2 font-body-md text-sm">
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Keterangan</dt>
+                            <dt class="text-on-surface-variant">{{ __('Keterangan') }}</dt>
                             <dd class="text-on-surface text-right">{{ $tx->keterangan ?? '-' }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Saldo Sebelum</dt>
+                            <dt class="text-on-surface-variant">{{ __('Saldo Sebelum') }}</dt>
                             <dd class="text-on-surface-variant text-right">Rp {{ number_format((float)$tx->saldo_sebelum, 0, ',', '.') }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Saldo Sesudah</dt>
+                            <dt class="text-on-surface-variant">{{ __('Saldo Sesudah') }}</dt>
                             <dd class="text-on-surface text-right">Rp {{ number_format((float)$tx->saldo_sesudah, 0, ',', '.') }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Waktu</dt>
+                            <dt class="text-on-surface-variant">{{ __('Waktu') }}</dt>
                             <dd class="text-on-surface text-right">{{ $tx->created_at ? \Carbon\Carbon::parse($tx->created_at)->locale('id')->diffForHumans() : '-' }}</dd>
                         </div>
                     </dl>
                 </article>
             @empty
-                <p class="text-center text-on-surface-variant py-10">Belum ada mutasi tercatat.</p>
+                <p class="text-center text-on-surface-variant py-10">{{ __('Belum ada mutasi tercatat.') }}</p>
             @endforelse
-            <p id="mutasi-empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada mutasi yang cocok.</p>
+            <p id="mutasi-empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">{{ __('Tidak ada mutasi yang cocok.') }}</p>
         </div>
     </section>
 </div>

@@ -1,11 +1,11 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Moderasi Produk')
+@section('title', __('Moderasi Produk'))
 
-@section('header-title', 'Moderasi Produk')
-@section('header-badge', 'Kelola')
+@section('header-title', __('Moderasi Produk'))
+@section('header-badge', __('Kelola'))
 
-@section('header-subtitle', 'Tinjau produk pending dan beri keputusan setujui atau tolak beserta alasan.')
+@section('header-subtitle', __('Tinjau produk pending dan beri keputusan setujui atau tolak beserta alasan.'))
 
 @php
     $tabs = [
@@ -28,7 +28,7 @@
     <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4">
         <div class="flex items-center gap-2 mb-3">
             <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-            <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Moderasi</span>
+            <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Moderasi') }}</span>
         </div>
         <div id="moderasi-tabs" class="flex flex-wrap items-center gap-2.5 justify-center py-2">
             @foreach ($tabs as $key => $label)
@@ -40,13 +40,13 @@
             @endforeach
         </div>
         <div class="flex justify-center pt-2">
-            <a href="{{ route('superadmin.produk') }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-gold-accent/40 bg-gold-accent/5 text-gold-accent font-label-sm text-label-sm uppercase tracking-wider hover:bg-gold-accent/15"><span class="material-symbols-outlined text-[16px]">visibility</span> Lihat produk disetujui di Data Produk</a>
+            <a href="{{ route('superadmin.produk') }}" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg border border-gold-accent/40 bg-gold-accent/5 text-gold-accent font-label-sm text-label-sm uppercase tracking-wider hover:bg-gold-accent/15"><span class="material-symbols-outlined text-[16px]">visibility</span> {{ __('Lihat produk disetujui di Data Produk') }}</a>
         </div>
 
         <div class="flex flex-col sm:flex-row sm:items-center gap-3 pt-4">
             <div class="relative flex-1">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                <input id="moderasi-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama produk, toko, kategori, atau tipe..." />
+                <input id="moderasi-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="{{ __('Cari nama produk, toko, kategori, atau tipe...') }}" />
                 <button type="button" id="moderasi-clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
                     <span class="material-symbols-outlined text-[20px]">close</span>
                 </button>
@@ -409,7 +409,7 @@ document.addEventListener('DOMContentLoaded', () => {
             initCardGalleries();
             applyModerasiFilter();
         } catch (err) {
-            if (window.showRalivaToast) showRalivaToast('Gagal memuat daftar produk. Silakan coba lagi.', 'error');
+            if (window.showRalivaToast) showRalivaToast('{{ __('Gagal memuat daftar produk. Silakan coba lagi.') }}', 'error');
         }
     }
 
@@ -449,59 +449,59 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="flex items-start gap-3">
                     <span class="material-symbols-outlined text-error text-[18px] mt-0.5">gpp_bad</span>
                     <div>
-                        <p class="font-label-sm text-[10px] uppercase tracking-widest text-error mb-1">Alasan Penolakan Sebelumnya</p>
+                        <p class="font-label-sm text-[10px] uppercase tracking-widest text-error mb-1">{{ __('Alasan Penolakan Sebelumnya') }}</p>
                         <p id="mod-reason-text" class="text-sm text-on-surface"></p>
                     </div>
                 </div>
             </div>
             <div class="flex gap-2 px-6 pt-4">
-                <button type="button" data-mod-tab="produk" class="mod-tab-btn px-4 py-2 rounded-lg font-label-sm text-[11px] uppercase tracking-wider transition-colors bg-deep-onyx text-on-primary">Informasi Produk</button>
-                <button type="button" data-mod-tab="bahan" class="mod-tab-btn px-4 py-2 rounded-lg font-label-sm text-[11px] uppercase tracking-wider transition-colors border border-muted-border text-on-surface-variant hover:text-on-surface">Informasi Bahan</button>
+                <button type="button" data-mod-tab="produk" class="mod-tab-btn px-4 py-2 rounded-lg font-label-sm text-[11px] uppercase tracking-wider transition-colors bg-deep-onyx text-on-primary">{{ __('Informasi Produk') }}</button>
+                <button type="button" data-mod-tab="bahan" class="mod-tab-btn px-4 py-2 rounded-lg font-label-sm text-[11px] uppercase tracking-wider transition-colors border border-muted-border text-on-surface-variant hover:text-on-surface">{{ __('Informasi Bahan') }}</button>
             </div>
             <div data-mod-panel="produk">
             <div class="grid md:grid-cols-2 gap-0">
                 <div class="bg-surface-container-low min-h-[220px] p-3 flex flex-col gap-3">
                     <div class="flex items-center justify-between">
-                        <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Foto Produk (<span id="mod-photo-count">0</span>)</span>
+                        <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Foto Produk (') }}<span id="mod-photo-count">0</span>)</span>
                         <span id="mod-photo-counter" class="font-body-md text-body-md font-bold text-gold-accent">-</span>
                     </div>
-                    <img id="mod-img" class="w-full h-[280px] object-cover rounded-lg cursor-zoom-in border border-muted-border" src="" alt="Foto produk" onclick="openLightbox(this.src)" />
+                    <img id="mod-img" class="w-full h-[280px] object-cover rounded-lg cursor-zoom-in border border-muted-border" src="" alt="{{ __('Foto produk') }}" onclick="openLightbox(this.src)" />
                     <div id="mod-thumbs" class="grid grid-cols-3 gap-2"></div>
                 </div>
                 <div class="p-6 space-y-4">
-                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Tipe Produk</span><span id="mod-tipe" class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">-</span></div>
-                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Kategori</span><span id="mod-category" class="font-body-md text-body-md text-on-surface">-</span></div>
-                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Varian (Warna & Ukuran)</span><span id="mod-variants" class="font-body-md text-body-md text-on-surface">-</span></div>
-                    <div id="mod-slot-box"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Kuota Slot Toko</span><span id="mod-slot" class="font-body-md text-body-md text-on-surface">-</span></div>
-                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Deskripsi</span><p id="mod-desc" class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-sm">-</p></div>
+                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">{{ __('Tipe Produk') }}</span><span id="mod-tipe" class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">-</span></div>
+                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">{{ __('Kategori') }}</span><span id="mod-category" class="font-body-md text-body-md text-on-surface">-</span></div>
+                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">{{ __('Varian (Warna & Ukuran)') }}</span><span id="mod-variants" class="font-body-md text-body-md text-on-surface">-</span></div>
+                    <div id="mod-slot-box"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">{{ __('Kuota Slot Toko') }}</span><span id="mod-slot" class="font-body-md text-body-md text-on-surface">-</span></div>
+                    <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">{{ __('Deskripsi') }}</span><p id="mod-desc" class="font-body-md text-body-md text-on-surface-variant leading-relaxed text-sm">-</p></div>
                 </div>
             </div>
             </div>
             <div data-mod-panel="bahan" class="hidden p-6">
-                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mb-3">Bahan produksi (diinput Gudang)</p>
+                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mb-3">{{ __('Bahan produksi (diinput Gudang)') }}</p>
                 <div class="overflow-x-auto">
                     <table class="w-full min-w-[420px] text-sm">
                         <thead>
                             <tr class="text-left text-[10px] uppercase tracking-widest text-on-surface-variant">
-                                <th class="py-1 pr-2">Bahan</th>
-                                <th class="py-1 pr-2 text-right">Jumlah / unit</th>
-                                <th class="py-1 pr-2">Satuan</th>
+                                <th class="py-1 pr-2">{{ __('Bahan') }}</th>
+                                <th class="py-1 pr-2 text-right">{{ __('Jumlah / unit') }}</th>
+                                <th class="py-1 pr-2">{{ __('Satuan') }}</th>
                             </tr>
                         </thead>
                         <tbody id="mod-bahan-rows"></tbody>
                     </table>
-                    <p id="mod-bahan-empty" class="hidden text-sm text-on-surface-variant py-4 text-center">Belum ada bahan untuk produk ini.</p>
+                    <p id="mod-bahan-empty" class="hidden text-sm text-on-surface-variant py-4 text-center">{{ __('Belum ada bahan untuk produk ini.') }}</p>
                 </div>
             </div>
         </div>
 
         <div class="shrink-0 border-t border-muted-border px-6 py-4 bg-surface/95 backdrop-blur flex gap-3">
-            <p id="mod-action-note" class="hidden flex-1 self-center text-xs text-on-surface-variant italic">Keputusan sudah diambil untuk produk ini.</p>
-            <p id="mod-action-slotfull" class="hidden flex-1 self-center text-xs text-error font-semibold">Kuota slot toko penuh — setujui hanya setelah slot ditambah.</p>
-            <button id="mod-action-reject" type="button" onclick="openRejectModal()" class="hidden flex-1 py-3 bg-transparent border border-error/40 text-error font-label-sm text-label-sm uppercase tracking-widest hover:bg-error/10 transition-colors rounded-lg inline-flex items-center justify-center gap-1.5"><span class="material-symbols-outlined text-[18px]">block</span>Tolak</button>
+            <p id="mod-action-note" class="hidden flex-1 self-center text-xs text-on-surface-variant italic">{{ __('Keputusan sudah diambil untuk produk ini.') }}</p>
+            <p id="mod-action-slotfull" class="hidden flex-1 self-center text-xs text-error font-semibold">{{ __('Kuota slot toko penuh — setujui hanya setelah slot ditambah.') }}</p>
+            <button id="mod-action-reject" type="button" onclick="openRejectModal()" class="hidden flex-1 py-3 bg-transparent border border-error/40 text-error font-label-sm text-label-sm uppercase tracking-widest hover:bg-error/10 transition-colors rounded-lg inline-flex items-center justify-center gap-1.5"><span class="material-symbols-outlined text-[18px]">block</span>{{ __('Tolak') }}</button>
             <form id="approve-product-form" class="flex-1" method="POST" action="" onsubmit="closeDetailModal()">
                 @csrf
-                <button id="mod-action-approve" type="submit" class="hidden w-full py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest hover:bg-black transition-colors rounded-lg btn-premium inline-flex items-center justify-center gap-1.5"><span class="material-symbols-outlined text-[18px]">verified</span>Setujui Produk</button>
+                <button id="mod-action-approve" type="submit" class="hidden w-full py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest hover:bg-black transition-colors rounded-lg btn-premium inline-flex items-center justify-center gap-1.5"><span class="material-symbols-outlined text-[18px]">verified</span>{{ __('Setujui Produk') }}</button>
             </form>
         </div>
     </div>
@@ -509,7 +509,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 <!-- Lightbox Foto -->
 <div class="fixed inset-0 z-[80] hidden items-center justify-center p-4 bg-black/80" id="lightbox" onclick="if (event.target === this) closeLightbox()">
-    <img id="lightbox-img" class="max-w-[90vw] max-h-[90vh] object-contain rounded-lg" src="" alt="Foto produk" />
+    <img id="lightbox-img" class="max-w-[90vw] max-h-[90vh] object-contain rounded-lg" src="" alt="{{ __('Foto produk') }}" />
     <span id="lightbox-counter" class="absolute bottom-4 left-1/2 -translate-x-1/2 text-white text-xs font-bold bg-black/50 px-2.5 py-1 rounded-full">-</span>
     <button type="button" class="absolute top-4 right-4 p-2 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors z-10" onclick="closeLightbox()"><span class="material-symbols-outlined">close</span></button>
 </div>
@@ -524,14 +524,14 @@ document.addEventListener('DOMContentLoaded', () => {
         'dataModal' => true,
     ])
         <div class="p-6">
-            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">Alasan Penolakan</h3>
-            <p class="text-on-surface-variant text-sm text-center mb-4">Alasan dikirim ke <span id="mod-reject-store" class="font-bold text-on-surface">-</span>.</p>
-            <textarea required minlength="10" maxlength="1000" name="alasan" id="reject-alasan-input" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-4" placeholder="Tulis alasan di sini... (minimal 10 karakter)" rows="4"></textarea>
+            <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">{{ __('Alasan Penolakan') }}</h3>
+            <p class="text-on-surface-variant text-sm text-center mb-4">{{ __('Alasan dikirim ke') }} <span id="mod-reject-store" class="font-bold text-on-surface">-</span>.</p>
+            <textarea required minlength="10" maxlength="1000" name="alasan" id="reject-alasan-input" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-error focus:ring-1 focus:ring-error mb-4" placeholder="{{ __('Tulis alasan di sini... (minimal 10 karakter)') }}" rows="4"></textarea>
         </div>
         @slot('footer')
             <div class="flex space-x-3">
-                <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeRejectModal()">Batal</button>
-                <button type="submit" class="flex-1 btn-modal btn-modal-danger">Konfirmasi</button>
+                <button type="button" class="flex-1 btn-modal btn-modal-ghost" onclick="closeRejectModal()">{{ __('Batal') }}</button>
+                <button type="submit" class="flex-1 btn-modal btn-modal-danger">{{ __('Konfirmasi') }}</button>
             </div>
         @endslot
     @endcomponent

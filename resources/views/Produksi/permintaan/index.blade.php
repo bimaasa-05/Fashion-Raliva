@@ -1,10 +1,10 @@
 @extends('layouts.produksi')
 
-@section('title', 'Permintaan Operasional')
+@section('title', __('Permintaan Operasional'))
 
-@section('header-title', 'Permintaan')
-@section('header-badge', 'Ajukan')
-@section('header-subtitle', 'Ajukan permintaan operasional ke Admin toko.')
+@section('header-title', __('Permintaan'))
+@section('header-badge', __('Ajukan'))
+@section('header-subtitle', __('Ajukan permintaan operasional ke Admin toko.'))
 
 @push('styles')
 <style>
@@ -32,25 +32,25 @@
             <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total</span>
                 <span class="raliva-figure text-[26px] text-on-surface">{{ $stats['pending'] + $stats['disetujui'] + $stats['ditolak'] }}</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">permintaan terkirim</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">{{ __('permintaan terkirim') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">forum</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Pending</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Pending') }}</span>
                 <span class="raliva-figure text-[26px] text-gold-accent">{{ $stats['pending'] }}</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">menunggu Admin</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">{{ __('menunggu Admin') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Disetujui</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Disetujui') }}</span>
                 <span class="raliva-figure text-[26px] text-secondary">{{ $stats['disetujui'] }}</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">diterima Admin</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">{{ __('diterima Admin') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">check_circle</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Ditolak</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Ditolak') }}</span>
                 <span class="raliva-figure text-[26px] text-error">{{ $stats['ditolak'] }}</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">ditolak Admin</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">{{ __('ditolak Admin') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-error/15 fill pointer-events-none select-none" aria-hidden="true">cancel</span>
             </div>
         </section>
@@ -61,19 +61,19 @@
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-[26px] text-gold-accent">edit_note</span>
                     <div>
-                        <h3 class="font-title-md text-title-md text-on-surface premium-heading">Ajukan Permintaan</h3>
-                        <p class="font-label-sm text-[11px] text-on-surface-variant mt-0.5">Kirim permintaan operasional ke Admin toko untuk diproses.</p>
+                        <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Ajukan Permintaan') }}</h3>
+                        <p class="font-label-sm text-[11px] text-on-surface-variant mt-0.5">{{ __('Kirim permintaan operasional ke Admin toko untuk diproses.') }}</p>
                     </div>
                 </div>
-                <button type="button" onclick="document.getElementById('form-ajukan').classList.toggle('hidden')" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded btn-premium">+ Ajukan</button>
+                <button type="button" onclick="document.getElementById('form-ajukan').classList.toggle('hidden')" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded btn-premium">{{ __('+ Ajukan') }}</button>
             </div>
             <form id="form-ajukan" method="POST" action="{{ route('produksi.permintaan.store') }}" class="space-y-4">
                 @csrf
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label for="jenis_permintaan" class="raliva-label block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1.5">Jenis Permintaan *</label>
+                        <label for="jenis_permintaan" class="raliva-label block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1.5">{{ __('Jenis Permintaan') }} *</label>
                         <select id="jenis_permintaan" name="jenis_permintaan" required class="raliva-select w-full">
-                            <option value="" disabled selected>Pilih jenis permintaan</option>
+                            <option value="" disabled selected>{{ __('Pilih jenis permintaan') }}</option>
                             @foreach ($jenisOptions as $value => $label)
                                 <option value="{{ $value }}" @selected(old('jenis_permintaan') === $value)>{{ $label }}</option>
                             @endforeach
@@ -81,22 +81,22 @@
                         @error('jenis_permintaan')<p class="mt-1 text-[11px] text-error">{{ $message }}</p>@enderror
                     </div>
                     <div>
-                        <label for="judul" class="raliva-label block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1.5">Judul *</label>
-                        <input id="judul" type="text" name="judul" maxlength="150" value="{{ old('judul') }}" placeholder="Ringkasan permintaan..." class="raliva-input w-full" />
+                        <label for="judul" class="raliva-label block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1.5">{{ __('Judul') }} *</label>
+                        <input id="judul" type="text" name="judul" maxlength="150" value="{{ old('judul') }}" placeholder="{{ __('Ringkasan permintaan...') }}" class="raliva-input w-full" />
                         @error('judul')<p class="mt-1 text-[11px] text-error">{{ $message }}</p>@enderror
                     </div>
                 </div>
                 <div>
-                    <label for="deskripsi" class="raliva-label block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1.5">Deskripsi *</label>
-                    <textarea id="deskripsi" name="deskripsi" rows="5" maxlength="2000" placeholder="Jelaskan kebutuhan operasional secara rinci..." class="raliva-input w-full resize-y">{{ old('deskripsi') }}</textarea>
+                    <label for="deskripsi" class="raliva-label block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1.5">{{ __('Deskripsi') }} *</label>
+                    <textarea id="deskripsi" name="deskripsi" rows="5" maxlength="2000" placeholder="{{ __('Jelaskan kebutuhan operasional secara rinci...') }}" class="raliva-input w-full resize-y">{{ old('deskripsi') }}</textarea>
                     <div class="flex items-center justify-between mt-1">
-                        <span class="text-[11px] text-on-surface-variant">Maks. 2000 karakter</span>
+                        <span class="text-[11px] text-on-surface-variant">{{ __('Maks. 2000 karakter') }}</span>
                         <span class="text-[11px] text-on-surface-variant/70" data-char-count>0 / 2000</span>
                     </div>
                     @error('deskripsi')<p class="mt-1 text-[11px] text-error">{{ $message }}</p>@enderror
                 </div>
                 <div class="flex items-center justify-end gap-3 pt-2 border-t border-muted-border">
-                    <button type="reset" class="px-4 py-2.5 border border-muted-border rounded-lg text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant hover:text-on-surface hover:border-gold-accent transition-colors">Bersihkan</button>
+                    <button type="reset" class="px-4 py-2.5 border border-muted-border rounded-lg text-[10px] font-semibold uppercase tracking-widest text-on-surface-variant hover:text-on-surface hover:border-gold-accent transition-colors">{{ __('Bersihkan') }}</button>
                     <button type="submit" class="px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium inline-flex items-center gap-2">
                         <span class="material-symbols-outlined text-[16px]">send</span>Ajukan Permintaan
                     </button>
@@ -110,8 +110,8 @@
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-[26px] text-gold-accent">history</span>
                     <div>
-                        <h3 class="font-title-md text-title-md text-on-surface premium-heading">Riwayat Permintaan</h3>
-                        <p class="font-label-sm text-[11px] text-on-surface-variant mt-0.5">Daftar permintaan yang pernah diajukan beserta statusnya.</p>
+                        <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Riwayat Permintaan') }}</h3>
+                        <p class="font-label-sm text-[11px] text-on-surface-variant mt-0.5">{{ __('Daftar permintaan yang pernah diajukan beserta statusnya.') }}</p>
                     </div>
                 </div>
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
@@ -128,7 +128,7 @@
                     </div>
                     <div class="relative w-full lg:w-72">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                        <input type="text" placeholder="Cari judul permintaan..." data-table-search class="raliva-search" />
+                        <input type="text" placeholder="{{ __('Cari judul permintaan...') }}" data-table-search class="raliva-search" />
                     </div>
                 </div>
             </div>
@@ -138,12 +138,12 @@
                     <thead>
                         <tr class="border-b border-muted-border text-left">
                             <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center w-12">No</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Jenis</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Judul</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Jenis') }}</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Judul') }}</th>
                             <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tanggal</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Admin</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Catatan</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Tanggal') }}</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Admin') }}</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Catatan') }}</th>
                         </tr>
                     </thead>
                     <tbody>
