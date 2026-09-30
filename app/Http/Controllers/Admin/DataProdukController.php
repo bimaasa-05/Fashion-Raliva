@@ -70,15 +70,6 @@ class DataProdukController extends Controller
             return back()->with('error', 'Admin belum ditugaskan ke toko mana pun.');
         }
 
-        // Gate kuota di paling atas: input tidak hilang, halaman buka popup Beli Slot / Beli Paket.
-        if (! \App\Support\SlotService::canAdd((int) $storeId)) {
-            $total = \App\Support\SlotService::totalQuota((int) $storeId);
-            $used = \App\Support\SlotService::usedSlots((int) $storeId);
-
-            return redirect()->route('admin.produk', ['slot_habis' => 1])->withInput()
-                ->with('error', sprintf('Kuota slot produk penuh (%d/%d). Pilih Beli Slot atau Beli Paket di bawah.', $used, $total));
-        }
-
         $request->merge([
             'harga_dasar' => str_replace('.', '', (string) $request->input('harga_dasar', '')),
             'hpp' => str_replace('.', '', (string) $request->input('hpp', '')),
@@ -130,6 +121,16 @@ class DataProdukController extends Controller
         $warna = WarnaPalet::normalizeOptionalSubmissionOrFail($request->input('warna', []), $request->input('warna_hex', []));
         $data['warna'] = $warna['names'];
         $data['warna_hex'] = $warna['hexes'];
+
+        // Gate kuota setelah validasi: form valid + kuota habis = input tidak hilang,
+        // halaman buka popup Beli Slot / Beli Paket. Form tidak valid = error validasi biasa.
+        if (! \App\Support\SlotService::canAdd((int) $storeId)) {
+            $total = \App\Support\SlotService::totalQuota((int) $storeId);
+            $used = \App\Support\SlotService::usedSlots((int) $storeId);
+
+            return redirect()->route('admin.produk', ['slot_habis' => 1])->withInput()
+                ->with('error', sprintf('Kuota slot produk penuh (%d/%d). Pilih Beli Slot atau Beli Paket di bawah.', $used, $total));
+        }
 
         // Unggah foto dulu (kumpulkan path), lalu 1 transaksi untuk semua baris DB master.
         $photoPaths = [];
