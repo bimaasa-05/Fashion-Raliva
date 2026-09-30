@@ -103,6 +103,36 @@ class QcAutoShortfallTest extends TestCase
             'Tidak boleh potong dua kali.');
     }
 
+    public function test_utama_warehouse_is_prioritized(): void
+    {
+        // Gudang utama (dibuat pertama) stoknya lebih kecil dari cabang —
+        // yang dipakai tetap gudang utama.
+        [$produksi, $gudang, $order, $variants] = $this->orderSiapQc('prio-', 50, 50);
+        $utamaId = WarehouseStock::whereIn('product_variant_id', $variants)->min('warehouse_id');
+        $utamaNama = Warehouse::find($utamaId)->nama_gudang;
+        $cabang = Warehouse::create([
+            'store_id' => $order->store_id, 'nama_gudang' => 'Cabang Uji Prio',
+            'alamat' => 'Jl. Cabang', 'status' => Warehouse::STATUS_AKTIF,
+        ]);
+        WarehouseStock::create([
+            'warehouse_id' => $cabang->warehouse_id,
+            'product_variant_id' => $variants[0],
+            'jumlah_stok' => 200,
+        ]);
+
+        $this->actingAs($produksi)->post(
+            route('produksi.pemeriksaan-kualitas.store', ['order' => $order->order_id]),
+            ['jumlah_lulus' => 5]
+        )->assertSessionHasNoErrors();
+
+        $movement = StockMovement::where('sumber_id', $order->order_id)
+            ->where('alasan', 'like', 'Penutup kekurangan%')
+            ->firstOrFail();
+        $this->assertSame($utamaId, (int) $movement->warehouse_id, 'Gudang utama dipakai duluan.');
+        $this->assertStringContainsString($utamaNama, $movement->alasan);
+        $this->assertSame($utamaNama, $order->fresh()->namaGudangShortfall());
+    }
+
     /**
      * Order 6 pcs (4+2) status menunggu_qc.
      *
