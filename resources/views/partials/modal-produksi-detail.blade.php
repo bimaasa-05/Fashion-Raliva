@@ -107,9 +107,13 @@
                         </div>
                     @endif
                 @elseif (!is_null($o->jumlah_berhasil) || !is_null($o->jumlah_gagal))
+                    @php
+                        $dariGudangModal = (int) $o->items->sum('qty_dari_gudang');
+                        $namaGudangModal = $dariGudangModal > 0 ? ($o->namaGudangShortfall() ?? 'Gudang') : null;
+                    @endphp
                     <div class="flex justify-between gap-4 pt-2 border-t border-muted-border">
                         <span class="text-on-surface-variant">Hasil Produksi</span>
-                        <span class="text-on-surface text-right"><span class="text-secondary font-bold">{{ $o->jumlah_berhasil ?? 0 }}</span> berhasil • <span class="text-error">{{ $o->jumlah_gagal ?? 0 }}</span> gagal@if ((int) $o->items->sum('qty_dari_gudang') > 0) • <span class="text-gold-accent font-bold">{{ $o->items->sum('qty_dari_gudang') }}</span> dari Gudang@endif</span>
+                        <span class="text-on-surface text-right"><span class="text-secondary font-bold">{{ $o->jumlah_berhasil ?? 0 }}</span> berhasil • <span class="text-error">{{ $o->jumlah_gagal ?? 0 }}</span> gagal @if ($dariGudangModal > 0) • <span class="text-gold-accent font-bold">{{ $dariGudangModal }}</span> dari {{ $namaGudangModal }} @endif</span>
                     </div>
                 @endif
                 @if ($o->qc_perlu_admin_pada)
