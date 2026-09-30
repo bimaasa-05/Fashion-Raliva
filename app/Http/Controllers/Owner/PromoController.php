@@ -63,6 +63,17 @@ class PromoController extends Controller
             'status' => 'aktif',
         ]);
 
+        // Kabar ke pengikut toko: promo baru tayang.
+        $store = OwnerContext::currentStore();
+        if ($store) {
+            $store->notifyFollowers(
+                Notification::TIPE_PROMO,
+                'Promo Baru',
+                sprintf('Toko %s mengeluarkan promo "%s" dengan kode %s.', $store->nama_toko, $validated['nama_promo'], strtoupper($validated['kode_promo'])),
+                route('customer.shop.store', $storeId)
+            );
+        }
+
         Notification::fireSelf(Notification::TIPE_PROMO, 'Promo Ditambahkan', sprintf('Promo "%s" (kode %s) berhasil ditambahkan.', $validated['nama_promo'], strtoupper($validated['kode_promo'])), route('owner.promo'));
 
         return redirect()->route('owner.promo')->with('success', 'Promo berhasil ditambahkan.');

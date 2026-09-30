@@ -124,6 +124,12 @@ class User extends Authenticatable
             ->withTimestamps();
     }
 
+    public function followedStores(): BelongsToMany
+    {
+        return $this->belongsToMany(Store::class, 'store_follows', 'user_id', 'store_id')
+            ->withTimestamps();
+    }
+
     public function warehouseAssignments(): HasMany
     {
         return $this->hasMany(WarehouseStaff::class, 'user_id', 'user_id');

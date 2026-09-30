@@ -674,7 +674,7 @@
                     <path d="M10.7 19v-4.4h2.6V19" />
                 </svg>
             </a>
-            <button id="theme-toggle-btn" aria-label="Toggle theme" title="Mode gelap" type="button"
+            <button id="theme-toggle-btn" aria-label="{{ __('Toggle theme') }}" title="{{ __('Mode gelap') }}" data-title-dark="{{ __('Mode gelap') }}" data-title-light="{{ __('Mode terang') }}" type="button"
                 onclick="toggleTheme()"
                 class="atl-chip w-10 h-10 rounded-full border border-outline bg-surface-container-lowest shadow-sm hover:border-secondary hover:text-secondary flex items-center justify-center">
                 <span class="relative block h-5 w-5">
@@ -921,7 +921,7 @@
         function updateThemeChipTitle() {
             var b = document.getElementById('theme-toggle-btn');
             if (!b) return;
-            b.title = document.documentElement.classList.contains('theme-dark') ? 'Mode terang' : 'Mode gelap';
+            b.title = document.documentElement.classList.contains('theme-dark') ? (b.dataset.titleLight || 'Mode terang') : (b.dataset.titleDark || 'Mode gelap');
         }
         updateThemeChipTitle();
         window.addEventListener('pageshow', function(e) {
