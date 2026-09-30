@@ -173,11 +173,11 @@
 
         <div class="footer">
             @if (($roleFilter ?? 'admin') === 'owner')
-                ROI = laba bersih / total investasi (Modal, Investor, biaya iklan) per pemilik toko.
+                ROI = laba bersih / total investasi. Investasi = modal pribadi Owner/Admin + biaya iklan, bukan dana investor luar.
             @elseif (($roleFilter ?? 'admin') === 'admin')
                 Closing Rate = pesanan selesai / seluruh order yang ditangani. LTV = pendapatan / customer unik yang ditangani. Rating adalah proxy dari ulasan pada order yang diverifikasi karyawan.
             @elseif (($roleFilter ?? 'admin') === 'produksi')
-                Metrik dihitung dari production order yang ditugaskan (assigned_to). Durasi hanya dari order selesai bertanggal valid.
+                Metrik dihitung dari pesanan yang di-accept karyawan (produksi_oleh). Durasi hanya dari order selesai bertanggal valid.
             @else
                 Transfer diatribusikan ke peminta. Akurasi = opname tanpa selisih / total opname.
             @endif

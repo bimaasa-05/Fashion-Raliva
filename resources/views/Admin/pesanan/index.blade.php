@@ -471,6 +471,12 @@
                         <dd class="text-on-surface text-right">
                             {{ $badgeMap[$pesanan->status]['label'] ?? ucfirst($pesanan->status) }}</dd>
                     </div>
+                    @if (!is_null($pesanan->jumlah_berhasil) || !is_null($pesanan->jumlah_gagal) || $pesanan->tanggal_qc || $pesanan->qc_perlu_admin_pada)
+                        <div class="flex justify-between gap-4 pt-3 border-t border-muted-border">
+                            <dt class="text-on-surface-variant shrink-0">Hasil Produksi/QC</dt>
+                            <dd class="text-on-surface text-right">{{ $pesanan->jumlah_berhasil ?? 0 }} berhasil · {{ $pesanan->jumlah_gagal ?? 0 }} gagal{{ (int) $pesanan->items->sum('qty_dari_gudang') > 0 ? ' · '.$pesanan->items->sum('qty_dari_gudang').' dari '.($pesanan->namaGudangShortfall() ?? 'Gudang') : '' }}{{ $pesanan->tanggal_qc ? ' · QC '.$pesanan->tanggal_qc->translatedFormat('d M Y') : '' }}{{ $pesanan->qc_perlu_admin_pada ? ' · Perlu Admin' : '' }}</dd>
+                        </div>
+                    @endif
                 </div>
                 <div
                     class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end gap-3">
@@ -621,6 +627,15 @@
                     <h3 class="font-title-md text-title-md text-on-surface mb-1 text-center">Tanggapan QC Gagal</h3>
                     <p class="text-on-surface-variant text-sm text-center font-mono mb-3">
                         {{ $pesanan->nomor_order ?? '#' . $pesanan->order_id }}</p>
+                    <div
+                        class="bg-surface-container-low border border-muted-border rounded-lg p-3 mb-4 text-xs text-on-surface text-center">
+                        Total: <b>{{ $pesanan->items->sum('quantity') ?? 0 }} pcs</b>
+                        · Berhasil produksi: <b>{{ $pesanan->jumlah_berhasil ?? 0 }}</b>
+                        · Gagal produksi: <b class="text-error">{{ $pesanan->jumlah_gagal ?? 0 }}</b>
+                        @if ((int) $pesanan->items->sum('qty_dari_gudang') > 0)
+                            · Dari {{ $pesanan->namaGudangShortfall() ?? 'Gudang' }}: <b class="text-gold-accent">{{ $pesanan->items->sum('qty_dari_gudang') }}</b>
+                        @endif
+                    </div>
                     <div
                         class="bg-error/5 border border-error/20 rounded-lg p-3 mb-4 text-xs text-on-surface space-y-1">
                         <p><span class="font-bold uppercase text-error">Keterangan Produksi:</span>

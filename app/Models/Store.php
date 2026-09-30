@@ -123,6 +123,11 @@ class Store extends Model
         return $this->hasMany(ProductionOrder::class, 'store_id', 'store_id');
     }
 
+    public function socials(): HasMany
+    {
+        return $this->hasMany(StoreSocial::class, 'store_id', 'store_id');
+    }
+
     protected function casts(): array
     {
         return [

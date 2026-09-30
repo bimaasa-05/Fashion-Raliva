@@ -3,7 +3,7 @@
 @section('title', 'Gudang')
 
 @section('header-title', 'Gudang')
-@section('header-badge', '2 Gudang Aktif')
+@section('header-badge', $warehouses->where('status', 'aktif')->count().' Gudang Aktif')
 @section('header-subtitle', 'Kelola data gudang dan pantau stok di setiap lokasi.')
 
 @section('content')
@@ -58,7 +58,10 @@
     <section>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
             <h2 data-reveal class="font-title-md text-title-md text-on-surface premium-heading">Daftar Gudang</h2>
-            <p data-reveal class="text-xs text-on-surface-variant flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">lock</span> Halaman ini read-only</p>
+            <button type="button" data-modal-open="modal-tambah-gudang" data-reveal
+                class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
+                <span class="material-symbols-outlined text-[18px]">add</span> Tambah Gudang
+            </button>
         </div>
 
         <div data-reveal-group class="grid grid-cols-1 lg:grid-cols-2 gap-section-gap">
@@ -115,6 +118,14 @@
 
                     <div class="flex gap-gutter mt-auto">
                         <button type="button" data-modal-open="modal-gudang-{{ $g->warehouse_id }}" class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Lihat Detail</button>
+                    </div>
+                    <div class="flex gap-gutter">
+                        <button type="button" data-modal-open="modal-edit-gudang-{{ $g->warehouse_id }}" class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Edit</button>
+                        <button type="button" data-modal-open="modal-staff-gudang-{{ $g->warehouse_id }}" class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Petugas</button>
+                        <form method="POST" action="{{ route('owner.gudang.toggle', $g->warehouse_id) }}" class="flex-1" onsubmit="return confirm('{{ $g->status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan' }} gudang {{ $g->nama_gudang }}?');">
+                            @csrf
+                            <button type="submit" class="w-full py-2.5 border rounded-lg text-xs font-semibold transition-colors {{ $g->status === 'aktif' ? 'border-error/30 text-error hover:bg-error/10' : 'border-secondary/30 text-secondary hover:bg-secondary-container/10' }}">{{ $g->status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan' }}</button>
+                        </form>
                     </div>
                 </article>
             @empty
@@ -250,6 +261,104 @@
 </div>
 @endforeach
 
+{{-- Modal Tambah Gudang --}}
+<div id="modal-tambah-gudang" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <form method="POST" action="{{ route('owner.gudang.store') }}" class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+        @csrf
+        <div class="sticky top-0 bg-surface-container-lowest flex items-center justify-between px-6 py-5 border-b border-muted-border">
+            <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Gudang</h3>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div>
+                <label class="block raliva-label mb-2">Nama Gudang *</label>
+                <input name="nama_gudang" type="text" required maxlength="150" placeholder="cth. Gudang Utama Bandung" class="raliva-input" />
+            </div>
+            <div>
+                <label class="block raliva-label mb-2">Alamat</label>
+                <textarea name="alamat" rows="2" maxlength="500" placeholder="Alamat lengkap gudang" class="raliva-textarea"></textarea>
+            </div>
+            <div>
+                <label class="block raliva-label mb-2">Nomor Telepon</label>
+                <input name="nomor_telepon" type="text" maxlength="30" placeholder="08xxxxxxxxxx" class="raliva-input" />
+            </div>
+        </div>
+        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end gap-3">
+            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+            <button type="submit" class="px-5 py-2.5 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium">Simpan Gudang</button>
+        </div>
+    </form>
+</div>
+
+{{-- Modal Edit + Petugas per gudang --}}
+@foreach ($warehouses as $g)
+<div id="modal-edit-gudang-{{ $g->warehouse_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <form method="POST" action="{{ route('owner.gudang.update', $g->warehouse_id) }}" class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+        @csrf
+        @method('PUT')
+        <div class="sticky top-0 bg-surface-container-lowest flex items-center justify-between px-6 py-5 border-b border-muted-border">
+            <h3 class="font-title-md text-title-md text-on-surface premium-heading">Edit Gudang</h3>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div>
+                <label class="block raliva-label mb-2">Nama Gudang *</label>
+                <input name="nama_gudang" type="text" required maxlength="150" value="{{ $g->nama_gudang }}" class="raliva-input" />
+            </div>
+            <div>
+                <label class="block raliva-label mb-2">Alamat</label>
+                <textarea name="alamat" rows="2" maxlength="500" class="raliva-textarea">{{ $g->alamat }}</textarea>
+            </div>
+            <div>
+                <label class="block raliva-label mb-2">Nomor Telepon</label>
+                <input name="nomor_telepon" type="text" maxlength="30" value="{{ $g->nomor_telepon }}" class="raliva-input" />
+            </div>
+        </div>
+        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end gap-3">
+            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+            <button type="submit" class="px-5 py-2.5 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium">Simpan Perubahan</button>
+        </div>
+    </form>
+</div>
+<div id="modal-staff-gudang-{{ $g->warehouse_id }}" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <form method="POST" action="{{ route('owner.gudang.staff', $g->warehouse_id) }}" class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+        @csrf
+        <div class="sticky top-0 bg-surface-container-lowest flex items-center justify-between px-6 py-5 border-b border-muted-border">
+            <div>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Petugas Gudang</h3>
+                <p class="text-xs text-on-surface-variant mt-1">{{ $g->nama_gudang }}</p>
+            </div>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface"><span class="material-symbols-outlined">close</span></button>
+        </div>
+        <div class="p-6 space-y-4">
+            <div>
+                <p class="raliva-label mb-2">Petugas saat ini</p>
+                @forelse ($g->staff as $st)
+                    <p class="text-sm text-on-surface py-1">{{ $st->nama_lengkap ?? '-' }}</p>
+                @empty
+                    <p class="text-sm text-on-surface-variant">Belum ada petugas.</p>
+                @endforelse
+            </div>
+            <div>
+                <label class="block raliva-label mb-2">Tugaskan Staff Gudang *</label>
+                <select name="user_id" required class="raliva-select">
+                    <option value="">— Pilih Staff —</option>
+                    @foreach ($calonPetugas ?? [] as $c)
+                        <option value="{{ $c->user_id }}">{{ $c->nama_lengkap }} ({{ $c->email }})</option>
+                    @endforeach
+                </select>
+            </div>
+        </div>
+        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end gap-3">
+            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+            <button type="submit" class="px-5 py-2.5 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium">Tugaskan</button>
+        </div>
+    </form>
+</div>
+@endforeach
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function(){

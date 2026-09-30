@@ -74,12 +74,14 @@ class Order extends Model
         'tgl_berakhir_produksi',
         'produksi_dimulai_pada',
         'produksi_selesai_pada',
+        'produksi_oleh',
         'produksi_catatan_tolak',
         'jumlah_berhasil',
         'jumlah_gagal',
         'kekurangan_gudang',
         'qc_perlu_admin_pada',
         'qc_perlu_admin_catatan',
+        'qc_admin_catatan',
         'tanggal_qc',
         'tanggal_packing',
         'tipe_order',
@@ -195,5 +197,37 @@ class Order extends Model
     public function qualityChecks(): HasMany
     {
         return $this->hasMany(QualityCheck::class, 'order_id', 'order_id');
+    }
+
+    /**
+     * Movement stok gudang yang menutup kekurangan produksi pesanan ini.
+     */
+    public function shortfallMovements(): HasMany
+    {
+        return $this->hasMany(StockMovement::class, 'sumber_id', 'order_id')
+            ->where('sumber_tipe', StockMovement::SUMBER_ORDER_ITEM)
+            ->where('alasan', 'like', 'Penutup kekurangan%');
+    }
+
+    /**
+     * Nama gudang sumber pcs yang diambil untuk pesanan ini.
+     */
+    public function namaGudangShortfall(): ?string
+    {
+        if (! $this->relationLoaded('shortfallMovements')) {
+            $this->load('shortfallMovements.warehouse');
+        }
+
+        $nama = $this->shortfallMovements
+            ->pluck('warehouse.nama_gudang')
+            ->filter()
+            ->unique()
+            ->values();
+
+        if ($nama->isEmpty()) {
+            return null;
+        }
+
+        return $nama->count() === 1 ? $nama->first() : $nama->count().' gudang';
     }
 }

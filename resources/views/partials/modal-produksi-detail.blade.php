@@ -55,7 +55,8 @@
             <div class="bg-surface-container-low rounded-lg p-4 space-y-2">
                 <div class="flex justify-between gap-4"><span class="text-on-surface-variant">Pelanggan</span><span class="text-on-surface text-right">{{ $o->checkout?->nama_penerima ?? $o->checkout?->user?->nama_lengkap ?? '-' }}</span></div>
                 <div class="flex justify-between gap-4"><span class="text-on-surface-variant">Toko</span><span class="text-on-surface text-right">{{ $o->store?->nama_toko ?? '-' }}</span></div>
-                <div class="flex justify-between gap-4"><span class="text-on-surface-variant">Status</span><span class="text-on-surface text-right capitalize">{{ str_replace('_', ' ', $o->status) }}</span></div>
+                <div class="flex justify-between gap-4"><span class="text-on-surface-variant">Status Produksi</span><span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-[10px] uppercase tracking-wider">{{ str_replace('_', ' ', $o->status) }}</span></div>
+                <div class="flex justify-between gap-4"><span class="text-on-surface-variant">Status QC</span><span class="inline-flex items-center px-2 py-0.5 rounded-full font-label-sm text-[10px] uppercase tracking-wider {{ $o->qc_perlu_admin_pada ? 'bg-error/10 text-error border border-error/25' : ($o->tanggal_qc ? 'bg-tertiary-container/20 text-tertiary border border-tertiary/25' : 'bg-surface-container text-on-surface-variant border border-muted-border') }}">{{ $o->qc_perlu_admin_pada ? 'Perlu Admin' : ($o->tanggal_qc ? 'Lulus' : 'Menunggu QC') }}</span></div>
                 <div>
                     <p class="text-on-surface-variant mb-1">Produk &amp; Jumlah</p>
                     <ul class="space-y-1">
@@ -98,6 +99,34 @@
                     <div class="flex justify-between gap-4 pt-2 border-t border-muted-border">
                         <span class="text-on-surface-variant">Hasil QC</span>
                         <span class="text-on-surface text-right"><span class="text-secondary font-bold">{{ $qcRow->jumlah_lulus }}</span> lulus • <span class="text-error">{{ $qcRow->jumlah_gagal }}</span> gagal</span>
+                    </div>
+                    @if ($qcRow->catatan)
+                        <div class="pt-2">
+                            <p class="text-on-surface-variant mb-1">Catatan QC Produksi</p>
+                            <p class="text-on-surface italic">“{{ $qcRow->catatan }}”</p>
+                        </div>
+                    @endif
+                @elseif (!is_null($o->jumlah_berhasil) || !is_null($o->jumlah_gagal))
+                    @php
+                        $dariGudangModal = (int) $o->items->sum('qty_dari_gudang');
+                        $namaGudangModal = $dariGudangModal > 0 ? ($o->namaGudangShortfall() ?? 'Gudang') : null;
+                    @endphp
+                    <div class="flex justify-between gap-4 pt-2 border-t border-muted-border">
+                        <span class="text-on-surface-variant">Hasil Produksi</span>
+                        <span class="text-on-surface text-right"><span class="text-secondary font-bold">{{ $o->jumlah_berhasil ?? 0 }}</span> berhasil • <span class="text-error">{{ $o->jumlah_gagal ?? 0 }}</span> gagal @if ($dariGudangModal > 0) • <span class="text-gold-accent font-bold">{{ $dariGudangModal }}</span> dari {{ $namaGudangModal }} @endif</span>
+                    </div>
+                @endif
+                @if ($o->qc_perlu_admin_pada)
+                    <div class="bg-error/5 border border-error/20 rounded-lg p-3 mt-2 text-xs space-y-1">
+                        <p><span class="font-bold uppercase text-error">QC Gagal — perlu Admin:</span>
+                            <span class="text-on-surface">{{ $o->qc_perlu_admin_catatan }}</span></p>
+                        <p class="text-on-surface-variant">Sejak {{ $o->qc_perlu_admin_pada?->translatedFormat('d M Y H:i') }}</p>
+                    </div>
+                @endif
+                @if ($o->qc_admin_catatan)
+                    <div class="pt-2">
+                        <p class="text-on-surface-variant mb-1">Catatan Admin untuk Produksi</p>
+                        <p class="text-on-surface italic">“{{ $o->qc_admin_catatan }}”</p>
                     </div>
                 @endif
                 @if (($o->kekurangan_gudang ?? 0) > 0)

@@ -10,7 +10,9 @@ use App\Models\Role;
 use App\Models\StoreStaff;
 use App\Services\NotificationService;
 use App\Support\ActivityLogger;
+use App\Support\ShortfallStockAllocator;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class PemeriksaanKualitasController extends Controller
 {
@@ -25,7 +27,7 @@ class PemeriksaanKualitasController extends Controller
 
         $orders = Order::whereIn('store_id', $storeIds)
             ->where('status', $tab === 'siap' ? Order::STATUS_SIAP_KIRIM : Order::STATUS_MENUNGGU_QC)
-            ->with(['items.productVariant.product', 'bahanList', 'checkout', 'store', 'qualityChecks', 'shipments'])
+            ->with(['items.productVariant.product', 'bahanList', 'checkout', 'store', 'qualityChecks', 'shipments', 'shortfallMovements.warehouse'])
             ->orderByDesc('created_at')
             ->paginate(15);
 
@@ -61,47 +63,80 @@ class PemeriksaanKualitasController extends Controller
             return back()->with('toast', ['message' => "Jumlah lulus melebihi total pesanan ({$totalQty} pcs).", 'icon' => 'gpp_maybe']);
         }
 
-        // Gagal dihitung otomatis; kekurangan (lulus < total) diambil dari Gudang.
+        // Gagal dihitung otomatis; kekurangan (lulus < total) langsung diambil dari Gudang.
         $gagal = max(0, $totalQty - (int) $data['jumlah_lulus']);
         $kurang = max(0, $totalQty - (int) $data['jumlah_lulus']);
 
         $qcStatus = $gagal > 0 ? QualityCheck::STATUS_SEBAGIAN : QualityCheck::STATUS_LULUS;
 
-        QualityCheck::create([
-            'order_id' => $order->order_id,
-            'checked_by' => ActivityLogger::resolveActorId(),
-            'jumlah_lulus' => $data['jumlah_lulus'],
-            'jumlah_gagal' => $gagal,
-            'status' => $qcStatus,
-            'catatan' => $data['catatan'] ?? null,
-            'diperiksa_pada' => now(),
-        ]);
+        $terambil = 0;
+        $sisa = $kurang;
+        $gudangSumber = null;
+
+        DB::transaction(function () use ($order, $data, $totalQty, $gagal, $kurang, $storeIds, $qcStatus, &$terambil, &$sisa, &$gudangSumber) {
+            QualityCheck::create([
+                'order_id' => $order->order_id,
+                'checked_by' => ActivityLogger::resolveActorId(),
+                'jumlah_lulus' => $data['jumlah_lulus'],
+                'jumlah_gagal' => $gagal,
+                'status' => $qcStatus,
+                'catatan' => $data['catatan'] ?? null,
+                'diperiksa_pada' => now(),
+            ]);
+
+            // Ambil semaksimal mungkin dari stok gudang (partial); sisa jadi tugas Gudang.
+            if ($kurang > 0) {
+                $hasil = ShortfallStockAllocator::allocate($order, $kurang, $storeIds, true);
+                $terambil = $hasil['terambil'];
+                $sisa = $hasil['sisa'];
+                $gudangSumber = $hasil['gudang'];
+            }
+
+            $order->update([
+                'status' => Order::STATUS_SIAP_KIRIM,
+                // Barang siap kirim = lulus produksi + yang diambil dari gudang (cap total).
+                'jumlah_berhasil' => min($totalQty, (int) $data['jumlah_lulus'] + $terambil),
+                // jumlah_gagal tetap cacat produksi (bukan sisa kirim).
+                'jumlah_gagal' => $gagal,
+                'kekurangan_gudang' => $sisa,
+                'tanggal_qc' => now(),
+                'tanggal_packing' => now(),
+            ]);
+        });
 
         $lama = $order->only(['status']);
-        $order->update([
-            'status' => Order::STATUS_SIAP_KIRIM,
-            'jumlah_berhasil' => $data['jumlah_lulus'],
-            'jumlah_gagal' => $gagal,
-            'kekurangan_gudang' => $kurang,
-            'tanggal_qc' => now(),
-            'tanggal_packing' => now(),
-        ]);
-
         ActivityLogger::log('produksi.qc.complete', Order::class, $order->order_id, $lama,
-            ['status' => Order::STATUS_SIAP_KIRIM, 'lulus' => $data['jumlah_lulus'], 'gagal' => $gagal, 'kekurangan_gudang' => $kurang],
-            sprintf('QC + Packing selesai untuk pesanan %s. Lulus: %d, Gagal (otomatis): %d, Kurang dari Gudang: %d.', $order->nomor_order, $data['jumlah_lulus'], $gagal, $kurang));
+            ['status' => Order::STATUS_SIAP_KIRIM, 'lulus' => $data['jumlah_lulus'], 'gagal' => $gagal, 'kekurangan_gudang' => $sisa, 'dari_gudang' => $terambil, 'gudang_sumber' => $gudangSumber],
+            sprintf('QC + Packing selesai untuk pesanan %s. Lulus: %d, Gagal (otomatis): %d, Dari Gudang: %d%s, Sisa Kurang: %d.', $order->nomor_order, $data['jumlah_lulus'], $gagal, $terambil, $gudangSumber ? ' ('.$gudangSumber.')' : '', $sisa));
 
-        if ($kurang > 0) {
+        if ($sisa > 0) {
             NotificationService::sendToRoleInStores(Role::GUDANG, [$order->store_id], Notification::TIPE_SISTEM,
                 'Kekurangan Produksi — Siapkan dari Gudang',
-                sprintf('Pesanan %s kurang %d pcs dari produksi. Siapkan dari stok gudang.', $order->nomor_order, $kurang),
+                sprintf('Pesanan %s kurang %d pcs dari produksi. Siapkan dari stok gudang.', $order->nomor_order, $sisa),
                 ActivityLogger::resolveActorId(),
                 route('gudang.kekurangan'));
             NotificationService::sendToRoleInStores(Role::ADMIN, [$order->store_id], Notification::TIPE_SISTEM,
                 'Kekurangan Produksi Diambil dari Gudang',
-                sprintf('Pesanan %s kurang %d pcs; diambil dari stok gudang.', $order->nomor_order, $kurang),
+                sprintf('Pesanan %s kurang %d pcs; diambil dari stok gudang.', $order->nomor_order, $sisa),
                 ActivityLogger::resolveActorId(),
                 route('admin.pesanan'));
+        } elseif ($terambil > 0) {
+            NotificationService::sendToRoleInStores(Role::GUDANG, [$order->store_id], Notification::TIPE_SISTEM,
+                'Kekurangan Terpenuhi Otomatis dari Gudang',
+                sprintf('Pesanan %s — %d pcs kekurangan diambil otomatis dari stok gudang%s saat QC.', $order->nomor_order, $terambil, $gudangSumber ? ' ('.$gudangSumber.')' : ''),
+                ActivityLogger::resolveActorId(),
+                route('gudang.kekurangan'));
+            NotificationService::sendToRoleInStores(Role::ADMIN, [$order->store_id], Notification::TIPE_SISTEM,
+                'Kekurangan Terpenuhi Otomatis dari Gudang',
+                sprintf('Pesanan %s kurang %d pcs dan sudah terpenuhi otomatis dari stok gudang%s.', $order->nomor_order, $terambil, $gudangSumber ? ' ('.$gudangSumber.')' : ''),
+                ActivityLogger::resolveActorId(),
+                route('admin.pesanan'));
+            NotificationService::sendToRoleInStores(Role::PRODUKSI, [$order->store_id], Notification::TIPE_SISTEM,
+                'Kekurangan Terpenuhi Otomatis dari Gudang',
+                sprintf('Pesanan %s — %d pcs kekurangan sudah diambil dari stok gudang%s. Silakan dipacking ulang.',
+                    $order->nomor_order, $terambil, $gudangSumber ? ' ('.$gudangSumber.')' : ''),
+                ActivityLogger::resolveActorId(),
+                route('produksi.pemeriksaan-kualitas'));
         }
 
         NotificationService::sendToRole(Role::ADMIN, Notification::TIPE_SISTEM,

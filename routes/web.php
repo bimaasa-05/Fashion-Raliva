@@ -53,6 +53,7 @@ use App\Http\Controllers\Gudang\StokRusakController as GudangStokRusakController
 use App\Http\Controllers\Owner\DashboardController as OwnerDashboardController;
 use App\Http\Controllers\Owner\DataPelangganController;
 use App\Http\Controllers\Owner\DataTokoController;
+use App\Http\Controllers\Owner\StoreSocialController;
 use App\Http\Controllers\Owner\GudangController as OwnerGudangController;
 use App\Http\Controllers\Owner\KaryawanController;
 use App\Http\Controllers\Owner\KelolaSlotController;
@@ -356,6 +357,8 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/pengaturan-sistem/help/faq', [PengaturanSistemController::class, 'storeHelpFaq'])->name('pengaturan-sistem.help.faq.store');
     Route::put('/pengaturan-sistem/help/faq/{helpFaq}', [PengaturanSistemController::class, 'updateHelpFaq'])->name('pengaturan-sistem.help.faq.update');
     Route::delete('/pengaturan-sistem/help/faq/{helpFaq}', [PengaturanSistemController::class, 'destroyHelpFaq'])->name('pengaturan-sistem.help.faq.destroy');
+    Route::post('/pengaturan-sistem/sosmed', [PengaturanSistemController::class, 'storeSosmed'])->name('pengaturan-sistem.sosmed.store');
+    Route::post('/pengaturan-sistem/sosmed/{platform}/toggle', [PengaturanSistemController::class, 'toggleSosmed'])->name('pengaturan-sistem.sosmed.toggle');
     Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
     Route::match(['put', 'post'], '/profil', [ProfilController::class, 'updateProfile'])->name('profil.update');
     Route::match(['put', 'post'], '/profil/password', [ProfilController::class, 'updatePassword'])->name('profil.password');
@@ -499,6 +502,8 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::get('/dashboard', [OwnerDashboardController::class, 'index'])->name('dashboard');
     Route::get('/data-toko', [DataTokoController::class, 'index'])->name('data-toko');
     Route::put('/data-toko', [DataTokoController::class, 'update'])->name('data-toko.update');
+    Route::post('/data-toko/sosmed', [StoreSocialController::class, 'store'])->name('data-toko.sosmed.store');
+    Route::delete('/data-toko/sosmed/{social}', [StoreSocialController::class, 'destroy'])->name('data-toko.sosmed.destroy');
     Route::get('/pengajuan-toko', [PengajuanTokoController::class, 'index'])->name('pengajuan-toko');
     Route::post('/pengajuan-toko', [PengajuanTokoController::class, 'store'])->name('pengajuan-toko.store');
     Route::post('/pengajuan-toko/reupload', [PengajuanTokoController::class, 'reupload'])->name('pengajuan-toko.reupload');
@@ -541,6 +546,10 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::get('/gudang', [OwnerGudangController::class, 'index'])->name('gudang');
     Route::post('/gudang/{stockTransfer}/setujui', [OwnerGudangController::class, 'setujui'])->name('gudang.setujui');
     Route::post('/gudang/{stockTransfer}/tolak', [OwnerGudangController::class, 'tolak'])->name('gudang.tolak');
+    Route::post('/gudang', [OwnerGudangController::class, 'store'])->name('gudang.store');
+    Route::put('/gudang/{warehouse}', [OwnerGudangController::class, 'update'])->name('gudang.update');
+    Route::post('/gudang/{warehouse}/toggle', [OwnerGudangController::class, 'toggle'])->name('gudang.toggle');
+    Route::post('/gudang/{warehouse}/staff', [OwnerGudangController::class, 'assignStaff'])->name('gudang.staff');
     Route::get('/komplain', [OwnerKomplainController::class, 'index'])->name('komplain');
     Route::get('/komplain/{komplain}/messages', [OwnerKomplainController::class, 'messages'])->name('komplain.messages');
     Route::post('/komplain/{komplain}/messages', [OwnerKomplainController::class, 'storeMessage'])->name('komplain.messages.store');

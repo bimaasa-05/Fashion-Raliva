@@ -24,10 +24,10 @@ class OrderTrackingPickupTest extends TestCase
             ->get(route('customer.order-tracking', ['order' => $order->order_id]));
 
         $response->assertOk();
-        $response->assertSee('Siap Diambil', false);
-        $response->assertSee('Siap diambil', false);
-        $response->assertSee('Ambil di', false);
-        $response->assertDontSee('Nomor Resi', false);
+        $response->assertSee('Ready for Pickup', false);
+        $response->assertSee('Ready for pickup', false);
+        $response->assertSee('Pick up at', false);
+        $response->assertDontSee('Receipt No.', false);
     }
 
     public function test_delivery_order_keeps_courier_branch(): void
@@ -39,8 +39,8 @@ class OrderTrackingPickupTest extends TestCase
             ->get(route('customer.order-tracking', ['order' => $order->order_id]));
 
         $response->assertOk();
-        $response->assertSee('Dikemas', false);
-        $response->assertDontSee('Siap Diambil', false);
+        $response->assertSee('Packed', false);
+        $response->assertDontSee('Ready for Pickup', false);
     }
 
     public function test_customer_refund_submission_route_is_removed(): void

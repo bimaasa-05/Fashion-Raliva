@@ -42,7 +42,7 @@ class QcTabRincianGudangTest extends TestCase
 
         $response->assertOk();
         $response->assertSee($siap->nomor_order, false);
-        $response->assertSee('+1 dari Gudang', false);
+        $response->assertSee('−1 masih kurang', false);
         $response->assertDontSee($menunggu->nomor_order, false);
         $response->assertDontSee('modal-qc-' . $siap->order_id, false);
         $response->assertDontSee('Gagal — Hubungi Admin', false);

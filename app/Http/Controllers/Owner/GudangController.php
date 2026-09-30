@@ -43,7 +43,117 @@ class GudangController extends Controller
                 ->get()
             : collect();
 
-        return view('Owner.gudang.index', compact('warehouses', 'summary', 'menungguPersetujuan'));
+        $calonPetugas = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', Role::GUDANG))
+            ->where('status', 'aktif')
+            ->orderBy('nama_lengkap')
+            ->get(['user_id', 'nama_lengkap', 'email']);
+
+        return view('Owner.gudang.index', compact('warehouses', 'summary', 'menungguPersetujuan', 'calonPetugas'));
+    }
+
+    public function store(Request $request): RedirectResponse
+    {
+        $storeId = OwnerContext::firstStoreId();
+        if (! $storeId) {
+            return back()->with('error', 'Belum ada toko untuk ditambah gudang.');
+        }
+
+        $data = $request->validate([
+            'nama_gudang' => ['required', 'string', 'max:150'],
+            'alamat' => ['nullable', 'string', 'max:500'],
+            'nomor_telepon' => ['nullable', 'string', 'max:30'],
+        ], [
+            'nama_gudang.required' => 'Nama gudang wajib diisi.',
+        ]);
+
+        Warehouse::create([
+            'store_id' => $storeId,
+            'nama_gudang' => trim($data['nama_gudang']),
+            'alamat' => $data['alamat'] ?? null,
+            'nomor_telepon' => $data['nomor_telepon'] ?? null,
+            'status' => Warehouse::STATUS_AKTIF,
+        ]);
+
+        return back()->with('success', 'Gudang "'.$data['nama_gudang'].'" ditambahkan.');
+    }
+
+    public function update(Request $request, Warehouse $warehouse): RedirectResponse
+    {
+        if (! OwnerContext::canAccessStore($warehouse->store_id)) {
+            return back()->with('error', 'Gudang ini di luar toko Anda.');
+        }
+
+        $data = $request->validate([
+            'nama_gudang' => ['required', 'string', 'max:150'],
+            'alamat' => ['nullable', 'string', 'max:500'],
+            'nomor_telepon' => ['nullable', 'string', 'max:30'],
+        ], [
+            'nama_gudang.required' => 'Nama gudang wajib diisi.',
+        ]);
+
+        $warehouse->update([
+            'nama_gudang' => trim($data['nama_gudang']),
+            'alamat' => $data['alamat'] ?? null,
+            'nomor_telepon' => $data['nomor_telepon'] ?? null,
+        ]);
+
+        return back()->with('success', 'Data gudang diperbarui.');
+    }
+
+    public function toggle(Request $request, Warehouse $warehouse): RedirectResponse
+    {
+        if (! OwnerContext::canAccessStore($warehouse->store_id)) {
+            return back()->with('error', 'Gudang ini di luar toko Anda.');
+        }
+
+        if ($warehouse->status === Warehouse::STATUS_AKTIF) {
+            $aktifLain = Warehouse::where('store_id', $warehouse->store_id)
+                ->where('status', Warehouse::STATUS_AKTIF)
+                ->where('warehouse_id', '!=', $warehouse->warehouse_id)
+                ->exists();
+            if (! $aktifLain) {
+                return back()->with('error', 'Tidak bisa menonaktifkan satu-satunya gudang aktif.');
+            }
+            $stok = (int) \App\Models\WarehouseStock::where('warehouse_id', $warehouse->warehouse_id)->sum('jumlah_stok');
+            if ($stok > 0) {
+                return back()->with('error', 'Gudang masih menyimpan '.$stok.' pcs stok. Pindahkan dulu sebelum dinonaktifkan.');
+            }
+            $warehouse->update(['status' => Warehouse::STATUS_NONAKTIF]);
+
+            return back()->with('success', 'Gudang dinonaktifkan.');
+        }
+
+        $warehouse->update(['status' => Warehouse::STATUS_AKTIF]);
+
+        return back()->with('success', 'Gudang diaktifkan kembali.');
+    }
+
+    public function assignStaff(Request $request, Warehouse $warehouse): RedirectResponse
+    {
+        if (! OwnerContext::canAccessStore($warehouse->store_id)) {
+            return back()->with('error', 'Gudang ini di luar toko Anda.');
+        }
+
+        $data = $request->validate([
+            'user_id' => ['required', 'integer', 'exists:users,user_id'],
+        ], [
+            'user_id.required' => 'Pilih staff gudang.',
+        ]);
+
+        $user = \App\Models\User::where('user_id', $data['user_id'])
+            ->whereHas('role', fn ($q) => $q->where('nama_role', Role::GUDANG))
+            ->where('status', 'aktif')
+            ->first();
+        if (! $user) {
+            return back()->with('error', 'User harus staff Gudang yang aktif.');
+        }
+
+        \App\Models\WarehouseStaff::updateOrCreate(
+            ['warehouse_id' => $warehouse->warehouse_id, 'user_id' => $user->user_id],
+            ['tanggal_penugasan' => now(), 'status' => 'aktif']
+        );
+
+        return back()->with('success', $user->nama_lengkap.' ditugaskan ke '.$warehouse->nama_gudang.'.');
     }
 
     public function setujui(Request $request, StockTransfer $stockTransfer): RedirectResponse

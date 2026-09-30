@@ -342,6 +342,24 @@
 </div>
 </div>
 </div>
+<!-- Social Media -->
+<div class="border border-outline-variant rounded-lg p-md card-premium">
+<div class="info-row">
+<span class="material-symbols-outlined text-[22px]">share</span>
+<div class="min-w-0 flex-1">
+<p class="font-body-sm text-body-sm font-semibold text-on-surface">{{ __('Social Media') }}</p>
+@if(($storeSocials ?? collect())->isNotEmpty())
+<div class="mt-xs space-y-xs">
+@foreach($storeSocials as $social)
+<a href="{{ $social->url }}" target="_blank" rel="noopener" class="block font-body-sm text-body-sm text-[var(--chrome-accent)] hover:underline truncate">{{ $social->label() }}</a>
+@endforeach
+</div>
+@else
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('No social media yet') }}</p>
+@endif
+</div>
+</div>
+</div>
 </div>
 <!-- Policies -->
 <div class="mt-lg border-t border-outline-variant pt-lg">
