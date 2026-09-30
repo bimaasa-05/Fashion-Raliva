@@ -102,10 +102,16 @@ class ManajemenTokoController extends Controller
             ]);
         }
 
-        $dokumenValid = StoreDocument::where('store_id', $toko->store_id)->where('status', '!=', 'ditolak')->count();
-        if ($dokumenValid < 3) {
+        // Dokumen wajib pengajuan toko hanya KTP (NPWP, foto depan, dan SIU
+        // opsional), jadi persetujuan mensyaratkan KTP yang sudah diunggah
+        // dan tidak berstatus ditolak.
+        $ktpValid = StoreDocument::where('store_id', $toko->store_id)
+            ->where('jenis', 'ktp')
+            ->where('status', '!=', 'ditolak')
+            ->exists();
+        if (! $ktpValid) {
             return back()->with('toast', [
-                'message' => 'Minimal 3 dokumen valid diperlukan sebelum menyetujui toko (saat ini '.$dokumenValid.').',
+                'message' => 'Dokumen KTP wajib sudah diunggah dan tidak ditolak sebelum menyetujui toko.',
                 'icon' => 'gpp_maybe',
             ]);
         }
