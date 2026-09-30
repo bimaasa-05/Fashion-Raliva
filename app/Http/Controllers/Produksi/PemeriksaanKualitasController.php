@@ -10,7 +10,6 @@ use App\Models\Role;
 use App\Models\StoreStaff;
 use App\Services\NotificationService;
 use App\Support\ActivityLogger;
-use App\Support\ShortfallStockAllocator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -63,17 +62,14 @@ class PemeriksaanKualitasController extends Controller
             return back()->with('toast', ['message' => "Jumlah lulus melebihi total pesanan ({$totalQty} pcs).", 'icon' => 'gpp_maybe']);
         }
 
-        // Gagal dihitung otomatis; kekurangan (lulus < total) langsung diambil dari Gudang.
+        // Gagal dihitung otomatis; kekurangan (lulus < total) dicatat untuk
+        // disiapkan manual oleh Gudang lewat menu Kekurangan.
         $gagal = max(0, $totalQty - (int) $data['jumlah_lulus']);
         $kurang = max(0, $totalQty - (int) $data['jumlah_lulus']);
 
         $qcStatus = $gagal > 0 ? QualityCheck::STATUS_SEBAGIAN : QualityCheck::STATUS_LULUS;
 
-        $terambil = 0;
-        $sisa = $kurang;
-        $gudangSumber = null;
-
-        DB::transaction(function () use ($order, $data, $totalQty, $gagal, $kurang, $storeIds, $qcStatus, &$terambil, &$sisa, &$gudangSumber) {
+        DB::transaction(function () use ($order, $data, $totalQty, $gagal, $kurang, $qcStatus) {
             QualityCheck::create([
                 'order_id' => $order->order_id,
                 'checked_by' => ActivityLogger::resolveActorId(),
@@ -84,21 +80,12 @@ class PemeriksaanKualitasController extends Controller
                 'diperiksa_pada' => now(),
             ]);
 
-            // Ambil semaksimal mungkin dari stok gudang (partial); sisa jadi tugas Gudang.
-            if ($kurang > 0) {
-                $hasil = ShortfallStockAllocator::allocate($order, $kurang, $storeIds, true);
-                $terambil = $hasil['terambil'];
-                $sisa = $hasil['sisa'];
-                $gudangSumber = $hasil['gudang'];
-            }
-
             $order->update([
                 'status' => Order::STATUS_SIAP_KIRIM,
-                // Barang siap kirim = lulus produksi + yang diambil dari gudang (cap total).
-                'jumlah_berhasil' => min($totalQty, (int) $data['jumlah_lulus'] + $terambil),
+                'jumlah_berhasil' => $data['jumlah_lulus'],
                 // jumlah_gagal tetap cacat produksi (bukan sisa kirim).
                 'jumlah_gagal' => $gagal,
-                'kekurangan_gudang' => $sisa,
+                'kekurangan_gudang' => $kurang,
                 'tanggal_qc' => now(),
                 'tanggal_packing' => now(),
             ]);
@@ -106,37 +93,20 @@ class PemeriksaanKualitasController extends Controller
 
         $lama = $order->only(['status']);
         ActivityLogger::log('produksi.qc.complete', Order::class, $order->order_id, $lama,
-            ['status' => Order::STATUS_SIAP_KIRIM, 'lulus' => $data['jumlah_lulus'], 'gagal' => $gagal, 'kekurangan_gudang' => $sisa, 'dari_gudang' => $terambil, 'gudang_sumber' => $gudangSumber],
-            sprintf('QC + Packing selesai untuk pesanan %s. Lulus: %d, Gagal (otomatis): %d, Dari Gudang: %d%s, Sisa Kurang: %d.', $order->nomor_order, $data['jumlah_lulus'], $gagal, $terambil, $gudangSumber ? ' ('.$gudangSumber.')' : '', $sisa));
+            ['status' => Order::STATUS_SIAP_KIRIM, 'lulus' => $data['jumlah_lulus'], 'gagal' => $gagal, 'kekurangan_gudang' => $kurang],
+            sprintf('QC + Packing selesai untuk pesanan %s. Lulus: %d, Gagal (otomatis): %d, Kurang dari Gudang: %d.', $order->nomor_order, $data['jumlah_lulus'], $gagal, $kurang));
 
-        if ($sisa > 0) {
+        if ($kurang > 0) {
             NotificationService::sendToRoleInStores(Role::GUDANG, [$order->store_id], Notification::TIPE_SISTEM,
                 'Kekurangan Produksi — Siapkan dari Gudang',
-                sprintf('Pesanan %s kurang %d pcs dari produksi. Siapkan dari stok gudang.', $order->nomor_order, $sisa),
+                sprintf('Pesanan %s kurang %d pcs dari produksi. Siapkan dari stok gudang.', $order->nomor_order, $kurang),
                 ActivityLogger::resolveActorId(),
                 route('gudang.kekurangan'));
             NotificationService::sendToRoleInStores(Role::ADMIN, [$order->store_id], Notification::TIPE_SISTEM,
                 'Kekurangan Produksi Diambil dari Gudang',
-                sprintf('Pesanan %s kurang %d pcs; diambil dari stok gudang.', $order->nomor_order, $sisa),
+                sprintf('Pesanan %s kurang %d pcs; diambil dari stok gudang.', $order->nomor_order, $kurang),
                 ActivityLogger::resolveActorId(),
                 route('admin.pesanan'));
-        } elseif ($terambil > 0) {
-            NotificationService::sendToRoleInStores(Role::GUDANG, [$order->store_id], Notification::TIPE_SISTEM,
-                'Kekurangan Terpenuhi Otomatis dari Gudang',
-                sprintf('Pesanan %s — %d pcs kekurangan diambil otomatis dari stok gudang%s saat QC.', $order->nomor_order, $terambil, $gudangSumber ? ' ('.$gudangSumber.')' : ''),
-                ActivityLogger::resolveActorId(),
-                route('gudang.kekurangan'));
-            NotificationService::sendToRoleInStores(Role::ADMIN, [$order->store_id], Notification::TIPE_SISTEM,
-                'Kekurangan Terpenuhi Otomatis dari Gudang',
-                sprintf('Pesanan %s kurang %d pcs dan sudah terpenuhi otomatis dari stok gudang%s.', $order->nomor_order, $terambil, $gudangSumber ? ' ('.$gudangSumber.')' : ''),
-                ActivityLogger::resolveActorId(),
-                route('admin.pesanan'));
-            NotificationService::sendToRoleInStores(Role::PRODUKSI, [$order->store_id], Notification::TIPE_SISTEM,
-                'Kekurangan Terpenuhi Otomatis dari Gudang',
-                sprintf('Pesanan %s — %d pcs kekurangan sudah diambil dari stok gudang%s. Silakan dipacking ulang.',
-                    $order->nomor_order, $terambil, $gudangSumber ? ' ('.$gudangSumber.')' : ''),
-                ActivityLogger::resolveActorId(),
-                route('produksi.pemeriksaan-kualitas'));
         }
 
         NotificationService::sendToRole(Role::ADMIN, Notification::TIPE_SISTEM,
