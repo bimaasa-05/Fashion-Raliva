@@ -66,17 +66,17 @@
 
         {{-- Timeline Real — center --}}
         <div class="mt-10 overflow-x-auto pb-2 flex justify-start md:justify-center">
-            <ol class="flex min-w-0 md:min-w-[640px] w-full items-center justify-center">
+            <ol class="flex min-w-0 md:min-w-[640px] w-full items-start justify-center">
                 @php
                     $steps = [
                         ['Pengajuan Dikirim', $hasStore ? optional($store->created_at)->translatedFormat('d M Y') : '-', $step1Done],
                         ['Verifikasi Dokumen', $hasDocs ? optional($documents->max('updated_at') ?? $store?->created_at)->translatedFormat('d M Y') : '-', $step2Done],
-                        ['Review Super Admin', $step3Done ? optional($store->updated_at)->translatedFormat('d M Y') : '-', $step3Done],
+                        ['Menunggu Persetujuan', $step3Done ? optional($store->updated_at)->translatedFormat('d M Y') : '-', $step3Done],
                         ['Toko Aktif', $isAktif ? optional($store->updated_at)->translatedFormat('d M Y') : '-', $step4Done],
                     ];
                 @endphp
                 @foreach ($steps as $step)
-                    @php $isErrorStep = $isDitolak && $step[0] === 'Review Super Admin'; @endphp
+                    @php $isErrorStep = $isDitolak && $step[0] === 'Menunggu Persetujuan'; @endphp
                     <li class="flex-1 relative flex flex-col items-center text-center">
                         @if (! $loop->last)
                             <span class="absolute top-[22px] left-[calc(50%+22px)] right-[calc(-50%+22px)] h-[3px] {{ $isErrorStep ? 'bg-error/40' : ($step[2] ? 'bg-gold-accent/60' : 'bg-outline-variant') }} rounded-full"></span>
