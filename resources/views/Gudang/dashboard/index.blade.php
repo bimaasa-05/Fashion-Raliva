@@ -221,7 +221,7 @@
                                     @endif
                                 </td>
                                 <td class="p-4 text-center">
-                                    <button type="button" onclick="showRalivaToast('Permintaan restock untuk {{ $item->nama_produk }} dikirim ke Admin Toko.', 'local_shipping')" class="px-3 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors btn-premium">{{ __('Ajukan Restock') }}</button>
+                                    <button type="button" onclick="showRalivaToast('{{ __('Permintaan restock untuk :ph1 dikirim ke Admin Toko.', ['ph1' => $item->nama_produk]) }}', 'local_shipping')" class="px-3 py-2 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-tertiary-container transition-colors btn-premium">{{ __('Ajukan Restock') }}</button>
                                 </td>
                             </tr>
                         @empty
@@ -259,7 +259,7 @@
                             </div>
                         </div>
 
-                        <button type="button" onclick="showRalivaToast('Permintaan restock untuk {{ $item->nama_produk }} dikirim ke Admin Toko.', 'local_shipping')" class="w-full min-h-11 inline-flex items-center justify-center gap-2 rounded-lg bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest btn-premium">
+                        <button type="button" onclick="showRalivaToast('{{ __('Permintaan restock untuk :ph1 dikirim ke Admin Toko.', ['ph1' => $item->nama_produk]) }}', 'local_shipping')" class="w-full min-h-11 inline-flex items-center justify-center gap-2 rounded-lg bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest btn-premium">
                             <span class="material-symbols-outlined text-[18px]">local_shipping</span>Ajukan Restock
                         </button>
                     </article>

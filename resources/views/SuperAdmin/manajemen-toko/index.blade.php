@@ -477,7 +477,7 @@
                 return false;
             }
             const tanggal = new Date(sampai).toLocaleString('id-ID', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' });
-            pageConfirm('{{ __('Toko akan ditangguhkan sementara hingga') }} ' + tanggal + '{{ __('. Lanjutkan?') }}', {
+            pageConfirm(@js(__('Toko akan ditangguhkan sementara hingga :ph1. Lanjutkan?')).replace(':ph1', tanggal), {
                 title: '{{ __('Konfirmasi Penangguhan') }}',
                 sub: '{{ __('Toko aktif kembali otomatis saat melewati batas waktu tersebut.') }}',
                 accent: 'danger',

@@ -52,7 +52,7 @@ class PencairanDanaController extends Controller
     {
         $store = OwnerContext::currentStore();
         if (! $store || ! $store->wallet) {
-            return back()->with('error', 'Anda belum memiliki toko/wallet.');
+            return back()->with('error',__('Anda belum memiliki toko/wallet.'));
         }
         $data = $request->validate([
             'jumlah' => ['required', 'numeric', 'min:100000'],
@@ -73,7 +73,7 @@ class PencairanDanaController extends Controller
             ->sum('jumlah');
         $available = (float) $wallet->saldo_tersedia - $locked;
         if ($available < (float) $data['jumlah']) {
-            return back()->with('error', 'Saldo tidak cukup (termasuk opsi pencairan yang sedang menunggu).');
+            return back()->with('error',__('Saldo tidak cukup (termasuk opsi pencairan yang sedang menunggu).'));
         }
         DB::transaction(function () use ($wallet, $data, $store) {
             Withdrawal::create([
@@ -104,6 +104,6 @@ class PencairanDanaController extends Controller
         }
         Notification::fireSelf(Notification::TIPE_WALLET, 'Pencairan Diajukan', sprintf('Pengajuan pencairan Rp %s berhasil diajukan.', number_format((float) $data['jumlah'], 0, ',', '.')), route('owner.pencairan-dana'));
 
-        return back()->with('success', 'Pengajuan pencairan berhasil.');
+        return back()->with('success',__('Pengajuan pencairan berhasil.'));
     }
 }

@@ -581,7 +581,7 @@
             if (parseInt(d.produk) > 0) alasan.push(d.produk + ' produk');
             if (parseInt(d.sub) > 0) alasan.push(d.sub + ' sub-kategori');
             warningBox.className = 'mb-4 bg-error/5 border border-error/25 rounded-lg p-3 text-xs text-on-surface';
-            warningBox.textContent = '{{ __('⚠️ Kategori ini masih') }} ' + alasan.join(' dan ') + '{{ __('. Penghapusan akan ditolak sistem.') }}';
+            warningBox.textContent = @js(__('⚠️ Kategori ini masih :ph1. Penghapusan akan ditolak sistem.')).replace(':ph1', alasan.join(' dan '));
         } else {
             warningBox.className = 'hidden';
             warningBox.textContent = '';

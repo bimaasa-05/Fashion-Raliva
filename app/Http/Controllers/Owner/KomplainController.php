@@ -57,7 +57,7 @@ class KomplainController extends Controller
         abort_unless($this->belongsToStoreEscalated($komplain), 404);
 
         if (in_array($komplain->status, [Complaint::STATUS_SELESAI, Complaint::STATUS_DITUTUP], true)) {
-            return response()->json(['message' => 'Komplain ini sudah selesai.'], 422);
+            return response()->json(['message' => __('Komplain ini sudah selesai.')], 422);
         }
 
         $data = $request->validate([
@@ -103,19 +103,19 @@ class KomplainController extends Controller
         }
 
         if ($message->deleted_at) {
-            return response()->json(['message' => 'Pesan sudah dihapus.'], 422);
+            return response()->json(['message' => __('Pesan sudah dihapus.')], 422);
         }
 
         if (in_array($komplain->status, [Complaint::STATUS_SELESAI, Complaint::STATUS_DITUTUP], true)) {
-            return response()->json(['message' => 'Komplain ini sudah selesai dan tidak dapat diubah.'], 422);
+            return response()->json(['message' => __('Komplain ini sudah selesai dan tidak dapat diubah.')], 422);
         }
 
         if ($message->sender_id !== Auth::id()) {
-            return response()->json(['message' => 'Hanya pemilik pesan yang dapat mengedit.'], 403);
+            return response()->json(['message' => __('Hanya pemilik pesan yang dapat mengedit.')], 403);
         }
 
         if ($message->created_at->lt(now()->subMinutes(10))) {
-            return response()->json(['message' => 'Pesan hanya dapat diedit dalam 10 menit pertama setelah dikirim.'], 422);
+            return response()->json(['message' => __('Pesan hanya dapat diedit dalam 10 menit pertama setelah dikirim.')], 422);
         }
 
         $data = $request->validate([
@@ -147,7 +147,7 @@ class KomplainController extends Controller
         }
 
         if (in_array($komplain->status, [Complaint::STATUS_SELESAI, Complaint::STATUS_DITUTUP], true)) {
-            return response()->json(['message' => 'Komplain ini sudah selesai dan tidak dapat diubah.'], 422);
+            return response()->json(['message' => __('Komplain ini sudah selesai dan tidak dapat diubah.')], 422);
         }
 
         $per = $request->input('per', 'me');
@@ -166,15 +166,15 @@ class KomplainController extends Controller
         }
 
         if ($message->deleted_at) {
-            return response()->json(['message' => 'Pesan sudah dihapus.'], 422);
+            return response()->json(['message' => __('Pesan sudah dihapus.')], 422);
         }
 
         if ($message->sender_id !== Auth::id()) {
-            return response()->json(['message' => 'Hanya pemilik pesan yang dapat menghapus untuk semua orang.'], 403);
+            return response()->json(['message' => __('Hanya pemilik pesan yang dapat menghapus untuk semua orang.')], 403);
         }
 
         if ($message->created_at->lt(now()->subDays(1))) {
-            return response()->json(['message' => 'Pesan hanya dapat dihapus untuk semua orang dalam 1 hari setelah dikirim.'], 422);
+            return response()->json(['message' => __('Pesan hanya dapat dihapus untuk semua orang dalam 1 hari setelah dikirim.')], 422);
         }
 
         $message->delete();

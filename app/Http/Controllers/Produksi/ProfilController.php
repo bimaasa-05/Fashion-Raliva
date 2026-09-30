@@ -55,7 +55,7 @@ class ProfilController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Profil Diperbarui', 'Profil Anda berhasil diperbarui.', route('produksi.profil'));
 
         return back()->with('toast', [
-            'message' => 'Profil berhasil diperbarui.',
+            'message' => __('Profil berhasil diperbarui.'),
             'icon' => 'task_alt',
         ]);
     }
@@ -67,7 +67,7 @@ class ProfilController extends Controller
         $data = $request->validated();
 
         if (! Hash::check($data['password_lama'], $user->password)) {
-            return back()->withErrors(['password_lama' => 'Kata sandi saat ini salah.'])->withInput();
+            return back()->withErrors(['password_lama' => __('Kata sandi saat ini salah.')])->withInput();
         }
 
         $user->update(['password' => $data['password_baru']]);
@@ -84,7 +84,7 @@ class ProfilController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Kata Sandi Diperbarui', 'Kata sandi akun Anda berhasil diperbarui.', route('produksi.profil'));
 
         return back()->with('toast', [
-            'message' => 'Password berhasil diubah.',
+            'message' => __('Password berhasil diubah.'),
             'icon' => 'task_alt',
         ]);
     }

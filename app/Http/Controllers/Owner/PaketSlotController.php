@@ -71,12 +71,12 @@ class PaketSlotController extends Controller
     public function purchase(Request $request, ProductSlotPackage $paket)
     {
         if ($paket->status !== ProductSlotPackage::STATUS_AKTIF) {
-            return back()->with('toast', ['message' => 'Paket ini sedang tidak tersedia.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Paket ini sedang tidak tersedia.'), 'icon' => 'gpp_maybe']);
         }
 
         $storeId = OwnerContext::firstStoreId();
         if (! $storeId) {
-            return back()->with('error', 'Anda belum memiliki toko.');
+            return back()->with('error',__('Anda belum memiliki toko.'));
         }
 
         $data = $request->validate([
@@ -125,6 +125,6 @@ class PaketSlotController extends Controller
         );
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Paket Slot Aktif', sprintf('Paket "%s" (%d slot) berhasil aktif%s.', $paket->nama_paket, $paket->jumlah_slot, $diskon > 0 ? ' dengan diskon Rp '.number_format($diskon, 0, ',', '.').' ("'.$promo->nama_promo.'")' : ''), route('owner.paket-slot'));
 
-        return back()->with('success', 'Paket "'.$paket->nama_paket.'" ('.$paket->jumlah_slot.' slot) berhasil aktif. Kuota toko bertambah.');
+        return back()->with('success',__('Paket ":ph1" (:ph2 slot) berhasil aktif. Kuota toko bertambah.', ['ph1' => $paket->nama_paket, 'ph2' => $paket->jumlah_slot]));
     }
 }

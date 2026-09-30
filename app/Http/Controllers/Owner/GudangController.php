@@ -111,12 +111,12 @@ class GudangController extends Controller
         } catch (\RuntimeException $e) {
             return back()->with('error', $e->getMessage());
         } catch (\Throwable $e) {
-            return back()->with('error', 'Gagal menyetujui pemindahan.');
+            return back()->with('error',__('Gagal menyetujui pemindahan.'));
         }
 
         $this->notifyPersetujuan($stockTransfer, 'disetujui', 'Pemindahan #TRF-'.$stockTransfer->stock_transfer_id.' disetujui. Stok gudang asal telah dikurangi.');
 
-        return back()->with('success', 'Pemindahan disetujui. Stok gudang asal telah dikurangi.');
+        return back()->with('success',__('Pemindahan disetujui. Stok gudang asal telah dikurangi.'));
     }
 
     public function tolak(Request $request, StockTransfer $stockTransfer): RedirectResponse
@@ -161,12 +161,12 @@ class GudangController extends Controller
         } catch (\RuntimeException $e) {
             return back()->with('error', $e->getMessage());
         } catch (\Throwable $e) {
-            return back()->with('error', 'Gagal menolak pemindahan.');
+            return back()->with('error',__('Gagal menolak pemindahan.'));
         }
 
         $this->notifyPersetujuan($stockTransfer, 'ditolak', 'Pemindahan #TRF-'.$stockTransfer->stock_transfer_id.' ditolak. Alasan: '.$data['alasan']);
 
-        return back()->with('success', 'Pemindahan ditolak.');
+        return back()->with('success',__('Pemindahan ditolak.'));
     }
 
     private function notifyPersetujuan(StockTransfer $transfer, string $aksi, string $pesan): void

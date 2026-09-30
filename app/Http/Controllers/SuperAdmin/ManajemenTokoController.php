@@ -97,7 +97,7 @@ class ManajemenTokoController extends Controller
     {
         if (! in_array($toko->status, [Store::STATUS_PENDING, Store::STATUS_DITOLAK], true)) {
             return back()->with('toast', [
-                'message' => 'Hanya toko berstatus menunggu atau ditolak yang dapat disetujui.',
+                'message' => __('Hanya toko berstatus menunggu atau ditolak yang dapat disetujui.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -105,7 +105,7 @@ class ManajemenTokoController extends Controller
         $dokumenValid = StoreDocument::where('store_id', $toko->store_id)->where('status', '!=', 'ditolak')->count();
         if ($dokumenValid < 3) {
             return back()->with('toast', [
-                'message' => 'Minimal 3 dokumen valid diperlukan sebelum menyetujui toko (saat ini '.$dokumenValid.').',
+                'message' => __('Minimal 3 dokumen valid diperlukan sebelum menyetujui toko (saat ini :ph1).', ['ph1' => $dokumenValid]),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -184,7 +184,7 @@ class ManajemenTokoController extends Controller
     {
         if ($toko->status !== Store::STATUS_PENDING) {
             return back()->with('toast', [
-                'message' => 'Hanya toko berstatus menunggu yang dapat ditolak.',
+                'message' => __('Hanya toko berstatus menunggu yang dapat ditolak.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -233,7 +233,7 @@ class ManajemenTokoController extends Controller
     {
         if ($toko->status !== Store::STATUS_AKTIF) {
             return back()->with('toast', [
-                'message' => 'Hanya toko berstatus aktif yang dapat ditangguhkan.',
+                'message' => __('Hanya toko berstatus aktif yang dapat ditangguhkan.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -289,7 +289,7 @@ class ManajemenTokoController extends Controller
     {
         if ($toko->status !== Store::STATUS_NONAKTIF) {
             return back()->with('toast', [
-                'message' => 'Hanya toko berstatus ditangguhkan yang dapat diaktifkan kembali.',
+                'message' => __('Hanya toko berstatus ditangguhkan yang dapat diaktifkan kembali.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -489,7 +489,7 @@ class ManajemenTokoController extends Controller
     public function setujuiUpdate(Request $request, Store $toko, \App\Models\StoreUpdateRequest $permintaan)
     {
         if ($permintaan->store_id !== $toko->store_id || $permintaan->status !== \App\Models\StoreUpdateRequest::STATUS_PENDING) {
-            return back()->with('toast', ['message' => 'Pengajuan tidak valid.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pengajuan tidak valid.'), 'icon' => 'gpp_maybe']);
         }
 
         $lama = $toko->only(['nama_toko', 'kategori', 'deskripsi', 'alamat', 'kota', 'nomor_telepon', 'logo']);
@@ -537,13 +537,13 @@ class ManajemenTokoController extends Controller
         ]);
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Perubahan Disetujui', sprintf('Perubahan data toko "%s" disetujui.', $toko->nama_toko), route('superadmin.manajemen-toko'));
 
-        return back()->with('toast', ['message' => 'Perubahan data toko disetujui.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Perubahan data toko disetujui.'), 'icon' => 'task_alt']);
     }
 
     public function tolakUpdate(Request $request, Store $toko, \App\Models\StoreUpdateRequest $permintaan)
     {
         if ($permintaan->store_id !== $toko->store_id || $permintaan->status !== \App\Models\StoreUpdateRequest::STATUS_PENDING) {
-            return back()->with('toast', ['message' => 'Pengajuan tidak valid.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pengajuan tidak valid.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -581,7 +581,7 @@ class ManajemenTokoController extends Controller
             'url' => route('owner.data-toko'),
         ]);
 
-        return back()->with('toast', ['message' => 'Perubahan data toko ditolak.', 'icon' => 'block']);
+        return back()->with('toast', ['message' => __('Perubahan data toko ditolak.'), 'icon' => 'block']);
     }
 
     private static function jenisLabel(string $jenis): string

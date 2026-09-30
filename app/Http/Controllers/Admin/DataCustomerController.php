@@ -36,7 +36,7 @@ class DataCustomerController extends Controller
         $roleId = Role::where('nama_role', Role::CUSTOMER)->value('role_id');
 
         if (! $roleId) {
-            return back()->with('error', 'Role customer belum tersedia.');
+            return back()->with('error',__('Role customer belum tersedia.'));
         }
 
         $data = $request->validate([
@@ -70,6 +70,6 @@ class DataCustomerController extends Controller
             route('admin.customer')
         );
 
-        return back()->with('success', 'Customer ' . $customer->nama_lengkap . ' berhasil ditambahkan.');
+        return back()->with('success',__('Customer :ph1 berhasil ditambahkan.', ['ph1' => $customer->nama_lengkap]));
     }
 }

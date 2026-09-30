@@ -292,7 +292,7 @@ class LaporanController extends Controller
         $storeId = OwnerContext::firstStoreId();
 
         if (! $storeId) {
-            return back()->with('toast', ['message' => 'Belum ada toko untuk diekspor.', 'icon' => 'storefront']);
+            return back()->with('toast', ['message' => __('Belum ada toko untuk diekspor.'), 'icon' => 'storefront']);
         }
 
         $period = (int) $request->input('period', 30);

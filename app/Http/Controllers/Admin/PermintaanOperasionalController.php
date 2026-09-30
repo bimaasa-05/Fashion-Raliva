@@ -46,7 +46,7 @@ class PermintaanOperasionalController extends Controller
     public function show(PermintaanOperasional $permintaan)
     {
         if (! AdminContext::canAccessStore($permintaan->store_id)) {
-            return back()->with('toast', ['message' => 'Permintaan di luar scope toko Anda.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Permintaan di luar scope toko Anda.'), 'icon' => 'gpp_maybe']);
         }
 
         $permintaan->load(['store:store_id,nama_toko', 'pemohon:user_id,nama_lengkap,role_id', 'admin:user_id,nama_lengkap', 'pemohon.role:role_id,nama_role']);
@@ -56,11 +56,11 @@ class PermintaanOperasionalController extends Controller
     public function setujui(Request $request, PermintaanOperasional $permintaan)
     {
         if (! AdminContext::canAccessStore($permintaan->store_id)) {
-            return back()->with('toast', ['message' => 'Permintaan di luar scope toko Anda.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Permintaan di luar scope toko Anda.'), 'icon' => 'gpp_maybe']);
         }
 
         if ($permintaan->status !== PermintaanOperasional::STATUS_PENDING) {
-            return back()->with('toast', ['message' => 'Permintaan ini sudah diproses.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Permintaan ini sudah diproses.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -96,17 +96,17 @@ class PermintaanOperasionalController extends Controller
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Permintaan Disetujui', sprintf('Permintaan "%s" disetujui.', $permintaan->judul), route('admin.permintaan-operasional'));
 
-        return back()->with('toast', ['message' => 'Permintaan disetujui.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Permintaan disetujui.'), 'icon' => 'task_alt']);
     }
 
     public function tolak(Request $request, PermintaanOperasional $permintaan)
     {
         if (! AdminContext::canAccessStore($permintaan->store_id)) {
-            return back()->with('toast', ['message' => 'Permintaan di luar scope toko Anda.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Permintaan di luar scope toko Anda.'), 'icon' => 'gpp_maybe']);
         }
 
         if ($permintaan->status !== PermintaanOperasional::STATUS_PENDING) {
-            return back()->with('toast', ['message' => 'Permintaan ini sudah diproses.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Permintaan ini sudah diproses.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -145,6 +145,6 @@ class PermintaanOperasionalController extends Controller
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Permintaan Ditolak', sprintf('Permintaan "%s" ditolak.', $permintaan->judul), route('admin.permintaan-operasional'));
 
-        return back()->with('toast', ['message' => 'Permintaan ditolak.', 'icon' => 'block']);
+        return back()->with('toast', ['message' => __('Permintaan ditolak.'), 'icon' => 'block']);
     }
 }

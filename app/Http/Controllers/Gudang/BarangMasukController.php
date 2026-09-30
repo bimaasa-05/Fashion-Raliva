@@ -57,7 +57,7 @@ class BarangMasukController extends Controller
         $warehouse = $this->activeWarehouse();
 
         if (! $warehouse) {
-            return back()->with('toast', ['message' => 'Tidak ada gudang aktif.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Tidak ada gudang aktif.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -115,7 +115,7 @@ class BarangMasukController extends Controller
         } catch (\RuntimeException $e) {
             return back()->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
         } catch (\Throwable $e) {
-            return back()->with('toast', ['message' => 'Gagal mencatat barang masuk.', 'icon' => 'error']);
+            return back()->with('toast', ['message' => __('Gagal mencatat barang masuk.'), 'icon' => 'error']);
         }
 
         ActivityLogger::log(
@@ -137,7 +137,7 @@ class BarangMasukController extends Controller
         );
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Barang Masuk Dicatat', sprintf('%d unit barang masuk dicatat di gudang "%s".', $data['jumlah'], $warehouse->nama_gudang), route('gudang.dashboard'));
 
-        return back()->with('toast', ['message' => 'Barang masuk berhasil dicatat.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Barang masuk berhasil dicatat.'), 'icon' => 'task_alt']);
     }
 
     private function getProductsForWarehouse($warehouse)

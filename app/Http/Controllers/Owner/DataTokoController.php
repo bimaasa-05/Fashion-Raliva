@@ -22,7 +22,7 @@ class DataTokoController extends Controller
 
         if (! $store || $store->status !== Store::STATUS_AKTIF) {
             return redirect()->route('owner.pengajuan-toko')
-                ->with('info', ! $store ? 'Silakan ajukan pembuatan toko terlebih dahulu.' : 'Data Toko terbuka setelah toko aktif. Pantau progres di Pengajuan Toko.');
+                ->with('info', ! $store ? __('Silakan ajukan pembuatan toko terlebih dahulu.') : __('Data Toko terbuka setelah toko aktif. Pantau progres di Pengajuan Toko.'));
         }
 
         $rating = $store ? (float) Review::where('store_id', $store->store_id)->avg('rating') : 0;
@@ -46,11 +46,11 @@ class DataTokoController extends Controller
     {
         $store = OwnerContext::currentStore();
         if (! $store) {
-            return back()->with('error', 'Toko tidak ditemukan.');
+            return back()->with('error',__('Toko tidak ditemukan.'));
         }
 
         if ($store->status !== Store::STATUS_AKTIF) {
-            return back()->with('error', 'Data Toko hanya dapat diubah setelah toko aktif.');
+            return back()->with('error',__('Data Toko hanya dapat diubah setelah toko aktif.'));
         }
 
         $validated = $request->validate([
@@ -76,7 +76,7 @@ class DataTokoController extends Controller
 
         if (\App\Models\StoreUpdateRequest::where('store_id', $store->store_id)
             ->where('status', \App\Models\StoreUpdateRequest::STATUS_PENDING)->exists()) {
-            return back()->with('error', 'Masih ada pengajuan perubahan yang menunggu verifikasi Super Admin.');
+            return back()->with('error',__('Masih ada pengajuan perubahan yang menunggu verifikasi Super Admin.'));
         }
 
         $sama = $store->nama_toko === $validated['nama_toko']
@@ -88,7 +88,7 @@ class DataTokoController extends Controller
             && ! $request->hasFile('logo');
 
         if ($sama) {
-            return back()->with('info', 'Tidak ada perubahan data toko.');
+            return back()->with('info',__('Tidak ada perubahan data toko.'));
         }
 
         $logoPath = null;
@@ -145,6 +145,6 @@ class DataTokoController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Perubahan Diajukan', sprintf('Perubahan data toko "%s" dikirim dan menunggu verifikasi Super Admin.', $store->nama_toko), route('owner.data-toko'));
 
         return redirect()->route('owner.data-toko')
-            ->with('success', 'Perubahan data toko dikirim dan menunggu verifikasi Super Admin.');
+            ->with('success',__('Perubahan data toko dikirim dan menunggu verifikasi Super Admin.'));
     }
 }

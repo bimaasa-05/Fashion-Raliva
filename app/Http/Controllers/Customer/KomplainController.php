@@ -72,7 +72,7 @@ class KomplainController extends Controller
             $existing = $order->complaints()->orderByDesc('complaint_id')->first();
 
             return redirect()->route('customer.komplain', ['open' => $existing->complaint_id])
-                ->with('toast', ['message' => 'Pesanan ini sudah memiliki komplain. Silakan lanjutkan di thread yang ada.', 'icon' => 'info']);
+                ->with('toast', ['message' => __('Pesanan ini sudah memiliki komplain. Silakan lanjutkan di thread yang ada.'), 'icon' => 'info']);
         }
 
         // Komplain hanya untuk pesanan yang sudah diterima (selesai).
@@ -116,7 +116,7 @@ class KomplainController extends Controller
 
         if ($order->status !== Order::STATUS_SELESAI) {
             return back()
-                ->withErrors(['order_id' => 'Komplain hanya dapat diajukan untuk pesanan yang sudah diterima.'])
+                ->withErrors(['order_id' => __('Komplain hanya dapat diajukan untuk pesanan yang sudah diterima.')])
                 ->withInput();
         }
 
@@ -124,7 +124,7 @@ class KomplainController extends Controller
         $existing = $order->complaints()->orderByDesc('complaint_id')->first();
         if ($existing) {
             return redirect()->route('customer.komplain', ['open' => $existing->complaint_id])
-                ->with('toast', ['message' => 'Pesanan ini sudah memiliki komplain. Silakan lanjutkan di thread yang ada.', 'icon' => 'info']);
+                ->with('toast', ['message' => __('Pesanan ini sudah memiliki komplain. Silakan lanjutkan di thread yang ada.'), 'icon' => 'info']);
         }
 
         $complaint = DB::transaction(function () use ($order, $data) {
@@ -159,7 +159,7 @@ class KomplainController extends Controller
         });
 
         return redirect()->route('customer.komplain', ['open' => $complaint->complaint_id])
-            ->with('toast', ['message' => 'Komplain berhasil dikirim. Toko akan segera membalas.', 'icon' => 'task_alt']);
+            ->with('toast', ['message' => __('Komplain berhasil dikirim. Toko akan segera membalas.'), 'icon' => 'task_alt']);
     }
 
     /**
@@ -189,15 +189,15 @@ class KomplainController extends Controller
         $this->authorizeMessage($komplain, $message);
 
         if ($message->deleted_at) {
-            return response()->json(['message' => 'Pesan sudah dihapus.'], 422);
+            return response()->json(['message' => __('Pesan sudah dihapus.')], 422);
         }
 
         if (in_array($komplain->status, [Complaint::STATUS_SELESAI, Complaint::STATUS_DITUTUP], true)) {
-            return response()->json(['message' => 'Komplain ini sudah selesai dan tidak dapat diubah.'], 422);
+            return response()->json(['message' => __('Komplain ini sudah selesai dan tidak dapat diubah.')], 422);
         }
 
         if ($message->created_at->lt(now()->subMinutes(10))) {
-            return response()->json(['message' => 'Pesan hanya dapat diedit dalam 10 menit pertama setelah dikirim.'], 422);
+            return response()->json(['message' => __('Pesan hanya dapat diedit dalam 10 menit pertama setelah dikirim.')], 422);
         }
 
         $data = $request->validate([
@@ -225,7 +225,7 @@ class KomplainController extends Controller
         $this->authorizeMessage($komplain, $message);
 
         if (in_array($komplain->status, [Complaint::STATUS_SELESAI, Complaint::STATUS_DITUTUP], true)) {
-            return response()->json(['message' => 'Komplain ini sudah selesai dan tidak dapat diubah.'], 422);
+            return response()->json(['message' => __('Komplain ini sudah selesai dan tidak dapat diubah.')], 422);
         }
 
         $per = $request->input('per', 'me');
@@ -244,15 +244,15 @@ class KomplainController extends Controller
         }
 
         if ($message->deleted_at) {
-            return response()->json(['message' => 'Pesan sudah dihapus.'], 422);
+            return response()->json(['message' => __('Pesan sudah dihapus.')], 422);
         }
 
         if ($message->sender_id !== Auth::id()) {
-            return response()->json(['message' => 'Hanya pemilik pesan yang dapat menghapus untuk semua orang.'], 403);
+            return response()->json(['message' => __('Hanya pemilik pesan yang dapat menghapus untuk semua orang.')], 403);
         }
 
         if ($message->created_at->lt(now()->subDays(1))) {
-            return response()->json(['message' => 'Pesan hanya dapat dihapus untuk semua orang dalam 1 hari setelah dikirim.'], 422);
+            return response()->json(['message' => __('Pesan hanya dapat dihapus untuk semua orang dalam 1 hari setelah dikirim.')], 422);
         }
 
         $message->delete();
@@ -280,7 +280,7 @@ class KomplainController extends Controller
         abort_unless($komplain->user_id === Auth::id(), 403);
 
         if (in_array($komplain->status, [Complaint::STATUS_SELESAI, Complaint::STATUS_DITUTUP], true)) {
-            return response()->json(['message' => 'Komplain ini sudah selesai.'], 422);
+            return response()->json(['message' => __('Komplain ini sudah selesai.')], 422);
         }
 
         // Anti-spam: maksimal 3 balasan beruntun per customer.
@@ -295,7 +295,7 @@ class KomplainController extends Controller
             ->where('sender_id', $komplain->user_id)
             ->count();
         if ($consecutive >= 3) {
-            return response()->json(['message' => 'Batas 3 balasan tercapai. Tunggu balasan toko untuk melanjutkan.'], 422);
+            return response()->json(['message' => __('Batas 3 balasan tercapai. Tunggu balasan toko untuk melanjutkan.')], 422);
         }
 
         $data = $request->validate([

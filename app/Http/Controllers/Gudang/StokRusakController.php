@@ -55,7 +55,7 @@ class StokRusakController extends Controller
         $warehouse = $this->activeWarehouse();
 
         if (! $warehouse) {
-            return back()->with('toast', ['message' => 'Tidak ada gudang aktif.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Tidak ada gudang aktif.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -110,7 +110,7 @@ class StokRusakController extends Controller
         } catch (\RuntimeException $e) {
             return back()->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
         } catch (\Throwable $e) {
-            return back()->with('toast', ['message' => 'Gagal melaporkan stok rusak.', 'icon' => 'error']);
+            return back()->with('toast', ['message' => __('Gagal melaporkan stok rusak.'), 'icon' => 'error']);
         }
 
         ActivityLogger::log(
@@ -132,7 +132,7 @@ class StokRusakController extends Controller
         );
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Stok Rusak Dilaporkan', sprintf('%d unit stok rusak dilaporkan di gudang "%s".', $data['jumlah_rusak'], $warehouse->nama_gudang), route('gudang.dashboard'));
 
-        return back()->with('toast', ['message' => 'Stok rusak berhasil dilaporkan.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Stok rusak berhasil dilaporkan.'), 'icon' => 'task_alt']);
     }
 
     private function getProductsForWarehouse($warehouse)

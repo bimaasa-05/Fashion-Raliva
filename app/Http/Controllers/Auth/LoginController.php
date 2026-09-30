@@ -32,7 +32,7 @@ class LoginController extends Controller
         if (! Auth::attempt($credentials, $remember)) {
             return back()
                 ->withInput($request->only('email'))
-                ->withErrors(['email' => 'Email atau password salah.']);
+                ->withErrors(['email' => __('Email atau password salah.')]);
         }
 
         $user = Auth::user();
@@ -42,7 +42,7 @@ class LoginController extends Controller
 
             return back()
                 ->withInput($request->only('email'))
-                ->withErrors(['email' => 'Akun tidak aktif. Hubungi administrator.']);
+                ->withErrors(['email' => __('Akun tidak aktif. Hubungi administrator.')]);
         }
 
         $request->session()->regenerate();

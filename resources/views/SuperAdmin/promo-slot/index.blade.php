@@ -380,7 +380,7 @@
                     document.getElementById('promo-method-input').value = 'PUT';
                 })
                 .catch(() => {
-                    document.getElementById('promo-modal-title').textContent = '{{ __('Ubah Promo Slot (') }}' + nama + ')';
+                    document.getElementById('promo-modal-title').textContent = @js(__('Ubah Promo Slot (:ph1)')).replace(':ph1', nama);
                 });
         } else {
             document.getElementById('promo-modal-title').textContent = '{{ __('Buat Promo Slot') }}';

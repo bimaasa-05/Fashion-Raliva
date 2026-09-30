@@ -73,7 +73,7 @@ class KaryawanController extends Controller
 
         $roleId = Role::where('nama_role', self::ROLE_NAMA[$validated['role']])->value('role_id');
         if (! $roleId) {
-            return back()->with('error', 'Role karyawan tidak tersedia.')->withInput();
+            return back()->with('error',__('Role karyawan tidak tersedia.'))->withInput();
         }
 
         $user = User::create([
@@ -108,7 +108,7 @@ class KaryawanController extends Controller
         ]);
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Karyawan Ditambahkan', sprintf('Karyawan "%s" (%s) berhasil ditambahkan.', $validated['nama_lengkap'], $validated['role']), route('owner.karyawan'));
 
-        return redirect()->route('owner.karyawan')->with('success', 'Karyawan berhasil ditambahkan.');
+        return redirect()->route('owner.karyawan')->with('success',__('Karyawan berhasil ditambahkan.'));
     }
 
     public function update(Request $request, StoreStaff $storeStaff)
@@ -124,7 +124,7 @@ class KaryawanController extends Controller
 
         $roleId = Role::where('nama_role', self::ROLE_NAMA[$validated['role']])->value('role_id');
         if (! $roleId) {
-            return back()->with('error', 'Role karyawan tidak tersedia.');
+            return back()->with('error',__('Role karyawan tidak tersedia.'));
         }
         if ($storeStaff->user) {
             $storeStaff->user->update(['role_id' => $roleId]);
@@ -148,7 +148,7 @@ class KaryawanController extends Controller
         }
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Data Karyawan Diperbarui', sprintf('Data karyawan "%s" diperbarui (role %s, status %s).', $storeStaff->user?->nama_lengkap ?? '-', $validated['role'], $validated['status']), route('owner.karyawan'));
 
-        return redirect()->route('owner.karyawan')->with('success', 'Data karyawan berhasil diperbarui.');
+        return redirect()->route('owner.karyawan')->with('success',__('Data karyawan berhasil diperbarui.'));
     }
 
     public function destroy(StoreStaff $storeStaff)
@@ -172,6 +172,6 @@ class KaryawanController extends Controller
         }
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Karyawan Dinonaktifkan', sprintf('Karyawan "%s" dinonaktifkan.', $storeStaff->user?->nama_lengkap ?? '-'), route('owner.karyawan'));
 
-        return redirect()->route('owner.karyawan')->with('success', 'Karyawan dinonaktifkan.');
+        return redirect()->route('owner.karyawan')->with('success',__('Karyawan dinonaktifkan.'));
     }
 }

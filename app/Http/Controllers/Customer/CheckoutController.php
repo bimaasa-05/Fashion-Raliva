@@ -161,7 +161,7 @@ class CheckoutController extends Controller
         // Tamu wajib pakai ?buy
         if (! Auth::check() && $buyId === 0) {
             return redirect()->route('customer.shop')
-                ->with('toast', ['message' => 'Pilih produk dan klik Beli Sekarang untuk checkout.', 'icon' => 'gpp_maybe']);
+                ->with('toast', ['message' => __('Pilih produk dan klik Beli Sekarang untuk checkout.'), 'icon' => 'gpp_maybe']);
         }
 
         $items = collect();
@@ -212,7 +212,7 @@ class CheckoutController extends Controller
         // Tamu tanpa item (buyId invalid) -> balik shop
         if ($items->isEmpty() && ! Auth::check()) {
             return redirect()->route('customer.shop')
-                ->with('toast', ['message' => 'Produk tidak tersedia.', 'icon' => 'gpp_maybe']);
+                ->with('toast', ['message' => __('Produk tidak tersedia.'), 'icon' => 'gpp_maybe']);
         }
 
         $count = $items->sum('quantity');
@@ -301,7 +301,7 @@ class CheckoutController extends Controller
                     ->first();
                 if ($existing) {
                     return redirect()->route('customer.checkout.payment', array_filter(['checkout' => $existing->checkout_id, 'buy' => request()->query('buy')]))
-                        ->with('toast', ['message' => 'Pesanan sudah dibuat sebelumnya. Silakan selesaikan pembayaran.', 'icon' => 'task_alt']);
+                        ->with('toast', ['message' => __('Pesanan sudah dibuat sebelumnya. Silakan selesaikan pembayaran.'), 'icon' => 'task_alt']);
                 }
             }
         }
@@ -317,8 +317,8 @@ class CheckoutController extends Controller
                 $roleName = $existing->role?->nama_role;
                 if ($roleName && $roleName !== Role::CUSTOMER) {
                     return back()
-                        ->with('toast', ['message' => 'Email sudah terdaftar untuk akun ' . $roleName . '. Gunakan email lain.', 'icon' => 'gpp_maybe'])
-                        ->withErrors(['email_pelanggan' => 'Email sudah digunakan.'])
+                        ->with('toast', ['message' => __('Email sudah terdaftar untuk akun :ph1. Gunakan email lain.', ['ph1' => $roleName]), 'icon' => 'gpp_maybe'])
+                        ->withErrors(['email_pelanggan' => __('Email sudah digunakan.')])
                         ->withInput();
                 }
                 // Coba auto-login dengan password default
@@ -333,8 +333,8 @@ class CheckoutController extends Controller
                     $buyParam = $validated['buy'] ? '?buy=' . (int) $validated['buy'] : '';
                     $redirect = url('/customer/checkout') . $buyParam;
                     return back()
-                        ->with('toast', ['message' => 'Email sudah terdaftar — silakan Masuk lalu checkout.', 'icon' => 'gpp_maybe'])
-                        ->withErrors(['email_pelanggan' => 'Email sudah terdaftar. Silakan masuk dulu, lalu lanjut checkout.'])
+                        ->with('toast', ['message' => __('Email sudah terdaftar — silakan Masuk lalu checkout.'), 'icon' => 'gpp_maybe'])
+                        ->withErrors(['email_pelanggan' => __('Email sudah terdaftar. Silakan masuk dulu, lalu lanjut checkout.')])
                         ->withInput();
                 }
             } else {
@@ -376,7 +376,7 @@ class CheckoutController extends Controller
             $vPre = ProductVariant::find((int) $validated['buy']);
             $stokPre = $vPre ? (int) $vPre->warehouseStocks()->sum('jumlah_stok') : 0;
             if ((int) ($validated['buy_qty'] ?? 1) > $stokPre) {
-                return back()->with('toast', ['message' => 'Stok tersisa ' . $stokPre . '.', 'icon' => 'gpp_maybe'])->withInput();
+                return back()->with('toast', ['message' => __('Stok tersisa :ph1.', ['ph1' => $stokPre]), 'icon' => 'gpp_maybe'])->withInput();
             }
         }
 
@@ -387,12 +387,12 @@ class CheckoutController extends Controller
             $variant = ProductVariant::find($variantId);
             $stok = $variant ? (int) $variant->warehouseStocks()->sum('jumlah_stok') : 0;
             if ($qty < 1 || $qty > $stok) {
-                return back()->with('toast', ['message' => 'Stok ' . ($item['nama_produk'] ?? 'produk') . ' tersisa ' . $stok . '.', 'icon' => 'gpp_maybe'])->withInput();
+                return back()->with('toast', ['message' => __('Stok :ph1 tersisa :ph2.', ['ph1' => ($item['nama_produk'] ?? 'produk'), 'ph2' => $stok]), 'icon' => 'gpp_maybe'])->withInput();
             }
         }
 
         if ($items->isEmpty()) {
-            return back()->with('toast', ['message' => 'Tidak ada item untuk dipesan. Keranjang kosong.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Tidak ada item untuk dipesan. Keranjang kosong.'), 'icon' => 'gpp_maybe']);
         }
 
         $shipping = (int) $validated['shipping'];
@@ -531,7 +531,7 @@ class CheckoutController extends Controller
         }
 
         $redirect = redirect()->route('customer.checkout.payment', array_filter(['checkout' => $checkout->checkout_id, 'buy' => request()->query('buy')]))
-            ->with('toast', ['message' => 'Pesanan berhasil dibuat. Silakan selesaikan pembayaran.', 'icon' => 'task_alt']);
+            ->with('toast', ['message' => __('Pesanan berhasil dibuat. Silakan selesaikan pembayaran.'), 'icon' => 'task_alt']);
 
         if ($isNewAccount && $flashEmail) {
             $redirect = $redirect->with('akun_baru', $flashEmail);
@@ -684,7 +684,7 @@ return view('customer.checkout.selesai', [
         $payment = $checkoutModel->payment;
 
         if (! in_array($payment->status, [Payment::STATUS_PENDING, Payment::STATUS_DITOLAK], true)) {
-            return back()->with('toast', ['message' => 'Bukti pembayaran sudah diproses.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Bukti pembayaran sudah diproses.'), 'icon' => 'gpp_maybe']);
         }
 
         $validated = $request->validate([
@@ -701,26 +701,26 @@ return view('customer.checkout.selesai', [
             ->where('status', PaymentMethod::STATUS_AKTIF)
             ->first();
         if (! $paymentMethod) {
-            return back()->with('toast', ['message' => 'Metode pembayaran tidak tersedia.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Metode pembayaran tidak tersedia.'), 'icon' => 'gpp_maybe']);
         }
 
         if (in_array($paymentMethod->kode_metode, ['ewallet', 'bank_transfer'], true) && empty($validated['payment_account_id'])) {
-            return back()->with('toast', ['message' => 'Pilih akun/tujuan pembayaran terlebih dahulu.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pilih akun/tujuan pembayaran terlebih dahulu.'), 'icon' => 'gpp_maybe']);
         }
 
         // Pembayaran campuran: Saldo Akun (sebagian) + metode eksternal (sisa).
         $jumlahSaldo = 0.0;
         if ($request->boolean('pakai_saldo')) {
             if ($paymentMethod->kode_metode === PaymentMethod::KODE_SALDO_AKUN) {
-                return back()->with('toast', ['message' => 'Metode kedua tidak boleh Saldo Akun.', 'icon' => 'gpp_maybe']);
+                return back()->with('toast', ['message' => __('Metode kedua tidak boleh Saldo Akun.'), 'icon' => 'gpp_maybe']);
             }
             $saldoCust = (float) CustomerWalletService::balance(Auth::user());
             $totalBayar = (float) $payment->jumlah;
             if ($saldoCust <= 0) {
-                return back()->with('toast', ['message' => 'Saldo akun Anda kosong, tidak bisa memakai pembayaran campuran.', 'icon' => 'gpp_maybe']);
+                return back()->with('toast', ['message' => __('Saldo akun Anda kosong, tidak bisa memakai pembayaran campuran.'), 'icon' => 'gpp_maybe']);
             }
             if ($saldoCust >= $totalBayar) {
-                return back()->with('toast', ['message' => 'Saldo Anda sudah mencukupi. Gunakan Bayar dengan Saldo Akun.', 'icon' => 'gpp_maybe']);
+                return back()->with('toast', ['message' => __('Saldo Anda sudah mencukupi. Gunakan Bayar dengan Saldo Akun.'), 'icon' => 'gpp_maybe']);
             }
             $jumlahSaldo = min($saldoCust, $totalBayar);
         }
@@ -732,7 +732,7 @@ return view('customer.checkout.selesai', [
                 ->where('status', PlatformBankAccount::STATUS_AKTIF)
                 ->first();
             if (! $account) {
-                return back()->with('toast', ['message' => 'Tujuan pembayaran tidak cocok dengan metode dipilih.', 'icon' => 'gpp_maybe']);
+                return back()->with('toast', ['message' => __('Tujuan pembayaran tidak cocok dengan metode dipilih.'), 'icon' => 'gpp_maybe']);
             }
         }
 
@@ -800,7 +800,7 @@ return view('customer.checkout.selesai', [
         // Selalu redirect ke halaman Selesai setelah upload bukti
         $hasAkunBaru = $request->session()->has('akun_baru') || session()->has('akun_baru');
         $redirect = redirect()->route('customer.checkout.selesai', $checkoutModel->checkout_id)
-            ->with('toast', ['message' => 'Bukti pembayaran diunggah. Menunggu verifikasi admin.', 'icon' => 'task_alt']);
+            ->with('toast', ['message' => __('Bukti pembayaran diunggah. Menunggu verifikasi admin.'), 'icon' => 'task_alt']);
 
         if ($hasAkunBaru) {
             $redirect = $redirect->with('akun_baru', session('akun_baru'));
@@ -825,7 +825,7 @@ return view('customer.checkout.selesai', [
             ->where('status', PaymentMethod::STATUS_AKTIF)
             ->first();
         if (! $paymentMethod) {
-            return back()->with('toast', ['message' => 'Metode Saldo Akun belum diaktifkan.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Metode Saldo Akun belum diaktifkan.'), 'icon' => 'gpp_maybe']);
         }
 
         $checkoutModel = Checkout::where('checkout_id', $checkout)
@@ -836,10 +836,10 @@ return view('customer.checkout.selesai', [
         $payment = $checkoutModel->payment;
 
         if (! in_array($payment->status, [Payment::STATUS_PENDING, Payment::STATUS_DITOLAK], true)) {
-            return back()->with('toast', ['message' => 'Pembayaran checkout ini sudah diproses.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pembayaran checkout ini sudah diproses.'), 'icon' => 'gpp_maybe']);
         }
         if ($checkoutModel->status !== Checkout::STATUS_PENDING) {
-            return back()->with('toast', ['message' => 'Checkout tidak berstatus pending.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Checkout tidak berstatus pending.'), 'icon' => 'gpp_maybe']);
         }
 
         $user = Auth::user();
@@ -903,7 +903,7 @@ return view('customer.checkout.selesai', [
         );
 
         return redirect()->route('customer.checkout.selesai', $checkoutModel->checkout_id)
-            ->with('toast', ['message' => 'Pembayaran berhasil menggunakan saldo akun.', 'icon' => 'task_alt']);
+            ->with('toast', ['message' => __('Pembayaran berhasil menggunakan saldo akun.'), 'icon' => 'task_alt']);
     }
 
     /**

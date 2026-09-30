@@ -40,7 +40,7 @@ class VerifikasiTopupController extends Controller
     {
         if ($topup->status !== CustomerTopup::STATUS_MENUNGGU_VERIFIKASI) {
             return back()->with('toast', [
-                'message' => 'Hanya topup berstatus menunggu verifikasi yang dapat disetujui.',
+                'message' => __('Hanya topup berstatus menunggu verifikasi yang dapat disetujui.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -79,7 +79,7 @@ class VerifikasiTopupController extends Controller
         );
 
         return back()->with('toast', [
-            'message' => 'Topup disetujui, saldo customer bertambah.',
+            'message' => __('Topup disetujui, saldo customer bertambah.'),
             'icon' => 'task_alt',
         ]);
     }
@@ -88,7 +88,7 @@ class VerifikasiTopupController extends Controller
     {
         if (! in_array($topup->status, [CustomerTopup::STATUS_MENUNGGU_VERIFIKASI, CustomerTopup::STATUS_PENDING, CustomerTopup::STATUS_DITOLAK], true)) {
             return back()->with('toast', [
-                'message' => 'Topup ini tidak dapat ditolak.',
+                'message' => __('Topup ini tidak dapat ditolak.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -124,7 +124,7 @@ class VerifikasiTopupController extends Controller
         );
 
         return back()->with('toast', [
-            'message' => 'Topup ditolak, customer dihubungi.',
+            'message' => __('Topup ditolak, customer dihubungi.'),
             'icon' => 'gpp_maybe',
         ]);
     }

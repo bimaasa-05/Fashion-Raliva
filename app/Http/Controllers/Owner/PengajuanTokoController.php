@@ -39,7 +39,7 @@ class PengajuanTokoController extends Controller
         // Jalur yang diizinkan: belum punya toko atau ditolak.
         // Status pending terkunci (menunggu verifikasi Super Admin).
         if ($store && $store->status !== Store::STATUS_DITOLAK) {
-            return back()->with('error', 'Pengajuan sedang menunggu verifikasi dan tidak dapat diubah.');
+            return back()->with('error',__('Pengajuan sedang menunggu verifikasi dan tidak dapat diubah.'));
         }
 
         $isNew = ! $store;
@@ -62,7 +62,7 @@ class PengajuanTokoController extends Controller
         $uploadTerlarang = collect($presentFiles)->filter(fn ($jenis) => ($statusDok[$jenis] ?? null) === 'terverifikasi')->values()->all();
         if ($uploadTerlarang) {
             $nama = $uploadTerlarang->map(fn ($jenis) => static::jenisLabel($jenis))->implode(', ');
-            return back()->with('error', 'Dokumen '.$nama.' sudah terverifikasi dan tidak dapat diunggah ulang.')->withInput();
+            return back()->with('error',__('Dokumen :ph1 sudah terverifikasi dan tidak dapat diunggah ulang.', ['ph1' => $nama]))->withInput();
         }
 
         // Setiap jenis wajib harus terpenuhi = ada file baru ATAU status
@@ -70,7 +70,7 @@ class PengajuanTokoController extends Controller
         $kurang = collect($jenisWajib)->filter(fn ($jenis) => ! in_array($jenis, $presentFiles, true) && ! in_array($statusDok[$jenis] ?? null, ['pending', 'terverifikasi'], true))->values()->all();
         if ($kurang) {
             $nama = $kurang->map(fn ($jenis) => static::jenisLabel($jenis))->implode(', ');
-            return back()->with('error', 'Dokumen wajib belum lengkap: '.$nama.' (foto depan toko opsional).')->withInput();
+            return back()->with('error',__('Dokumen wajib belum lengkap: :ph1 (foto depan toko opsional).', ['ph1' => $nama]))->withInput();
         }
 
         $request->validate(collect($presentFiles)->mapWithKeys(fn ($jenis) => [
@@ -148,7 +148,7 @@ class PengajuanTokoController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pengajuan Toko Terkirim', sprintf('%d dokumen toko "%s" terunggah dan menunggu verifikasi Super Admin.', count($presentFiles), $store->nama_toko), route('owner.pengajuan-toko'));
 
         return redirect()->route('owner.pengajuan-toko')
-            ->with('success', count($presentFiles).' dokumen berhasil diunggah dan menunggu verifikasi.');
+            ->with('success', __(':ph1 dokumen berhasil diunggah dan menunggu verifikasi.', ['ph1' => count($presentFiles)]));
     }
 
     public function reupload(Request $request)
@@ -156,20 +156,20 @@ class PengajuanTokoController extends Controller
         $user = $request->user();
         $store = $user?->ownedStores()->first();
         if (! $store || $store->status !== Store::STATUS_AKTIF) {
-            return back()->with('error', 'Unggah ulang hanya untuk toko aktif.');
+            return back()->with('error',__('Unggah ulang hanya untuk toko aktif.'));
         }
 
         $jenisList = ['ktp', 'npwp', 'foto_depan', 'siu'];
         $presentFiles = collect($jenisList)->filter(fn ($jenis) => $request->hasFile($jenis))->values()->all();
 
         if (count($presentFiles) !== 1) {
-            return back()->with('error', 'Pilih satu dokumen untuk diunggah ulang.')->withInput();
+            return back()->with('error',__('Pilih satu dokumen untuk diunggah ulang.'))->withInput();
         }
 
         $jenis = $presentFiles[0];
         $existing = StoreDocument::where('store_id', $store->store_id)->where('jenis', $jenis)->first();
         if ($existing && in_array($existing->status, ['pending', 'terverifikasi'], true)) {
-            return back()->with('error', 'Dokumen '.static::jenisLabel($jenis).' berstatus '.$existing->status.' dan tidak dapat diunggah ulang. Hanya dokumen ditolak yang bisa diunggah ulang.')->withInput();
+            return back()->with('error',__('Dokumen :ph1 berstatus :ph2 dan tidak dapat diunggah ulang. Hanya dokumen ditolak yang bisa diunggah ulang.', ['ph1' => static::jenisLabel($jenis), 'ph2' => $existing->status]))->withInput();
         }
 
         $request->validate(collect($presentFiles)->mapWithKeys(fn ($jenis) => [
@@ -206,7 +206,7 @@ class PengajuanTokoController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Dokumen Diunggah Ulang', sprintf('Dokumen %s toko "%s" terunggah dan menunggu verifikasi Super Admin.', $jenis, $store->nama_toko), route('owner.pengajuan-toko'));
 
         return redirect()->route('owner.pengajuan-toko')
-            ->with('success', 'Dokumen berhasil diunggah ulang dan menunggu verifikasi.');
+            ->with('success',__('Dokumen berhasil diunggah ulang dan menunggu verifikasi.'));
     }
 
     private static function jenisLabel(string $jenis): string

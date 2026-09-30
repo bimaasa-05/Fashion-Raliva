@@ -364,7 +364,9 @@
     function openToggleModal(id, action, reviewer) {
         const isActive = action === 'aktifkan';
         document.getElementById('toggle-title').textContent = isActive ? 'Aktifkan Ulasan' : 'Nonaktifkan Ulasan';
-        document.getElementById('toggle-message').textContent = '{{ __('Ulasan dari') }} ' + reviewer + ' {{ __('akan di') }}' + (isActive ? 'aktifkan kembali' : 'nonaktifkan') + '.';
+        document.getElementById('toggle-message').textContent = isActive
+            ? @js(__('Ulasan dari :ph1 akan diaktifkan kembali.')).replace(':ph1', reviewer)
+            : @js(__('Ulasan dari :ph1 akan dinonaktifkan.')).replace(':ph1', reviewer);
         document.getElementById('toggle-form').action = '{{ url("superadmin/ulasan-produk-toko") }}/' + id + '/' + action;
         const modal = document.getElementById('toggleModal');
         modal.classList.remove('hidden');

@@ -56,14 +56,14 @@ class PerubahanProdukController extends Controller
     public function approve(Request $request, Product $produk, ProductUpdateRequest $permintaan)
     {
         if ($permintaan->product_id !== $produk->product_id || $permintaan->status !== ProductUpdateRequest::STATUS_PENDING) {
-            return back()->with('toast', ['message' => 'Pengajuan tidak valid.', 'icon' => 'gpp_bad']);
+            return back()->with('toast', ['message' => __('Pengajuan tidak valid.'), 'icon' => 'gpp_bad']);
         }
 
         return DB::transaction(function () use ($produk, $permintaan) {
             $lockedRequest = ProductUpdateRequest::whereKey($permintaan->product_update_request_id)->lockForUpdate()->first();
             $lockedProduct = Product::whereKey($produk->product_id)->lockForUpdate()->first();
             if (! $lockedRequest || $lockedRequest->status !== ProductUpdateRequest::STATUS_PENDING || ! $lockedProduct) {
-                return back()->with('toast', ['message' => 'Pengajuan sudah diputuskan atau produk tidak ditemukan.', 'icon' => 'gpp_bad']);
+                return back()->with('toast', ['message' => __('Pengajuan sudah diputuskan atau produk tidak ditemukan.'), 'icon' => 'gpp_bad']);
             }
 
             ProductUpdateApplier::apply($lockedProduct, $lockedRequest->after_payload ?? []);
@@ -83,14 +83,14 @@ class PerubahanProdukController extends Controller
             );
             $this->notifyDecision($lockedRequest, true, null);
 
-            return back()->with('toast', ['message' => 'Pengajuan perubahan disetujui dan sudah berlaku.', 'icon' => 'task_alt']);
+            return back()->with('toast', ['message' => __('Pengajuan perubahan disetujui dan sudah berlaku.'), 'icon' => 'task_alt']);
         });
     }
 
     public function reject(Request $request, Product $produk, ProductUpdateRequest $permintaan)
     {
         if ($permintaan->product_id !== $produk->product_id || $permintaan->status !== ProductUpdateRequest::STATUS_PENDING) {
-            return back()->with('toast', ['message' => 'Pengajuan tidak valid.', 'icon' => 'gpp_bad']);
+            return back()->with('toast', ['message' => __('Pengajuan tidak valid.'), 'icon' => 'gpp_bad']);
         }
 
         $data = $request->validate([
@@ -127,7 +127,7 @@ class PerubahanProdukController extends Controller
         );
         $this->notifyDecision($permintaan, false, $data['alasan']);
 
-        return back()->with('toast', ['message' => 'Pengajuan perubahan ditolak.', 'icon' => 'block']);
+        return back()->with('toast', ['message' => __('Pengajuan perubahan ditolak.'), 'icon' => 'block']);
     }
 
     private function compare(ProductUpdateRequest $permintaan): array

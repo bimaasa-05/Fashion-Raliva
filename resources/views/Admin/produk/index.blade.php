@@ -474,12 +474,12 @@
             const nama = (nameInput.value || '').trim();
             const hex = editNormHex(editHexInput?.value || '');
             if (nama.length < 2 || /^warna\s*\d+$/i.test(nama)) {
-                window.showRalivaToast('Nama warna custom wajib diisi minimal 2 karakter.', 'gpp_bad');
+                window.showRalivaToast('{{ __('Nama warna custom wajib diisi minimal 2 karakter.') }}', 'gpp_bad');
                 nameInput.focus();
                 return;
             }
             if (!hex) {
-                window.showRalivaToast('Kode hex warna custom wajib valid. Contoh: f4f4f4.', 'gpp_bad');
+                window.showRalivaToast('{{ __('Kode hex warna custom wajib valid. Contoh: f4f4f4.') }}', 'gpp_bad');
                 editHexInput.focus();
                 return;
             }
@@ -602,7 +602,7 @@
             if (kept + baru > 5) {
                 e.preventDefault();
                 if (window.__restoreStripped) window.__restoreStripped(document.getElementById('form-edit-produk'));
-                window.showRalivaToast('Maksimal total 5 foto (sekarang ' + (kept + baru) + ').', 'gpp_bad');
+                window.showRalivaToast(@js(__('Maksimal total 5 foto (sekarang :ph1).')).replace(':ph1', kept + baru), 'gpp_bad');
                 return;
             }
             this.querySelectorAll('input[name="warna_hex[]"]').forEach(h => h.remove());
@@ -1148,7 +1148,7 @@ function initKategoriCombobox(prefix) {
 
     const saveCategory = () => {
         const nama = inlineNama.value.trim();
-        if (!nama) { window.showRalivaToast('Nama kategori wajib diisi.', 'gpp_bad'); return; }
+        if (!nama) { window.showRalivaToast('{{ __('Nama kategori wajib diisi.') }}', 'gpp_bad'); return; }
         const dup = Array.from(list.querySelectorAll('[data-category-id]')).some(
             (li) => li.getAttribute('data-category-name').toLowerCase() === nama.toLowerCase()
         );
@@ -1185,9 +1185,9 @@ function initKategoriCombobox(prefix) {
                 otherList.appendChild(li);
             });
             selectCategory(j.kategori.category_id, j.kategori.nama_kategori);
-            window.showRalivaToast('Kategori "' + j.kategori.nama_kategori + '" berhasil ditambahkan.', 'task_alt');
+            window.showRalivaToast(@js(__('Kategori ":ph1" berhasil ditambahkan.')).replace(':ph1', j.kategori.nama_kategori), 'task_alt');
         })
-        .catch(err => window.showRalivaToast(err.message || 'Terjadi kesalahan.', 'gpp_bad'))
+        .catch(err => window.showRalivaToast(err.message || '{{ __('Terjadi kesalahan.') }}', 'gpp_bad'))
         .finally(() => { inlineSimpan.disabled = false; });
     };
     inlineSimpan.addEventListener('click', saveCategory);
@@ -1260,14 +1260,14 @@ initKategoriCombobox('edit');
         const nama = (nameInput.value || '').trim();
         const hex = normHex(hexInput?.value || '');
         if (nama.length < 2 || /^warna\s*\d+$/i.test(nama)) {
-            window.showRalivaToast('Nama warna custom wajib diisi minimal 2 karakter.', 'gpp_bad');
+            window.showRalivaToast('{{ __('Nama warna custom wajib diisi minimal 2 karakter.') }}', 'gpp_bad');
             nameInput.focus();
             return;
         }
         const exists = Array.from(document.querySelectorAll('[name="warna[]"]')).some((cb) => cb.value.toLowerCase() === nama.toLowerCase());
-        if (exists) { window.showRalivaToast('Warna "' + nama + '" sudah ada.', 'gpp_bad'); return; }
+        if (exists) { window.showRalivaToast(@js(__('Warna ":ph1" sudah ada.')).replace(':ph1', nama), 'gpp_bad'); return; }
         if (!hex) {
-            window.showRalivaToast('Kode hex warna custom wajib valid. Contoh: f4f4f4.', 'gpp_bad');
+            window.showRalivaToast('{{ __('Kode hex warna custom wajib valid. Contoh: f4f4f4.') }}', 'gpp_bad');
             hexInput.focus();
             return;
         }
@@ -1289,7 +1289,7 @@ initKategoriCombobox('edit');
         chips.appendChild(labelEl);
         nameInput.value = '';
         renderVarianStok();
-        window.showRalivaToast('Warna custom "' + nama + '" ditambahkan.', 'task_alt');
+        window.showRalivaToast(@js(__('Warna custom ":ph1" ditambahkan.')).replace(':ph1', nama), 'task_alt');
     };
 
     addBtn.addEventListener('click', addCustomWarna);
@@ -1460,13 +1460,13 @@ function parseRibuanDecimal(raw) {
             target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         };
         const fotoTerisi = Array.from(form.querySelectorAll('input[name="foto_produk[]"]')).some(i => i.files && i.files.length > 0);
-        if (!fotoTerisi) return fail('Wajib: unggah minimal 1 foto produk.', form.querySelector('input[name="foto_produk[]"]'));
-        if (!document.getElementById('fp-kategori-hidden')?.value) return fail('Wajib: pilih kategori produk.', document.getElementById('fp-kategori-box'));
-        if (getSelectedUkuran().length === 0) return fail('Wajib: pilih minimal 1 ukuran.', document.getElementById('ukuran-chips'));
+        if (!fotoTerisi) return fail('{{ __('Wajib: unggah minimal 1 foto produk.') }}', form.querySelector('input[name="foto_produk[]"]'));
+        if (!document.getElementById('fp-kategori-hidden')?.value) return fail('{{ __('Wajib: pilih kategori produk.') }}', document.getElementById('fp-kategori-box'));
+        if (getSelectedUkuran().length === 0) return fail('{{ __('Wajib: pilih minimal 1 ukuran.') }}', document.getElementById('ukuran-chips'));
         const rows = Array.from(document.querySelectorAll('#varian-stok-grid [name$="[stok]"]'));
-        if (!rows.length) return fail('Wajib: isi stok tiap varian (pilih ukuran dulu).', document.getElementById('varian-stok-empty'));
+        if (!rows.length) return fail('{{ __('Wajib: isi stok tiap varian (pilih ukuran dulu).') }}', document.getElementById('varian-stok-empty'));
         const kosong = rows.find(i => i.value === '' || window.parseRibuanInt(i.value) < 10);
-        if (kosong) return fail('Wajib: stok tiap varian minimal 10.', kosong);
+        if (kosong) return fail('{{ __('Wajib: stok tiap varian minimal 10.') }}', kosong);
     });
 })();
 

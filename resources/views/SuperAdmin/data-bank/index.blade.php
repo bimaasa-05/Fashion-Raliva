@@ -854,7 +854,7 @@
     // Hapus Bank
     function confirmDeleteBank(id, nama) {
         document.getElementById('form-hapus-bank').action = '{{ route('superadmin.data-bank.hapus', ['bank' => ':ID']) }}'.replace(':ID', id);
-        document.getElementById('hapus-bank-text').textContent = '{{ __('Bank "') }}' + nama + '{{ __('" beserta rekening platform-nya akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.') }}';
+        document.getElementById('hapus-bank-text').textContent = @js(__('Bank ":ph1" beserta rekening platform-nya akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.')).replace(':ph1', nama);
         document.getElementById('modal-hapus-bank').classList.remove('hidden');
         document.getElementById('modal-hapus-bank').classList.add('flex');
     }
@@ -867,7 +867,7 @@
     // Hapus E-Wallet
     function confirmDeleteEwallet(id, nama) {
         document.getElementById('form-hapus-ewallet').action = '{{ route('superadmin.data-bank.account.hapus', ['account' => ':ID']) }}'.replace(':ID', id);
-        document.getElementById('hapus-ewallet-text').textContent = '{{ __('E-wallet "') }}' + nama + '{{ __('" akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.') }}';
+        document.getElementById('hapus-ewallet-text').textContent = @js(__('E-wallet ":ph1" akan dihapus permanen. Tindakan ini tidak bisa dibatalkan.')).replace(':ph1', nama);
         document.getElementById('modal-hapus-ewallet').classList.remove('hidden');
         document.getElementById('modal-hapus-ewallet').classList.add('flex');
     }

@@ -97,7 +97,7 @@ class DataBankController extends Controller
         });
 
         return back()->with('toast', [
-            'message' => 'Bank "'.$bank->nama_bank.'" berhasil ditambahkan.',
+            'message' => __('Bank ":ph1" berhasil ditambahkan.', ['ph1' => $bank->nama_bank]),
             'icon' => 'task_alt',
         ]);
     }
@@ -166,7 +166,7 @@ class DataBankController extends Controller
         });
 
         return back()->with('toast', [
-            'message' => 'Perubahan bank "'.$bank->nama_bank.'" berhasil disimpan.',
+            'message' => __('Perubahan bank ":ph1" berhasil disimpan.', ['ph1' => $bank->nama_bank]),
             'icon' => 'task_alt',
         ]);
     }
@@ -177,7 +177,7 @@ class DataBankController extends Controller
 
         if ($adaTransaksi) {
             return back()->with('toast', [
-                'message' => 'Hapus dibatalkan — bank "'.$bank->nama_bank.'" masih memiliki rekening toko yang terdaftar.',
+                'message' => __('Hapus dibatalkan — bank ":ph1" masih memiliki rekening toko yang terdaftar.', ['ph1' => $bank->nama_bank]),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -202,7 +202,7 @@ class DataBankController extends Controller
         });
 
         return back()->with('toast', [
-            'message' => 'Bank "'.$lama['nama_bank'].'" berhasil dihapus.',
+            'message' => __('Bank ":ph1" berhasil dihapus.', ['ph1' => $lama['nama_bank']]),
             'icon' => 'delete',
         ]);
     }
@@ -255,7 +255,7 @@ class DataBankController extends Controller
         $label = $validated['jenis'] === PlatformBankAccount::JENIS_QRIS ? 'QRIS' : 'E-Wallet';
 
         return back()->with('toast', [
-            'message' => "Akun {$label} \"{$validated['nama']}\" berhasil ditambahkan.",
+            'message' => __('Akun :ph75227 ":ph75228" berhasil ditambahkan.', ['ph75227' => $label, 'ph75228' => $validated['nama']]),
             'icon' => 'task_alt',
         ]);
     }
@@ -293,7 +293,7 @@ class DataBankController extends Controller
         $label = $account->jenis === PlatformBankAccount::JENIS_QRIS ? 'QRIS' : 'E-Wallet';
 
         return back()->with('toast', [
-            'message' => "Akun {$label} \"{$validated['nama']}\" berhasil diperbarui.",
+            'message' => __('Akun :ph75225 ":ph75226" berhasil diperbarui.', ['ph75225' => $label, 'ph75226' => $validated['nama']]),
             'icon' => 'task_alt',
         ]);
     }
@@ -302,7 +302,7 @@ class DataBankController extends Controller
     {
         if ($account->jenis === PlatformBankAccount::JENIS_BANK_TRANSFER) {
             return back()->with('toast', [
-                'message' => 'Akun bank transfer hanya bisa dihapus lewat hapus bank.',
+                'message' => __('Akun bank transfer hanya bisa dihapus lewat hapus bank.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -317,7 +317,7 @@ class DataBankController extends Controller
         $label = $account->jenis === PlatformBankAccount::JENIS_QRIS ? 'QRIS' : 'E-Wallet';
 
         return back()->with('toast', [
-            'message' => "Akun {$label} \"{$nama}\" berhasil dihapus.",
+            'message' => __('Akun :ph75223 ":ph75224" berhasil dihapus.', ['ph75223' => $label, 'ph75224' => $nama]),
             'icon' => 'delete',
         ]);
     }

@@ -127,7 +127,7 @@ class NotifikasiController extends Controller
     {
         NotificationService::markAllRead(Auth::id());
 
-        return response()->json(['success' => true, 'message' => 'Semua notifikasi telah dibaca']);
+        return response()->json(['success' => true, 'message' => __('Semua notifikasi telah dibaca')]);
     }
 
     /**

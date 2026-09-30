@@ -59,15 +59,15 @@ class DataProduksiController extends Controller
     {
         $storeIds = StoreStaff::where('user_id', auth()->id())->where('status', 'aktif')->pluck('store_id')->all();
         if (! in_array($order->store_id, $storeIds, true)) {
-            return back()->with('toast', ['message' => 'Pesanan di luar scope toko Anda.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pesanan di luar scope toko Anda.'), 'icon' => 'gpp_maybe']);
         }
 
         if ($order->status !== Order::STATUS_DIPROSES) {
-            return back()->with('toast', ['message' => 'Hanya pesanan yang sudah diproses yang bisa di-accept.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Hanya pesanan yang sudah diproses yang bisa di-accept.'), 'icon' => 'gpp_maybe']);
         }
 
         if ($order->produksi_dimulai_pada) {
-            return back()->with('toast', ['message' => 'Produksi sudah dimulai sebelumnya.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Produksi sudah dimulai sebelumnya.'), 'icon' => 'gpp_maybe']);
         }
 
         $lama = $order->only(['status', 'produksi_dimulai_pada']);
@@ -89,7 +89,7 @@ class DataProduksiController extends Controller
             ActivityLogger::resolveActorId(),
             route('admin.pesanan'));
 
-        return back()->with('toast', ['message' => "Pesanan {$order->nomor_order} diterima, produksi dimulai.", 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Pesanan :ph58725 diterima, produksi dimulai.', ['ph58725' => $order->nomor_order]), 'icon' => 'task_alt']);
     }
 
     /**
@@ -156,8 +156,8 @@ class DataProduksiController extends Controller
 
         return back()->with('toast', [
             'message' => $totalOrder > 0
-                ? "Bahan dilengkapi untuk {$totalOrder} pesanan ({$totalBaris} baris)."
-                : 'Tidak ada pesanan yang perlu dilengkapi bahannya.',
+                ? __('Bahan dilengkapi untuk :ph1 pesanan (:ph2 baris).', ['ph1' => $totalOrder, 'ph2' => $totalBaris])
+                : __('Tidak ada pesanan yang perlu dilengkapi bahannya.'),
             'icon' => 'task_alt',
         ]);
     }
@@ -166,11 +166,11 @@ class DataProduksiController extends Controller
     {
         $storeIds = StoreStaff::where('user_id', auth()->id())->where('status', 'aktif')->pluck('store_id')->all();
         if (! in_array($order->store_id, $storeIds, true)) {
-            return back()->with('toast', ['message' => 'Pesanan di luar scope toko Anda.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pesanan di luar scope toko Anda.'), 'icon' => 'gpp_maybe']);
         }
 
         if ($order->status !== Order::STATUS_DIPROSES) {
-            return back()->with('toast', ['message' => 'Hanya pesanan yang sudah diproses yang bisa ditolak.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Hanya pesanan yang sudah diproses yang bisa ditolak.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -197,22 +197,22 @@ class DataProduksiController extends Controller
             ActivityLogger::resolveActorId(),
             route('admin.pesanan'));
 
-        return back()->with('toast', ['message' => "Pesanan {$order->nomor_order} ditolak, dikembalikan ke Admin.", 'icon' => 'block']);
+        return back()->with('toast', ['message' => __('Pesanan :ph58724 ditolak, dikembalikan ke Admin.', ['ph58724' => $order->nomor_order]), 'icon' => 'block']);
     }
 
     public function storeBahan(Request $request, Order $order)
     {
         $storeIds = StoreStaff::where('user_id', auth()->id())->where('status', 'aktif')->pluck('store_id')->all();
         if (! in_array($order->store_id, $storeIds, true)) {
-            return back()->with('toast', ['message' => 'Pesanan di luar scope toko Anda.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pesanan di luar scope toko Anda.'), 'icon' => 'gpp_maybe']);
         }
 
         if ($order->status !== Order::STATUS_DIPROSES) {
-            return back()->with('toast', ['message' => 'Hanya pesanan yang diproses yang bisa ditambah bahan.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Hanya pesanan yang diproses yang bisa ditambah bahan.'), 'icon' => 'gpp_maybe']);
         }
 
         if (! $order->produksi_dimulai_pada) {
-            return back()->with('toast', ['message' => 'Accept dulu pesanan ini sebelum menambah bahan.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Accept dulu pesanan ini sebelum menambah bahan.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -253,14 +253,14 @@ class DataProduksiController extends Controller
             ['bahan_count' => count($data['bahan'])],
             sprintf('Produksi menambah %d bahan untuk pesanan %s.', count($data['bahan']), $order->nomor_order));
 
-        return back()->with('toast', ['message' => 'Bahan tambahan berhasil disimpan.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Bahan tambahan berhasil disimpan.'), 'icon' => 'task_alt']);
     }
 
     public function updateStatus(Request $request, Order $order)
     {
         $storeIds = StoreStaff::where('user_id', auth()->id())->where('status', 'aktif')->pluck('store_id')->all();
         if (! in_array($order->store_id, $storeIds, true)) {
-            return back()->with('toast', ['message' => 'Pesanan di luar scope toko Anda.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pesanan di luar scope toko Anda.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -272,16 +272,16 @@ class DataProduksiController extends Controller
         ]);
 
         if ($order->status !== Order::STATUS_DIPROSES) {
-            return back()->with('toast', ['message' => 'Hanya pesanan yang sedang diproses yang bisa diselesaikan.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Hanya pesanan yang sedang diproses yang bisa diselesaikan.'), 'icon' => 'gpp_maybe']);
         }
 
         if (! $order->produksi_dimulai_pada) {
-            return back()->with('toast', ['message' => 'Anda belum accept produksi ini.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Anda belum accept produksi ini.'), 'icon' => 'gpp_maybe']);
         }
 
         $totalQty = (int) $order->items()->sum('quantity');
         if ($data['jumlah_berhasil'] > $totalQty) {
-            return back()->with('toast', ['message' => "Jumlah berhasil melebihi total pesanan ({$totalQty} pcs).", 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Jumlah berhasil melebihi total pesanan (:ph58723 pcs).', ['ph58723' => $totalQty]), 'icon' => 'gpp_maybe']);
         }
 
         // Gagal dihitung otomatis: selisih total pesanan vs yang berhasil.
@@ -305,6 +305,6 @@ class DataProduksiController extends Controller
             ActivityLogger::resolveActorId(),
             route('admin.pesanan'));
 
-        return back()->with('toast', ['message' => "Pesanan {$order->nomor_order} selesai diproduksi. Menunggu QC.", 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Pesanan :ph58722 selesai diproduksi. Menunggu QC.', ['ph58722' => $order->nomor_order]), 'icon' => 'task_alt']);
     }
 }

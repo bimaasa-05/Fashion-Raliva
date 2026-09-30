@@ -57,11 +57,11 @@
             }
             const diff = Math.floor((end - now) / 1000);
             if (diff < 0) {
-                el.textContent = '{{ __('Terlambat ') }}' + countdownProduksiFmt(diff);
+                el.textContent = @js(__('Terlambat :ph1')).replace(':ph1', countdownProduksiFmt(diff));
                 el.classList.add('text-error', 'font-bold');
                 el.classList.remove('text-on-surface-variant', 'text-secondary');
             } else {
-                el.textContent = '{{ __('Sisa ') }}' + countdownProduksiFmt(diff) + ' (' + live.pct + '%)';
+                el.textContent = @js(__('Sisa :ph1 (:ph2%)')).replace(':ph1', countdownProduksiFmt(diff)).replace(':ph2', live.pct);
                 el.classList.add('text-on-surface-variant');
                 el.classList.remove('text-error', 'font-bold', 'text-secondary');
             }

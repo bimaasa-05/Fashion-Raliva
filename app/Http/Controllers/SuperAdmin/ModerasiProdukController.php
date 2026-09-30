@@ -89,14 +89,14 @@ class ModerasiProdukController extends Controller
 
             if (! $locked || $locked->status !== Product::STATUS_PENDING) {
                 return back()->with('toast', [
-                    'message' => 'Hanya produk berstatus pending yang dapat disetujui.',
+                    'message' => __('Hanya produk berstatus pending yang dapat disetujui.'),
                     'icon' => 'gpp_maybe',
                 ]);
             }
 
             if ($locked->store_id === null) {
                 return back()->with('toast', [
-                    'message' => 'Produk tidak terhubung ke toko mana pun, tidak dapat disetujui.',
+                    'message' => __('Produk tidak terhubung ke toko mana pun, tidak dapat disetujui.'),
                     'icon' => 'gpp_maybe',
                 ]);
             }
@@ -161,7 +161,7 @@ class ModerasiProdukController extends Controller
 
             if (! $locked || $locked->status !== Product::STATUS_PENDING) {
                 return back()->with('toast', [
-                    'message' => 'Hanya produk berstatus pending yang dapat ditolak.',
+                    'message' => __('Hanya produk berstatus pending yang dapat ditolak.'),
                     'icon' => 'gpp_maybe',
                 ]);
             }

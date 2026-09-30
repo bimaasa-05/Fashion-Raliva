@@ -51,11 +51,11 @@ class ResetPasswordController extends Controller
 
         if ($status === Password::PASSWORD_RESET) {
             return redirect()->route('login')
-                ->with('success', 'Password berhasil diubah. Silakan login dengan password baru Anda.');
+                ->with('success',__('Password berhasil diubah. Silakan login dengan password baru Anda.'));
         }
 
         return back()
             ->withInput($request->only('email'))
-            ->withErrors(['email' => 'Tautan reset password tidak valid atau sudah kedaluwarsa.']);
+            ->withErrors(['email' => __('Tautan reset password tidak valid atau sudah kedaluwarsa.')]);
     }
 }

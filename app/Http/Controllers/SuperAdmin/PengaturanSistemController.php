@@ -109,11 +109,11 @@ class PengaturanSistemController extends Controller
         });
 
         if (empty($baru)) {
-            return back()->with('toast', ['message' => 'Tidak ada pengaturan yang dikirim.', 'icon' => 'info']);
+            return back()->with('toast', ['message' => __('Tidak ada pengaturan yang dikirim.'), 'icon' => 'info']);
         }
 
         return back()->with('toast', [
-            'message' => 'Pengaturan sistem berhasil disimpan.',
+            'message' => __('Pengaturan sistem berhasil disimpan.'),
             'icon' => 'task_alt',
         ]);
     }
@@ -151,7 +151,7 @@ class PengaturanSistemController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Dokumen Legal Diperbarui', 'Syarat & Ketentuan dan Kebijakan Privasi diperbarui.', route('superadmin.pengaturan-sistem'));
 
         return back()->with('toast', [
-            'message' => 'Konten Syarat & Ketentuan dan Kebijakan Privasi berhasil disimpan.',
+            'message' => __('Konten Syarat & Ketentuan dan Kebijakan Privasi berhasil disimpan.'),
             'icon' => 'task_alt',
         ]);
     }
@@ -203,7 +203,7 @@ class PengaturanSistemController extends Controller
         });
 
         return back()->with('toast', [
-            'message' => 'Konten hero Pusat Bantuan berhasil disimpan.',
+            'message' => __('Konten hero Pusat Bantuan berhasil disimpan.'),
             'icon' => 'task_alt',
         ]);
     }
@@ -223,7 +223,7 @@ class PengaturanSistemController extends Controller
         ActivityLogger::log('help.category.create', HelpCategory::class, $kategori->help_category_id, null, $kategori->only(['icon', 'judul', 'subjudul', 'urutan']), "Menambahkan kategori bantuan \"{$kategori->judul}\".");
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Kategori Bantuan Ditambahkan', "Kategori bantuan \"{$kategori->judul}\" ditambahkan.", route('superadmin.pengaturan-sistem'));
 
-        return back()->with('toast', ['message' => "Kategori \"{$kategori->judul}\" berhasil ditambahkan.", 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Kategori ":ph86807" berhasil ditambahkan.', ['ph86807' => $kategori->judul]), 'icon' => 'task_alt']);
     }
 
     public function updateHelpCategory(Request $request, HelpCategory $helpCategory)
@@ -242,7 +242,7 @@ class PengaturanSistemController extends Controller
         ActivityLogger::log('help.category.update', HelpCategory::class, $helpCategory->help_category_id, $lama, $helpCategory->only(['icon', 'judul', 'subjudul', 'urutan', 'is_active']), "Mengubah kategori bantuan \"{$helpCategory->judul}\".");
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Kategori Bantuan Diperbarui', "Kategori bantuan \"{$helpCategory->judul}\" diperbarui.", route('superadmin.pengaturan-sistem'));
 
-        return back()->with('toast', ['message' => "Kategori \"{$helpCategory->judul}\" berhasil diperbarui.", 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Kategori ":ph86806" berhasil diperbarui.', ['ph86806' => $helpCategory->judul]), 'icon' => 'task_alt']);
     }
 
     public function destroyHelpCategory(HelpCategory $helpCategory)
@@ -250,7 +250,7 @@ class PengaturanSistemController extends Controller
         if ($helpCategory->faqs()->exists()) {
             $jumlah = $helpCategory->faqs()->count();
             return back()->with('toast', [
-                'message' => "Hapus dibatalkan — kategori \"{$helpCategory->judul}\" masih dipakai {$jumlah} FAQ.",
+                'message' => __('Hapus dibatalkan — kategori ":ph86804" masih dipakai :ph86805 FAQ.', ['ph86804' => $helpCategory->judul, 'ph86805' => $jumlah]),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -263,7 +263,7 @@ class PengaturanSistemController extends Controller
         ActivityLogger::log('help.category.delete', HelpCategory::class, $id, $lama, null, "Menghapus kategori bantuan \"{$judul}\".");
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Kategori Bantuan Dihapus', "Kategori bantuan \"{$judul}\" dihapus.", route('superadmin.pengaturan-sistem'));
 
-        return back()->with('toast', ['message' => "Kategori \"{$judul}\" berhasil dihapus.", 'icon' => 'delete']);
+        return back()->with('toast', ['message' => __('Kategori ":ph86803" berhasil dihapus.', ['ph86803' => $judul]), 'icon' => 'delete']);
     }
 
     public function storeHelpFaq(Request $request)
@@ -281,7 +281,7 @@ class PengaturanSistemController extends Controller
         ActivityLogger::log('help.faq.create', HelpFaq::class, $faq->help_faq_id, null, $faq->only(['help_category_id', 'pertanyaan', 'urutan']), 'Menambahkan FAQ bantuan baru.');
         Notification::fireSelf(Notification::TIPE_SISTEM, 'FAQ Bantuan Ditambahkan', 'FAQ bantuan baru ditambahkan.', route('superadmin.pengaturan-sistem'));
 
-        return back()->with('toast', ['message' => 'FAQ berhasil ditambahkan.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('FAQ berhasil ditambahkan.'), 'icon' => 'task_alt']);
     }
 
     public function updateHelpFaq(Request $request, HelpFaq $helpFaq)
@@ -300,7 +300,7 @@ class PengaturanSistemController extends Controller
         ActivityLogger::log('help.faq.update', HelpFaq::class, $helpFaq->help_faq_id, $lama, $helpFaq->only(['help_category_id', 'pertanyaan', 'jawaban', 'urutan', 'is_active']), 'Mengubah FAQ bantuan.');
         Notification::fireSelf(Notification::TIPE_SISTEM, 'FAQ Bantuan Diperbarui', 'FAQ bantuan diperbarui.', route('superadmin.pengaturan-sistem'));
 
-        return back()->with('toast', ['message' => 'FAQ berhasil diperbarui.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('FAQ berhasil diperbarui.'), 'icon' => 'task_alt']);
     }
 
     public function destroyHelpFaq(HelpFaq $helpFaq)
@@ -313,7 +313,7 @@ class PengaturanSistemController extends Controller
         ActivityLogger::log('help.faq.delete', HelpFaq::class, $id, $lama, null, 'Menghapus FAQ bantuan.');
         Notification::fireSelf(Notification::TIPE_SISTEM, 'FAQ Bantuan Dihapus', 'FAQ bantuan dihapus.', route('superadmin.pengaturan-sistem'));
 
-        return back()->with('toast', ['message' => 'FAQ berhasil dihapus.', 'icon' => 'delete']);
+        return back()->with('toast', ['message' => __('FAQ berhasil dihapus.'), 'icon' => 'delete']);
     }
 
     private function validateHelpCategory(Request $request): array

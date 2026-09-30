@@ -171,7 +171,7 @@ class OrderTrackingController extends Controller
 
         if ($order->status !== Order::STATUS_DIKIRIM) {
             return redirect()->route('customer.order-tracking', ['order' => $order->order_id])
-                ->with('toast', ['message' => 'Pesanan tidak dapat dikonfirmasi pada status ini.', 'icon' => 'info']);
+                ->with('toast', ['message' => __('Pesanan tidak dapat dikonfirmasi pada status ini.'), 'icon' => 'info']);
         }
 
         try {
@@ -207,7 +207,7 @@ class OrderTrackingController extends Controller
         }
 
         return redirect()->route('customer.order-tracking', ['order' => $order->order_id])
-            ->with('toast', ['message' => 'Pesanan dikonfirmasi diterima. Terima kasih!', 'icon' => 'task_alt']);
+            ->with('toast', ['message' => __('Pesanan dikonfirmasi diterima. Terima kasih!'), 'icon' => 'task_alt']);
     }
 
 }

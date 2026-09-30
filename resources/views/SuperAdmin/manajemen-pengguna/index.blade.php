@@ -1067,7 +1067,7 @@
         const d = card.dataset;
 
         document.getElementById('user-modal-title').textContent = '{{ __('Edit Pengguna') }}';
-        document.getElementById('user-modal-sub').textContent = '{{ __('Perbarui data pengguna "') }}' + d.name + '".';
+        document.getElementById('user-modal-sub').textContent = @js(__('Perbarui data pengguna ":ph1".')).replace(':ph1', d.name);
         document.getElementById('user-submit-btn').textContent = '{{ __('Simpan Perubahan') }}';
 
         const form = document.getElementById('user-form');

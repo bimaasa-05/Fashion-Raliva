@@ -66,7 +66,7 @@ class SupplierController extends Controller
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Supplier Ditambahkan', sprintf('Supplier "%s" berhasil ditambahkan.', $data['nama_supplier']), route('admin.supplier'));
 
-        return back()->with('success', 'Supplier ditambahkan.');
+        return back()->with('success',__('Supplier ditambahkan.'));
     }
 
     public function update(Request $request, Supplier $supplier): RedirectResponse
@@ -116,7 +116,7 @@ class SupplierController extends Controller
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Supplier Diperbarui', sprintf('Data supplier "%s" berhasil diperbarui.', $supplier->nama_supplier), route('admin.supplier'));
 
-        return back()->with('success', 'Supplier diperbarui.');
+        return back()->with('success',__('Supplier diperbarui.'));
     }
 
     public function destroy(Supplier $supplier): RedirectResponse
@@ -125,6 +125,6 @@ class SupplierController extends Controller
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Supplier Dihapus', sprintf('Supplier "%s" telah dihapus.', $supplier->nama_supplier), route('admin.supplier'));
 
-        return back()->with('success', 'Supplier dihapus.');
+        return back()->with('success',__('Supplier dihapus.'));
     }
 }
