@@ -28,6 +28,9 @@ class AdminStoreIsolationTest extends TestCase
         $produk2 = $produk1->replicate();
         $produk2->store_id = $store2;
         $produk2->nama_produk = 'Isolasi Toko Dua ' . uniqid();
+        // replicate() menyalin deskripsi juga — timpa agar tidak mengandung
+        // nama produk toko 1 (false positive assertDontSee).
+        $produk2->deskripsi = 'Deskripsi isolasi uji.';
         $produk2->save();
 
         // Admin toko 1 tetap melihat produknya sendiri.
