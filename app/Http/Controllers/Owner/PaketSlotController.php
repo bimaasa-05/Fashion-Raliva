@@ -9,6 +9,7 @@ use App\Models\ProductSlotPackage;
 use App\Models\Role;
 use App\Models\SlotGrant;
 use App\Models\SlotPackagePromotion;
+use App\Models\StoreExpense;
 use App\Models\StoreSlotSubscription;
 use App\Services\NotificationService;
 use App\Support\OwnerContext;
@@ -118,6 +119,18 @@ class PaketSlotController extends Controller
             'Pembelian paket '.$paket->nama_paket,
             $sub->slot_subscription_id,
             StoreSlotSubscription::class
+        );
+
+        // Pengeluaran toko: paket langsung aktif (tanpa approval), jadi expense
+        // dicatat di sini. Dibayar via transfer eksternal — tanpa potong wallet.
+        StoreExpense::firstOrCreate(
+            ['store_id' => $storeId, 'nama' => sprintf('Paket slot "%s" (%d slot)', $paket->nama_paket, $paket->jumlah_slot)],
+            [
+                'kategori' => 'Slot',
+                'nominal' => (float) ($hargaAkhir ?? $paket->harga ?? 0),
+                'tanggal' => now()->toDateString(),
+                'dibuat_oleh' => auth()->id(),
+            ]
         );
 
         NotificationService::sendToRole(
