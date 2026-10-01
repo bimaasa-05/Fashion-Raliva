@@ -17,6 +17,11 @@
 </div>
 
 <div data-real class="hidden space-y-section-gap">
+    <div>
+        <a href="{{ route('owner.dashboard') }}" class="inline-flex items-center gap-2 px-4 py-2 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
+            <span class="material-symbols-outlined text-[16px]">arrow_back</span>{{ __('Kembali ke Dashboard') }}
+        </a>
+    </div>
     @if(! \App\Support\OwnerContext::currentStore())
         <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
