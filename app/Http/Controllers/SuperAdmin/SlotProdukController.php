@@ -9,6 +9,7 @@ use App\Models\Setting;
 use App\Models\SlotGrant;
 use App\Models\SlotPurchaseRequest;
 use App\Models\Store;
+use App\Models\StoreExpense;
 use App\Support\ActivityLogger;
 use App\Support\SlotService;
 use Illuminate\Http\Request;
@@ -309,6 +310,25 @@ class SlotProdukController extends Controller
                     $locked->alasan ?: 'Pembelian slot produk',
                     $locked->slot_purchase_id,
                     SlotPurchaseRequest::class
+                );
+
+                // Pengeluaran toko: pembelian slot adalah beban kas toko (dibayar
+                // via transfer eksternal + bukti, bukan dari saldo wallet —
+                // jadi hanya StoreExpense, tanpa decrement wallet).
+                // Idempoten: nama expense unik per permintaan.
+                $namaExpense = sprintf(
+                    'Pembelian %d slot fleksibel (req #%d)',
+                    $locked->jumlah_slot,
+                    $locked->slot_purchase_id
+                );
+                StoreExpense::firstOrCreate(
+                    ['store_id' => $locked->store_id, 'nama' => $namaExpense],
+                    [
+                        'kategori' => 'Slot',
+                        'nominal' => (float) $locked->total_harga,
+                        'tanggal' => now()->toDateString(),
+                        'dibuat_oleh' => Auth::id(),
+                    ]
                 );
 
                 $lama = $locked->only(['status']);
