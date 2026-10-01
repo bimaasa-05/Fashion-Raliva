@@ -68,6 +68,15 @@ class DataPesananController extends Controller
         $paymentAccounts = PlatformBankAccount::where('status', PlatformBankAccount::STATUS_AKTIF)
             ->orderBy('urutan')->get(['platform_bank_account_id', 'jenis', 'nama', 'kode', 'nomor_rekening', 'nama_pemilik']);
 
+        // Kurir + layanan untuk pilihan Diantar pada form pesanan offline.
+        $couriers = \App\Models\Courier::where('status', \App\Models\Courier::STATUS_AKTIF)
+            ->where(fn ($q) => $q->whereNull('store_id')->orWhereIn('store_id', $storeIds))
+            ->with(['services' => fn ($q) => $q->where('status', 'aktif')
+                ->where(fn ($qq) => $qq->whereNull('store_id')->orWhereIn('store_id', $storeIds))
+                ->orderBy('nama_layanan')])
+            ->orderBy('nama_kurir')->get();
+        $kurirAktif = $storeIds ? $this->kurirAktifToko((int) $storeIds[0]) : [];
+
         return view('Admin.pesanan.index', [
             'orders' => $orders,
             'statuses' => $statuses,
@@ -76,6 +85,8 @@ class DataPesananController extends Controller
             'recentOrders' => $recentOrders,
             'customers' => $customers,
             'paymentAccounts' => $paymentAccounts,
+            'couriers' => $couriers,
+            'kurirAktif' => $kurirAktif,
         ]);
     }
 
@@ -140,6 +151,27 @@ class DataPesananController extends Controller
         ]);
     }
 
+    /**
+     * ID kurir yang boleh dipakai toko (cermin logika PengirimanController):
+     * bila toko punya pengaturan, hanya yang is_aktif; bila belum ada, semua global.
+     *
+     * @return int[]
+     */
+    private function kurirAktifToko(int $storeId): array
+    {
+        $couriers = \App\Models\Courier::where('status', \App\Models\Courier::STATUS_AKTIF)
+            ->where(fn ($q) => $q->whereNull('store_id')->orWhere('store_id', $storeId))
+            ->pluck('courier_id')->all();
+
+        $set = \App\Models\StoreCourierSetting::where('store_id', $storeId)->get();
+        if ($set->isEmpty()) {
+            return array_map('intval', $couriers);
+        }
+
+        return $set->where('is_aktif', true)->whereNull('shipping_service_id')
+            ->pluck('courier_id')->map(fn ($v) => (int) $v)->all();
+    }
+
     public function store(Request $request): \Illuminate\Http\RedirectResponse
     {
         $storeIds = AdminContext::assignedStoreIds();
@@ -164,6 +196,9 @@ class DataPesananController extends Controller
             'payment_account_id' => ['required_if:metode_bayar,transfer', 'nullable', 'exists:platform_bank_accounts,platform_bank_account_id'],
             'bukti' => ['required_if:metode_bayar,transfer', 'nullable', 'image', 'mimes:jpeg,png,jpg', 'max:4096'],
             'catatan' => ['nullable', 'string', 'max:1000'],
+            'fulfillment' => ['nullable', 'in:ambil,diantar'],
+            'courier_id' => ['nullable', 'integer', 'exists:couriers,courier_id'],
+            'shipping_service_id' => ['nullable', 'integer', 'exists:shipping_services,shipping_service_id'],
         ], [
             'items.required' => 'Pilih minimal 1 produk.',
             'items.min' => 'Pilih minimal 1 produk.',
@@ -252,9 +287,35 @@ class DataPesananController extends Controller
 
         $metodeBayar = $isOffline ? ($data['metode_bayar'] ?? 'tunai') : null;
 
-        [$pajak, $biaya, $grand] = \App\Support\PricingService::computeTotals($subtotal, 0);
+        // Cara terima: online selalu diantar; offline bisa pilih ambil/diantar.
+        $fulfillment = $isOffline ? ($data['fulfillment'] ?? 'ambil') : 'diantar';
+        if (! in_array($fulfillment, ['ambil', 'diantar'], true)) {
+            $fulfillment = $isOffline ? 'ambil' : 'diantar';
+        }
+        $ongkir = 0;
+        if ($isOffline && $fulfillment === 'diantar') {
+            $courier = \App\Models\Courier::where('courier_id', $data['courier_id'] ?? null)->first();
+            $kurirAktif = $this->kurirAktifToko($storeId);
+            if (! $courier || ! in_array((int) $courier->courier_id, $kurirAktif, true)) {
+                return back()->with('toast', ['message' => 'Pilih kurir yang aktif untuk toko ini.', 'icon' => 'gpp_maybe']);
+            }
+            if (! empty($data['shipping_service_id'])) {
+                $service = \App\Models\ShippingService::where('shipping_service_id', $data['shipping_service_id'])
+                    ->where('courier_id', $courier->courier_id)
+                    ->where('status', 'aktif')
+                    ->where(fn ($q) => $q->whereNull('store_id')->orWhere('store_id', $storeId))
+                    ->first();
+                if (! $service) {
+                    return back()->with('toast', ['message' => 'Layanan kurir tidak valid untuk toko ini.', 'icon' => 'gpp_maybe']);
+                }
+                // Otoritas tarif di server (abaikan input ongkir mentah dari form).
+                $ongkir = (int) ($service->tarif ?? 0);
+            }
+        }
 
-        $newOrder = DB::transaction(function () use ($prepared, $subtotal, $pajak, $biaya, $grand, $userId, $storeId, $isOffline, $data, $request, $metodeBayar) {
+        [$pajak, $biaya, $grand] = \App\Support\PricingService::computeTotals($subtotal, $ongkir);
+
+        $newOrder = DB::transaction(function () use ($prepared, $subtotal, $pajak, $biaya, $grand, $ongkir, $fulfillment, $userId, $storeId, $isOffline, $data, $request, $metodeBayar) {
             $checkout = \App\Models\Checkout::create([
                 'user_id' => $userId,
                 'email_pelanggan' => $data['email_pelanggan'] ?? null,
@@ -265,7 +326,7 @@ class DataPesananController extends Controller
                 'total_diskon' => 0,
                 'total_pajak' => $pajak,
                 'biaya_layanan' => $biaya,
-                'total_ongkir' => 0,
+                'total_ongkir' => $ongkir,
                 'grand_total' => $grand,
                 'status' => \App\Models\Checkout::STATUS_PENDING,
             ]);
@@ -277,10 +338,13 @@ class DataPesananController extends Controller
                 'subtotal' => $subtotal,
                 'total_pajak' => $pajak,
                 'biaya_layanan' => $biaya,
+                'total_ongkir' => $ongkir,
                 'grand_total' => $grand,
                 'status' => Order::STATUS_PENDING_PAYMENT,
                 'tipe_pesanan' => $isOffline ? Order::TIPE_PESANAN_OFFLINE : Order::TIPE_PESANAN_ONLINE,
-                'metode_fulfillment' => $isOffline ? Order::FULFILLMENT_AMBIL : Order::FULFILLMENT_DIANTAR,
+                'metode_fulfillment' => $isOffline
+                    ? ($fulfillment === 'diantar' ? Order::FULFILLMENT_DIANTAR : Order::FULFILLMENT_AMBIL)
+                    : Order::FULFILLMENT_DIANTAR,
                 'catatan' => $data['catatan'] ?? null,
             ]);
 
