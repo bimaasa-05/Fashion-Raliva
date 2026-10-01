@@ -88,8 +88,11 @@
                     @forelse ($orders as $o)
                         @php
                             $qc = $o->qualityChecks->first();
-                            $berhasil = $qc?->jumlah_lulus ?? $o->jumlah_berhasil ?? 0;
-                            $gagal = $qc?->jumlah_gagal ?? $o->jumlah_gagal ?? 0;
+                            $prodB = $o->hasil_produksi_berhasil ?? $o->jumlah_berhasil ?? 0;
+                            $prodG = $o->hasil_produksi_gagal ?? $o->jumlah_gagal ?? 0;
+                            $qcB = $o->hasil_qc_lulus ?? $qc?->jumlah_lulus;
+                            $qcG = $o->hasil_qc_gagal ?? $qc?->jumlah_gagal;
+                            $catQc = $qc?->catatan ?? $o->qc_perlu_admin_catatan ?? $o->qc_admin_catatan;
                             $statusBadge = match ($o->status) {
                                 'siap_kirim' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
                                 'dikirim' => 'bg-sky-500/10 text-sky-600 border-sky-500/30',
@@ -120,8 +123,15 @@
                                 @endforeach
                             </td>
                             <td class="py-3.5 px-4 text-center">
-                                <p class="text-secondary font-bold">{{ number_format($berhasil, 0, ',', '.') }} berhasil</p>
-                                <p class="text-error">{{ number_format($gagal, 0, ',', '.') }} gagal</p>
+                                <p class="text-secondary font-bold">{{ number_format($prodB, 0, ',', '.') }} berhasil <span class="font-normal text-on-surface-variant text-xs">(produksi)</span></p>
+                                <p class="text-error">{{ number_format($prodG, 0, ',', '.') }} gagal</p>
+                                @if ($qcB !== null || $qcG !== null)
+                                    <p class="text-green-600 font-bold mt-1">{{ number_format($qcB ?? 0, 0, ',', '.') }} lulus <span class="font-normal text-on-surface-variant text-xs">(QC)</span></p>
+                                    <p class="text-error">{{ number_format($qcG ?? 0, 0, ',', '.') }} gagal (QC)</p>
+                                @endif
+                                @if ($catQc)
+                                    <p class="text-xs text-on-surface-variant italic mt-1">“{{ \Illuminate\Support\Str::limit($catQc, 80) }}”</p>
+                                @endif
                                 @if (($o->kekurangan_gudang ?? 0) > 0)
                                     <p class="text-gold-accent text-xs">+{{ $o->kekurangan_gudang }} dari Gudang</p>
                                 @endif
