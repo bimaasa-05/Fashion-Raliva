@@ -37,7 +37,7 @@
 
     {{-- Tabel --}}
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto hidden md:block">
             <table class="premium-table w-full min-w-[900px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
@@ -98,6 +98,55 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+        <div class="md:hidden grid grid-cols-1 gap-gutter">
+            @forelse ($orders as $o)
+                <article class="bg-surface-container-low border border-muted-border rounded-xl p-4">
+                    <div class="flex items-start justify-between gap-3">
+                        <div class="min-w-0">
+                            <p class="font-bold text-on-surface">{{ $o->nomor_order }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->checkout?->nama_penerima ?? $o->checkout?->user?->nama_lengkap ?? '-' }}</p>
+                            <p class="text-[10px] text-on-surface-variant mt-0.5">{{ $o->created_at?->translatedFormat('d M Y') ?? '-' }}</p>
+                        </div>
+                        @if ($tab === 'siap')
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-green-500/10 text-green-600 text-[10px] font-bold uppercase border border-green-500/30 shrink-0">{{ __('Siap Kirim') }}</span>
+                        @elseif ($o->qc_perlu_admin_pada)
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/30 shrink-0">{{ __('Menunggu Admin') }}</span>
+                        @else
+                            <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30 shrink-0">{{ __('Menunggu QC') }}</span>
+                        @endif
+                    </div>
+                    @if ($o->catatan)
+                        <p class="text-xs text-on-surface mt-1 italic">“{{ \Illuminate\Support\Str::limit($o->catatan, 80) }}”</p>
+                    @endif
+                    <div class="mt-2">
+                        @foreach ($o->items as $item)
+                            <p class="text-sm text-on-surface">{{ $item->nama_produk_snapshot }} <span class="text-on-surface-variant">× {{ $item->quantity }}</span></p>
+                        @endforeach
+                    </div>
+                    <div class="mt-3 pt-3 border-t border-muted-border text-sm">
+                        @php($dariGudang = (int) $o->items->sum('qty_dari_gudang'))
+                        <p class="text-green-600 font-bold">{{ $o->jumlah_berhasil ?? 0 }}/{{ $o->items->sum('quantity') }} pcs berhasil</p>
+                        <p class="text-error">{{ $o->jumlah_gagal ?? 0 }} gagal</p>
+                        @if ($tab === 'siap' && $dariGudang > 0)
+                            <p class="text-xs text-gold-accent font-bold mt-0.5">{{ $dariGudang }} pcs dari {{ $o->namaGudangShortfall() ?? 'Gudang' }}</p>
+                        @endif
+                        @if ($tab === 'siap' && (int) ($o->kekurangan_gudang ?? 0) > 0)
+                            <p class="text-xs text-error font-bold mt-0.5">−{{ $o->kekurangan_gudang }} masih kurang</p>
+                        @endif
+                    </div>
+                    <div class="flex items-center gap-2 mt-3 pt-3 border-t border-muted-border">
+                        <button type="button" onclick="openDetailProduksi('{{ $o->order_id }}')" title="{{ __('Detail produksi') }}" class="inline-flex items-center justify-center px-3 py-2 border border-muted-border text-on-surface-variant rounded-lg hover:border-gold-accent hover:text-gold-accent transition-colors shrink-0">
+                            <span class="material-symbols-outlined text-[16px]">timeline</span>
+                        </button>
+                        @if ($tab !== 'siap')
+                            <button type="button" onclick="openModalQC('{{ $o->order_id }}')" class="flex-1 px-3 py-2 bg-deep-onyx text-on-primary text-[11px] font-bold uppercase rounded-lg hover:opacity-90 transition-opacity">{{ __('QC + Packing') }}</button>
+                        @endif
+                    </div>
+                </article>
+            @empty
+                <p class="text-center text-on-surface-variant py-10">{{ $tab === 'siap' ? 'Belum ada pesanan siap untuk dikirim.' : 'Tidak ada pesanan menunggu QC.' }}</p>
+            @endforelse
         </div>
         {{ $orders->withQueryString()->links() }}
     </section>

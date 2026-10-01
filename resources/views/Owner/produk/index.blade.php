@@ -45,7 +45,7 @@
     </section>
 
     {{-- Ringkasan --}}
-    <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <section data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Produk') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $counts['total'] }}</span>

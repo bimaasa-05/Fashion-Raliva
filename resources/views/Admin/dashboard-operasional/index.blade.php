@@ -77,7 +77,7 @@
 
 <section>
     <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">{{ __('Ringkasan Hari Ini') }}</h2>
-    <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
         <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Pesanan Baru') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $stats['pesanan_baru'] }}</span>

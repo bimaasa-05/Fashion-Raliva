@@ -8,7 +8,7 @@
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
-    <div class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         @for ($i = 0; $i < 4; $i++)
             <div class="h-28 bg-surface-container-high rounded-lg animate-pulse"></div>
         @endfor
@@ -28,7 +28,7 @@
         <div class="bg-error/10 border border-error/30 text-error rounded-lg px-4 py-3 text-sm font-body-md">{{ session('error') }}</div>
     @endif
     {{-- Ringkasan --}}
-    <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <section data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Komplain Terbuka') }}</span>
             <span class="raliva-figure text-[26px] text-error">{{ $terbuka }}</span>
@@ -980,7 +980,7 @@
         const panel = document.getElementById(panelId);
         if (!panel || panel.dataset.rendered) return;
         panel.dataset.inputId = inputId;
-        panel.innerHTML = '<div class="grid grid-cols-8 gap-1">' + CHAT_EMOJI.map(function (e) {
+        panel.innerHTML = '<div class="grid grid-cols-6 sm:grid-cols-8 gap-1">' + CHAT_EMOJI.map(function (e) {
             return '<button type="button" data-emoji="' + e + '" onclick="insertEmojiTo(this)" class="w-9 h-9 flex items-center justify-center text-[20px] leading-none rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer">' + e + '</button>';
         }).join('') + '</div>';
         panel.dataset.rendered = '1';

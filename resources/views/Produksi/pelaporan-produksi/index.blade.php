@@ -11,7 +11,7 @@
     $jelasRate = $stats['unit_diminta'] > 0 ? round($stats['unit_layak'] / $stats['unit_diminta'] * 100) : 0;
 @endphp
 <div data-skeleton class="space-y-section-gap">
-    <div class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         @for ($i = 0; $i < 4; $i++)
             <div class="h-28 bg-surface-container-high rounded-lg animate-pulse"></div>
         @endfor
@@ -21,7 +21,7 @@
 
 <div data-real class="hidden space-y-section-gap">
     {{-- Ringkasan --}}
-    <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <section data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Unit Diminta') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ number_format($stats['unit_diminta'], 0, ',', '.') }}</span>
@@ -71,7 +71,7 @@
             </form>
         </div>
 
-        <div class="overflow-x-auto">
+        <div class="overflow-x-auto hidden md:block">
             <table class="premium-table w-full min-w-[900px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
@@ -200,6 +200,110 @@
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <div class="md:hidden grid grid-cols-1 gap-gutter">
+            @forelse ($orders as $order)
+                <article class="bg-surface-container-low border border-muted-border rounded-xl p-4">
+                    <div class="flex items-start justify-between gap-3">
+                        <p class="font-bold text-on-surface">{{ $order->nomor_produksi }}</p>
+                        <span class="text-xs text-on-surface-variant whitespace-nowrap shrink-0">{{ $order->selesai_pada?->format('d M Y') ?? '-' }}</span>
+                    </div>
+                    <div class="mt-2 space-y-1">
+                        @foreach ($order->items as $item)
+                            <div class="flex items-center justify-between gap-3 text-sm">
+                                <span class="text-on-surface font-bold">{{ $item->productVariant?->product?->nama_produk ?? '-' }}</span>
+                                <span class="text-xs text-on-surface-variant whitespace-nowrap">{{ $item->jumlah_diminta }} unit</span>
+                            </div>
+                        @endforeach
+                    </div>
+                    <div class="grid grid-cols-3 gap-3 mt-3 pt-3 border-t border-muted-border text-sm text-center">
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Layak') }}</p>
+                            <p class="font-bold text-secondary mt-0.5">{{ number_format($order->layak_total, 0, ',', '.') }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Rusak') }}</p>
+                            <p class="font-bold mt-0.5 {{ $order->gagal_total > 0 ? 'text-error' : 'text-on-surface-variant' }}">{{ number_format($order->gagal_total, 0, ',', '.') }}</p>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Tercapai') }}</p>
+                            <p class="font-bold mt-0.5 {{ $order->diminta_total > 0 && $order->layak_total >= $order->diminta_total ? 'text-secondary' : 'text-gold-accent' }}">{{ $order->diminta_total > 0 ? round($order->layak_total / $order->diminta_total * 100) : 0 }}%</p>
+                        </div>
+                    </div>
+                    <details class="mt-3 pt-3 border-t border-muted-border">
+                        <summary class="text-xs font-semibold text-gold-accent cursor-pointer select-none">{{ __('Detail') }}</summary>
+                        <div class="grid grid-cols-1 gap-3 mt-3">
+                            <div class="bg-surface-container-low border border-muted-border rounded-lg p-3">
+                                <h4 class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">{{ __('Bahan Terpakai') }}</h4>
+                                @if ($order->materials->isEmpty())
+                                    <p class="text-xs text-on-surface-variant/60">{{ __('Tidak ada bahan tercatat.') }}</p>
+                                @else
+                                    <ul class="space-y-1.5">
+                                        @foreach ($order->materials as $mat)
+                                            <li class="flex items-center justify-between gap-3 text-xs">
+                                                <span class="text-on-surface">{{ $mat->material?->nama_bahan ?? '-' }}</span>
+                                                <span class="text-on-surface-variant whitespace-nowrap">{{ number_format($mat->jumlah_pakai, 0, ',', '.') }} {{ $mat->material?->satuan }}</span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+                            </div>
+                            <div class="bg-surface-container-low border border-muted-border rounded-lg p-3">
+                                <h4 class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">{{ __('Hasil QC') }}</h4>
+                                @if ($order->qualityChecks->isEmpty())
+                                    <p class="text-xs text-on-surface-variant/60">{{ __('Belum ada pemeriksaan.') }}</p>
+                                @else
+                                    <ul class="space-y-1.5">
+                                        @foreach ($order->qualityChecks as $qc)
+                                            <li class="flex items-center justify-between gap-3 text-xs">
+                                                <span class="text-on-surface-variant">{{ $qc->diperiksa_pada?->format('d M H:i') }} — {{ $qc->checker?->nama_lengkap ?? '—' }}</span>
+                                                <span class="whitespace-nowrap font-bold">
+                                                    <span class="text-secondary">{{ $qc->jumlah_lulus }} layak</span>
+                                                    @if ($qc->jumlah_gagal > 0)<span class="text-error"> / {{ $qc->jumlah_gagal }} gagal</span>@endif
+                                                </span>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                    @if ($order->results->isNotEmpty())
+                                        <div class="mt-3 pt-2 border-t border-muted-border space-y-1">
+                                            @foreach ($order->results as $res)
+                                                <p class="text-xs text-on-surface-variant flex items-center justify-between">
+                                                    <span>Produksi {{ $res->jumlah_diproduksi }} unit</span>
+                                                    @if ($res->jumlah_gagal > 0)<span class="text-error font-bold">{{ $res->jumlah_gagal }} rusak</span>@endif
+                                                </p>
+                                            @endforeach
+                                        </div>
+                                    @endif
+                                @endif
+                            </div>
+                            <div class="bg-surface-container-low border border-muted-border rounded-lg p-3">
+                                <h4 class="font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">{{ __('Barang Rusak') }}</h4>
+                                @if ($order->barang_rusak->isEmpty())
+                                    <p class="text-xs text-secondary">{{ __('Tidak ada defect — semua unit layak.') }}</p>
+                                @else
+                                    <ul class="space-y-2">
+                                        @foreach ($order->barang_rusak as $qc)
+                                            <li class="text-xs">
+                                                <p class="flex items-center justify-between gap-2">
+                                                    <span class="font-bold text-error">{{ $qc->jumlah_gagal }} unit</span>
+                                                    <span class="text-on-surface-variant">{{ $qc->diperiksa_pada?->format('d M H:i') }}</span>
+                                                </p>
+                                                <p class="text-on-surface-variant/80 mt-1">{{ $qc->catatan ?: 'Tanpa catatan defect.' }}</p>
+                                            </li>
+                                        @endforeach
+                                    </ul>
+                                @endif
+                            </div>
+                        </div>
+                    </details>
+                </article>
+            @empty
+                <div class="py-10 text-center">
+                    <span class="material-symbols-outlined text-[28px] text-on-surface-variant">search_off</span>
+                    <p class="text-on-surface-variant font-body-md text-sm mt-2">{{ __('Tidak ada laporan produksi.') }}</p>
+                </div>
+            @endforelse
         </div>
 
         @if ($orders->hasPages())

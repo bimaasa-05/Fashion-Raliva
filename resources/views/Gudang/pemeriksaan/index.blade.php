@@ -113,7 +113,7 @@
                         <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $badgeClass[$statusM] }} text-[10px] font-bold uppercase border shrink-0">{{ $statusM }}</span>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-gutter mb-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter mb-4">
                         <div class="bg-surface-container-low border border-muted-border rounded-lg p-3">
                             <p class="raliva-label">{{ __('Stok Sistem') }}</p>
                             <p class="font-title-md text-lg text-on-surface leading-tight">{{ $s->jumlah_stok }}</p>
@@ -199,7 +199,7 @@
                         <span class="text-xs text-on-surface-variant shrink-0 text-right">{{ $h->created_at?->format('d M Y • H:i') ?? '-' }}</span>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-gutter mb-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter mb-4">
                         <div class="bg-surface-container-low border border-muted-border rounded-lg p-3 text-center">
                             <p class="raliva-label">{{ __('Sistem') }}</p>
                             <p class="font-title-md text-lg text-on-surface leading-tight">{{ $h->stok_sistem }}</p>
@@ -251,7 +251,7 @@
                         <span class="material-symbols-outlined">close</span>
                     </button>
                 </div>
-                <div class="grid grid-cols-2 gap-gutter mb-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter mb-6">
                     <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 text-center">
                         <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Stok Sistem') }}</p>
                         <p class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $s->jumlah_stok }}</p>

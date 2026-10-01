@@ -8,7 +8,7 @@
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
-    <div class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         @for ($i = 0; $i < 4; $i++)
             <div class="h-28 bg-surface-container-high rounded-lg animate-pulse"></div>
         @endfor
@@ -27,7 +27,7 @@
         </div>
     @endif
     {{-- Ringkasan --}}
-    <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <section data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         @foreach ([['Total Karyawan', $summary['total'], 'on-surface', 'groups'], ['Admin', $summary['admin'], 'secondary', 'admin_panel_settings'], ['Produksi & Gudang', $summary['produksi_gudang'], 'on-surface', 'precision_manufacturing'], ['Nonaktif', $summary['nonaktif'], 'error', 'person_off']] as $stat)
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __($stat[0]) }}</span>

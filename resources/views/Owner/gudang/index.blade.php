@@ -8,7 +8,7 @@
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
-    <div class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         @for ($i = 0; $i < 4; $i++)
             <div class="h-28 bg-surface-container-high rounded-lg animate-pulse"></div>
         @endfor
@@ -28,7 +28,7 @@
         </div>
     @endif
     {{-- Ringkasan --}}
-    <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <section data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Gudang') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $summary['total'] }}</span>
@@ -184,7 +184,7 @@
     {{--        Ringkasan Stok Antar Gudang --}}
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">{{ __('Ringkasan Stok Kritis') }}</h2>
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading sm:whitespace-nowrap">{{ __('Ringkasan Stok Kritis') }}</h2>
             <div class="relative w-full sm:w-64">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                 <input type="text" placeholder="{{ __('Cari produk...') }}" data-table-search class="raliva-search" />

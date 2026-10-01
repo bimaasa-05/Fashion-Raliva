@@ -34,7 +34,7 @@
     </div>
     <section>
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">{{ __('Ringkasan Refund') }}</h2>
-        <div data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+        <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Kasus Menunggu') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary break-words">{{ $stats['requested'] }}</span>

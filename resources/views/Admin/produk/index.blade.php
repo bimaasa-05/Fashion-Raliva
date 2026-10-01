@@ -825,7 +825,7 @@
         {{-- Foto --}}
         <div>
             <label class="block raliva-label mb-2">Foto Produk (maks. 5 foto) <span class="text-error">*</span></label>
-            <div class="grid grid-cols-4 gap-gutter" id="foto-slot-grid">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-gutter" id="foto-slot-grid">
                 @for ($i = 0; $i < 5; $i++)
                     <label class="foto-slot aspect-[3/4] rounded-lg border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-gold-accent hover:bg-surface-container-low transition-colors group relative overflow-hidden" data-foto-slot>
                         <input type="file" name="foto_produk[]" accept="image/*" class="hidden" data-foto-input onchange="previewFotoSlot(this)" />

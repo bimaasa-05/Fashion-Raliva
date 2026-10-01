@@ -30,7 +30,7 @@
 @section('content')
     @include('partials.flash-toast')
 
-    <section data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter mb-6">
+    <section data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-6">
         <div data-reveal
             class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
             <span

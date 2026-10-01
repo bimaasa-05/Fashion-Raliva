@@ -140,7 +140,7 @@
             {{-- Perbandingan durasi --}}
             <div>
                 <p class="text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">{{ __('Durasi Pengerjaan') }}</p>
-                <div class="grid grid-cols-2 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div class="bg-surface-container-low rounded-lg p-3">
                         <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Target (Admin)') }}</p>
                         <p class="text-on-surface font-bold mt-1">{{ $durTarget !== null ? produksiFmtDetik($durTarget) : '-' }}</p>

@@ -17,7 +17,7 @@
 
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">{{ __('Ringkasan Stok') }}</h2>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter mb-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-8">
             <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden">
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill pointer-events-none select-none" aria-hidden="true">inventory_2</span>
                 <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Varian Terdata') }}</p>
