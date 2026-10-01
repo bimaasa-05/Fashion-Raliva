@@ -33,6 +33,7 @@
             'items' => [
                 ['route' => 'owner.pesanan', 'icon' => 'shopping_bag', 'text' => 'Data Pesanan', 'badge' => 'pesanan'],
                 ['route' => 'owner.ulasan', 'icon' => 'star', 'text' => 'Ulasan & Penilaian'],
+                ['route' => 'owner.pengikut', 'icon' => 'person_add', 'text' => 'Pengikut Toko'],
                 ['route' => 'owner.komplain', 'aliases' => ['owner.pengembalian-dana'], 'icon' => 'move_up', 'text' => 'Eskalasi', 'badge' => 'eskalasi'],
             ],
         ],
