@@ -95,25 +95,31 @@
                         <p class="text-on-surface italic">“{{ $o->catatan }}”</p>
                     </div>
                 @endif
-                @if ($qcRow)
+                @php
+                    $qcLulus = $o->hasil_qc_lulus ?? $qcRow?->jumlah_lulus;
+                    $qcGagal = $o->hasil_qc_gagal ?? $qcRow?->jumlah_gagal;
+                    $prodB = $o->hasil_produksi_berhasil ?? $o->jumlah_berhasil;
+                    $prodG = $o->hasil_produksi_gagal ?? $o->jumlah_gagal;
+                    $catatanQc = $qcRow?->catatan ?? $o->qc_admin_catatan;
+                    $dariGudangModal = (int) $o->items->sum('qty_dari_gudang');
+                    $namaGudangModal = $dariGudangModal > 0 ? ($o->namaGudangShortfall() ?? 'Gudang') : null;
+                @endphp
+                @if ($qcLulus !== null || $qcGagal !== null)
                     <div class="flex justify-between gap-4 pt-2 border-t border-muted-border">
                         <span class="text-on-surface-variant">Hasil QC</span>
-                        <span class="text-on-surface text-right"><span class="text-secondary font-bold">{{ $qcRow->jumlah_lulus }}</span> lulus • <span class="text-error">{{ $qcRow->jumlah_gagal }}</span> gagal</span>
+                        <span class="text-on-surface text-right"><span class="text-secondary font-bold">{{ $qcLulus ?? 0 }}</span> lulus • <span class="text-error">{{ $qcGagal ?? 0 }}</span> gagal</span>
                     </div>
-                    @if ($qcRow->catatan)
+                    @if ($catatanQc)
                         <div class="pt-2">
-                            <p class="text-on-surface-variant mb-1">Catatan QC Produksi</p>
-                            <p class="text-on-surface italic">“{{ $qcRow->catatan }}”</p>
+                            <p class="text-on-surface-variant mb-1">Catatan QC</p>
+                            <p class="text-on-surface italic">“{{ $catatanQc }}”</p>
                         </div>
                     @endif
-                @elseif (!is_null($o->jumlah_berhasil) || !is_null($o->jumlah_gagal))
-                    @php
-                        $dariGudangModal = (int) $o->items->sum('qty_dari_gudang');
-                        $namaGudangModal = $dariGudangModal > 0 ? ($o->namaGudangShortfall() ?? 'Gudang') : null;
-                    @endphp
+                @endif
+                @if (!is_null($prodB) || !is_null($o->jumlah_gagal))
                     <div class="flex justify-between gap-4 pt-2 border-t border-muted-border">
                         <span class="text-on-surface-variant">Hasil Produksi</span>
-                        <span class="text-on-surface text-right"><span class="text-secondary font-bold">{{ $o->jumlah_berhasil ?? 0 }}</span> berhasil • <span class="text-error">{{ $o->jumlah_gagal ?? 0 }}</span> gagal @if ($dariGudangModal > 0) • <span class="text-gold-accent font-bold">{{ $dariGudangModal }}</span> dari {{ $namaGudangModal }} @endif</span>
+                        <span class="text-on-surface text-right"><span class="text-secondary font-bold">{{ $prodB ?? 0 }}</span> berhasil • <span class="text-error">{{ $prodG ?? 0 }}</span> gagal @if ($dariGudangModal > 0) • <span class="text-gold-accent font-bold">{{ $dariGudangModal }}</span> dari {{ $namaGudangModal }} @endif</span>
                     </div>
                 @endif
                 @if ($o->qc_perlu_admin_pada)
