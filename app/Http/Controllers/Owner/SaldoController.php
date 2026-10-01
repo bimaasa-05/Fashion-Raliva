@@ -142,6 +142,9 @@ class SaldoController extends Controller
 
         $katExpList = StoreExpense::where('store_id', $store->store_id)
             ->select('kategori')->distinct()->pluck('kategori')->filter()->values()->all();
+        foreach (['Operasional', 'Bahan', 'Bonus', 'Gaji', 'Sewa', 'Slot', 'Lainnya'] as $wajib) {
+            if (! in_array($wajib, $katExpList, true)) $katExpList[] = $wajib;
+        }
 
         $filterKatIn = trim((string) $request->input('kat_in', ''));
         $pemasukanList = $wallet->transactions()
