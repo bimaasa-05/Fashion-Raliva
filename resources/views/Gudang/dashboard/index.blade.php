@@ -12,7 +12,7 @@
 @endphp
 <div data-skeleton class="space-y-6">
     <div class="h-[76px] bg-surface-container-high rounded-lg animate-pulse"></div>
-    <div class="grid grid-cols-2 xl:grid-cols-3 gap-gutter">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-gutter">
         @for ($i = 0; $i < 6; $i++)
             <div class="h-32 bg-surface-container-high rounded-lg animate-pulse"></div>
         @endfor
@@ -48,7 +48,7 @@
 
     <section class="rise">
         <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">{{ __('Ringkasan Gudang') }}</h2>
-        <div class="grid grid-cols-2 xl:grid-cols-3 gap-gutter">
+        <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-gutter">
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Produk') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $stats->total_produk ?? 0 }}">{{ $stats->total_produk ?? 0 }}</span></span>
@@ -248,7 +248,7 @@
                             @endif
                         </div>
 
-                        <div class="grid grid-cols-2 gap-gutter mb-4">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter mb-4">
                             <div class="bg-surface-container-low border border-muted-border rounded-lg p-3">
                                 <p class="raliva-label">{{ __('Stok') }}</p>
                                 <p class="font-title-md text-lg leading-tight {{ $item->status === 'kritis' || $item->status === 'habis' ? 'text-error' : 'text-on-surface' }}">{{ $item->jumlah_stok }}</p>

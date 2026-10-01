@@ -8,7 +8,7 @@
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
-    <div class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         @for ($i = 0; $i < 4; $i++)
             <div class="h-28 bg-surface-container-high rounded-lg animate-pulse"></div>
         @endfor
@@ -38,7 +38,7 @@
     {{-- Daftar Komplain (hanya eskalasi) --}}
     <section data-table-scope>
         <div data-reveal class="flex items-center justify-between gap-4 mb-6">
-            <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">{{ __('Perlu Keputusan Anda') }}</h2>
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading sm:whitespace-nowrap">{{ __('Perlu Keputusan Anda') }}</h2>
         </div>
 
         <div data-reveal-group class="space-y-gutter">
@@ -901,7 +901,7 @@ document.addEventListener('DOMContentLoaded', function(){
         const panel = document.getElementById(panelId);
         if (!panel || panel.dataset.rendered) return;
         panel.dataset.inputId = inputId;
-        panel.innerHTML = '<div class="grid grid-cols-8 gap-1">' + CHAT_EMOJI.map(function (e) {
+        panel.innerHTML = '<div class="grid grid-cols-6 sm:grid-cols-8 gap-1">' + CHAT_EMOJI.map(function (e) {
             return '<button type="button" data-emoji="' + e + '" onclick="insertEmojiTo(this)" class="w-9 h-9 flex items-center justify-center text-[20px] leading-none rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer">' + e + '</button>';
         }).join('') + '</div>';
         panel.dataset.rendered = '1';

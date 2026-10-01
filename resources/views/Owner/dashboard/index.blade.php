@@ -9,7 +9,7 @@
 @section('content')
 <div data-skeleton class="space-y-section-gap">
     <div class="h-[110px] bg-surface-container-high rounded-lg animate-pulse"></div>
-    <div class="grid grid-cols-2 xl:grid-cols-3 gap-gutter">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-gutter">
         @for ($i = 0; $i < 6; $i++)
             <div class="h-28 bg-surface-container-high rounded-lg animate-pulse"></div>
         @endfor
@@ -71,7 +71,7 @@
     {{-- Ringkasan Toko --}}
     <section>
         <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">{{ __('Ringkasan Toko') }}</h2>
-        <div data-reveal-group class="grid grid-cols-2 xl:grid-cols-3 gap-gutter">
+        <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-gutter">
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Penjualan Hari Ini') }}</span>
                 <span class="raliva-figure text-[26px] text-on-surface">{{ 'Rp ' . number_format($penjualanHariIni, 0, ',', '.') }}</span>
@@ -121,7 +121,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-section-gap">
         <section data-reveal class="lg:col-span-3 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">{{ __('Performa Penjualan') }}</h2>
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading sm:whitespace-nowrap">{{ __('Performa Penjualan') }}</h2>
                 <div class="inline-flex self-start sm:self-auto bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
                     <button type="button" data-chart-range="7" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">{{ __('7 Hari') }}</button>
                     <button type="button" data-chart-range="30" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">{{ __('30 Hari') }}</button>

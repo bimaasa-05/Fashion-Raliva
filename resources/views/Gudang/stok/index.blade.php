@@ -182,7 +182,7 @@
                         <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $badgeClassM }} text-[10px] font-bold uppercase border shrink-0">{{ ucfirst($statusKey) }}</span>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-gutter mb-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter mb-4">
                         <div class="bg-surface-container-low border border-muted-border rounded-lg p-3">
                             <p class="raliva-label">{{ __('Stok Tersedia') }}</p>
                             <p class="font-title-md text-lg {{ $stockClassM }} leading-tight">{{ $row->total_stok }} <span class="text-[11px] text-on-surface-variant font-normal">unit</span></p>
@@ -212,7 +212,7 @@
                         </div>
                     </dl>
 
-                    <div class="grid grid-cols-2 gap-gutter">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
                         <button type="button" data-modal-open="stok-detail-{{ $loop->iteration }}" class="min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
                             <span class="material-symbols-outlined text-[18px]">visibility</span>Detail
                         </button>
@@ -245,7 +245,7 @@
                     </button>
                 </div>
                 <div class="p-6 space-y-5">
-                    <div class="grid grid-cols-2 gap-gutter">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
                         <div class="bg-surface-container-low border border-muted-border rounded-lg p-4">
                             <p class="raliva-label">{{ __('Total Stok Tersedia') }}</p>
                             <p class="raliva-figure text-[26px] {{ in_array($row->status, ['kritis', 'habis']) ? 'text-error' : 'text-on-surface' }}">{{ $row->total_stok }}</p>
@@ -262,7 +262,7 @@
                             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant font-semibold">{{ __('Detail per Variasi') }}</p>
                         </div>
                         <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
+                            <table class="w-full min-w-[560px] text-sm">
                                 <thead>
                                     <tr class="border-b border-muted-border bg-surface-container-high/50">
                                         <th class="p-3 text-left font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Variasi') }}</th>

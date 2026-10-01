@@ -79,7 +79,7 @@
     </section>
 
     {{-- Ringkasan --}}
-    <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <section data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Dalam Pengiriman') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $summary['dikirim'] }}</span>
@@ -105,7 +105,7 @@
     {{-- Tabel Pengiriman --}}
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">{{ __('Proses Pengiriman') }}</h2>
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading sm:whitespace-nowrap">{{ __('Proses Pengiriman') }}</h2>
             <div class="flex items-center gap-gutter w-full sm:w-auto">
                 <select data-table-filter="status-kirim" class="raliva-select">
                     <option value="">{{ __('Semua Status') }}</option>

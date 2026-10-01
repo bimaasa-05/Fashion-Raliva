@@ -7,7 +7,7 @@
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
-    <div class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         @for ($i = 0; $i < 4; $i++)
             <div class="h-28 bg-surface-container-high rounded-lg animate-pulse"></div>
         @endfor
@@ -45,7 +45,7 @@
             default => [__('Total Bersih'), 'Rp '.number_format($totals['bersih'] ?? 0,0,',','.'), (($totals['bersih'] ?? 0) >= 0 ? 'secondary' : 'error'), 'account_balance_wallet'],
         };
     @endphp
-    <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <section data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         @foreach ([[__('Total Karyawan'), count($rows) + 0, 'on-surface', 'groups'], [__('ROI Toko'), $roiLbl, 'secondary', 'trending_up'], [__('LTV Pelanggan'), $ltvLbl, 'secondary', 'loyalty'], $kartuKeempat] as $stat)
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ $stat[0] }}</span>

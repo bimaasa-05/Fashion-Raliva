@@ -154,7 +154,7 @@
                 </div>
             </div>
 
-            <div data-table-wrap class="overflow-x-auto">
+            <div data-table-wrap class="overflow-x-auto hidden md:block">
                 <table class="premium-table w-full min-w-[900px] font-body-md text-sm">
                     <thead>
                         <tr class="border-b border-muted-border text-left">
@@ -243,6 +243,67 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <div class="md:hidden grid grid-cols-1 gap-gutter">
+                @forelse ($permintaan as $index => $p)
+                    @php
+                        $no = $permintaan->firstItem() + $index;
+                        $statusBadge = match ($p->status) {
+                            'pending' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
+                            'disetujui' => 'bg-success/10 text-success border-success/20',
+                            'ditolak' => 'bg-error/10 text-error border-error/20',
+                            default => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
+                        };
+                        $statusLabel = match ($p->status) {
+                            'pending' => 'Pending',
+                            'disetujui' => 'Disetujui',
+                            'ditolak' => 'Ditolak',
+                            default => ucfirst($p->status),
+                        };
+                        $jenisLabel = $jenisOptions[$p->jenis_permintaan] ?? ucfirst($p->jenis_permintaan);
+                        $admin = $p->admin ? ($p->admin->nama_lengkap ?? $p->admin->nama ?? $p->admin->email) : null;
+                        $tanggal = $p->diproses_pada ?? $p->created_at;
+                    @endphp
+                    <article data-table-row class="bg-surface-container-low border border-muted-border rounded-xl p-4">
+                        <div class="flex items-start justify-between gap-3">
+                            <div class="min-w-0">
+                                <p class="inline-flex items-center gap-1.5 text-on-surface font-semibold text-sm">
+                                    <span class="material-symbols-outlined text-[16px] text-gold-accent">label</span>{{ $jenisLabel }}
+                                </p>
+                                <p class="font-bold text-on-surface mt-1">{{ $p->judul }}</p>
+                                <p class="text-[11px] text-on-surface-variant line-clamp-1 mt-0.5">{{ $p->deskripsi }}</p>
+                            </div>
+                            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border whitespace-nowrap shrink-0 {{ $statusBadge }}">
+                                @if ($p->status === 'pending')<span class="material-symbols-outlined text-[12px]">schedule</span>
+                                @elseif($p->status === 'disetujui')<span class="material-symbols-outlined text-[12px]">check</span>
+                                @elseif($p->status === 'ditolak')<span class="material-symbols-outlined text-[12px]">close</span>@endif
+                                {{ $statusLabel }}
+                            </span>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-muted-border text-sm">
+                            <div>
+                                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Tanggal') }}</p>
+                                <p class="text-on-surface-variant text-xs mt-0.5">{{ $tanggal?->format('d M Y') ?? '-' }} <span class="text-[10px] text-on-surface-variant/70">{{ $tanggal?->format('H:i') }}</span></p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Admin') }}</p>
+                                <p class="text-on-surface-variant text-xs mt-0.5">{{ $admin ?: '—' }}</p>
+                            </div>
+                            <div class="col-span-2">
+                                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Catatan') }}</p>
+                                <p class="text-xs text-on-surface-variant line-clamp-2 mt-0.5">{{ $p->catatan_admin ?: '—' }}</p>
+                            </div>
+                        </div>
+                    </article>
+                @empty
+                    <div class="py-10 text-center">
+                        <span class="material-symbols-outlined text-[28px] text-on-surface-variant">inbox</span>
+                        <p class="text-on-surface-variant font-body-md text-sm mt-2">
+                            @if ($activeStatus === 'semua')Belum ada permintaan operasional.@else Tidak ada permintaan dengan status "{{ $activeStatus }}".@endif
+                        </p>
+                    </div>
+                @endforelse
             </div>
 
             @if ($permintaan->hasPages())

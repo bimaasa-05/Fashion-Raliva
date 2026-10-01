@@ -465,7 +465,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Foto Produk (') }}<span id="mod-photo-count">0</span>)</span>
                         <span id="mod-photo-counter" class="font-body-md text-body-md font-bold text-gold-accent">-</span>
                     </div>
-                    <img id="mod-img" class="w-full h-[280px] object-cover rounded-lg cursor-zoom-in border border-muted-border" src="" alt="{{ __('Foto produk') }}" onclick="openLightbox(this.src)" />
+                    <img id="mod-img" class="w-full h-[200px] sm:h-[280px] object-cover rounded-lg cursor-zoom-in border border-muted-border" src="" alt="{{ __('Foto produk') }}" onclick="openLightbox(this.src)" />
                     <div id="mod-thumbs" class="grid grid-cols-3 gap-2"></div>
                 </div>
                 <div class="p-6 space-y-4">

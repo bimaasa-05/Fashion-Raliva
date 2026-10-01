@@ -33,7 +33,7 @@
     @endif
 
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium card-static">
-        <div class="flex items-center justify-between gap-4 mb-6">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-6">
             <div>
                 <h2 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Menunggu Keputusan Anda') }}</h2>
                 <p class="text-xs text-on-surface-variant mt-1">{{ __('Refund yang dieskalasi Admin. Setelah diputuskan oleh Anda, tidak tampil lagi di daftar ini.') }}</p>

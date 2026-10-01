@@ -97,7 +97,7 @@
                             <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Nama bahan') }} *
                                 <input name="bahan[{{ $i }}][nama_bahan]" type="text" maxlength="150" required value="{{ $b->nama_bahan }}" class="raliva-input text-sm mt-1" />
                             </label>
-                            <div class="grid grid-cols-2 gap-2">
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                                 <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Jumlah / unit') }} *
                                     <input name="bahan[{{ $i }}][jumlah]" type="text" inputmode="decimal" required value="{{ rtrim(rtrim(number_format((float) $b->jumlah_per_unit, 3, ',', '.'), '0'), ',') }}" class="raliva-input text-sm mt-1" />
                                 </label>
@@ -154,7 +154,7 @@
                     <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant">Nama bahan *
                         <input name="bahan[${i}][nama_bahan]" type="text" maxlength="150" required class="raliva-input text-sm mt-1" />
                     </label>
-                    <div class="grid grid-cols-2 gap-2">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                         <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant">Jumlah / unit *
                             <input name="bahan[${i}][jumlah]" type="text" inputmode="decimal" required placeholder="1" class="raliva-input text-sm mt-1" />
                         </label>

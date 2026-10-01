@@ -17,7 +17,7 @@
 @endif
 <div class="space-y-6">
     <!-- Statistik Ringkas -->
-    <div class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">{{ __('Total Supplier') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface relative">{{ $stats['total'] ?? 0 }}</span>

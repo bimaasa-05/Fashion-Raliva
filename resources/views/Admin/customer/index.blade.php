@@ -14,7 +14,7 @@
     <div class="bg-error/10 border border-error/30 text-error rounded-lg px-4 py-3 text-sm font-body-md mb-6">{{ session('error') }}</div>
 @endif
 
-    <section data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter mb-6">
+    <section data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-6">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">groups</span>
             <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">{{ __('Total Customer') }}</span>

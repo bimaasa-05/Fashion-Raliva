@@ -154,7 +154,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading whitespace-nowrap">{{ __('Kinerja Platform') }}</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading sm:whitespace-nowrap">{{ __('Kinerja Platform') }}</h2>
             <div class="inline-flex self-start sm:self-auto bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
                 <button type="button" data-chart-range="7" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">{{ __('7 Hari') }}</button>
                 <button type="button" data-chart-range="30" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">{{ __('30 Hari') }}</button>
