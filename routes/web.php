@@ -65,6 +65,7 @@ use App\Http\Controllers\Owner\PencairanDanaController as OwnerPencairanDanaCont
 use App\Http\Controllers\Owner\PengajuanTokoController;
 use App\Http\Controllers\Owner\PengaturanTokoController;
 use App\Http\Controllers\Owner\PengembalianDanaController as OwnerPengembalianDanaController;
+use App\Http\Controllers\Owner\PengikutController;
 use App\Http\Controllers\Owner\PengirimanController as OwnerPengirimanController;
 use App\Http\Controllers\Owner\PesananController as OwnerPesananController;
 use App\Http\Controllers\Owner\ProdukController as OwnerProdukController;
@@ -525,6 +526,7 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::delete('/promo/{promo}', [OwnerPromoController::class, 'destroy'])->name('promo.destroy');
     Route::post('/promo/{promo}/toggle', [OwnerPromoController::class, 'toggle'])->name('promo.toggle');
     Route::get('/ulasan', [UlasanController::class, 'index'])->name('ulasan');
+    Route::get('/pengikut', [PengikutController::class, 'index'])->name('pengikut');
     Route::get('/data-pelanggan', [DataPelangganController::class, 'index'])->name('data-pelanggan');
     Route::get('/saldo', fn () => redirect()->route('owner.keuangan'))->name('saldo');
     Route::get('/keuangan', [SaldoController::class, 'index'])->name('keuangan');
