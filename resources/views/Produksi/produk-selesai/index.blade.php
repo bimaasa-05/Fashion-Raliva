@@ -34,6 +34,7 @@
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Produk &amp; Jumlah</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Lulus QC</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Gagal QC</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Catatan QC</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tanggal QC</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Aksi</th>
@@ -55,12 +56,13 @@
                                     <p class="text-on-surface">{{ $item->nama_produk_snapshot }} <span class="text-on-surface-variant">× {{ $item->quantity }}</span></p>
                                 @endforeach
                             </td>
-                            <td class="py-3.5 px-4 text-center font-bold text-green-600">{{ $qc?->jumlah_lulus ?? $o->jumlah_berhasil ?? 0 }}
+                            <td class="py-3.5 px-4 text-center font-bold text-green-600">{{ $o->hasil_qc_lulus ?? $qc?->jumlah_lulus ?? $o->jumlah_berhasil ?? 0 }}
                                 @if (($o->kekurangan_gudang ?? 0) > 0)
                                     <span class="block text-[10px] font-normal text-gold-accent">+{{ $o->kekurangan_gudang }} dari Gudang</span>
                                 @endif
                             </td>
-                            <td class="py-3.5 px-4 text-center text-error">{{ $qc?->jumlah_gagal ?? $o->jumlah_gagal ?? 0 }}</td>
+                            <td class="py-3.5 px-4 text-center text-error">{{ $o->hasil_qc_gagal ?? $qc?->jumlah_gagal ?? $o->jumlah_gagal ?? 0 }}</td>
+                            <td class="py-3.5 px-4 text-xs text-on-surface-variant" style="max-width: 220px">{{ \Illuminate\Support\Str::limit($qc?->catatan ?? $o->qc_perlu_admin_catatan ?? $o->qc_admin_catatan ?? '-', 80) }}</td>
                             <td class="py-3.5 px-4 text-on-surface-variant">{{ $o->tanggal_qc?->translatedFormat('d M Y H:i') ?? '-' }}</td>
                             <td class="py-3.5 px-4 text-center">
                                 <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">Siap Kirim</span>
