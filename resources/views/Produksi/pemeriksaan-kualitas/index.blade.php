@@ -38,12 +38,14 @@
     {{-- Tabel --}}
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="overflow-x-auto">
-            <table class="premium-table w-full min-w-[900px] font-body-md text-sm">
+            <table class="premium-table w-full min-w-[1150px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">No. Pesanan</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Produk &amp; Jumlah</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Hasil Produksi</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Hasil QC</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Catatan QC</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
                         <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Aksi</th>
                     </tr>
@@ -65,8 +67,8 @@
                                 @endforeach
                             </td>
                             <td class="py-3.5 px-4 text-center" @if ($o->qc_admin_catatan) title="Catatan Admin: {{ $o->qc_admin_catatan }}" @endif>
-                                <p class="text-green-600 font-bold">{{ $o->jumlah_berhasil ?? 0 }}/{{ $o->items->sum('quantity') }} pcs berhasil</p>
-                                <p class="text-error">{{ $o->jumlah_gagal ?? 0 }} gagal</p>
+                                <p class="text-green-600 font-bold">{{ $o->hasil_produksi_berhasil ?? $o->jumlah_berhasil ?? 0 }}/{{ $o->items->sum('quantity') }} pcs berhasil</p>
+                                <p class="text-error">{{ $o->hasil_produksi_gagal ?? $o->jumlah_gagal ?? 0 }} gagal</p>
                                 @php($dariGudang = (int) $o->items->sum('qty_dari_gudang'))
                                 @if ($tab === 'siap' && $dariGudang > 0)
                                     <p class="text-xs text-gold-accent font-bold mt-0.5">{{ $dariGudang }} pcs dari {{ $o->namaGudangShortfall() ?? 'Gudang' }}</p>
@@ -75,6 +77,18 @@
                                     <p class="text-xs text-error font-bold mt-0.5">−{{ $o->kekurangan_gudang }} masih kurang</p>
                                 @endif
                             </td>
+                            <td class="py-3.5 px-4 text-center">
+                                @php($qcRow = $o->qualityChecks->first())
+                                @php($qcLulus = $o->hasil_qc_lulus ?? $qcRow?->jumlah_lulus)
+                                @php($qcGagal = $o->hasil_qc_gagal ?? $qcRow?->jumlah_gagal)
+                                @if ($qcLulus !== null || $qcGagal !== null)
+                                    <p class="text-green-600 font-bold">{{ $qcLulus ?? 0 }} lulus</p>
+                                    <p class="text-error">{{ $qcGagal ?? 0 }} gagal</p>
+                                @else
+                                    <span class="text-on-surface-variant">-</span>
+                                @endif
+                            </td>
+                            <td class="py-3.5 px-4 text-xs text-on-surface-variant" style="max-width: 220px">{{ \Illuminate\Support\Str::limit($qcRow?->catatan ?? $o->qc_perlu_admin_catatan ?? $o->qc_admin_catatan ?? '-', 80) }}</td>
                             <td class="py-3.5 px-4 text-center">
                                 @if ($tab === 'siap')
                                     <span class="inline-flex items-center px-2 py-1 rounded-full bg-green-500/10 text-green-600 text-[10px] font-bold uppercase border border-green-500/30">Siap Kirim</span>
@@ -94,7 +108,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="py-12 text-center text-on-surface-variant">{{ $tab === 'siap' ? 'Belum ada pesanan siap untuk dikirim.' : 'Tidak ada pesanan menunggu QC.' }}</td></tr>
+                        <tr><td colspan="7" class="py-12 text-center text-on-surface-variant">{{ $tab === 'siap' ? 'Belum ada pesanan siap untuk dikirim.' : 'Tidak ada pesanan menunggu QC.' }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -120,11 +134,23 @@
         <div class="p-6 space-y-4">
             <div class="bg-surface-container-low rounded-lg p-3 space-y-1">
                 <p class="text-xs text-on-surface-variant uppercase tracking-wider">Hasil Produksi</p>
-                <p class="text-sm"><span class="text-green-600 font-bold">{{ $o->jumlah_berhasil ?? 0 }} berhasil</span> • <span class="text-error">{{ $o->jumlah_gagal ?? 0 }} gagal</span> • <span class="text-on-surface-variant">total {{ $o->items->sum('quantity') }} pcs</span></p>
+                <p class="text-sm"><span class="text-green-600 font-bold">{{ $o->hasil_produksi_berhasil ?? $o->jumlah_berhasil ?? 0 }} berhasil</span> • <span class="text-error">{{ $o->hasil_produksi_gagal ?? $o->jumlah_gagal ?? 0 }} gagal</span> • <span class="text-on-surface-variant">total {{ $o->items->sum('quantity') }} pcs</span></p>
                 @if ($o->catatan)
                     <p class="text-xs text-on-surface mt-1 italic">Catatan customer: “{{ $o->catatan }}”</p>
                 @endif
             </div>
+            @if ($o->hasil_qc_lulus !== null || $o->qc_perlu_admin_pada)
+                <div class="bg-error/5 border border-error/20 rounded-lg p-3 space-y-1">
+                    <p class="text-xs text-error uppercase tracking-wider font-bold">Hasil QC Terakhir</p>
+                    <p class="text-sm"><span class="text-green-600 font-bold">{{ $o->hasil_qc_lulus ?? 0 }} lulus</span> • <span class="text-error">{{ $o->hasil_qc_gagal ?? 0 }} gagal</span></p>
+                    @if ($o->qc_perlu_admin_catatan)
+                        <p class="text-xs text-on-surface mt-1 italic">Catatan: “{{ $o->qc_perlu_admin_catatan }}”</p>
+                    @endif
+                    @if ($o->qc_admin_catatan)
+                        <p class="text-xs text-on-surface mt-1 italic">Tanggapan Admin: “{{ $o->qc_admin_catatan }}”</p>
+                    @endif
+                </div>
+            @endif
             <div>
                 <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Jumlah Lulus QC *</label>
                 <input type="number" name="jumlah_lulus" required min="0" max="{{ $o->items->sum('quantity') }}" value="{{ $o->items->sum('quantity') }}" class="raliva-input w-full" />
