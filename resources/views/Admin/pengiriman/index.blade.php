@@ -89,6 +89,9 @@
                                         @endforeach
                                     @endforeach
                                 </select>
+                                @if ($couriers->flatMap(fn ($c) => $c->services)->isEmpty())
+                                    <p class="text-xs text-error w-full">Belum ada layanan kurir — tambah dulu di menu Metode Pengiriman.</p>
+                                @endif
                                 <input required name="nomor_resi" minlength="4" maxlength="50" class="raliva-input w-full sm:w-44 text-xs" type="text" placeholder="Masukkan No. Resi" />
                                 <input name="estimasi_tiba" type="date" min="{{ date('Y-m-d') }}" class="raliva-input w-full sm:w-40 text-xs" title="Estimasi tiba (opsional)" />
                                 <button type="button" data-modal-open="modal-confirm-resi-{{ $pesanan->order_id }}" class="px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-xs uppercase tracking-widest rounded hover:bg-black transition-colors btn-premium whitespace-nowrap">Simpan Resi</button>
@@ -293,7 +296,7 @@
 {{-- Modal antrean penyerahan (di luar kontainer antrean) --}}
 @foreach ($antrian as $item)
     @php $pesanan = $item['order']; @endphp
-    @if ($item['tipe'] === 'offline')
+    @if ($item['tipe'] === 'ambil')
         <div id="modal-selesai-ambil-{{ $pesanan->order_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/50" data-modal-close></div>
             <form method="POST" action="{{ route('admin.pesanan.selesai', $pesanan->order_id) }}" class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
