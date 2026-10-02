@@ -1,9 +1,9 @@
 @extends('layouts.admin')
 
-@section('title', 'Data Produk')
-@section('header-title', 'Data Produk')
-@section('header-badge', 'Terbatas')
-@section('header-subtitle', 'Kelola produk sesuai permission yang diberikan Owner.')
+@section('title', __('Data Produk'))
+@section('header-title', __('Data Produk'))
+@section('header-badge', __('Terbatas'))
+@section('header-subtitle', __('Kelola produk sesuai permission yang diberikan Owner.'))
 
 @section('content')
 @include('partials.flash-toast')
@@ -16,39 +16,39 @@
 <div class="space-y-section-gap">
     <div class="flex items-start gap-3 p-4 border border-gold-accent/30 bg-gold-accent/10 rounded-lg">
         <span class="material-symbols-outlined text-gold-accent text-[20px] mt-0.5">lock</span>
-        <p class="font-body-md text-sm text-on-surface">Akses terbatas: produk yang kamu tambahkan akan diajukan dan menunggu persetujuan Super Admin (status <b>pending</b>).</p>
+        <p class="font-body-md text-sm text-on-surface">{{ __('Akses terbatas: produk yang kamu tambahkan akan diajukan dan menunggu persetujuan Super Admin (status') }} <b>pending</b>).</p>
     </div>
 
     <section data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">inventory_2</span>
-            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Total Produk</span>
+            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">{{ __('Total Produk') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface relative">{{ $stats['total'] ?? $products->total() }}</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">check_circle</span>
-            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Aktif</span>
+            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">{{ __('Aktif') }}</span>
             <span class="raliva-figure text-[26px] text-secondary relative">{{ $stats['aktif'] ?? 0 }}</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
-            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Menunggu Persetujuan</span>
+            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">{{ __('Menunggu Persetujuan') }}</span>
             <span class="raliva-figure text-[26px] text-gold-accent relative">{{ $stats['pending'] ?? 0 }}</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">cancel</span>
-            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">Ditolak</span>
+            <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">{{ __('Ditolak') }}</span>
             <span class="raliva-figure text-[26px] text-error relative">{{ $stats['ditolak'] ?? 0 }}</span>
         </div>
     </section>
 
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-            <h2 class="font-title-md text-title-md text-on-surface premium-heading">Katalog Produk Toko</h2>
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Katalog Produk Toko') }}</h2>
             <div class="flex items-center gap-3">
                 <form method="GET" class="relative w-full md:w-56">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                    <input type="text" name="q" value="{{ request('q') }}" placeholder="Cari produk..." class="raliva-search" />
+                    <input type="text" name="q" value="{{ request('q') }}" placeholder="{{ __('Cari produk...') }}" class="raliva-search" />
                 </form>
                 <button type="button" data-modal-open="{{ ($slotHabis ?? false) ? 'modal-slot-habis' : 'modal-form-produk' }}" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
                     <span class="material-symbols-outlined text-[18px]">add</span> Tambah
@@ -57,14 +57,14 @@
         </div>
 
         <div class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 mb-6 overflow-x-auto max-w-full">
-            <button type="button" data-adm-tab="semua" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">Semua</button>
-            <button type="button" data-adm-tab="pending" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Menunggu</button>
-            <button type="button" data-adm-tab="disetujui" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Disetujui</button>
-            <button type="button" data-adm-tab="ditolak" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Ditolak</button>
+            <button type="button" data-adm-tab="semua" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">{{ __('Semua') }}</button>
+            <button type="button" data-adm-tab="pending" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">{{ __('Menunggu') }}</button>
+            <button type="button" data-adm-tab="disetujui" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">{{ __('Disetujui') }}</button>
+            <button type="button" data-adm-tab="ditolak" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">{{ __('Ditolak') }}</button>
         </div>
 
         @if ($products->isEmpty())
-            <p class="text-on-surface-variant text-sm py-10 text-center">Tidak ada produk ditemukan.</p>
+            <p class="text-on-surface-variant text-sm py-10 text-center">{{ __('Tidak ada produk ditemukan.') }}</p>
         @else
         <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-gutter">
             @forelse ($products as $p)
@@ -110,18 +110,18 @@
                         @endif
                         <div class="absolute top-2 right-2">
                             @if ($statusA === 'aktif')
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[9px] font-bold uppercase border border-success/20">Disetujui</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[9px] font-bold uppercase border border-success/20">{{ __('Disetujui') }}</span>
                             @elseif ($statusA === 'ditolak')
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20">Ditolak</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20">{{ __('Ditolak') }}</span>
                             @else
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30">Menunggu</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30">{{ __('Menunggu') }}</span>
                             @endif
                         </div>
                     </div>
                     @if (count($fotosA) > 1)
                         <div class="flex gap-2 px-4 pt-3 overflow-x-auto" data-produk-strip>
                             @foreach ($fotosA as $i => $f)
-                                <button type="button" data-produk-pin="{{ $i }}" aria-label="Tampilkan foto {{ $i + 1 }} dari {{ $p->nama_produk }}" aria-pressed="{{ $i === 0 ? 'true' : 'false' }}" class="h-16 w-20 shrink-0 rounded-md overflow-hidden border transition-colors {{ $i === 0 ? 'border-gold-accent ring-2 ring-gold-accent/30' : 'border-outline-variant hover:border-gold-accent' }}">
+                                <button type="button" data-produk-pin="{{ $i }}" aria-label="{{ __('Tampilkan foto') }} {{ $i + 1 }} {{ __('dari') }} {{ $p->nama_produk }}" aria-pressed="{{ $i === 0 ? 'true' : 'false' }}" class="h-16 w-20 shrink-0 rounded-md overflow-hidden border transition-colors {{ $i === 0 ? 'border-gold-accent ring-2 ring-gold-accent/30' : 'border-outline-variant hover:border-gold-accent' }}">
                                     <img src="{{ $f }}" alt="" class="w-full h-full object-cover" loading="lazy" />
                                 </button>
                             @endforeach
@@ -134,22 +134,22 @@
                         <div class="flex flex-col gap-2 mt-3 pt-3 border-t border-muted-border sm:flex-row sm:items-center sm:justify-between sm:flex-wrap">
                             <span class="text-xs text-on-surface-variant truncate">{{ $p->category?->nama_kategori ?? '-' }}</span>
                             @if ($pengajuanTerkunci)
-                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30 whitespace-nowrap">Pengajuan Pending</span>
+                                <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30 whitespace-nowrap">{{ __('Pengajuan Pending') }}</span>
                             @endif
                             <div class="flex items-center gap-1.5">
-                                <button type="button" data-produk-detail class="inline-flex items-center gap-1 px-2.5 py-1 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">visibility</span>Detail</button>
-                                <button type="button" data-produk-edit @disabled($pengajuanTerkunci) title="{{ $pengajuanTerkunci ? 'Menunggu keputusan Super Admin' : 'Ajukan perubahan produk' }}" data-action="{{ route('admin.produk.update', $p) }}" data-nama="{{ $p->nama_produk }}" data-kategori="{{ $p->category_id }}" data-kategori-nama="{{ $p->category?->nama_kategori ?? '' }}" data-harga="{{ $p->harga_dasar }}" data-hpp="{{ $p->modal_produksi ?? '' }}" data-tipe="{{ $p->tipe_produk }}" data-deskripsi="{{ $p->deskripsi }}" data-fotos="{{ $editFotosJson }}" data-varian="{{ $editVarianJson }}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gold-accent/10 border border-gold-accent/30 rounded-lg text-xs font-semibold text-gold-accent hover:bg-gold-accent/20 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"><span class="material-symbols-outlined text-[14px]">edit</span>Edit</button>
+                                <button type="button" data-produk-detail class="inline-flex items-center gap-1 px-2.5 py-1 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">visibility</span>{{ __('Detail') }}</button>
+                                <button type="button" data-produk-edit @disabled($pengajuanTerkunci) title="{{ $pengajuanTerkunci ? __('Menunggu keputusan Super Admin') : __('Ajukan perubahan produk') }}" data-action="{{ route('admin.produk.update', $p) }}" data-nama="{{ $p->nama_produk }}" data-kategori="{{ $p->category_id }}" data-kategori-nama="{{ $p->category?->nama_kategori ?? '' }}" data-harga="{{ $p->harga_dasar }}" data-hpp="{{ $p->modal_produksi ?? '' }}" data-tipe="{{ $p->tipe_produk }}" data-deskripsi="{{ $p->deskripsi }}" data-fotos="{{ $editFotosJson }}" data-varian="{{ $editVarianJson }}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gold-accent/10 border border-gold-accent/30 rounded-lg text-xs font-semibold text-gold-accent hover:bg-gold-accent/20 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"><span class="material-symbols-outlined text-[14px]">edit</span>{{ __('Edit') }}</button>
                             </div>
                         </div>
                     </div>
                 </article>
             @empty
-                <p class="col-span-full text-on-surface-variant text-sm py-8 text-center">Tidak ada produk ditemukan.</p>
+                <p class="col-span-full text-on-surface-variant text-sm py-8 text-center">{{ __('Tidak ada produk ditemukan.') }}</p>
             @endforelse
         </div>
         <div class="mt-6">{{ $products->links() }}</div>
         <div data-empty-state class="hidden flex-col items-center py-8 text-center gap-3">
-            <p class="text-on-surface-variant font-body-md text-sm">Tidak ada produk pada status ini.</p>
+            <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada produk pada status ini.') }}</p>
         </div>
         @endif
     </section>
@@ -164,36 +164,36 @@
                 <h3 id="detail-nama" class="font-title-md text-title-md text-on-surface premium-heading">-</h3>
                 <p id="detail-sub" class="text-on-surface-variant font-body-md text-xs mt-1">-</p>
             </div>
-            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors shrink-0" aria-label="Tutup">
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors shrink-0" aria-label="{{ __('Tutup') }}">
                 <span class="material-symbols-outlined">close</span>
             </button>
         </div>
         <div class="p-6 space-y-5">
             <div id="detail-main-wrap" class="rounded-lg overflow-hidden border border-outline-variant bg-surface-container-low aspect-[3/4] max-h-[60vh] w-full flex items-center justify-center">
-                <img id="detail-main-img" class="w-full h-full object-cover" src="" alt="Foto produk" />
+                <img id="detail-main-img" class="w-full h-full object-cover" src="" alt="{{ __('Foto produk') }}" />
                 <div id="detail-noimg" class="hidden flex-col items-center gap-2 text-on-surface-variant">
                     <span class="material-symbols-outlined text-[40px]">inventory_2</span>
-                    <p class="text-xs">Belum ada foto produk</p>
+                    <p class="text-xs">{{ __('Belum ada foto produk') }}</p>
                 </div>
             </div>
             <div id="detail-gallery" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm">
-                <div><dt class="raliva-label">Harga Dasar</dt><dd id="detail-harga" class="font-bold text-on-surface mt-1">-</dd></div>
-                <div><dt class="raliva-label">Kategori</dt><dd id="detail-kategori" class="text-on-surface mt-1">-</dd></div>
-                <div><dt class="raliva-label">Tipe</dt><dd id="detail-tipe" class="text-on-surface mt-1">-</dd></div>
-                <div><dt class="raliva-label">Varian</dt><dd id="detail-varian" class="text-on-surface mt-1">-</dd></div>
-                <div class="sm:col-span-2"><dt class="raliva-label">Deskripsi</dt><dd id="detail-deskripsi" class="text-on-surface mt-1 whitespace-pre-line">-</dd></div>
+                <div><dt class="raliva-label">{{ __('Harga Dasar') }}</dt><dd id="detail-harga" class="font-bold text-on-surface mt-1">-</dd></div>
+                <div><dt class="raliva-label">{{ __('Kategori') }}</dt><dd id="detail-kategori" class="text-on-surface mt-1">-</dd></div>
+                <div><dt class="raliva-label">{{ __('Tipe') }}</dt><dd id="detail-tipe" class="text-on-surface mt-1">-</dd></div>
+                <div><dt class="raliva-label">{{ __('Varian') }}</dt><dd id="detail-varian" class="text-on-surface mt-1">-</dd></div>
+                <div class="sm:col-span-2"><dt class="raliva-label">{{ __('Deskripsi') }}</dt><dd id="detail-deskripsi" class="text-on-surface mt-1 whitespace-pre-line">-</dd></div>
                 <div class="sm:col-span-2">
-                    <dt class="raliva-label">Rencana Produksi</dt>
+                    <dt class="raliva-label">{{ __('Rencana Produksi') }}</dt>
                     <dd id="detail-resep-ringkasan" class="text-on-surface mt-1">-</dd>
                     <div id="detail-resep-wrap" class="hidden overflow-x-auto mt-2">
                         <table class="w-full min-w-[520px] text-xs">
                             <thead>
                                 <tr class="text-left uppercase tracking-wider text-on-surface-variant">
-                                    <th class="py-1 pr-2">Bahan</th>
-                                    <th class="py-1 pr-2">Jumlah</th>
-                                    <th class="py-1 pr-2">Biaya</th>
-                                    <th class="py-1 text-right">Total</th>
+                                    <th class="py-1 pr-2">{{ __('Bahan') }}</th>
+                                    <th class="py-1 pr-2">{{ __('Jumlah') }}</th>
+                                    <th class="py-1 pr-2">{{ __('Biaya') }}</th>
+                                    <th class="py-1 text-right">{{ __('Total') }}</th>
                                 </tr>
                             </thead>
                             <tbody id="detail-resep-rows"></tbody>
@@ -203,8 +203,8 @@
                         <table class="w-full min-w-[520px] text-xs">
                             <thead>
                                 <tr class="text-left uppercase tracking-wider text-on-surface-variant">
-                                    <th class="py-1 pr-2">Biaya Operasional</th>
-                                    <th class="py-1 text-right">Nominal</th>
+                                    <th class="py-1 pr-2">{{ __('Biaya Operasional') }}</th>
+                                    <th class="py-1 text-right">{{ __('Nominal') }}</th>
                                 </tr>
                             </thead>
                             <tbody id="detail-operasional-rows"></tbody>
@@ -213,7 +213,7 @@
                 </div>
             </dl>
             <div id="detail-reason-box" class="hidden rounded-lg border border-error/20 bg-error/5 px-4 py-3">
-                <p class="font-label-sm text-[10px] uppercase tracking-wider text-error">Alasan Penolakan</p>
+                <p class="font-label-sm text-[10px] uppercase tracking-wider text-error">{{ __('Alasan Penolakan') }}</p>
                 <p id="detail-reason" class="text-sm text-on-surface mt-1">-</p>
             </div>
         </div>
@@ -227,7 +227,7 @@
         @csrf
         @method('PUT')
         <div class="sticky top-0 bg-surface-container-lowest z-10 flex items-center justify-between px-6 py-5 border-b border-muted-border">
-            <h3 class="font-title-md text-title-md text-on-surface premium-heading">Edit Produk</h3>
+            <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Edit Produk') }}</h3>
             <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface">
                 <span class="material-symbols-outlined text-[20px]">close</span>
             </button>
@@ -235,26 +235,26 @@
         <div class="p-6 space-y-6">
             {{-- Foto: lama (centang untuk hapus) + tambah baru --}}
             <div>
-                <label class="block raliva-label mb-2">Foto Saat Ini <span class="normal-case font-normal">(centang untuk hapus)</span></label>
+                <label class="block raliva-label mb-2">{{ __('Foto Saat Ini') }} <span class="normal-case font-normal">({{ __('centang untuk hapus') }})</span></label>
                 <div id="edit-foto-lama" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
-                <p id="edit-foto-kosong" class="hidden text-xs text-on-surface-variant">Belum ada foto.</p>
-                <label class="block raliva-label mt-4 mb-2">Tambah Foto Baru <span class="normal-case font-normal">(maks. total 5)</span></label>
+                <p id="edit-foto-kosong" class="hidden text-xs text-on-surface-variant">{{ __('Belum ada foto.') }}</p>
+                <label class="block raliva-label mt-4 mb-2">{{ __('Tambah Foto Baru') }} <span class="normal-case font-normal">({{ __('maks. total 5') }})</span></label>
                 <div id="edit-foto-slot-grid" class="grid grid-cols-2 sm:grid-cols-4 gap-2"></div>
-                <p class="text-xs text-on-surface-variant mt-2"><span id="edit-foto-count">0</span> foto lama + <span id="edit-foto-baru-count">0</span> baru (maks. total 5).</p>
+                <p class="text-xs text-on-surface-variant mt-2"><span id="edit-foto-count">0</span> {{ __('foto lama +') }} <span id="edit-foto-baru-count">0</span> {{ __('baru (maks. total 5).') }}</p>
             </div>
             <div class="space-y-4">
-                <p class="text-xs font-medium text-gold-accent pt-2 border-t border-muted-border">Informasi Dasar</p>
+                <p class="text-xs font-medium text-gold-accent pt-2 border-t border-muted-border">{{ __('Informasi Dasar') }}</p>
                 <div>
-                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Nama Produk *</label>
+                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">{{ __('Nama Produk') }} *</label>
                     <input type="text" id="edit-nama-produk" name="nama_produk" required class="raliva-input w-full" />
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Kategori <span class="text-error">*</span></label>
+                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">{{ __('Kategori') }} <span class="text-error">*</span></label>
                         @include('partials.kategori-combobox', ['prefix' => 'edit', 'categories' => $categories, 'selectedId' => '', 'selectedName' => ''])
                     </div>
                     <div>
-                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Tipe Produk</label>
+                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">{{ __('Tipe Produk') }}</label>
                         <select id="edit-tipe-produk" name="tipe_produk" class="raliva-select w-full">
                             <option value="regular">Regular</option>
                             <option value="preorder">Pre-Order</option>
@@ -264,14 +264,14 @@
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
-                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">HPP / Modal (Rp) *</label>
+                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">{{ __('HPP / Modal (Rp)') }} *</label>
                         <div class="flex items-stretch">
                             <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
                             <input type="text" id="edit-hpp" name="hpp" required inputmode="numeric" data-rupiah placeholder="650.000" class="raliva-input w-full" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Harga Jual (Rp) *</label>
+                        <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">{{ __('Harga Jual (Rp)') }} *</label>
                         <div class="flex items-stretch">
                             <span class="inline-flex items-center px-4 text-sm font-bold text-on-surface-variant bg-surface-container-low border border-muted-border rounded-l-lg border-r-0 select-none">Rp</span>
                             <input type="text" id="edit-harga-dasar" name="harga_dasar" required inputmode="numeric" data-rupiah placeholder="949.000" class="raliva-input w-full" style="border-top-left-radius:0;border-bottom-left-radius:0;" />
@@ -279,14 +279,14 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">Deskripsi</label>
-                    <textarea id="edit-deskripsi" name="deskripsi" rows="3" class="raliva-textarea w-full" placeholder="Deskripsi produk..."></textarea>
+                    <label class="block text-xs uppercase text-on-surface-variant mb-1 font-semibold">{{ __('Deskripsi') }}</label>
+                    <textarea id="edit-deskripsi" name="deskripsi" rows="3" class="raliva-textarea w-full" placeholder="{{ __('Deskripsi produk...') }}"></textarea>
                 </div>
             </div>
             <div class="space-y-4">
-                <p class="text-xs font-medium text-gold-accent pt-2 border-t border-muted-border">Variasi &amp; Stok</p>
+                <p class="text-xs font-medium text-gold-accent pt-2 border-t border-muted-border">{{ __('Variasi & Stok') }}</p>
                 <div>
-                    <p class="raliva-label mb-2">Ukuran @if(!empty($tokoKategori))<span class="text-xs font-normal text-on-surface-variant">(kategori toko: {{ $tokoKategori }})</span>@endif</p>
+                    <p class="raliva-label mb-2">{{ __('Ukuran') }} @if(!empty($tokoKategori))<span class="text-xs font-normal text-on-surface-variant">({{ __('kategori toko') }}: {{ $tokoKategori }})</span>@endif</p>
                     <div class="flex flex-wrap gap-2" id="edit-ukuran-chips">
                         @foreach (($ukuranOptions ?? ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'All Size']) as $size)
                             <button type="button" class="edit-ukuran-chip px-4 py-2 rounded-lg border border-muted-border text-xs font-medium text-on-surface hover:border-gold-accent transition-colors" data-size="{{ $size }}">{{ $size }}</button>
@@ -295,7 +295,7 @@
                     <input type="hidden" name="ukuran_terpilih" id="edit-ukuran-terpilih" />
                 </div>
                 <div>
-                <p class="raliva-label mb-2">Warna <span class="text-xs font-normal text-on-surface-variant">(opsional; klik untuk pilih, bisa lebih dari satu)</span></p>
+                <p class="raliva-label mb-2">{{ __('Warna') }} <span class="text-xs font-normal text-on-surface-variant">({{ __('opsional; klik untuk pilih, bisa lebih dari satu') }})</span></p>
                     <div class="grid grid-cols-4 sm:grid-cols-5 gap-2" id="edit-warna-presets">
                         @foreach ([['Navy', '#22304a'], ['Camel', '#c19a6b'], ['Putih', '#f5f3f3'], ['Merah', '#c62828'], ['Biru', '#2360a8'], ['Kuning', '#e6b91e'], ['Marun', '#7d2b33'], ['Hijau', '#2e7d32'], ['Emerald', '#046e4c'], ['Coral', '#f2875c'], ['Teal', '#0f766e'], ['Cream', '#f6ecd9'], ['Violet', '#7c3aed'], ['Sage', '#9caf88']] as $color)
                             <label class="edit-warna-chip flex flex-col items-center gap-1 py-2 rounded-lg border border-muted-border cursor-pointer hover:border-gold-accent transition-colors has-[:checked]:bg-gold-accent/10 has-[:checked]:border-gold-accent" data-warna-value="{{ $color[0] }}" data-hex="{{ $color[1] }}">
@@ -307,28 +307,28 @@
                     </div>
                     <div id="edit-warna-custom-chips" class="flex flex-wrap gap-2 mt-2"></div>
                     <div class="flex items-center gap-2 mt-3 flex-wrap">
-                        <input type="text" id="edit-warna-custom-name" placeholder="Warna baru (wajib bila tambah warna, cth: Tosca)" maxlength="30" class="raliva-input text-sm flex-1" style="min-width:10rem;" />
+                        <input type="text" id="edit-warna-custom-name" placeholder="{{ __('Warna baru (wajib bila tambah warna, cth: Tosca)') }}" maxlength="30" class="raliva-input text-sm flex-1" style="min-width:10rem;" />
                         <div class="flex items-center gap-1.5 shrink-0">
                             <span class="text-on-surface-variant font-bold text-sm">#</span>
-                            <input type="text" id="edit-warna-custom-hex" placeholder="f4f4f4" maxlength="6" autocomplete="off" spellcheck="false" class="raliva-input text-sm font-mono uppercase" style="width: 7.5rem;" title="Ketik kode warna hex, cth: f4f4f4" />
+                            <input type="text" id="edit-warna-custom-hex" placeholder="f4f4f4" maxlength="6" autocomplete="off" spellcheck="false" class="raliva-input text-sm font-mono uppercase" style="width: 7.5rem;" title="{{ __('Ketik kode warna hex, cth: f4f4f4') }}" />
                         </div>
-                        <input type="color" id="edit-warna-custom-color" value="#1c1b1b" class="w-10 h-10 rounded cursor-pointer shrink-0" title="Pilih warna" />
+                        <input type="color" id="edit-warna-custom-color" value="#1c1b1b" class="w-10 h-10 rounded cursor-pointer shrink-0" title="{{ __('Pilih warna') }}" />
                         <button type="button" id="edit-warna-custom-add" class="px-4 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded shrink-0">Tambah</button>
                     </div>
                 </div>
                 <div>
-                    <p class="raliva-label mb-1">Stok per Varian</p>
-                    <p class="text-xs text-on-surface-variant mb-3">Ubah stok untuk setiap kombinasi varian. Kombinasi baru akan dibuat otomatis.</p>
+                    <p class="raliva-label mb-1">{{ __('Stok per Varian') }}</p>
+                    <p class="text-xs text-on-surface-variant mb-3">{{ __('Ubah stok untuk setiap kombinasi varian. Kombinasi baru akan dibuat otomatis.') }}</p>
                     <div id="edit-varian-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-                    <p id="edit-varian-empty" class="mt-2 p-4 border border-dashed border-outline-variant rounded-lg text-center text-xs text-on-surface-variant">Belum ada varian. Pilih ukuran di atas; warna boleh dikosongkan.</p>
+                    <p id="edit-varian-empty" class="mt-2 p-4 border border-dashed border-outline-variant rounded-lg text-center text-xs text-on-surface-variant">{{ __('Belum ada varian. Pilih ukuran di atas; warna boleh dikosongkan.') }}</p>
                 </div>
             </div>
         </div>
         <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border px-6 py-4 space-y-3">
-            <p class="text-xs text-on-surface-variant">Perubahan tidak langsung berlaku. Pengajuan ini dikunci sampai diputuskan Super Admin.</p>
+            <p class="text-xs text-on-surface-variant">{{ __('Perubahan tidak langsung berlaku. Pengajuan ini dikunci sampai diputuskan Super Admin.') }}</p>
             <div class="flex gap-3">
-                <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
-                <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded transition-colors btn-premium">Ajukan Perubahan</button>
+                <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">{{ __('Batal') }}</button>
+                <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded transition-colors btn-premium">{{ __('Ajukan Perubahan') }}</button>
             </div>
         </div>
     </form>
@@ -474,12 +474,12 @@
             const nama = (nameInput.value || '').trim();
             const hex = editNormHex(editHexInput?.value || '');
             if (nama.length < 2 || /^warna\s*\d+$/i.test(nama)) {
-                window.showRalivaToast('Nama warna custom wajib diisi minimal 2 karakter.', 'gpp_bad');
+                window.showRalivaToast('{{ __('Nama warna custom wajib diisi minimal 2 karakter.') }}', 'gpp_bad');
                 nameInput.focus();
                 return;
             }
             if (!hex) {
-                window.showRalivaToast('Kode hex warna custom wajib valid. Contoh: f4f4f4.', 'gpp_bad');
+                window.showRalivaToast('{{ __('Kode hex warna custom wajib valid. Contoh: f4f4f4.') }}', 'gpp_bad');
                 editHexInput.focus();
                 return;
             }
@@ -602,7 +602,7 @@
             if (kept + baru > 5) {
                 e.preventDefault();
                 if (window.__restoreStripped) window.__restoreStripped(document.getElementById('form-edit-produk'));
-                window.showRalivaToast('Maksimal total 5 foto (sekarang ' + (kept + baru) + ').', 'gpp_bad');
+                window.showRalivaToast(@js(__('Maksimal total 5 foto (sekarang :ph1).')).replace(':ph1', kept + baru), 'gpp_bad');
                 return;
             }
             this.querySelectorAll('input[name="warna_hex[]"]').forEach(h => h.remove());
@@ -825,7 +825,7 @@
         {{-- Foto --}}
         <div>
             <label class="block raliva-label mb-2">Foto Produk (maks. 5 foto) <span class="text-error">*</span></label>
-            <div class="grid grid-cols-4 gap-gutter" id="foto-slot-grid">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-gutter" id="foto-slot-grid">
                 @for ($i = 0; $i < 5; $i++)
                     <label class="foto-slot aspect-[3/4] rounded-lg border-2 border-dashed border-outline-variant flex flex-col items-center justify-center gap-1 cursor-pointer hover:border-gold-accent hover:bg-surface-container-low transition-colors group relative overflow-hidden" data-foto-slot>
                         <input type="file" name="foto_produk[]" accept="image/*" class="hidden" data-foto-input onchange="previewFotoSlot(this)" />
@@ -1148,7 +1148,7 @@ function initKategoriCombobox(prefix) {
 
     const saveCategory = () => {
         const nama = inlineNama.value.trim();
-        if (!nama) { window.showRalivaToast('Nama kategori wajib diisi.', 'gpp_bad'); return; }
+        if (!nama) { window.showRalivaToast('{{ __('Nama kategori wajib diisi.') }}', 'gpp_bad'); return; }
         const dup = Array.from(list.querySelectorAll('[data-category-id]')).some(
             (li) => li.getAttribute('data-category-name').toLowerCase() === nama.toLowerCase()
         );
@@ -1185,9 +1185,9 @@ function initKategoriCombobox(prefix) {
                 otherList.appendChild(li);
             });
             selectCategory(j.kategori.category_id, j.kategori.nama_kategori);
-            window.showRalivaToast('Kategori "' + j.kategori.nama_kategori + '" berhasil ditambahkan.', 'task_alt');
+            window.showRalivaToast(@js(__('Kategori ":ph1" berhasil ditambahkan.')).replace(':ph1', j.kategori.nama_kategori), 'task_alt');
         })
-        .catch(err => window.showRalivaToast(err.message || 'Terjadi kesalahan.', 'gpp_bad'))
+        .catch(err => window.showRalivaToast(err.message || '{{ __('Terjadi kesalahan.') }}', 'gpp_bad'))
         .finally(() => { inlineSimpan.disabled = false; });
     };
     inlineSimpan.addEventListener('click', saveCategory);
@@ -1260,14 +1260,14 @@ initKategoriCombobox('edit');
         const nama = (nameInput.value || '').trim();
         const hex = normHex(hexInput?.value || '');
         if (nama.length < 2 || /^warna\s*\d+$/i.test(nama)) {
-            window.showRalivaToast('Nama warna custom wajib diisi minimal 2 karakter.', 'gpp_bad');
+            window.showRalivaToast('{{ __('Nama warna custom wajib diisi minimal 2 karakter.') }}', 'gpp_bad');
             nameInput.focus();
             return;
         }
         const exists = Array.from(document.querySelectorAll('[name="warna[]"]')).some((cb) => cb.value.toLowerCase() === nama.toLowerCase());
-        if (exists) { window.showRalivaToast('Warna "' + nama + '" sudah ada.', 'gpp_bad'); return; }
+        if (exists) { window.showRalivaToast(@js(__('Warna ":ph1" sudah ada.')).replace(':ph1', nama), 'gpp_bad'); return; }
         if (!hex) {
-            window.showRalivaToast('Kode hex warna custom wajib valid. Contoh: f4f4f4.', 'gpp_bad');
+            window.showRalivaToast('{{ __('Kode hex warna custom wajib valid. Contoh: f4f4f4.') }}', 'gpp_bad');
             hexInput.focus();
             return;
         }
@@ -1289,7 +1289,7 @@ initKategoriCombobox('edit');
         chips.appendChild(labelEl);
         nameInput.value = '';
         renderVarianStok();
-        window.showRalivaToast('Warna custom "' + nama + '" ditambahkan.', 'task_alt');
+        window.showRalivaToast(@js(__('Warna custom ":ph1" ditambahkan.')).replace(':ph1', nama), 'task_alt');
     };
 
     addBtn.addEventListener('click', addCustomWarna);
@@ -1460,13 +1460,13 @@ function parseRibuanDecimal(raw) {
             target?.scrollIntoView({ behavior: 'smooth', block: 'center' });
         };
         const fotoTerisi = Array.from(form.querySelectorAll('input[name="foto_produk[]"]')).some(i => i.files && i.files.length > 0);
-        if (!fotoTerisi) return fail('Wajib: unggah minimal 1 foto produk.', form.querySelector('input[name="foto_produk[]"]'));
-        if (!document.getElementById('fp-kategori-hidden')?.value) return fail('Wajib: pilih kategori produk.', document.getElementById('fp-kategori-box'));
-        if (getSelectedUkuran().length === 0) return fail('Wajib: pilih minimal 1 ukuran.', document.getElementById('ukuran-chips'));
+        if (!fotoTerisi) return fail('{{ __('Wajib: unggah minimal 1 foto produk.') }}', form.querySelector('input[name="foto_produk[]"]'));
+        if (!document.getElementById('fp-kategori-hidden')?.value) return fail('{{ __('Wajib: pilih kategori produk.') }}', document.getElementById('fp-kategori-box'));
+        if (getSelectedUkuran().length === 0) return fail('{{ __('Wajib: pilih minimal 1 ukuran.') }}', document.getElementById('ukuran-chips'));
         const rows = Array.from(document.querySelectorAll('#varian-stok-grid [name$="[stok]"]'));
-        if (!rows.length) return fail('Wajib: isi stok tiap varian (pilih ukuran dulu).', document.getElementById('varian-stok-empty'));
+        if (!rows.length) return fail('{{ __('Wajib: isi stok tiap varian (pilih ukuran dulu).') }}', document.getElementById('varian-stok-empty'));
         const kosong = rows.find(i => i.value === '' || window.parseRibuanInt(i.value) < 10);
-        if (kosong) return fail('Wajib: stok tiap varian minimal 10.', kosong);
+        if (kosong) return fail('{{ __('Wajib: stok tiap varian minimal 10.') }}', kosong);
     });
 })();
 

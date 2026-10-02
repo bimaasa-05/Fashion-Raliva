@@ -34,7 +34,7 @@ class BahanProdukController extends Controller
     {
         $storeIds = $this->storeIds();
         if (! in_array($product->store_id, $storeIds, true)) {
-            return back()->with('toast', ['message' => 'Produk di luar scope toko Anda.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Produk di luar scope toko Anda.'), 'icon' => 'gpp_maybe']);
         }
 
         $request->merge([
@@ -77,7 +77,7 @@ class BahanProdukController extends Controller
             sprintf('Gudang menyimpan %d bahan produksi untuk produk %s.', count($rows), $product->nama_produk));
 
         return back()->with('toast', [
-            'message' => "Bahan produksi untuk {$product->nama_produk} disimpan.",
+            'message' => __('Bahan produksi untuk :ph75908 disimpan.', ['ph75908' => $product->nama_produk]),
             'icon' => 'task_alt',
         ]);
     }

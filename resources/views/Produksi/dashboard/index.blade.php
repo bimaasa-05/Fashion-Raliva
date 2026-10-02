@@ -1,10 +1,10 @@
 @extends('layouts.produksi')
 
-@section('title', 'Dashboard Produksi')
+@section('title', __('Dashboard Produksi'))
 
-@section('header-title', 'Dashboard Produksi')
-@section('header-badge', 'Atelier Aktif')
-@section('header-subtitle', 'Ringkasan proses produksi, kualitas dan hasil kerja harian Anda.')
+@section('header-title', __('Dashboard Produksi'))
+@section('header-badge', __('Atelier Aktif'))
+@section('header-subtitle', __('Ringkasan proses produksi, kualitas dan hasil kerja harian Anda.'))
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
@@ -31,12 +31,12 @@
             </div>
             <div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <p class="raliva-figure text-xl text-on-surface">Atelier Produksi Raliva</p>
+                    <p class="raliva-figure text-xl text-on-surface">{{ __('Atelier Produksi Raliva') }}</p>
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">
                         <span class="material-symbols-outlined fill text-[12px]">verified</span>Workshop Kemang
                     </span>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Raliva Atelier Jakarta • 12 staf aktif • Kapasitas 120 unit/hari</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">{{ __('Raliva Atelier Jakarta • 12 staf aktif • Kapasitas 120 unit/hari') }}</p>
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-gutter self-start md:self-auto">
@@ -51,42 +51,42 @@
 
     {{-- Ringkasan Produksi --}}
     <section>
-        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Ringkasan Produksi</h2>
+        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">{{ __('Ringkasan Produksi') }}</h2>
         <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-gutter">
             <a href="{{ route('produksi.data-produksi') }}" class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hover:border-gold-accent transition-colors" data-reveal>
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Diproses</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Diproses') }}</span>
                 <span class="raliva-figure text-[26px] text-gold-accent">{{ $stats['diproses'] }}</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">sedang dikerjakan</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">{{ __('sedang dikerjakan') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">precision_manufacturing</span>
             </a>
             <a href="{{ route('produksi.pemeriksaan-kualitas') }}" class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hover:border-gold-accent transition-colors" data-reveal>
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu QC</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Menunggu QC') }}</span>
                 <span class="raliva-figure text-[26px] text-gold-accent">{{ $stats['menunggu_qc'] }}</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">perlu pemeriksaan</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">{{ __('perlu pemeriksaan') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">fact_check</span>
             </a>
             <a href="{{ route('produksi.pelaporan-produksi') }}" class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hover:border-gold-accent transition-colors" data-reveal>
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Selesai Bulan Ini</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Selesai Bulan Ini') }}</span>
                 <span class="raliva-figure text-[26px] text-secondary">{{ $stats['selesai_bulan'] }}</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">order terpenuhi</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">{{ __('order terpenuhi') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">task_alt</span>
             </a>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Unit Layak Bulan Ini</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Unit Layak Bulan Ini') }}</span>
                 <span class="raliva-figure text-[26px] text-secondary">{{ number_format($stats['layak_bulan'], 0, ',', '.') }}</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">lolos QC masuk gudang</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">{{ __('lolos QC masuk gudang') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">verified</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Barang Rusak Bulan Ini</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Barang Rusak Bulan Ini') }}</span>
                 <span class="raliva-figure text-[26px] text-error">{{ number_format($stats['rusak_bulan'], 0, ',', '.') }}</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">defect tercatat QC</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">{{ __('defect tercatat QC') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">report</span>
             </div>
             <a href="{{ route('produksi.bahan-produksi') }}" class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hover:border-gold-accent transition-colors" data-reveal>
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Bahan Menipis</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Bahan Menipis') }}</span>
                 <span class="raliva-figure text-[26px] {{ $stats['bahan_menipis'] > 0 ? 'text-error' : 'text-secondary' }}">{{ $stats['bahan_menipis'] }}</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">perlu isi ulang</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">{{ __('perlu isi ulang') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">inventory</span>
             </a>
         </div>
@@ -96,11 +96,11 @@
     <div class="grid grid-cols-1 lg:grid-cols-5 gap-section-gap">
         <section data-reveal class="lg:col-span-3 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Output Produksi</h2>
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading sm:whitespace-nowrap">{{ __('Output Produksi') }}</h2>
                 <div class="inline-flex self-start sm:self-auto bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
-                    <button type="button" data-chart-range="7" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">7 Hari</button>
-                    <button type="button" data-chart-range="30" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">30 Hari</button>
-                    <button type="button" data-chart-range="90" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">3 Bulan</button>
+                    <button type="button" data-chart-range="7" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">{{ __('7 Hari') }}</button>
+                    <button type="button" data-chart-range="30" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">{{ __('30 Hari') }}</button>
+                    <button type="button" data-chart-range="90" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">{{ __('3 Bulan') }}</button>
                 </div>
             </div>
             <div id="chart-wrap" class="relative h-72 md:h-80">
@@ -111,15 +111,15 @@
                     <span class="material-symbols-outlined text-on-error-container">cloud_off</span>
                 </div>
                 <div>
-                    <p class="font-title-md text-title-md text-on-surface">Data gagal dimuat</p>
-                    <p class="text-on-surface-variant font-body-md text-sm mt-1">Terjadi masalah saat mengambil data grafik. Silakan coba lagi.</p>
+                    <p class="font-title-md text-title-md text-on-surface">{{ __('Data gagal dimuat') }}</p>
+                    <p class="text-on-surface-variant font-body-md text-sm mt-1">{{ __('Terjadi masalah saat mengambil data grafik. Silakan coba lagi.') }}</p>
                 </div>
-                <button type="button" id="chart-retry" class="mt-2 px-5 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium">Coba Lagi</button>
+                <button type="button" id="chart-retry" class="mt-2 px-5 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium">{{ __('Coba Lagi') }}</button>
             </div>
         </section>
 
         <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Produksi Prioritas</h2>
+            <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">{{ __('Produksi Prioritas') }}</h2>
             <ul class="space-y-5">
                 @foreach ($prioritas as $p)
                     <li>
@@ -164,7 +164,7 @@
                 @endif
             </ul>
             @if ($prioritas->isEmpty() && ! $bahanMenipis)
-                <p class="text-on-surface-variant font-body-md text-sm py-6 text-center">Tidak ada produksi berjalan.</p>
+                <p class="text-on-surface-variant font-body-md text-sm py-6 text-center">{{ __('Tidak ada produksi berjalan.') }}</p>
             @endif
             <a href="{{ route('produksi.data-produksi') }}" class="mt-6 w-full flex items-center justify-center gap-2 py-3 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
                 Lihat Data Produksi<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
@@ -175,8 +175,8 @@
     {{-- Aktivitas Terbaru --}}
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between gap-4 mb-6">
-            <h2 class="font-title-md text-title-md text-on-surface premium-heading">Aktivitas Terbaru</h2>
-            <a href="{{ route('produksi.data-produksi', ['tab' => 'proses']) }}" class="text-sm font-semibold text-gold-accent hover:underline shrink-0">Lihat Semua</a>
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Aktivitas Terbaru') }}</h2>
+            <a href="{{ route('produksi.data-produksi', ['tab' => 'proses']) }}" class="text-sm font-semibold text-gold-accent hover:underline shrink-0">{{ __('Lihat Semua') }}</a>
         </div>
         <ul class="space-y-4">
             @forelse ($events as $ev)
@@ -194,7 +194,7 @@
                 </li>
             @empty
                 <li class="text-center py-6">
-                    <p class="text-on-surface-variant font-body-md text-sm">Belum ada aktivitas produksi.</p>
+                    <p class="text-on-surface-variant font-body-md text-sm">{{ __('Belum ada aktivitas produksi.') }}</p>
                 </li>
             @endforelse
         </ul>
@@ -242,8 +242,8 @@
                 data: {
                     labels: data.labels,
                     datasets: [
-                        { label: 'Output Aktual', data: data.output, borderColor: '#8B1E3F', backgroundColor: 'rgba(139, 30, 63, 0.12)', fill: true, tension: 0.38, borderWidth: 2, pointBackgroundColor: '#8B1E3F', pointRadius: 3 },
-                        { label: 'Target Harian', data: data.target, borderColor: c.tick, borderDash: [6, 4], backgroundColor: 'transparent', fill: false, tension: 0.2, borderWidth: 1.5, pointRadius: 0 }
+                        { label: '{{ __('Output Aktual') }}', data: data.output, borderColor: '#8B1E3F', backgroundColor: 'rgba(139, 30, 63, 0.12)', fill: true, tension: 0.38, borderWidth: 2, pointBackgroundColor: '#8B1E3F', pointRadius: 3 },
+                        { label: '{{ __('Target Harian') }}', data: data.target, borderColor: c.tick, borderDash: [6, 4], backgroundColor: 'transparent', fill: false, tension: 0.2, borderWidth: 1.5, pointRadius: 0 }
                     ]
                 },
                 options: {

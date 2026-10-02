@@ -38,8 +38,8 @@ class NotifikasiController extends Controller
             'notifications' => $notifications->map(function (Notification $n) use ($user) {
                 return [
                     'id' => $n->notification_id,
-                    'judul' => $n->judul,
-                    'isi' => $n->pesan,
+                    'judul' => __($n->judul),
+                    'isi' => __($n->pesan),
                     'type' => $n->tipe,
                     'icon' => static::ICON_MAP[$n->tipe] ?? 'notifications',
                     'url' => $n->url,
@@ -79,8 +79,8 @@ class NotifikasiController extends Controller
                 $items[] = [
                     'id_notif' => $n->notification_id,
                     'icon' => static::ICON_MAP[$n->tipe] ?? 'notifications',
-                    'judul' => $n->judul,
-                    'message' => $n->pesan,
+                    'judul' => __($n->judul),
+                    'message' => __($n->pesan),
                     'type' => $n->tipe,
                     'url' => $n->url,
                     'target' => $n->url ?? $this->notifTarget($user->role?->nama_role, $n->tipe),
@@ -127,7 +127,7 @@ class NotifikasiController extends Controller
     {
         NotificationService::markAllRead(Auth::id());
 
-        return response()->json(['success' => true, 'message' => 'Semua notifikasi telah dibaca']);
+        return response()->json(['success' => true, 'message' => __('Semua notifikasi telah dibaca')]);
     }
 
     /**

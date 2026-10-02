@@ -179,7 +179,7 @@ class SaldoController extends Controller
         });
 
         return redirect()->route('customer.saldo.topup.payment', $topup->customer_topup_id)
-            ->with('toast', ['message' => 'Topup dibuat. Silakan bayar sesuai nominal.', 'icon' => 'task_alt']);
+            ->with('toast', ['message' => __('Topup dibuat. Silakan bayar sesuai nominal.'), 'icon' => 'task_alt']);
     }
 
     /**
@@ -192,7 +192,7 @@ class SaldoController extends Controller
         }
 
         if (! in_array($topup->status, [CustomerTopup::STATUS_PENDING, CustomerTopup::STATUS_DITOLAK], true)) {
-            return back()->with('toast', ['message' => 'Topup ini sudah tidak bisa dibatalkan.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Topup ini sudah tidak bisa dibatalkan.'), 'icon' => 'gpp_maybe']);
         }
 
         DB::transaction(function () use ($topup) {
@@ -201,7 +201,7 @@ class SaldoController extends Controller
         });
 
         return redirect()->route('customer.saldo')
-            ->with('toast', ['message' => 'Topup Rp '.number_format((float) $topup->jumlah, 0, ',', '.').' dibatalkan.', 'icon' => 'task_alt']);
+            ->with('toast', ['message' => __('Topup Rp :ph1 dibatalkan.', ['ph1' => number_format((float) $topup->jumlah, 0, ',', '.')]), 'icon' => 'task_alt']);
     }
 
     public function payment(Request $request, CustomerTopup $topup)
@@ -232,7 +232,7 @@ class SaldoController extends Controller
         $this->expireOverdue();
 
         if (! in_array($topup->status, [CustomerTopup::STATUS_PENDING, CustomerTopup::STATUS_DITOLAK, CustomerTopup::STATUS_MENUNGGU_VERIFIKASI], true)) {
-            return back()->with('toast', ['message' => 'Topup sudah diproses.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Topup sudah diproses.'), 'icon' => 'gpp_maybe']);
         }
 
         $validated = $request->validate([
@@ -249,11 +249,11 @@ class SaldoController extends Controller
             ->where('status', PaymentMethod::STATUS_AKTIF)
             ->first();
         if (! $paymentMethod) {
-            return back()->with('toast', ['message' => 'Metode pembayaran tidak tersedia.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Metode pembayaran tidak tersedia.'), 'icon' => 'gpp_maybe']);
         }
 
         if (in_array($paymentMethod->kode_metode, ['ewallet', 'bank_transfer'], true) && empty($validated['payment_account_id'])) {
-            return back()->with('toast', ['message' => 'Pilih akun/tujuan pembayaran terlebih dahulu.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pilih akun/tujuan pembayaran terlebih dahulu.'), 'icon' => 'gpp_maybe']);
         }
 
         $account = null;
@@ -263,7 +263,7 @@ class SaldoController extends Controller
                 ->where('status', PlatformBankAccount::STATUS_AKTIF)
                 ->first();
             if (! $account) {
-                return back()->with('toast', ['message' => 'Tujuan pembayaran tidak cocok dengan metode dipilih.', 'icon' => 'gpp_maybe']);
+                return back()->with('toast', ['message' => __('Tujuan pembayaran tidak cocok dengan metode dipilih.'), 'icon' => 'gpp_maybe']);
             }
         }
 
@@ -313,7 +313,7 @@ class SaldoController extends Controller
         );
 
         return redirect()->route('customer.saldo.topup.selesai', $topup->customer_topup_id)
-            ->with('toast', ['message' => 'Bukti topup diunggah. Menunggu verifikasi Super Admin.', 'icon' => 'task_alt']);
+            ->with('toast', ['message' => __('Bukti topup diunggah. Menunggu verifikasi Super Admin.'), 'icon' => 'task_alt']);
     }
 
     public function selesai(CustomerTopup $topup)
@@ -383,20 +383,20 @@ class SaldoController extends Controller
             $bankTujuan = Bank::where('bank_id', $validated['bank_id'])->first();
             if (! $bankTujuan || strtolower($bankTujuan->kode_bank ?? '') === 'bsi') {
                 return back()
-                    ->with('toast', ['message' => 'Bank tujuan tidak tersedia untuk penarikan.', 'icon' => 'gpp_maybe'])
+                    ->with('toast', ['message' => __('Bank tujuan tidak tersedia untuk penarikan.'), 'icon' => 'gpp_maybe'])
                     ->withInput();
             }
         }
 
         if ($bersih <= 0) {
             return back()
-                ->with('toast', ['message' => 'Nominal harus lebih besar dari biaya platform ' . rtrim(rtrim(number_format($feePersen, 2, ',', '.'), '0'), ',') . '%.', 'icon' => 'gpp_maybe'])
+                ->with('toast', ['message' => __('Nominal harus lebih besar dari biaya platform :ph1%.', ['ph1' => rtrim(rtrim(number_format($feePersen, 2, ',', '.'), '0'), ',')]), 'icon' => 'gpp_maybe'])
                 ->withInput();
         }
 
         if (CustomerWalletService::balance($user) < $jumlah) {
             return back()
-                ->with('toast', ['message' => 'Saldo akun tidak mencukupi untuk penarikan ini.', 'icon' => 'gpp_maybe'])
+                ->with('toast', ['message' => __('Saldo akun tidak mencukupi untuk penarikan ini.'), 'icon' => 'gpp_maybe'])
                 ->withInput();
         }
 
@@ -437,7 +437,7 @@ class SaldoController extends Controller
         );
 
         return redirect()->route('customer.saldo.tarik.show', $penarikan->customer_withdrawal_id)
-            ->with('toast', ['message' => 'Pengajuan penarikan dibuat. Menunggu verifikasi Super Admin.', 'icon' => 'task_alt']);
+            ->with('toast', ['message' => __('Pengajuan penarikan dibuat. Menunggu verifikasi Super Admin.'), 'icon' => 'task_alt']);
     }
 
     /**
@@ -492,7 +492,7 @@ class SaldoController extends Controller
         }
 
         if ($penarikan->status !== CustomerWithdrawal::STATUS_PENDING) {
-            return back()->with('toast', ['message' => 'Penarikan ini sudah tidak bisa dibatalkan.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Penarikan ini sudah tidak bisa dibatalkan.'), 'icon' => 'gpp_maybe']);
         }
 
         DB::transaction(function () use ($penarikan) {
@@ -501,7 +501,7 @@ class SaldoController extends Controller
         });
 
         return redirect()->route('customer.saldo')
-            ->with('toast', ['message' => 'Penarikan Rp ' . number_format((float) $penarikan->jumlah, 0, ',', '.') . ' dibatalkan, saldo dikembalikan.', 'icon' => 'task_alt']);
+            ->with('toast', ['message' => __('Penarikan Rp :ph1 dibatalkan, saldo dikembalikan.', ['ph1' => number_format((float) $penarikan->jumlah, 0, ',', '.')]), 'icon' => 'task_alt']);
     }
 
     public function paymentStatus(CustomerTopup $topup)

@@ -50,7 +50,7 @@ class ReviewController extends Controller
 
         if (! $orderItem) {
             return redirect()->route('customer.reviews')->with('toast', [
-                'message' => 'Produk yang Anda pilih tidak bisa direview.',
+                'message' => __('Produk yang Anda pilih tidak bisa direview.'),
                 'icon' => 'info',
             ]);
         }
@@ -68,7 +68,7 @@ class ReviewController extends Controller
         $orderItem = $this->resolveEligibleOrderItem((int) $data['order_item_id']);
 
         if (! $orderItem) {
-            return back()->withErrors(['order_item_id' => 'Produk tidak bisa direview.'])->withInput();
+            return back()->withErrors(['order_item_id' => __('Produk tidak bisa direview.')])->withInput();
         }
 
         Review::create([
@@ -100,13 +100,13 @@ class ReviewController extends Controller
 
         if (! $productId) {
             return redirect()->route('customer.reviews')->with('toast', [
-                'message' => 'Review berhasil dikirim dan langsung tampil di produk.',
+                'message' => __('Review berhasil dikirim dan langsung tampil di produk.'),
                 'icon' => 'task_alt',
             ]);
         }
 
         return redirect()->route('customer.shop.produk-riviews', $productId)->with('toast', [
-            'message' => 'Review berhasil dikirim dan langsung tampil di produk.',
+            'message' => __('Review berhasil dikirim dan langsung tampil di produk.'),
             'icon' => 'task_alt',
         ]);
     }
@@ -154,13 +154,13 @@ class ReviewController extends Controller
 
         if ($review->product_id) {
             return redirect()->route('customer.shop.produk-riviews', $review->product_id)->with('toast', [
-                'message' => 'Review berhasil diperbarui.',
+                'message' => __('Review berhasil diperbarui.'),
                 'icon' => 'task_alt',
             ]);
         }
 
         return redirect()->route('customer.reviews')->with('toast', [
-            'message' => 'Review berhasil diperbarui.',
+            'message' => __('Review berhasil diperbarui.'),
             'icon' => 'task_alt',
         ]);
     }
@@ -176,7 +176,7 @@ class ReviewController extends Controller
         $review->delete();
 
         return redirect()->route('customer.reviews')->with('toast', [
-            'message' => 'Review berhasil dihapus.',
+            'message' => __('Review berhasil dihapus.'),
             'icon' => 'task_alt',
         ]);
     }

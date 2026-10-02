@@ -40,12 +40,12 @@ class KekuranganController extends Controller
     {
         $storeIds = $this->storeIds();
         if (! in_array($order->store_id, $storeIds, true)) {
-            return back()->with('toast', ['message' => 'Pesanan di luar scope toko Anda.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pesanan di luar scope toko Anda.'), 'icon' => 'gpp_maybe']);
         }
 
         $kurang = (int) $order->kekurangan_gudang;
         if ($kurang <= 0) {
-            return back()->with('toast', ['message' => 'Pesanan ini sudah tidak memiliki kekurangan.', 'icon' => 'info']);
+            return back()->with('toast', ['message' => __('Pesanan ini sudah tidak memiliki kekurangan.'), 'icon' => 'info']);
         }
 
         try {
@@ -84,7 +84,7 @@ class KekuranganController extends Controller
             route('admin.pesanan', ['status' => Order::STATUS_MENUNGGU_QC]));
 
         return back()->with('toast', [
-            'message' => "Kekurangan {$kurang} pcs untuk pesanan {$order->nomor_order} disiapkan dari gudang".($gudangSumber ? " ({$gudangSumber})" : '').'.',
+            'message' => __('Kekurangan :ph1 pcs untuk pesanan :ph2 disiapkan dari gudang', ['ph1' => $kurang, 'ph2' => $order->nomor_order]) . ($gudangSumber ? ' (' . $gudangSumber . ')' : '') . '.',
             'icon' => 'task_alt',
         ]);
     }

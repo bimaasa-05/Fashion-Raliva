@@ -44,7 +44,7 @@ class WishlistController extends Controller
                 'product_id' => 'required|integer|exists:products,product_id',
             ]);
         } catch (ValidationException $e) {
-            return response()->json(['status' => 'error', 'message' => 'Produk tidak ditemukan.'], 422);
+            return response()->json(['status' => 'error', 'message' => __('Produk tidak ditemukan.')], 422);
         }
 
         $productId = (int) $validated['product_id'];
@@ -58,7 +58,7 @@ class WishlistController extends Controller
             $existing->delete();
             return response()->json([
                 'status' => 'removed',
-                'message' => 'Dihapus dari wishlist.',
+                'message' => __('Dihapus dari wishlist.'),
                 'count' => $wishlist->items()->count(),
                 'wishlisted' => false,
             ]);
@@ -68,7 +68,7 @@ class WishlistController extends Controller
 
         return response()->json([
             'status' => 'added',
-            'message' => 'Ditambahkan ke wishlist.',
+            'message' => __('Ditambahkan ke wishlist.'),
             'count' => $wishlist->items()->count(),
             'wishlisted' => true,
         ]);
@@ -86,12 +86,12 @@ class WishlistController extends Controller
             ->delete();
 
         if (!$deleted) {
-            return response()->json(['status' => 'error', 'message' => 'Produk tidak ada di wishlist.'], 404);
+            return response()->json(['status' => 'error', 'message' => __('Produk tidak ada di wishlist.')], 404);
         }
 
         return response()->json([
             'status' => 'removed',
-            'message' => 'Dihapus dari wishlist.',
+            'message' => __('Dihapus dari wishlist.'),
             'count' => $wishlist->items()->count(),
         ]);
     }

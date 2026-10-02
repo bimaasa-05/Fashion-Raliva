@@ -97,7 +97,7 @@ class PengirimanController extends Controller
             });
         } catch (\Throwable $e) {
             return back()->with('toast', [
-                'message' => 'Status pengiriman tidak dapat diperbarui: '.$e->getMessage(),
+                'message' => __('Status pengiriman tidak dapat diperbarui: :ph1', ['ph1' => $e->getMessage()]),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -118,7 +118,7 @@ class PengirimanController extends Controller
         Notification::fireSelf(Notification::TIPE_PENGIRIMAN, 'Status Pengiriman Diperbarui', sprintf('Status pengiriman pesanan %s diubah ke "%s".', $pengiriman->order->nomor_order ?? '-', ucfirst($newStatus)), route('superadmin.pengiriman'));
 
         return back()->with('toast', [
-            'message' => 'Status pengiriman berhasil diperbarui.',
+            'message' => __('Status pengiriman berhasil diperbarui.'),
             'icon' => 'task_alt',
         ]);
     }

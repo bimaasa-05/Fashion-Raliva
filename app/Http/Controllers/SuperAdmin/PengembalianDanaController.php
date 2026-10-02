@@ -41,7 +41,7 @@ class PengembalianDanaController extends Controller
     {
         if ($refund->status !== Refund::STATUS_REQUESTED) {
             return back()->with('toast', [
-                'message' => 'Hanya refund berstatus menunggu yang dapat disetujui.',
+                'message' => __('Hanya refund berstatus menunggu yang dapat disetujui.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -77,7 +77,7 @@ class PengembalianDanaController extends Controller
         } catch (\Throwable $e) {
             if (str_contains($e->getMessage(), 'Saldo toko tidak cukup')) {
                 return back()->with('toast', [
-                    'message' => 'Saldo toko tidak cukup untuk menyelesaikan refund ini.',
+                    'message' => __('Saldo toko tidak cukup untuk menyelesaikan refund ini.'),
                     'icon' => 'gpp_maybe',
                 ]);
             }
@@ -88,7 +88,7 @@ class PengembalianDanaController extends Controller
                 || str_contains($e->getMessage(), 'sudah berubah')
             ) {
                 return back()->with('toast', [
-                    'message' => 'Refund tidak dapat diselesaikan: '.$e->getMessage(),
+                    'message' => __('Refund tidak dapat diselesaikan: :ph1', ['ph1' => $e->getMessage()]),
                     'icon' => 'gpp_maybe',
                 ]);
             }
@@ -118,7 +118,7 @@ class PengembalianDanaController extends Controller
     {
         if ($refund->status !== Refund::STATUS_REQUESTED) {
             return back()->with('toast', [
-                'message' => 'Hanya refund berstatus menunggu yang dapat ditolak.',
+                'message' => __('Hanya refund berstatus menunggu yang dapat ditolak.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -151,7 +151,7 @@ class PengembalianDanaController extends Controller
         Notification::fireSelf(Notification::TIPE_PEMBAYARAN, 'Refund Ditolak', sprintf('Refund Rp %s ditolak.', number_format((float) $refund->jumlah, 0, ',', '.')), route('superadmin.pengembalian-dana'));
 
         return back()->with('toast', [
-            'message' => 'Pengajuan refund ditolak. Customer akan dinotifikasi.',
+            'message' => __('Pengajuan refund ditolak. Customer akan dinotifikasi.'),
             'icon' => 'block',
         ]);
     }
@@ -160,7 +160,7 @@ class PengembalianDanaController extends Controller
     {
         if ($refund->status !== Refund::STATUS_DISETUJUI) {
             return back()->with('toast', [
-                'message' => 'Hanya refund berstatus disetujui yang dapat diselesaikan.',
+                'message' => __('Hanya refund berstatus disetujui yang dapat diselesaikan.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -186,7 +186,7 @@ class PengembalianDanaController extends Controller
         } catch (\Throwable $e) {
             if (str_contains($e->getMessage(), 'Saldo toko tidak cukup')) {
                 return back()->with('toast', [
-                    'message' => 'Saldo toko tidak cukup untuk menyelesaikan refund ini.',
+                    'message' => __('Saldo toko tidak cukup untuk menyelesaikan refund ini.'),
                     'icon' => 'gpp_maybe',
                 ]);
             }
@@ -197,7 +197,7 @@ class PengembalianDanaController extends Controller
                 || str_contains($e->getMessage(), 'sudah berubah')
             ) {
                 return back()->with('toast', [
-                    'message' => 'Refund tidak dapat diselesaikan: '.$e->getMessage(),
+                    'message' => __('Refund tidak dapat diselesaikan: :ph1', ['ph1' => $e->getMessage()]),
                     'icon' => 'gpp_maybe',
                 ]);
             }
@@ -209,7 +209,7 @@ class PengembalianDanaController extends Controller
         Notification::fireSelf(Notification::TIPE_PEMBAYARAN, 'Refund Selesai', sprintf('Refund Rp %s ditandai selesai.', number_format((float) $refund->jumlah, 0, ',', '.')), route('superadmin.pengembalian-dana'));
 
         return back()->with('toast', [
-            'message' => 'Refund ditandai selesai dengan bukti terlampir.',
+            'message' => __('Refund ditandai selesai dengan bukti terlampir.'),
             'icon' => 'task_alt',
         ]);
     }

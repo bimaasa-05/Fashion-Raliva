@@ -14,7 +14,7 @@ class AccountController extends Controller
         if (! Auth::check()) {
             if ($request->query('notice') === 'login') {
                 return redirect()->route('customer.account')
-                    ->with('toast', ['message' => 'Silahkan login terlebih dahulu.', 'icon' => 'lock']);
+                    ->with('toast', ['message' => __('Silahkan login terlebih dahulu.'), 'icon' => 'lock']);
             }
 
             return view('customer.account.guest');

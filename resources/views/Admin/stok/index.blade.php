@@ -1,10 +1,10 @@
 ﻿@extends('layouts.admin')
 
-@section('title', 'Stok')
+@section('title', __('Stok'))
 
-@section('header-title', 'Stok')
-@section('header-badge', 'Lihat')
-@section('header-subtitle', 'Pantau stok produk — stok menipis tampil di atas.')
+@section('header-title', __('Stok'))
+@section('header-badge', __('Lihat'))
+@section('header-subtitle', __('Pantau stok produk — stok menipis tampil di atas.'))
 
 @section('content')
 @include('partials.flash-toast')
@@ -12,43 +12,43 @@
 <div class="space-y-section-gap">
     <div class="flex items-start gap-3 p-4 border border-gold-accent/30 bg-gold-accent/10 rounded-lg">
         <span class="material-symbols-outlined text-gold-accent text-[20px] mt-0.5">visibility</span>
-        <p class="font-body-md text-sm text-on-surface">Mode lihat saja. Pengelolaan stok dilakukan oleh Gudang. Stok menipis otomatis tampil paling atas.</p>
+        <p class="font-body-md text-sm text-on-surface">{{ __('Mode lihat saja. Pengelolaan stok dilakukan oleh Gudang. Stok menipis otomatis tampil paling atas.') }}</p>
     </div>
 
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Ringkasan Stok</h2>
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-gutter mb-8">
+        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">{{ __('Ringkasan Stok') }}</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-8">
             <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden">
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill pointer-events-none select-none" aria-hidden="true">inventory_2</span>
-                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Varian Terdata</p>
+                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Varian Terdata') }}</p>
                 <p class="font-title-md text-title-md text-on-surface mt-1">{{ $stocks->total() ?? $stocks->count() }}</p>
             </div>
             <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden">
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill pointer-events-none select-none" aria-hidden="true">check_circle</span>
-                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Total Unit</p>
+                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Total Unit') }}</p>
                 <p class="font-title-md text-title-md text-gold-accent mt-1">{{ number_format($stocks->sum('jumlah_stok'), 0, ',', '.') }}</p>
             </div>
             <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden">
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill pointer-events-none select-none" aria-hidden="true">warning</span>
-                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Stok Menipis</p>
+                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Stok Menipis') }}</p>
                 <p class="font-title-md text-title-md text-error mt-1">{{ $stocks->filter(fn($w) => $w->jumlah_stok <= ($w->stok_minimum ?: 5))->count() }}</p>
             </div>
             <div class="border border-muted-border rounded-lg p-5 bg-surface-container-low relative overflow-hidden">
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill pointer-events-none select-none" aria-hidden="true">category</span>
-                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Gudang Terlibat</p>
+                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Gudang Terlibat') }}</p>
                 <p class="font-title-md text-title-md text-on-surface mt-1">{{ $stocks->pluck('warehouse_id')->unique()->count() }}</p>
             </div>
         </div>
 
-        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">Daftar Stok Produk</h2>
+        <h2 class="font-title-md text-title-md mb-6 text-on-surface premium-heading">{{ __('Daftar Stok Produk') }}</h2>
         <div class="overflow-x-auto hidden md:block">
             <table class="w-full min-w-[600px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="p-4 text-left">Produk</th>
-                        <th class="p-4 text-center">Gudang</th>
-                        <th class="p-4 text-center">Stok</th>
-                        <th class="p-4 text-center">Status</th>
+                        <th class="p-4 text-left">{{ __('Produk') }}</th>
+                        <th class="p-4 text-center">{{ __('Gudang') }}</th>
+                        <th class="p-4 text-center">{{ __('Stok') }}</th>
+                        <th class="p-4 text-center">{{ __('Status') }}</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -65,14 +65,14 @@
                             <td class="p-4 text-center font-bold {{ $low ? 'text-error' : 'text-on-surface' }}">{{ $ws->jumlah_stok }}</td>
                             <td class="p-4 text-center">
                                 @if ($low)
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Menipis</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">{{ __('Menipis') }}</span>
                                 @else
-                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20">Aman</span>
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20">{{ __('Aman') }}</span>
                                 @endif
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="4" class="p-8 text-center text-on-surface-variant text-sm">Belum ada data stok.</td></tr>
+                        <tr><td colspan="4" class="p-8 text-center text-on-surface-variant text-sm">{{ __('Belum ada data stok.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -89,24 +89,24 @@
                             <p class="text-on-surface-variant text-xs mt-0.5">{{ $ws->productVariant?->sku ?? '' }}</p>
                         </div>
                         @if ($low)
-                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Menipis</span>
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">{{ __('Menipis') }}</span>
                         @else
-                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20">Aman</span>
+                            <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20">{{ __('Aman') }}</span>
                         @endif
                     </div>
                     <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-muted-border">
                         <div>
-                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Gudang</p>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Gudang') }}</p>
                             <p class="text-sm text-on-surface mt-0.5">{{ $ws->warehouse?->nama_gudang ?? '-' }}</p>
                         </div>
                         <div class="text-right">
-                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Stok</p>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Stok') }}</p>
                             <p class="font-bold {{ $low ? 'text-error' : 'text-on-surface' }} mt-0.5">{{ $ws->jumlah_stok }}</p>
                         </div>
                     </div>
                 </article>
             @empty
-                <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada data stok.</p>
+                <p class="text-on-surface-variant text-sm py-6 text-center">{{ __('Belum ada data stok.') }}</p>
             @endforelse
         </div>
         <div class="md:hidden mt-4">{{ $stocks->links() }}</div>

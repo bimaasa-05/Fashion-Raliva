@@ -51,7 +51,7 @@ class BahanProduksiController extends Controller
 
         $storeId = $storeIds[0] ?? null;
         if (! $storeId) {
-            return back()->with('toast', ['message' => 'Anda belum ditugaskan ke toko mana pun.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Anda belum ditugaskan ke toko mana pun.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -78,7 +78,7 @@ class BahanProduksiController extends Controller
             route('produksi.bahan-produksi'));
 
         return back()->with('toast', [
-            'message' => 'Bahan produksi berhasil ditambahkan.',
+            'message' => __('Bahan produksi berhasil ditambahkan.'),
             'icon' => 'task_alt',
         ]);
     }

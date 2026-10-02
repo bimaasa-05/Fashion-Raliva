@@ -1422,7 +1422,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
         <span id="btn-unggah-text">{{ __('Unggah Bukti Pembayaran') }}</span>
     </button>
 
-    <div id="btn-pair" class="{{ $buktiTerakhir ? 'grid grid-cols-2 gap-sm' : 'grid grid-cols-2 gap-sm hidden' }}">
+    <div id="btn-pair" class="{{ $buktiTerakhir ? 'grid grid-cols-1 sm:grid-cols-2 gap-sm' : 'grid grid-cols-1 sm:grid-cols-2 gap-sm hidden' }}">
         <button type="button" id="btn-ganti"
             class="w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest border border-outline text-on-surface hover:bg-surface-container-high transition-colors">
             <span class="material-symbols-outlined text-[20px]">photo_camera_back</span>

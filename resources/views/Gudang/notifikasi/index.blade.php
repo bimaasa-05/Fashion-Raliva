@@ -1,10 +1,10 @@
 @extends('layouts.gudang')
 
-@section('title', 'Notifikasi')
+@section('title', __('Notifikasi'))
 
-@section('header-title', 'Notifikasi')
-@section('header-badge', $warehouse->nama_gudang ?? 'Gudang')
-@section('header-subtitle', 'Pemberitahuan pekerjaan dan kondisi stok gudang Anda.')
+@section('header-title', __('Notifikasi'))
+@section('header-badge', $warehouse->nama_gudang ?? __('Gudang'))
+@section('header-subtitle', __('Pemberitahuan pekerjaan dan kondisi stok gudang Anda.'))
 
 @section('content')
 @php
@@ -30,7 +30,7 @@
         <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 mb-6" id="notif-chips">
             <div class="flex items-center gap-2 mb-3">
                 <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Notifikasi</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Notifikasi') }}</span>
             </div>
             <div class="flex flex-wrap gap-2">
                 @foreach ($chips as $chip)
@@ -41,14 +41,14 @@
 
         <div class="flex items-center justify-between gap-4 pb-4 mb-2 border-b border-muted-border">
             <p class="font-label-sm text-xs text-on-surface-variant"><span id="notif-unread-count" class="font-bold text-gold-accent">{{ $notifications->whereNull('dibaca_pada')->count() }} notifikasi belum dibaca</span></p>
-            <button type="button" id="mark-all-read" class="font-label-sm text-[10px] text-gold-accent uppercase tracking-widest hover:underline shrink-0">Tandai Semua Dibaca</button>
+            <button type="button" id="mark-all-read" class="font-label-sm text-[10px] text-gold-accent uppercase tracking-widest hover:underline shrink-0">{{ __('Tandai Semua Dibaca') }}</button>
         </div>
 
         <ul id="notif-list" class="divide-y divide-muted-border">
             @forelse ($notifications as $item)
                 @include('partials.notifikasi-item', ['item' => $item, 'showActor' => true])
             @empty
-                <li class="py-10 text-center text-on-surface-variant">Belum ada notifikasi.</li>
+                <li class="py-10 text-center text-on-surface-variant">{{ __('Belum ada notifikasi.') }}</li>
             @endforelse
         </ul>
 
@@ -56,8 +56,8 @@
             <div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center">
                 <span class="material-symbols-outlined text-on-surface-variant">notifications_off</span>
             </div>
-            <p class="font-title-md text-title-md text-on-surface">Tidak Ada Notifikasi</p>
-            <p class="text-on-surface-variant font-body-md text-sm max-w-sm">Tidak terdapat notifikasi pada kategori ini. Semua pekerjaan gudang sudah terpantau.</p>
+            <p class="font-title-md text-title-md text-on-surface">{{ __('Tidak Ada Notifikasi') }}</p>
+            <p class="text-on-surface-variant font-body-md text-sm max-w-sm">{{ __('Tidak terdapat notifikasi pada kategori ini. Semua pekerjaan gudang sudah terpantau.') }}</p>
         </div>
 
         @if ($notifications->hasPages())
@@ -98,7 +98,7 @@
                     'Accept': 'application/json',
                 },
             }).then((res) => {
-                if (!res.ok) throw new Error('Gagal menandai dibaca.');
+                if (!res.ok) throw new Error('{{ __('Gagal menandai dibaca.') }}';
                 return res.json();
             }).then((data) => {
                 if (window.updateNotifBadge) window.updateNotifBadge();
@@ -115,7 +115,7 @@
         const btn = document.getElementById('mark-all-read');
         const original = btn.textContent;
         btn.disabled = true;
-        btn.textContent = 'Memproses…';
+        btn.textContent = '{{ __('Memproses…') }}';
         fetch('{{ route('gudang.notifikasi.tandai-dibaca') }}', {
             method: 'POST',
             headers: {
@@ -124,7 +124,7 @@
                 'Accept': 'application/json',
             },
         }).then((res) => {
-            if (!res.ok) throw new Error('Gagal menandai semua dibaca.');
+            if (!res.ok) throw new Error('{{ __('Gagal menandai semua dibaca.') }}';
             return res.json();
         }).then(() => {
             notifList?.querySelectorAll('.notif-dot').forEach((dot) => dot.remove());
@@ -133,7 +133,7 @@
                 item.querySelector('.notif-text')?.classList.remove('font-semibold');
             });
             updateUnreadCount();
-            showRalivaToast('Semua notifikasi ditandai sudah dibaca.');
+            showRalivaToast('{{ __('Semua notifikasi ditandai sudah dibaca.') }}');
         }).catch((err) => {
             showRalivaToast(err.message || 'Gagal menandai semua dibaca.', 'error');
         }).finally(() => {

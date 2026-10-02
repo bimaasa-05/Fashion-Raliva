@@ -260,14 +260,14 @@ class SlotProdukController extends Controller
     {
         if ($rmt->status !== SlotPurchaseRequest::STATUS_PENDING) {
             return back()->with('toast', [
-                'message' => 'Permintaan sudah diproses.',
+                'message' => __('Permintaan sudah diproses.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if ($rmt->payment_status === SlotPurchaseRequest::PEMBAYARAN_DITOLAK) {
             return back()->with('toast', [
-                'message' => 'Pembayaran permintaan ini ditolak; tidak dapat disetujui.',
+                'message' => __('Pembayaran permintaan ini ditolak; tidak dapat disetujui.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -351,7 +351,7 @@ class SlotProdukController extends Controller
             });
         } catch (\Throwable $e) {
             return back()->with('toast', [
-                'message' => 'Gagal menyetujui pembelian slot: '.$e->getMessage(),
+                'message' => __('Gagal menyetujui pembelian slot: :ph1', ['ph1' => $e->getMessage()]),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -366,7 +366,7 @@ class SlotProdukController extends Controller
     {
         if ($rmt->status !== SlotPurchaseRequest::STATUS_PENDING) {
             return back()->with('toast', [
-                'message' => 'Permintaan sudah diproses.',
+                'message' => __('Permintaan sudah diproses.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -398,7 +398,7 @@ class SlotProdukController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pembelian Slot Ditolak', sprintf('Pembelian %d slot toko "%s" ditolak.', $rmt->jumlah_slot, $rmt->store->nama_toko ?? '-'), route('superadmin.slot-produk'));
 
         return back()->with('toast', [
-            'message' => 'Permintaan pembelian slot ditolak.',
+            'message' => __('Permintaan pembelian slot ditolak.'),
             'icon' => 'block',
         ]);
     }

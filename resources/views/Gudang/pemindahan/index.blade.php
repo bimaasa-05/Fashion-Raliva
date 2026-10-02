@@ -1,10 +1,10 @@
 @extends('layouts.gudang')
 
-@section('title', 'Pemindahan Stok')
+@section('title', __('Pemindahan Stok'))
 
-@section('header-title', 'Pemindahan Stok')
-@section('header-badge', $warehouse->nama_gudang ?? 'Gudang')
-@section('header-subtitle', 'Pindahkan stok antar gudang dalam toko yang sama.')
+@section('header-title', __('Pemindahan Stok'))
+@section('header-badge', $warehouse->nama_gudang ?? __('Gudang'))
+@section('header-subtitle', __('Pindahkan stok antar gudang dalam toko yang sama.'))
 
 @section('content')
 @php
@@ -35,7 +35,7 @@
             <div class="flex items-center justify-between gap-3 flex-wrap">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant hidden md:block">Filter &amp; Pencarian</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant hidden md:block">{{ __('Filter &amp; Pencarian') }}</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors btn-premium">
@@ -66,7 +66,7 @@
                             </button>
                             <div data-cs-menu role="listbox" style="transform-origin: top left"
                                 class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden py-1">
-                                <button type="button" role="option" data-cs-option="" data-cs-option-label="Semua Status" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                <button type="button" role="option" data-cs-option="" data-cs-option-label="{{ __('Semua Status') }}" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
                                     Semua Status<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($filters['status'] ?? '') === '' ? '' : 'hidden' }}">check</span>
                                 </button>
                                 @foreach ($statusLabel as $key => $label)
@@ -78,7 +78,7 @@
                             <input type="hidden" name="status" value="{{ $filters['status'] ?? '' }}" data-cs-input />
                         </div>
                     </div>
-                    <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Terapkan</button>
+                    <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">{{ __('Terapkan') }}</button>
                 </form>
             </div>
         </div>
@@ -88,14 +88,14 @@
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
                         <th class="p-4 text-center w-12">No.</th>
-                        <th class="p-4 text-left">Nomor</th>
-                        <th class="p-4 text-left">Rute Gudang</th>
-                        <th class="p-4 text-left">Produk</th>
-                        <th class="p-4 text-center">Jumlah</th>
-                        <th class="p-4 text-center">Tanggal</th>
-                        <th class="p-4 text-center">Petugas</th>
+                        <th class="p-4 text-left">{{ __('Nomor') }}</th>
+                        <th class="p-4 text-left">{{ __('Rute Gudang') }}</th>
+                        <th class="p-4 text-left">{{ __('Produk') }}</th>
+                        <th class="p-4 text-center">{{ __('Jumlah') }}</th>
+                        <th class="p-4 text-center">{{ __('Tanggal') }}</th>
+                        <th class="p-4 text-center">{{ __('Petugas') }}</th>
                         <th class="p-4 text-center">Status</th>
-                        <th class="p-4 text-center">Action</th>
+                        <th class="p-4 text-center">{{ __('Action') }}</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -120,13 +120,13 @@
                             <td class="p-4 text-center text-on-surface whitespace-nowrap">{{ $t->requester->nama_lengkap ?? '-' }}</td>
                             <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass[$t->status] ?? 'bg-surface-container-high text-on-surface-variant border-outline-variant' }} text-[10px] font-bold uppercase border">{{ $status }}</span></td>
                             <td class="p-4 text-center whitespace-nowrap">
-                                <button type="button" data-modal-open="pm-detail-{{ $loop->iteration }}" title="Lihat Detail" class="w-9 h-9 rounded-lg border border-muted-border items-center justify-center text-on-surface-variant hover:text-gold-accent hover:border-gold-accent transition-colors inline-flex">
+                                <button type="button" data-modal-open="pm-detail-{{ $loop->iteration }}" title="{{ __('Lihat Detail') }}" class="w-9 h-9 rounded-lg border border-muted-border items-center justify-center text-on-surface-variant hover:text-gold-accent hover:border-gold-accent transition-colors inline-flex">
                                     <span class="material-symbols-outlined text-[18px]">visibility</span>
                                 </button>
                                 @if ($t->status === 'requested' && (int) $t->to_warehouse_id === (int) $warehouse?->warehouse_id)
                                     <form method="POST" action="{{ route('gudang.pemindahan.approve', $t) }}" class="inline">
                                         @csrf
-                                        <button type="submit" title="Setujui" class="w-9 h-9 rounded-lg bg-secondary-container/20 border border-secondary/20 items-center justify-center text-secondary hover:opacity-80 transition-colors inline-flex">
+                                        <button type="submit" title="{{ __('Setujui') }}" class="w-9 h-9 rounded-lg bg-secondary-container/20 border border-secondary/20 items-center justify-center text-secondary hover:opacity-80 transition-colors inline-flex">
                                             <span class="material-symbols-outlined text-[18px]">check</span>
                                         </button>
                                     </form>
@@ -134,15 +134,15 @@
                                 @if ($t->status === 'approved' && (int) $t->to_warehouse_id === (int) $warehouse?->warehouse_id)
                                     <form method="POST" action="{{ route('gudang.pemindahan.receive', $t) }}" class="inline">
                                         @csrf
-                                        <button type="submit" title="Terima barang" class="w-9 h-9 rounded-lg bg-deep-onyx items-center justify-center text-on-primary hover:opacity-90 transition-colors inline-flex">
+                                        <button type="submit" title="{{ __('Terima barang') }}" class="w-9 h-9 rounded-lg bg-deep-onyx items-center justify-center text-on-primary hover:opacity-90 transition-colors inline-flex">
                                             <span class="material-symbols-outlined text-[18px]">inventory</span>
                                         </button>
                                     </form>
                                 @endif
                                 @if (in_array($t->status, ['requested', 'approved'], true) && (int) $t->from_warehouse_id === (int) $warehouse?->warehouse_id)
-                                    <form method="POST" action="{{ route('gudang.pemindahan.cancel', $t) }}" class="inline" onsubmit="return confirm('Batalkan pemindahan ini?')">
+                                    <form method="POST" action="{{ route('gudang.pemindahan.cancel', $t) }}" class="inline" onsubmit="return confirm('{{ __('Batalkan pemindahan ini?') }}')">
                                         @csrf
-                                        <button type="submit" title="Batalkan" class="w-9 h-9 rounded-lg bg-error/10 border border-error/20 items-center justify-center text-error hover:bg-error/20 transition-colors inline-flex">
+                                        <button type="submit" title="{{ __('Batalkan') }}" class="w-9 h-9 rounded-lg bg-error/10 border border-error/20 items-center justify-center text-error hover:bg-error/20 transition-colors inline-flex">
                                             <span class="material-symbols-outlined text-[18px]">close</span>
                                         </button>
                                     </form>
@@ -150,7 +150,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="9" class="p-10 text-center text-on-surface-variant">Belum ada pemindahan stok pada gudang ini.</td></tr>
+                        <tr><td colspan="9" class="p-10 text-center text-on-surface-variant">{{ __('Belum ada pemindahan stok pada gudang ini.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -185,7 +185,7 @@
 
                     <dl class="space-y-2 font-body-md text-sm mb-4">
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Petugas</dt>
+                            <dt class="text-on-surface-variant">{{ __('Petugas') }}</dt>
                             <dd class="text-on-surface text-right">{{ $t->requester->nama_lengkap ?? '-' }}</dd>
                         </div>
                     </dl>
@@ -204,24 +204,24 @@
                     @if ($t->status === 'requested' && (int) $t->to_warehouse_id === (int) $warehouse?->warehouse_id)
                         <form method="POST" action="{{ route('gudang.pemindahan.approve', $t) }}">
                             @csrf
-                            <button type="submit" class="w-full min-h-11 mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-secondary-container/20 border border-secondary/20 text-xs font-semibold text-secondary">Setujui Pemindahan</button>
+                            <button type="submit" class="w-full min-h-11 mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-secondary-container/20 border border-secondary/20 text-xs font-semibold text-secondary">{{ __('Setujui Pemindahan') }}</button>
                         </form>
                     @endif
                     @if ($t->status === 'approved' && (int) $t->to_warehouse_id === (int) $warehouse?->warehouse_id)
                         <form method="POST" action="{{ route('gudang.pemindahan.receive', $t) }}">
                             @csrf
-                            <button type="submit" class="w-full min-h-11 mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-deep-onyx text-xs font-semibold text-on-primary">Terima Barang</button>
+                            <button type="submit" class="w-full min-h-11 mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-deep-onyx text-xs font-semibold text-on-primary">{{ __('Terima Barang') }}</button>
                         </form>
                     @endif
                     @if (in_array($t->status, ['requested', 'approved'], true) && (int) $t->from_warehouse_id === (int) $warehouse?->warehouse_id)
-                        <form method="POST" action="{{ route('gudang.pemindahan.cancel', $t) }}" onsubmit="return confirm('Batalkan pemindahan ini?')">
+                        <form method="POST" action="{{ route('gudang.pemindahan.cancel', $t) }}" onsubmit="return confirm('{{ __('Batalkan pemindahan ini?') }}')">
                             @csrf
-                            <button type="submit" class="w-full min-h-11 mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-error/10 border border-error/20 text-xs font-semibold text-error">Batalkan</button>
+                            <button type="submit" class="w-full min-h-11 mt-2 inline-flex items-center justify-center gap-2 rounded-lg bg-error/10 border border-error/20 text-xs font-semibold text-error">{{ __('Batalkan') }}</button>
                         </form>
                     @endif
                 </article>
             @empty
-                <p class="text-center text-on-surface-variant py-10">Belum ada pemindahan stok pada gudang ini.</p>
+                <p class="text-center text-on-surface-variant py-10">{{ __('Belum ada pemindahan stok pada gudang ini.') }}</p>
             @endforelse
         </div>
 
@@ -252,7 +252,7 @@
                         <div class="flex items-center gap-2 min-w-0">
                             <span class="material-symbols-outlined text-[18px] text-secondary shrink-0">warehouse</span>
                             <div class="min-w-0">
-                                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Asal</p>
+                                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Asal') }}</p>
                                 <p class="text-on-surface truncate">{{ $t->fromWarehouse->nama_gudang ?? '-' }}</p>
                             </div>
                         </div>
@@ -260,44 +260,44 @@
                         <div class="flex items-center gap-2 min-w-0">
                             <span class="material-symbols-outlined text-[18px] text-gold-accent shrink-0">warehouse</span>
                             <div class="min-w-0">
-                                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Tujuan</p>
+                                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Tujuan') }}</p>
                                 <p class="text-on-surface truncate">{{ $t->toWarehouse->nama_gudang ?? '-' }}</p>
                             </div>
                         </div>
                     </div>
                 </div>
                 <dl class="space-y-4 font-body-md text-sm">
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Produk</dt><dd class="text-on-surface text-right">{{ $firstItem->productVariant?->product?->nama_produk ?? '-' }}</dd></div>
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Jumlah</dt><dd class="text-gold-accent font-bold">{{ $t->items->sum('jumlah') }} unit</dd></div>
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Petugas</dt><dd class="text-on-surface">{{ $t->requester->nama_lengkap ?? '-' }}</dd></div>
+                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">{{ __('Produk') }}</dt><dd class="text-on-surface text-right">{{ $firstItem->productVariant?->product?->nama_produk ?? '-' }}</dd></div>
+                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">{{ __('Jumlah') }}</dt><dd class="text-gold-accent font-bold">{{ $t->items->sum('jumlah') }} unit</dd></div>
+                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">{{ __('Petugas') }}</dt><dd class="text-on-surface">{{ $t->requester->nama_lengkap ?? '-' }}</dd></div>
                     <div class="flex justify-between gap-4 items-start"><dt class="text-on-surface-variant">Status</dt><dd><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass[$t->status] ?? '' }} text-[10px] font-bold uppercase border">{{ $status }}</span></dd></div>
                     @if ($t->status === 'cancelled' && $t->alasan_penolakan)
-                        <div class="flex justify-between gap-4 items-start"><dt class="text-on-surface-variant">Alasan Ditolak</dt><dd class="text-error text-right max-w-[60%]">{{ $t->alasan_penolakan }}</dd></div>
+                        <div class="flex justify-between gap-4 items-start"><dt class="text-on-surface-variant">{{ __('Alasan Ditolak') }}</dt><dd class="text-error text-right max-w-[60%]">{{ $t->alasan_penolakan }}</dd></div>
                     @endif
                 </dl>
                 @if (in_array($t->status, ['approved', 'in_transit']) && $t->to_warehouse_id === (int) $warehouse->warehouse_id)
                     <form method="POST" action="{{ route('gudang.pemindahan.receive', $t->stock_transfer_id) }}">
                         @csrf
-                        <button type="submit" class="w-full mt-6 py-3 bg-secondary/15 text-secondary border border-secondary/30 font-label-sm text-[11px] uppercase tracking-widest rounded hover:bg-secondary/25 transition-colors">Terima Pemindahan</button>
+                        <button type="submit" class="w-full mt-6 py-3 bg-secondary/15 text-secondary border border-secondary/30 font-label-sm text-[11px] uppercase tracking-widest rounded hover:bg-secondary/25 transition-colors">{{ __('Terima Pemindahan') }}</button>
                     </form>
                 @endif
-                <button type="button" data-modal-close class="w-full mt-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Tutup</button>
+                <button type="button" data-modal-close class="w-full mt-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">{{ __('Tutup') }}</button>
                 @if ($t->status === 'requested' && (int) $t->to_warehouse_id === (int) $warehouse?->warehouse_id)
                     <form method="POST" action="{{ route('gudang.pemindahan.approve', $t) }}">
                         @csrf
-                        <button type="submit" class="w-full mt-3 py-3 bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-[11px] uppercase tracking-widest rounded">Setujui Pemindahan</button>
+                        <button type="submit" class="w-full mt-3 py-3 bg-secondary-container/20 border border-secondary/20 text-secondary font-label-sm text-[11px] uppercase tracking-widest rounded">{{ __('Setujui Pemindahan') }}</button>
                     </form>
                 @endif
                 @if ($t->status === 'approved' && (int) $t->to_warehouse_id === (int) $warehouse?->warehouse_id)
                     <form method="POST" action="{{ route('gudang.pemindahan.receive', $t) }}">
                         @csrf
-                        <button type="submit" class="w-full mt-3 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Terima Barang</button>
+                        <button type="submit" class="w-full mt-3 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">{{ __('Terima Barang') }}</button>
                     </form>
                 @endif
                 @if (in_array($t->status, ['requested', 'approved'], true) && (int) $t->from_warehouse_id === (int) $warehouse?->warehouse_id)
-                    <form method="POST" action="{{ route('gudang.pemindahan.cancel', $t) }}" onsubmit="return confirm('Batalkan pemindahan ini?')">
+                    <form method="POST" action="{{ route('gudang.pemindahan.cancel', $t) }}" onsubmit="return confirm('{{ __('Batalkan pemindahan ini?') }}')">
                         @csrf
-                        <button type="submit" class="w-full mt-3 py-3 bg-error/10 border border-error/20 text-error font-label-sm text-[11px] uppercase tracking-widest rounded">Batalkan</button>
+                        <button type="submit" class="w-full mt-3 py-3 bg-error/10 border border-error/20 text-error font-label-sm text-[11px] uppercase tracking-widest rounded">{{ __('Batalkan') }}</button>
                     </form>
                 @endif
             </div>
@@ -309,8 +309,8 @@
         <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-xl bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
             <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
                 <div>
-                    <h3 class="font-title-md text-title-md text-on-surface premium-heading">Buat Pemindahan</h3>
-                    <p class="text-on-surface-variant font-body-md text-sm mt-1">Pindahkan stok ke gudang lain dalam toko yang sama.</p>
+                    <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Buat Pemindahan') }}</h3>
+                    <p class="text-on-surface-variant font-body-md text-sm mt-1">{{ __('Pindahkan stok ke gudang lain dalam toko yang sama.') }}</p>
                 </div>
                 <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
                     <span class="material-symbols-outlined">close</span>
@@ -320,14 +320,14 @@
                 @csrf
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                     <div>
-                        <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Gudang Asal</label>
+                        <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">{{ __('Gudang Asal') }}</label>
                         <input type="text" value="{{ $warehouse->nama_gudang ?? '-' }}" readonly disabled class="w-full bg-surface-container-low border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface-variant opacity-80 cursor-not-allowed" />
-                        <p class="text-xs text-on-surface-variant mt-1.5">Sesuai penugasan akun Anda.</p>
+                        <p class="text-xs text-on-surface-variant mt-1.5">{{ __('Sesuai penugasan akun Anda.') }}</p>
                     </div>
                     <div>
-                        <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Gudang Tujuan</label>
+                        <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">{{ __('Gudang Tujuan') }}</label>
                         <select name="to_warehouse_id" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
-                            <option value="">Pilih Gudang Tujuan</option>
+                            <option value="">{{ __('Pilih Gudang Tujuan') }}</option>
                             @foreach ($otherWarehouses as $ow)
                                 <option value="{{ $ow->warehouse_id }}">{{ $ow->nama_gudang }}</option>
                             @endforeach
@@ -335,9 +335,9 @@
                     </div>
                 </div>
                 <div>
-                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Produk</label>
+                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">{{ __('Produk') }}</label>
                     <select name="product_variant_id" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
-                        <option value="">Pilih Produk</option>
+                        <option value="">{{ __('Pilih Produk') }}</option>
                         @foreach ($products as $ws)
                             @php
                                 $pv = $ws->productVariant;
@@ -350,16 +350,16 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Jumlah</label>
+                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">{{ __('Jumlah') }}</label>
                     <input type="number" name="jumlah" min="1" value="1" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Catatan</label>
-                    <textarea name="catatan" rows="3" placeholder="Alasan pemindahan, kondisi barang, dll. (opsional)" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent resize-none"></textarea>
+                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">{{ __('Catatan') }}</label>
+                    <textarea name="catatan" rows="3" placeholder="{{ __('Alasan pemindahan, kondisi barang, dll. (opsional)') }}" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent resize-none"></textarea>
                 </div>
                 <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                    <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                    <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Ajukan Pemindahan</button>
+                    <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">{{ __('Batal') }}</button>
+                    <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">{{ __('Ajukan Pemindahan') }}</button>
                 </div>
             </form>
         </div>

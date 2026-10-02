@@ -69,7 +69,7 @@ class KurirController extends Controller
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Metode Pengiriman Diperbarui', 'Pengaturan kurir toko berhasil disimpan.', route('admin.kurir'));
 
-        return back()->with('success', 'Pengaturan kurir toko berhasil disimpan.');
+        return back()->with('success',__('Pengaturan kurir toko berhasil disimpan.'));
     }
 
     public function storeCourier(Request $request)
@@ -105,14 +105,14 @@ class KurirController extends Controller
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Kurir Ditambahkan', sprintf('Kurir "%s" ditambahkan untuk toko.', $data['nama_kurir']), route('admin.kurir'));
 
-        return back()->with('success', 'Kurir baru berhasil ditambahkan untuk toko.');
+        return back()->with('success',__('Kurir baru berhasil ditambahkan untuk toko.'));
     }
 
     public function updateCourier(Request $request, Courier $kurir)
     {
         $storeIds = AdminContext::assignedStoreIds();
         if (! $kurir->store_id || ! in_array($kurir->store_id, $storeIds, true)) {
-            abort(403, 'Hanya kurir milik toko yang bisa diubah. Kurir global dikelola SuperAdmin.');
+            abort(403, __('Hanya kurir milik toko yang bisa diubah. Kurir global dikelola SuperAdmin.'));
         }
 
         $data = $request->validate([
@@ -125,17 +125,17 @@ class KurirController extends Controller
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Kurir Diperbarui', sprintf('Kurir "%s" diperbarui.', $kurir->nama_kurir), route('admin.kurir'));
 
-        return back()->with('success', 'Kurir berhasil diperbarui.');
+        return back()->with('success',__('Kurir berhasil diperbarui.'));
     }
 
     public function destroyCourier(Courier $kurir)
     {
         $storeIds = AdminContext::assignedStoreIds();
         if (! $kurir->store_id || ! in_array($kurir->store_id, $storeIds, true)) {
-            abort(403, 'Hanya kurir milik toko yang bisa dihapus.');
+            abort(403, __('Hanya kurir milik toko yang bisa dihapus.'));
         }
         if ($kurir->shipments()->exists() || $kurir->services()->exists()) {
-            return back()->with('error', 'Kurir tidak dapat dihapus karena masih memiliki layanan/pengiriman.');
+            return back()->with('error',__('Kurir tidak dapat dihapus karena masih memiliki layanan/pengiriman.'));
         }
 
         $nama = $kurir->nama_kurir;
@@ -143,7 +143,7 @@ class KurirController extends Controller
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Kurir Dihapus', sprintf('Kurir "%s" dihapus.', $nama), route('admin.kurir'));
 
-        return back()->with('success', 'Kurir berhasil dihapus.');
+        return back()->with('success',__('Kurir berhasil dihapus.'));
     }
 
     public function storeLayanan(Request $request)
@@ -180,14 +180,14 @@ class KurirController extends Controller
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Layanan Ditambahkan', sprintf('Layanan "%s" ditambahkan pada %s.', $data['nama_layanan'], $courier->nama_kurir), route('admin.kurir'));
 
-        return back()->with('success', 'Layanan pengiriman berhasil ditambahkan.');
+        return back()->with('success',__('Layanan pengiriman berhasil ditambahkan.'));
     }
 
     public function updateLayanan(Request $request, \App\Models\ShippingService $layanan)
     {
         $storeIds = AdminContext::assignedStoreIds();
         if (! $layanan->store_id || ! in_array($layanan->store_id, $storeIds, true)) {
-            abort(403, 'Hanya layanan milik toko yang bisa diubah.');
+            abort(403, __('Hanya layanan milik toko yang bisa diubah.'));
         }
 
         $data = $request->validate([
@@ -205,17 +205,17 @@ class KurirController extends Controller
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Layanan Diperbarui', sprintf('Layanan "%s" diperbarui.', $layanan->nama_layanan), route('admin.kurir'));
 
-        return back()->with('success', 'Layanan pengiriman berhasil diperbarui.');
+        return back()->with('success',__('Layanan pengiriman berhasil diperbarui.'));
     }
 
     public function destroyLayanan(\App\Models\ShippingService $layanan)
     {
         $storeIds = AdminContext::assignedStoreIds();
         if (! $layanan->store_id || ! in_array($layanan->store_id, $storeIds, true)) {
-            abort(403, 'Hanya layanan milik toko yang bisa dihapus.');
+            abort(403, __('Hanya layanan milik toko yang bisa dihapus.'));
         }
         if ($layanan->shipments()->exists()) {
-            return back()->with('error', 'Layanan tidak dapat dihapus karena sudah dipakai pengiriman.');
+            return back()->with('error',__('Layanan tidak dapat dihapus karena sudah dipakai pengiriman.'));
         }
 
         $nama = $layanan->nama_layanan;
@@ -223,6 +223,6 @@ class KurirController extends Controller
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Layanan Dihapus', sprintf('Layanan "%s" dihapus.', $nama), route('admin.kurir'));
 
-        return back()->with('success', 'Layanan pengiriman berhasil dihapus.');
+        return back()->with('success',__('Layanan pengiriman berhasil dihapus.'));
     }
 }

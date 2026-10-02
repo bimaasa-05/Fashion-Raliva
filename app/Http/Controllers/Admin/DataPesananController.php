@@ -94,14 +94,14 @@ class DataPesananController extends Controller
     {
         if (! AdminContext::canAccessStore($pesanan->store_id)) {
             return back()->with('toast', [
-                'message' => 'Pesanan ini di luar scope toko yang Anda tugaskan.',
+                'message' => __('Pesanan ini di luar scope toko yang Anda tugaskan.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if (! in_array($pesanan->status, [Order::STATUS_MENUNGGU_PRODUKSI, Order::STATUS_DIBAYAR], true)) {
             return back()->with('toast', [
-                'message' => 'Hanya pesanan berstatus Baru atau Menunggu Produksi yang dapat diproses.',
+                'message' => __('Hanya pesanan berstatus Baru atau Menunggu Produksi yang dapat diproses.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -146,7 +146,7 @@ class DataPesananController extends Controller
         );
 
         return back()->with('toast', [
-            'message' => "Pesanan {$pesanan->nomor_order} kini diproses.",
+            'message' => __('Pesanan :ph36279 kini diproses.', ['ph36279' => $pesanan->nomor_order]),
             'icon' => 'task_alt',
         ]);
     }
@@ -177,7 +177,7 @@ class DataPesananController extends Controller
         $storeIds = AdminContext::assignedStoreIds();
         $storeId = $storeIds[0] ?? null;
         if (! $storeId) {
-            return back()->with('toast', ['message' => 'Admin belum ditugaskan ke toko mana pun.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Admin belum ditugaskan ke toko mana pun.'), 'icon' => 'gpp_maybe']);
         }
 
         $tipePesanan = $request->input('tipe_pesanan', 'online');
@@ -212,7 +212,7 @@ class DataPesananController extends Controller
 
         $items = collect($data['items'])->filter(fn ($r) => ! empty($r['product_variant_id']))->values();
         if ($items->isEmpty()) {
-            return back()->with('toast', ['message' => 'Pilih minimal 1 produk.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pilih minimal 1 produk.'), 'icon' => 'gpp_maybe']);
         }
 
         $variantIds = $items->pluck('product_variant_id')->all();
@@ -224,12 +224,12 @@ class DataPesananController extends Controller
         foreach ($items as $row) {
             $variant = $variants->get($row['product_variant_id']);
             if (! $variant || (int) $variant->product?->store_id !== (int) $storeId) {
-                return back()->with('toast', ['message' => 'Varian tidak valid untuk toko ini.', 'icon' => 'gpp_maybe']);
+                return back()->with('toast', ['message' => __('Varian tidak valid untuk toko ini.'), 'icon' => 'gpp_maybe']);
             }
             $qty = max(1, (int) $row['quantity']);
             $stok = (int) $variant->warehouseStocks->sum('jumlah_stok');
             if ($stok > 0 && $qty > $stok) {
-                return back()->with('toast', ['message' => 'Stok ' . ($variant->product?->nama_produk ?? 'produk') . ' hanya tersisa ' . $stok . '.', 'icon' => 'gpp_maybe']);
+                return back()->with('toast', ['message' => __('Stok :ph1 hanya tersisa :ph2.', ['ph1' => ($variant->product?->nama_produk ?? 'produk'), 'ph2' => $stok]), 'icon' => 'gpp_maybe']);
             }
             $harga = (float) ($variant->harga ?? $variant->product?->harga_dasar ?? 0);
             $sub = $harga * $qty;
@@ -427,7 +427,7 @@ class DataPesananController extends Controller
             : 'Pesanan dibuat (Menunggu Pembayaran).';
 
         return back()->with('toast', [
-            'message' => 'Pesanan ' . ($newOrder->nomor_order ?? ('#' . $newOrder->order_id)) . ' ' . $msg,
+            'message' => __('Pesanan :ph1 :ph2', ['ph1' => ($newOrder->nomor_order ?? ('#' . $newOrder->order_id)), 'ph2' => $msg]),
             'icon' => 'task_alt',
         ]);
     }
@@ -437,21 +437,21 @@ class DataPesananController extends Controller
     {
         if (! AdminContext::canAccessStore($pesanan->store_id)) {
             return back()->with('toast', [
-                'message' => 'Pesanan ini di luar scope toko yang Anda tugaskan.',
+                'message' => __('Pesanan ini di luar scope toko yang Anda tugaskan.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if ($pesanan->status !== Order::STATUS_SIAP_KIRIM) {
             return back()->with('toast', [
-                'message' => 'Pesanan dapat ditandai selesai setelah QC + packing (status Siap Kirim).',
+                'message' => __('Pesanan dapat ditandai selesai setelah QC + packing (status Siap Kirim).'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if ($pesanan->isDiantar()) {
             return back()->with('toast', [
-                'message' => 'Pesanan diantar kurir diselesaikan lewat pengiriman (input resi), bukan di sini.',
+                'message' => __('Pesanan diantar kurir diselesaikan lewat pengiriman (input resi), bukan di sini.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -494,7 +494,7 @@ class DataPesananController extends Controller
         Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Diselesaikan', sprintf('Pesanan %s ditandai selesai (diambil langsung).', $pesanan->nomor_order), route('admin.pesanan'));
 
         return back()->with('toast', [
-            'message' => "Pesanan {$pesanan->nomor_order} diselesaikan.",
+            'message' => __('Pesanan :ph36278 diselesaikan.', ['ph36278' => $pesanan->nomor_order]),
             'icon' => 'task_alt',
         ]);
     }
@@ -503,7 +503,7 @@ class DataPesananController extends Controller
     {
         if (! AdminContext::canAccessStore($pesanan->store_id)) {
             return back()->with('toast', [
-                'message' => 'Pesanan ini di luar scope toko yang Anda tugaskan.',
+                'message' => __('Pesanan ini di luar scope toko yang Anda tugaskan.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -519,21 +519,21 @@ class DataPesananController extends Controller
 
         if ($pesanan->status !== Order::STATUS_SIAP_KIRIM) {
             return back()->with('toast', [
-                'message' => 'Fulfillment hanya dapat diubah saat pesanan Siap Kirim.',
+                'message' => __('Fulfillment hanya dapat diubah saat pesanan Siap Kirim.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if ($target === ($pesanan->metode_fulfillment ?? Order::FULFILLMENT_DIANTAR)) {
             return back()->with('toast', [
-                'message' => 'Fulfillment pesanan memang sudah begitu.',
+                'message' => __('Fulfillment pesanan memang sudah begitu.'),
                 'icon' => 'info',
             ]);
         }
 
         if ($pesanan->shipments()->where('status', '!=', \App\Models\Shipment::STATUS_GAGAL)->exists()) {
             return back()->with('toast', [
-                'message' => 'Pesanan sudah memiliki pengiriman aktif — fulfillment tidak dapat diubah.',
+                'message' => __('Pesanan sudah memiliki pengiriman aktif — fulfillment tidak dapat diubah.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -617,8 +617,8 @@ class DataPesananController extends Controller
 
         return back()->with('toast', [
             'message' => $target === Order::FULFILLMENT_AMBIL
-                ? "Pesanan {$pesanan->nomor_order} dialihkan ke ambil di toko."
-                : "Pesanan {$pesanan->nomor_order} dialihkan ke kirim kurir.",
+                ? __('Pesanan :ph1 dialihkan ke ambil di toko.', ['ph1' => $pesanan->nomor_order])
+                : __('Pesanan :ph1 dialihkan ke kirim kurir.', ['ph1' => $pesanan->nomor_order]),
             'icon' => 'task_alt',
         ]);
     }
@@ -627,14 +627,14 @@ class DataPesananController extends Controller
     {
         if (! AdminContext::canAccessStore($pesanan->store_id)) {
             return back()->with('toast', [
-                'message' => 'Pesanan ini di luar scope toko yang Anda tugaskan.',
+                'message' => __('Pesanan ini di luar scope toko yang Anda tugaskan.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if (! $pesanan->qc_perlu_admin_pada || $pesanan->status !== Order::STATUS_MENUNGGU_QC) {
             return back()->with('toast', [
-                'message' => 'Pesanan ini tidak dalam antrian QC Gagal.',
+                'message' => __('Pesanan ini tidak dalam antrian QC Gagal.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -687,8 +687,8 @@ class DataPesananController extends Controller
 
         return back()->with('toast', [
             'message' => $rework
-                ? "Pesanan {$pesanan->nomor_order} dikirim ulang ke Produksi."
-                : "Pesanan {$pesanan->nomor_order} dilanjutkan ke QC ulang.",
+                ? __('Pesanan :ph1 dikirim ulang ke Produksi.', ['ph1' => $pesanan->nomor_order])
+                : __('Pesanan :ph1 dilanjutkan ke QC ulang.', ['ph1' => $pesanan->nomor_order]),
             'icon' => 'task_alt',
         ]);
     }
@@ -696,21 +696,21 @@ class DataPesananController extends Controller
     public function updateItems(Request $request, Order $pesanan)
     {
         if (! AdminContext::canAccessStore($pesanan->store_id)) {
-            return back()->with('toast', ['message' => 'Pesanan ini di luar scope toko yang Anda tugaskan.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pesanan ini di luar scope toko yang Anda tugaskan.'), 'icon' => 'gpp_maybe']);
         }
 
         if (! in_array($pesanan->status, [Order::STATUS_PENDING_PAYMENT, Order::STATUS_DIBAYAR], true)) {
-            return back()->with('toast', ['message' => 'Hanya pesanan Menunggu Pembayaran atau Dibayar yang dapat diubah.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Hanya pesanan Menunggu Pembayaran atau Dibayar yang dapat diubah.'), 'icon' => 'gpp_maybe']);
         }
 
         $pesanan->loadMissing(['checkout.payment', 'shipments']);
 
         if ($pesanan->checkout?->payment || Payment::where('checkout_id', $pesanan->checkout_id)->exists()) {
-            return back()->with('toast', ['message' => 'Pesanan sudah memiliki pembayaran, tidak dapat diubah.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pesanan sudah memiliki pembayaran, tidak dapat diubah.'), 'icon' => 'gpp_maybe']);
         }
 
         if ($pesanan->shipments->isNotEmpty() || $pesanan->shipments()->exists()) {
-            return back()->with('toast', ['message' => 'Pesanan sudah memiliki pengiriman, tidak dapat diubah.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pesanan sudah memiliki pengiriman, tidak dapat diubah.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -869,7 +869,7 @@ class DataPesananController extends Controller
         Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Diperbarui', sprintf('Pesanan %s berhasil diperbarui.', $pesanan->nomor_order), route('admin.pesanan'));
 
         return back()->with('toast', [
-            'message' => "Pesanan {$pesanan->nomor_order} diperbarui.",
+            'message' => __('Pesanan :ph36277 diperbarui.', ['ph36277' => $pesanan->nomor_order]),
             'icon' => 'task_alt',
         ]);
     }
@@ -877,7 +877,7 @@ class DataPesananController extends Controller
     public function invoice(Order $pesanan)
     {
         if (! AdminContext::canAccessStore($pesanan->store_id)) {
-            abort(403, 'Pesanan ini di luar scope toko yang Anda tugaskan.');
+            abort(403, __('Pesanan ini di luar scope toko yang Anda tugaskan.'));
         }
 
         $pesanan->load([

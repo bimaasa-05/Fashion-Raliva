@@ -169,7 +169,7 @@
                         <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('Top up saldo untuk berbelanja lebih mudah.') }}</p>
                     </div>
                     <div class="border-t lg:border-t-0 lg:border-l border-[var(--border-soft)] pt-lg lg:pt-0 lg:pl-lg">
-                        <div class="grid grid-cols-2 gap-gutter mb-md">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter mb-md">
                             <button type="button" data-chart-mode="in"
                                 class="flex items-center justify-center gap-xs py-sm border-2 rounded-xl bg-surface-container-low cursor-pointer hover:border-emerald-500 transition-colors font-body-sm text-body-sm">
                                 <span class="material-symbols-outlined text-[20px]">trending_up</span>

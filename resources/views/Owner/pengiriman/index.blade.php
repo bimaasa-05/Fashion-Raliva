@@ -1,10 +1,10 @@
 @extends('layouts.owner')
 
-@section('title', 'Pengiriman')
+@section('title', __('Pengiriman'))
 
-@section('header-title', 'Pengiriman')
-@section('header-badge', '45 Berjalan')
-@section('header-subtitle', 'Atur pilihan kurir toko dan pantau proses pengiriman.')
+@section('header-title', __('Pengiriman'))
+@section('header-badge', __('45 Berjalan'))
+@section('header-subtitle', __('Atur pilihan kurir toko dan pantau proses pengiriman.'))
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
@@ -18,14 +18,14 @@
         <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
             <div>
-                <p class="font-bold text-sm">Belum punya toko</p>
-                <p class="text-sm text-on-surface-variant mt-1">Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk akses fitur ini.</p>
+                <p class="font-bold text-sm">{{ __('Belum punya toko') }}</p>
+                <p class="text-sm text-on-surface-variant mt-1">{{ __('Silakan') }} <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">{{ __('ajukan toko') }}</a> {{ __('untuk akses fitur ini.') }}</p>
             </div>
         </div>
     @endif
     {{-- Pilihan Kurir --}}
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <h2 class="font-title-md text-title-md text-on-surface premium-heading mb-6">Pilihan Pengiriman Toko</h2>
+        <h2 class="font-title-md text-title-md text-on-surface premium-heading mb-6">{{ __('Pilihan Pengiriman Toko') }}</h2>
 
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border border-muted-border rounded-lg px-5 py-4 mb-gutter bg-surface-container-low">
             <div class="flex items-center gap-4">
@@ -33,8 +33,8 @@
                     <span class="material-symbols-outlined">rocket_launch</span>
                 </div>
                 <div>
-                    <p class="font-title-md text-sm text-on-surface">Kurir Platform — Raliva Express</p>
-                    <p class="text-xs text-on-surface-variant mt-0.5">Tarif terintegrasi, asuransi otomatis, resi realtime.</p>
+                    <p class="font-title-md text-sm text-on-surface">{{ __('Kurir Platform — Raliva Express') }}</p>
+                    <p class="text-xs text-on-surface-variant mt-0.5">{{ __('Tarif terintegrasi, asuransi otomatis, resi realtime.') }}</p>
                 </div>
             </div>
             <label class="raliva-toggle">
@@ -49,7 +49,7 @@
                 <div data-reveal class="border border-muted-border rounded-lg px-4 py-3.5 flex items-center justify-between gap-3 hover:border-gold-accent/40 transition-colors">
                     <div>
                         <p class="font-title-md text-sm text-on-surface">{{ $kurir[0] }}</p>
-                        <p class="text-[11px] text-on-surface-variant mt-0.5">{{ $kurir[1] }}</p>
+                        <p class="text-[11px] text-on-surface-variant mt-0.5">{{ __($kurir[1]) }}</p>
                     </div>
                     <label class="raliva-toggle">
                         <input type="checkbox" disabled class="sr-only peer" {{ $kurir[2] ? 'checked' : '' }} />
@@ -66,8 +66,8 @@
                     <span class="material-symbols-outlined text-gold-accent">store</span>
                 </div>
                 <div>
-                    <p class="font-title-md text-sm text-on-surface">Kurir Toko Sendiri / Instan Lain</p>
-                    <p class="text-xs text-on-surface-variant mt-0.5">Aktifkan jika ingin mengatur pengantaran secara mandiri.</p>
+                    <p class="font-title-md text-sm text-on-surface">{{ __('Kurir Toko Sendiri / Instan Lain') }}</p>
+                    <p class="text-xs text-on-surface-variant mt-0.5">{{ __('Aktifkan jika ingin mengatur pengantaran secara mandiri.') }}</p>
                 </div>
             </div>
             <label class="raliva-toggle">
@@ -79,25 +79,25 @@
     </section>
 
     {{-- Ringkasan --}}
-    <section data-reveal-group class="grid grid-cols-2 xl:grid-cols-4 gap-gutter">
+    <section data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Dalam Pengiriman</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Dalam Pengiriman') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $summary['dikirim'] }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">local_shipping</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Terkirim Hari Ini</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Terkirim Hari Ini') }}</span>
             <span class="raliva-figure text-[26px] text-secondary">{{ $summary['terkirim'] }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">where_to_vote</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Kurir</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Menunggu Kurir') }}</span>
             <span class="raliva-figure text-[26px] text-gold-accent">{{ $summary['menunggu'] }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">schedule_send</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Rata-rata Waktu Kirim</span>
-            <span class="raliva-figure text-[26px] text-on-surface"><span>2</span>,3 hari</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Rata-rata Waktu Kirim') }}</span>
+            <span class="raliva-figure text-[26px] text-on-surface"><span>2</span>,3 {{ __('hari') }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">timer</span>
         </div>
     </section>
@@ -105,13 +105,13 @@
     {{-- Tabel Pengiriman --}}
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <h2 class="font-title-md text-title-md text-on-surface premium-heading whitespace-nowrap">Proses Pengiriman</h2>
+            <h2 class="font-title-md text-title-md text-on-surface premium-heading sm:whitespace-nowrap">{{ __('Proses Pengiriman') }}</h2>
             <div class="flex items-center gap-gutter w-full sm:w-auto">
                 <select data-table-filter="status-kirim" class="raliva-select">
-                    <option value="">Semua Status</option>
-                    <option value="pickup">Menunggu Kurir</option>
-                    <option value="jalan">Dalam Pengiriman</option>
-                    <option value="sampai">Terkirim</option>
+                    <option value="">{{ __('Semua Status') }}</option>
+                    <option value="pickup">{{ __('Menunggu Kurir') }}</option>
+                    <option value="jalan">{{ __('Dalam Pengiriman') }}</option>
+                    <option value="sampai">{{ __('Terkirim') }}</option>
                 </select>
             </div>
         </div>
@@ -120,11 +120,11 @@
             <table class="premium-table w-full min-w-[880px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Pesanan</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tujuan</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Kurir & Resi</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Aksi</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Pesanan') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Tujuan') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Kurir & Resi') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">{{ __('Status') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">{{ __('Aksi') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -145,17 +145,17 @@
                             </td>
                             <td class="py-3.5 px-4 text-center">
                                 @if ($key === 'sampai')
-                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20"><span class="material-symbols-outlined fill text-[12px]">check_circle</span>Terkirim</span>
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20"><span class="material-symbols-outlined fill text-[12px]">check_circle</span>{{ __('Terkirim') }}</span>
                                 @else
-                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-sky-500/10 text-sky-600 text-[10px] font-bold uppercase border border-sky-500/30"><span class="material-symbols-outlined fill text-[12px]">local_shipping</span>Dalam Perjalanan</span>
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-sky-500/10 text-sky-600 text-[10px] font-bold uppercase border border-sky-500/30"><span class="material-symbols-outlined fill text-[12px]">local_shipping</span>{{ __('Dalam Perjalanan') }}</span>
                                 @endif
                             </td>
                             <td class="py-3.5 px-4 text-right">
-                                <button type="button" data-modal-open="modal-kirim-{{ $ship->order_id }}" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Lacak</button>
+                                <button type="button" data-modal-open="modal-kirim-{{ $ship->order_id }}" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">{{ __('Lacak') }}</button>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="py-8 text-center text-on-surface-variant text-sm">Tidak ada pengiriman aktif.</td></tr>
+                        <tr><td colspan="5" class="py-8 text-center text-on-surface-variant text-sm">{{ __('Tidak ada pengiriman aktif.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -174,20 +174,20 @@
                             <p class="text-xs text-on-surface-variant mt-0.5">{{ $tgl }}</p>
                         </div>
                         @if ($key === 'sampai')
-                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20 shrink-0"><span class="material-symbols-outlined fill text-[12px]">check_circle</span>Terkirim</span>
+                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20 shrink-0"><span class="material-symbols-outlined fill text-[12px]">check_circle</span>{{ __('Terkirim') }}</span>
                         @else
-                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-sky-500/10 text-sky-600 text-[10px] font-bold uppercase border border-sky-500/30 shrink-0"><span class="material-symbols-outlined fill text-[12px]">local_shipping</span>Jalan</span>
+                            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-sky-500/10 text-sky-600 text-[10px] font-bold uppercase border border-sky-500/30 shrink-0"><span class="material-symbols-outlined fill text-[12px]">local_shipping</span>{{ __('Jalan') }}</span>
                         @endif
                     </div>
-                    <button type="button" data-modal-open="modal-kirim-{{ $ship->order_id }}" class="mt-3 w-full py-2 rounded-lg border border-muted-border text-xs font-semibold text-gold-accent hover:border-gold-accent transition-colors">Lacak</button>
+                    <button type="button" data-modal-open="modal-kirim-{{ $ship->order_id }}" class="mt-3 w-full py-2 rounded-lg border border-muted-border text-xs font-semibold text-gold-accent hover:border-gold-accent transition-colors">{{ __('Lacak') }}</button>
                 </article>
             @empty
-                <p class="py-8 text-center text-on-surface-variant text-sm">Tidak ada pengiriman aktif.</p>
+                <p class="py-8 text-center text-on-surface-variant text-sm">{{ __('Tidak ada pengiriman aktif.') }}</p>
             @endforelse
         </div>
         <div data-empty-state class="hidden flex-col items-center py-12 text-center gap-3">
             <span class="material-symbols-outlined text-[40px] text-on-surface-variant">inbox</span>
-            <p class="text-on-surface-variant font-body-md text-sm">Tidak ada pengiriman pada status ini.</p>
+            <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada pengiriman pada status ini.') }}</p>
         </div>
     </section>
 </div>
@@ -199,7 +199,7 @@
     <div class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
         <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
             <div>
-                <p class="raliva-label text-gold-accent">Lacak Pengiriman</p>
+                <p class="raliva-label text-gold-accent">{{ __('Lacak Pengiriman') }}</p>
                 <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">#{{ $ship->order_id }}</h3>
                 <p class="text-xs text-on-surface-variant mt-0.5">{{ $ship->nomor_order }}</p>
             </div>
@@ -209,18 +209,18 @@
         </div>
         <div class="p-6 space-y-3">
             <div class="flex items-center justify-between bg-surface-container-low rounded-lg px-4 py-3">
-                <span class="text-[10px] uppercase text-on-surface-variant">Status</span>
+                <span class="text-[10px] uppercase text-on-surface-variant">{{ __('Status') }}</span>
                 <span class="inline-flex items-center px-2 py-0.5 rounded-full border {{ \App\Support\StatusStyle::badgeClass($ship->status) }} text-[10px] font-bold uppercase">{{ $ship->status }}</span>
             </div>
             <div class="bg-surface-container-low rounded-lg p-4 space-y-1.5 text-sm">
-                <div class="flex justify-between"><span class="text-on-surface-variant">Customer</span><span class="text-on-surface">{{ $ship->checkout?->user?->nama_lengkap ?? '-' }}</span></div>
+                <div class="flex justify-between"><span class="text-on-surface-variant">{{ __('Customer') }}</span><span class="text-on-surface">{{ $ship->checkout?->user?->nama_lengkap ?? '-' }}</span></div>
                 <div class="flex justify-between"><span class="text-on-surface-variant">Total</span><span class="text-on-surface">Rp {{ number_format($ship->grand_total, 0, ',', '.') }}</span></div>
-                <div class="flex justify-between"><span class="text-on-surface-variant">Tanggal</span><span class="text-on-surface">{{ optional($ship->created_at)->translatedFormat('d M Y') }}</span></div>
+                <div class="flex justify-between"><span class="text-on-surface-variant">{{ __('Tanggal') }}</span><span class="text-on-surface">{{ optional($ship->created_at)->translatedFormat('d M Y') }}</span></div>
             </div>
-            <p class="text-xs text-on-surface-variant flex items-start gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">info</span>Resi otomatis terbit saat pesanan dikirim oleh Admin Produksi.</p>
+            <p class="text-xs text-on-surface-variant flex items-start gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">info</span>{{ __('Resi otomatis terbit saat pesanan dikirim oleh Admin Produksi.') }}</p>
         </div>
         <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex justify-end">
-            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+            <button type="button" data-modal-close class="px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Tutup') }}</button>
         </div>
     </div>
 </div>
@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function(){
       // For tambah buttons, disable if no store
       el.setAttribute('disabled','');
       el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
-      el.title = 'Ajukan toko dulu';
+      el.title = '{{ __('Ajukan toko dulu') }}';
     }
   });
   // More generic: disable all buttons in data-real except those inside pengajuan

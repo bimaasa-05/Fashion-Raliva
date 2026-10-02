@@ -25,7 +25,7 @@ class GantiGudangController extends Controller
 
         if (! in_array((int) $request->warehouse_id, $assigned, true)) {
             return back()->with('toast', [
-                'message' => 'Anda tidak ditugaskan ke gudang tersebut.',
+                'message' => __('Anda tidak ditugaskan ke gudang tersebut.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -36,7 +36,7 @@ class GantiGudangController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Gudang Aktif Diganti', sprintf('Gudang aktif kini "%s".', $gudang?->nama_gudang ?? 'Gudang'), route('gudang.dashboard'));
 
         return back()->with('toast', [
-            'message' => 'Gudang aktif telah diganti.',
+            'message' => __('Gudang aktif telah diganti.'),
             'icon' => 'swap_horiz',
         ]);
     }

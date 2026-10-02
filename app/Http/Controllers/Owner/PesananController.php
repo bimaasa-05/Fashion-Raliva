@@ -64,7 +64,7 @@ class PesananController extends Controller
 
         // Teruskan pesanan ke Admin Produksi untuk diproses.
         if (! in_array($order->status, [Order::STATUS_PENDING_PAYMENT, Order::STATUS_DIBAYAR])) {
-            return back()->with('error', 'Pesanan sudah diproses atau tidak dapat diteruskan.');
+            return back()->with('error',__('Pesanan sudah diproses atau tidak dapat diteruskan.'));
         }
 
         $order->update(['status' => Order::STATUS_DIPROSES]);
@@ -81,6 +81,6 @@ class PesananController extends Controller
         }
         Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Diteruskan', sprintf('Pesanan %s diteruskan ke Admin Produksi.', $order->nomor_order), route('owner.pesanan'));
 
-        return back()->with('success', 'Pesanan '.$order->nomor_order.' diteruskan ke Admin Produksi.');
+        return back()->with('success',__('Pesanan :ph1 diteruskan ke Admin Produksi.', ['ph1' => $order->nomor_order]));
     }
 }

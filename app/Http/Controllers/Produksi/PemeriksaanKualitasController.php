@@ -42,11 +42,11 @@ class PemeriksaanKualitasController extends Controller
     {
         $storeIds = StoreStaff::where('user_id', auth()->id())->where('status', 'aktif')->pluck('store_id')->all();
         if (! in_array($order->store_id, $storeIds, true)) {
-            return back()->with('toast', ['message' => 'Pesanan di luar scope toko Anda.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pesanan di luar scope toko Anda.'), 'icon' => 'gpp_maybe']);
         }
 
         if ($order->status !== Order::STATUS_MENUNGGU_QC) {
-            return back()->with('toast', ['message' => 'Hanya pesanan menunggu QC yang bisa diproses.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Hanya pesanan menunggu QC yang bisa diproses.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -59,7 +59,7 @@ class PemeriksaanKualitasController extends Controller
 
         $totalQty = (int) $order->items()->sum('quantity');
         if ($data['jumlah_lulus'] > $totalQty) {
-            return back()->with('toast', ['message' => "Jumlah lulus melebihi total pesanan ({$totalQty} pcs).", 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Jumlah lulus melebihi total pesanan (:ph77679 pcs).', ['ph77679' => $totalQty]), 'icon' => 'gpp_maybe']);
         }
 
         // Gagal dihitung otomatis; kekurangan (lulus < total) dicatat untuk
@@ -123,8 +123,8 @@ class PemeriksaanKualitasController extends Controller
 
         return redirect()->route('produksi.pemeriksaan-kualitas', ['tab' => 'siap'])->with('toast', [
             'message' => $kurang > 0
-                ? "Pesanan {$order->nomor_order} lulus QC. Kurang {$kurang} pcs diambil dari Gudang."
-                : "Pesanan {$order->nomor_order} lulus QC + packing. Siap dikirim.",
+                ? __('Pesanan :ph1 lulus QC. Kurang :ph2 pcs diambil dari Gudang.', ['ph1' => $order->nomor_order, 'ph2' => $kurang])
+                : __('Pesanan :ph1 lulus QC + packing. Siap dikirim.', ['ph1' => $order->nomor_order]),
             'icon' => 'task_alt',
         ]);
     }
@@ -133,11 +133,11 @@ class PemeriksaanKualitasController extends Controller
     {
         $storeIds = StoreStaff::where('user_id', auth()->id())->where('status', 'aktif')->pluck('store_id')->all();
         if (! in_array($order->store_id, $storeIds, true)) {
-            return back()->with('toast', ['message' => 'Pesanan di luar scope toko Anda.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pesanan di luar scope toko Anda.'), 'icon' => 'gpp_maybe']);
         }
 
         if ($order->status !== Order::STATUS_MENUNGGU_QC) {
-            return back()->with('toast', ['message' => 'Hanya pesanan menunggu QC yang bisa ditandai gagal.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Hanya pesanan menunggu QC yang bisa ditandai gagal.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -172,7 +172,7 @@ class PemeriksaanKualitasController extends Controller
             route('admin.pesanan', ['status' => Order::STATUS_MENUNGGU_QC]));
 
         return back()->with('toast', [
-            'message' => "Pesanan {$order->nomor_order} ditandai gagal. Admin toko telah dihubungi.",
+            'message' => __('Pesanan :ph77678 ditandai gagal. Admin toko telah dihubungi.', ['ph77678' => $order->nomor_order]),
             'icon' => 'support_agent',
         ]);
     }

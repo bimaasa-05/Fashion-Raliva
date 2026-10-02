@@ -32,12 +32,12 @@ class SettingsController extends Controller
             // route('home') tidak ada (hanya customer.home) → pakai login
             // yang menampilkan session('success') setelah akun dihapus.
             return redirect()->route('login')
-                ->with('success', 'Akun Anda berhasil dihapus.');
+                ->with('success',__('Akun Anda berhasil dihapus.'));
         } catch (\Throwable $e) {
             DB::rollBack();
 
             return redirect()->back()
-                ->with('error', 'Akun tidak dapat dihapus karena masih memiliki pesanan atau aktivitas lainnya.');
+                ->with('error',__('Akun tidak dapat dihapus karena masih memiliki pesanan atau aktivitas lainnya.'));
         }
     }
 }

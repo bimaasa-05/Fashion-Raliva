@@ -1,11 +1,11 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Pengembalian Dana')
+@section('title', __('Pengembalian Dana'))
 
-@section('header-title', 'Pengembalian Dana')
-@section('header-badge', 'Kelola')
+@section('header-title', __('Pengembalian Dana'))
+@section('header-badge', __('Kelola'))
 
-@section('header-subtitle', 'Monitor dan tangani kasus refund yang dieskalasikan ke platform.')
+@section('header-subtitle', __('Monitor dan tangani kasus refund yang dieskalasikan ke platform.'))
 
 @php
     $badgeMap = [
@@ -29,43 +29,43 @@
         </span>
         <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
-            Data refund diperbarui real-time
+            {{ __('Data refund diperbarui real-time') }}
         </span>
     </div>
     <section>
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Refund</h2>
-        <div data-reveal-group class="grid grid-cols-2 lg:grid-cols-4 gap-gutter">
+        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">{{ __('Ringkasan Refund') }}</h2>
+        <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Kasus Menunggu</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Kasus Menunggu') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary break-words">{{ $stats['requested'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">perlu keputusan</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('perlu keputusan') }}</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
                     <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:72%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:64%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:84%"></i>
                 </div>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-gold-accent/25 rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium hover:border-gold-accent transition-colors hero-glow">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Nominal Menunggu</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Nominal Menunggu') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold break-words">Rp {{ number_format($stats['nominal_menunggu'], 0, ',', '.') }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">diajukan Customer</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('diajukan Customer') }}</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
                     <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:66%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:58%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:74%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:88%"></i>
                 </div>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">payments</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Disetujui</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Disetujui') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">{{ $stats['disetujui'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">sedang diproses</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('sedang diproses') }}</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
                     <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:46%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:72%"></i>
                 </div>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">task_alt</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Selesai</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Selesai') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">{{ $stats['selesai'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">dana dikembalikan</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('dana dikembalikan') }}</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
                     <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:38%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:56%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:50%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:66%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:78%"></i>
                 </div>
@@ -76,10 +76,10 @@
 
     <section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Pengembalian Dana</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Daftar Pengembalian Dana') }}</h2>
             <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
                 <span class="material-symbols-outlined text-[18px]">tune</span>
-                Filter
+                {{ __('Filter') }}
                 <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
             </button>
         </div>
@@ -89,7 +89,7 @@
             <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
                 <div class="flex items-center gap-2 shrink-0">
                     <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Status') }}</span>
                 </div>
                 <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
                 <div id="chip-group" class="flex flex-wrap gap-2">
@@ -106,7 +106,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div class="relative flex-1">
                     <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                    <input id="refund-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari ID refund, nomor order, nama pelanggan, atau toko..." />
+                    <input id="refund-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="{{ __('Cari ID refund, nomor order, nama pelanggan, atau toko...') }}" />
                     <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
@@ -123,15 +123,15 @@
             <table class="w-full min-w-[950px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
-                        <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">No.</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">ID Refund</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Pesanan</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Pelanggan / Toko</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Alasan</th>
-                        <th class="px-6 py-4 text-right text-[10px] font-semibold tracking-widest">Jumlah</th>
-                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Diajukan</th>
-                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Aksi</th>
+                        <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">{{ __('No.') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('ID Refund') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Pesanan') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Pelanggan / Toko') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Alasan') }}</th>
+                        <th class="px-6 py-4 text-right text-[10px] font-semibold tracking-widest">{{ __('Jumlah') }}</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Status') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Diajukan') }}</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Aksi') }}</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -163,7 +163,7 @@
                                     <div class="mb-1">
                                         <a href="{{ asset('storage/' . ltrim($refund->file_bukti, '/')) }}" target="_blank" rel="noopener"
                                             class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600 hover:underline">
-                                            <span class="material-symbols-outlined text-[13px]">receipt_long</span>Bukti Transfer
+                                            <span class="material-symbols-outlined text-[13px]">receipt_long</span>{{ __('Bukti Transfer') }}
                                         </a>
                                     </div>
                                 @endif
@@ -171,18 +171,18 @@
                                     <button type="button" onclick="openRejectRefund(this.closest('tr'))"
                                         class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase tracking-wider rounded-full shadow-sm hover:bg-error/20 hover:shadow hover:-translate-y-px transition-all duration-200">
                                         <span class="material-symbols-outlined text-[14px] leading-none">block</span>
-                                        Tolak
+                                        {{ __('Tolak') }}
                                     </button>
                                     <button type="button" onclick="openRefundConfirm({{ $refund->refund_id }})"
                                         class="ml-1 inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
                                         <span class="material-symbols-outlined text-[14px] leading-none">task_alt</span>
-                                        Setujui
+                                        {{ __('Setujui') }}
                                     </button>
                                 @elseif ($refund->status === 'disetujui')
                                     <button type="button" onclick="openRefundConfirm({{ $refund->refund_id }})"
                                         class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
                                         <span class="material-symbols-outlined text-[14px] leading-none">payments</span>
-                                        Selesaikan
+                                        {{ __('Selesaikan') }}
                                     </button>
                                 @else
                                     <span class="text-on-surface-variant text-xs uppercase">&mdash;</span>
@@ -190,13 +190,13 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="9" class="py-12 text-center text-on-surface-variant">Tidak ada refund tercatat.</td></tr>
+                        <tr><td colspan="9" class="py-12 text-center text-on-surface-variant">{{ __('Tidak ada refund tercatat.') }}</td></tr>
                     @endforelse
                     <tr id="empty-search" class="hidden">
                         <td colspan="9" class="p-8 text-center">
                             <div class="flex flex-col items-center gap-2">
                                 <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
-                                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada refund yang cocok.</p>
+                                <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada refund yang cocok.') }}</p>
                             </div>
                         </td>
                     </tr>
@@ -223,27 +223,27 @@
 
                     <dl class="space-y-2 font-body-md text-sm mb-4">
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Pesanan</dt>
+                            <dt class="text-on-surface-variant">{{ __('Pesanan') }}</dt>
                             <dd class="font-mono text-on-surface-variant text-right min-w-0 break-words">{{ $refund->order?->nomor_order ?? '-' }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Pelanggan</dt>
+                            <dt class="text-on-surface-variant">{{ __('Pelanggan') }}</dt>
                             <dd class="text-on-surface text-right min-w-0 break-words">{{ $refund->requester?->nama_lengkap ?? '-' }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Toko</dt>
+                            <dt class="text-on-surface-variant">{{ __('Toko') }}</dt>
                             <dd class="text-on-surface text-right min-w-0 break-words">{{ $refund->order?->store?->nama_toko ?? '-' }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Jumlah</dt>
+                            <dt class="text-on-surface-variant">{{ __('Jumlah') }}</dt>
                             <dd class="font-bold text-gold-accent text-right whitespace-nowrap min-w-0">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Diajukan</dt>
+                            <dt class="text-on-surface-variant">{{ __('Diajukan') }}</dt>
                             <dd class="text-on-surface text-right min-w-0 break-words">{{ $refund->diajukan_pada ? \Carbon\Carbon::parse($refund->diajukan_pada)->locale('id')->diffForHumans() : '-' }}</dd>
                         </div>
                         <div class="flex justify-between gap-3 items-start">
-                            <dt class="text-on-surface-variant shrink-0">Alasan</dt>
+                            <dt class="text-on-surface-variant shrink-0">{{ __('Alasan') }}</dt>
                             <dd class="text-on-surface text-right min-w-0 break-words [overflow-wrap:anywhere]">{{ \Illuminate\Support\Str::limit($refund->alasan, 60) }}</dd>
                         </div>
                     </dl>
@@ -251,7 +251,7 @@
                     @if ($refund->file_bukti)
                         <a href="{{ asset('storage/' . ltrim($refund->file_bukti, '/')) }}" target="_blank" rel="noopener"
                             class="mb-2 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-emerald-600 hover:underline">
-                            <span class="material-symbols-outlined text-[13px]">receipt_long</span>Bukti Transfer
+                            <span class="material-symbols-outlined text-[13px]">receipt_long</span>{{ __('Bukti Transfer') }}
                         </a>
                     @endif
 
@@ -259,16 +259,16 @@
                         @if ($refund->status === 'requested')
                             <button type="button" onclick="openRejectRefund(this.closest('article'))" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase tracking-wider rounded-full shadow-sm hover:bg-error/20 hover:shadow hover:-translate-y-px transition-all duration-200">
                                 <span class="material-symbols-outlined text-[16px] leading-none">block</span>
-                                Tolak
+                                {{ __('Tolak') }}
                             </button>
                             <button type="button" onclick="openRefundConfirm({{ $refund->refund_id }})" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
                                 <span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>
-                                Setujui
+                                {{ __('Setujui') }}
                             </button>
                         @elseif ($refund->status === 'disetujui')
                             <button type="button" onclick="openRefundConfirm({{ $refund->refund_id }})" class="flex-1 min-h-11 inline-flex items-center justify-center gap-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
                                 <span class="material-symbols-outlined text-[16px] leading-none">payments</span>
-                                Selesaikan
+                                {{ __('Selesaikan') }}
                             </button>
                         @else
                             <span class="flex-1 text-center text-on-surface-variant text-xs uppercase py-3">&mdash;</span>
@@ -276,9 +276,9 @@
                     </div>
                 </article>
             @empty
-                <p class="text-center text-on-surface-variant py-10">Tidak ada refund tercatat.</p>
+                <p class="text-center text-on-surface-variant py-10">{{ __('Tidak ada refund tercatat.') }}</p>
             @endforelse
-            <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada refund yang cocok.</p>
+            <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">{{ __('Tidak ada refund yang cocok.') }}</p>
         </div>
         @if ($refunds->hasPages())
             <div class="mt-6 flex justify-center">{{ $refunds->links() }}</div>
@@ -305,22 +305,22 @@
         <form method="POST" action="{{ route('superadmin.pengembalian-dana.setujui', $refund->refund_id) }}" id="setujui-form-{{ $refund->refund_id }}" enctype="multipart/form-data" class="p-6 space-y-4">
             @csrf
             <div class="text-center">
-                <h3 class="font-title-md text-title-md text-on-surface">Setujui Refund?</h3>
-                <p class="text-sm text-on-surface-variant mt-2 mb-4">Refund <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> sebesar <span class="font-bold text-on-surface">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</span> untuk pesanan {{ $refund->order?->nomor_order ?? '-' }} akan disetujui dan ditandai selesai.</p>
+                <h3 class="font-title-md text-title-md text-on-surface">{{ __('Setujui Refund?') }}</h3>
+                <p class="text-sm text-on-surface-variant mt-2 mb-4">{{ __('Refund') }} <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> sebesar <span class="font-bold text-on-surface">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</span> untuk pesanan {{ $refund->order?->nomor_order ?? '-' }} akan disetujui dan ditandai selesai.</p>
             </div>
             @if ($isSaldoAkunRefund)
                 <div class="rounded-xl border border-emerald-500/25 bg-emerald-500/10 p-4">
-                    <p class="font-label-sm text-[10px] uppercase tracking-widest text-emerald-600">Detail Pengembalian</p>
-                    <p class="text-sm text-on-surface mt-2">Nama Pelanggan: <span class="font-bold text-on-surface">{{ $namaPelangganRefund }}</span></p>
-                    <p class="text-sm text-on-surface mt-1">Nama Bank / Metode Tujuan: <span class="font-bold text-on-surface">Saldo Akun</span></p>
-                    <p class="text-xs text-on-surface-variant mt-1 inline-flex items-start gap-1"><span class="material-symbols-outlined text-[14px] shrink-0">verified_user</span>Dana dikembalikan otomatis ke saldo akun customer — bukti transfer tidak wajib.</p>
+                    <p class="font-label-sm text-[10px] uppercase tracking-widest text-emerald-600">{{ __('Detail Pengembalian') }}</p>
+                    <p class="text-sm text-on-surface mt-2">{{ __('Nama Pelanggan:') }} <span class="font-bold text-on-surface">{{ $namaPelangganRefund }}</span></p>
+                    <p class="text-sm text-on-surface mt-1">{{ __('Nama Bank / Metode Tujuan:') }} <span class="font-bold text-on-surface">{{ __('Saldo Akun') }}</span></p>
+                    <p class="text-xs text-on-surface-variant mt-1 inline-flex items-start gap-1"><span class="material-symbols-outlined text-[14px] shrink-0">verified_user</span>{{ __('Dana dikembalikan otomatis ke saldo akun customer — bukti transfer tidak wajib.') }}</p>
                 </div>
             @else
                 <div class="rounded-xl border border-muted-border bg-surface-container-low p-4">
-                    <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Detail Pengembalian</p>
-                    <p class="text-sm text-on-surface mt-2">Nama Pelanggan: <span class="font-bold text-on-surface">{{ $namaPelangganRefund }}</span></p>
-                    <p class="text-sm text-on-surface mt-1">Nama Bank / Metode Tujuan: <span class="font-bold text-on-surface">{{ $metodeAsalRefund }}</span></p>
-                    <p class="text-xs text-on-surface-variant mt-1 inline-flex items-start gap-1"><span class="material-symbols-outlined text-[14px] shrink-0">info</span>Kembalikan dana via metode pembayaran asal. Koordinasi dengan customer untuk nomor tujuan.</p>
+                    <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Detail Pengembalian') }}</p>
+                    <p class="text-sm text-on-surface mt-2">{{ __('Nama Pelanggan:') }} <span class="font-bold text-on-surface">{{ $namaPelangganRefund }}</span></p>
+                    <p class="text-sm text-on-surface mt-1">{{ __('Nama Bank / Metode Tujuan:') }} <span class="font-bold text-on-surface">{{ $metodeAsalRefund }}</span></p>
+                    <p class="text-xs text-on-surface-variant mt-1 inline-flex items-start gap-1"><span class="material-symbols-outlined text-[14px] shrink-0">info</span>{{ __('Kembalikan dana via metode pembayaran asal. Koordinasi dengan customer untuk nomor tujuan.') }}</p>
                 </div>
             @endif
             <div class="space-y-4 text-left">
@@ -332,8 +332,8 @@
                     <p class="text-[11px] text-on-surface-variant mt-1">@if ($isSaldoAkunRefund)Opsional — dana dikembalikan otomatis ke saldo akun.@else Wajib dilampirkan sebagai bukti transparansi (JPG, PNG, atau PDF, maks 5MB).@endif</p>
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1.5">Deskripsi Bukti</label>
-                    <input type="text" name="deskripsi_bukti" id="setujui-deskripsi-{{ $refund->refund_id }}" maxlength="1000" placeholder="Contoh: Transfer BCA dari rekening platform Raliva" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent placeholder-on-surface-variant/50" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1.5">{{ __('Deskripsi Bukti') }}</label>
+                    <input type="text" name="deskripsi_bukti" id="setujui-deskripsi-{{ $refund->refund_id }}" maxlength="1000" placeholder="{{ __('Contoh: Transfer BCA dari rekening platform Raliva') }}" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent placeholder-on-surface-variant/50" />
                 </div>
             </div>
         </form>
@@ -341,7 +341,7 @@
             <div class="flex gap-3">
                 <button type="button" onclick="closeRefundConfirm()" class="btn-modal btn-modal-ghost flex-1">
                     <span class="material-symbols-outlined text-[16px] leading-none">close</span>
-                    Batal
+                    {{ __('Batal') }}
                 </button>
                 <button type="submit" form="setujui-form-{{ $refund->refund_id }}" id="setujui-submit-{{ $refund->refund_id }}" @if (!$isSaldoAkunRefund) disabled data-proof-required @endif class="btn-modal btn-modal-primary flex-1 disabled:opacity-40 disabled:cursor-not-allowed">
                     <span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>
@@ -361,24 +361,24 @@
         <form method="POST" action="{{ route('superadmin.pengembalian-dana.selesaikan', $refund->refund_id) }}" id="selesaikan-form-{{ $refund->refund_id }}" enctype="multipart/form-data" class="p-6 space-y-4">
             @csrf
             <div class="text-center">
-                <h3 class="font-title-md text-title-md text-on-surface">Tandai Selesai?</h3>
-                <p class="text-sm text-on-surface-variant mt-2 mb-4">Refund <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> akan ditandai <span class="font-bold text-on-surface">selesai</span> dan Customer dikonfirmasi dana telah dikirim.</p>
+                <h3 class="font-title-md text-title-md text-on-surface">{{ __('Tandai Selesai?') }}</h3>
+                <p class="text-sm text-on-surface-variant mt-2 mb-4">{{ __('Refund') }} <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> {{ __('akan ditandai') }} <span class="font-bold text-on-surface">selesai</span> {{ __('dan Customer dikonfirmasi dana telah dikirim.') }}</p>
             </div>
             <div class="space-y-4 text-left">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1.5">Bukti Transfer <span class="text-error">*</span></label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1.5">{{ __('Bukti Transfer') }} <span class="text-error">*</span></label>
                     <input type="file" name="file_bukti" required accept=".jpg,.jpeg,.png,.pdf" class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:font-label-sm file:uppercase file:tracking-widest file:cursor-pointer border border-muted-border rounded-lg p-1 focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent" />
-                    <p class="text-[11px] text-on-surface-variant mt-1">Wajib dilampirkan sebagai bukti transparansi (JPG, PNG, atau PDF, maks 5MB).</p>
+                    <p class="text-[11px] text-on-surface-variant mt-1">{{ __('Wajib dilampirkan sebagai bukti transparansi (JPG, PNG, atau PDF, maks 5MB).') }}</p>
                 </div>
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1.5">Deskripsi Bukti</label>
-                    <input type="text" name="deskripsi_bukti" maxlength="1000" placeholder="Contoh: Transfer BCA dari rekening platform Raliva" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent placeholder-on-surface-variant/50" />
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1.5">{{ __('Deskripsi Bukti') }}</label>
+                    <input type="text" name="deskripsi_bukti" maxlength="1000" placeholder="{{ __('Contoh: Transfer BCA dari rekening platform Raliva') }}" class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent placeholder-on-surface-variant/50" />
                 </div>
                 @if ($refund->file_bukti_request)
-                    <p class="text-xs break-words min-w-0"><a href="{{ asset('storage/' . ltrim($refund->file_bukti_request, '/')) }}" target="_blank" class="text-gold-accent hover:underline inline-flex items-center gap-1 max-w-full"><span class="material-symbols-outlined text-[14px] shrink-0">visibility</span> Foto bukti barang dari customer</a>@if ($refund->deskripsi_bukti_request)<span class="text-on-surface-variant break-words"> — {{ $refund->deskripsi_bukti_request }}</span>@endif</p>
+                    <p class="text-xs break-words min-w-0"><a href="{{ asset('storage/' . ltrim($refund->file_bukti_request, '/')) }}" target="_blank" class="text-gold-accent hover:underline inline-flex items-center gap-1 max-w-full"><span class="material-symbols-outlined text-[14px] shrink-0">visibility</span> {{ __('Foto bukti barang dari customer') }}</a>@if ($refund->deskripsi_bukti_request)<span class="text-on-surface-variant break-words"> — {{ $refund->deskripsi_bukti_request }}</span>@endif</p>
                 @endif
                 @if ($refund->file_bukti)
-                    <p class="text-xs break-words min-w-0"><a href="{{ asset('storage/' . $refund->file_bukti) }}" target="_blank" class="text-gold-accent hover:underline inline-flex items-center gap-1 max-w-full"><span class="material-symbols-outlined text-[14px] shrink-0">visibility</span> Lihat bukti sebelumnya</a></p>
+                    <p class="text-xs break-words min-w-0"><a href="{{ asset('storage/' . $refund->file_bukti) }}" target="_blank" class="text-gold-accent hover:underline inline-flex items-center gap-1 max-w-full"><span class="material-symbols-outlined text-[14px] shrink-0">visibility</span> {{ __('Lihat bukti sebelumnya') }}</a></p>
                 @endif
             </div>
         </form>
@@ -386,11 +386,11 @@
             <div class="flex gap-3">
                 <button type="button" onclick="closeRefundConfirm()" class="btn-modal btn-modal-ghost flex-1">
                     <span class="material-symbols-outlined text-[16px] leading-none">close</span>
-                    Batal
+                    {{ __('Batal') }}
                 </button>
                 <button type="submit" form="selesaikan-form-{{ $refund->refund_id }}" class="btn-modal btn-modal-primary flex-1">
                     <span class="material-symbols-outlined text-[16px] leading-none">payments</span>
-                    Ya, Selesaikan
+                    {{ __('Ya, Selesaikan') }}
                 </button>
             </div>
         @endslot
@@ -407,17 +407,17 @@
     <form method="POST" action="" id="reject-refund-form" onsubmit="closeRejectRefund()" class="p-6 space-y-4">
         @csrf
         <div class="text-center">
-            <h3 class="font-title-md text-title-md text-on-surface">Alasan Penolakan Refund</h3>
-            <p class="text-on-surface-variant text-sm mt-2 mb-4">Refund <span id="reject-refund-kode" class="font-mono font-bold text-on-surface">-</span> akan ditolak dan Customer dinotifikasi.</p>
+            <h3 class="font-title-md text-title-md text-on-surface">{{ __('Alasan Penolakan Refund') }}</h3>
+            <p class="text-on-surface-variant text-sm mt-2 mb-4">{{ __('Refund') }} <span id="reject-refund-kode" class="font-mono font-bold text-on-surface">-</span> {{ __('akan ditolak dan Customer dinotifikasi.') }}</p>
         </div>
         <textarea name="alasan" required minlength="10" maxlength="1000" rows="4"
             class="w-full border border-muted-border bg-surface-container-low rounded-lg p-3 font-body-md text-body-md text-on-surface focus:outline-none focus:border-error focus:ring-1 focus:ring-error"
-            placeholder="Tulis alasan penolakan... (minimal 10 karakter)"></textarea>
+            placeholder="{{ __('Tulis alasan penolakan... (minimal 10 karakter)') }}"></textarea>
         </form>
         @slot('footer')
             <div class="flex space-x-3">
-                <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeRejectRefund()">Batal</button>
-                <button type="submit" form="reject-refund-form" class="btn-modal btn-modal-danger flex-1">Konfirmasi</button>
+                <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeRejectRefund()">{{ __('Batal') }}</button>
+                <button type="submit" form="reject-refund-form" class="btn-modal btn-modal-danger flex-1">{{ __('Konfirmasi') }}</button>
             </div>
         @endslot
     @endcomponent

@@ -20,7 +20,7 @@ class OwnerLaporanRingkasanSheet implements FromCollection, WithHeadings, WithMa
         protected int $period,
     ) {
         $this->judulSheet = 'LAPORAN TOKO RALIVA';
-        $this->subtitleSheet = 'Ringkasan Keuangan & Penjualan — Periode ' . $this->labelPeriode();
+        $this->subtitleSheet = __('Ringkasan Keuangan & Penjualan — Periode :ph1', ['ph1' => $this->labelPeriode()]);
         $this->barisHeaderSheet = 3;
         $this->lebarKolomSheet = [6, 34, 28];
         $this->kolomUangSheet = [3];
@@ -48,12 +48,12 @@ class OwnerLaporanRingkasanSheet implements FromCollection, WithHeadings, WithMa
         $dicairkan = (float) \App\Models\Withdrawal::where('store_id', $storeId)->where('status', 'selesai')->sum('jumlah');
 
         return collect([
-            ['no' => 1, 'label' => 'Total Pendapatan', 'value' => $pendapatan],
-            ['no' => 2, 'label' => 'Pesanan Selesai', 'value' => $pesananSelesai],
-            ['no' => 3, 'label' => 'Nilai Refund', 'value' => $refund],
-            ['no' => 4, 'label' => 'Dana Dicairkan', 'value' => $dicairkan],
-            ['no' => 5, 'label' => 'Saldo Bersih', 'value' => $pendapatan - $refund - $dicairkan],
-            ['no' => 6, 'label' => 'Periode', 'value' => $this->labelPeriode()],
+            ['no' => 1, 'label' => __('Total Pendapatan'), 'value' => $pendapatan],
+            ['no' => 2, 'label' => __('Pesanan Selesai'), 'value' => $pesananSelesai],
+            ['no' => 3, 'label' => __('Nilai Refund'), 'value' => $refund],
+            ['no' => 4, 'label' => __('Dana Dicairkan'), 'value' => $dicairkan],
+            ['no' => 5, 'label' => __('Saldo Bersih'), 'value' => $pendapatan - $refund - $dicairkan],
+            ['no' => 6, 'label' => __('Periode'), 'value' => $this->labelPeriode()],
         ]);
     }
 
@@ -62,7 +62,7 @@ class OwnerLaporanRingkasanSheet implements FromCollection, WithHeadings, WithMa
      */
     public function headings(): array
     {
-        return ['No.', 'Metrik', 'Nilai'];
+        return [__('No.'), __('Metrik'), __('Nilai')];
     }
 
     /**
@@ -76,6 +76,6 @@ class OwnerLaporanRingkasanSheet implements FromCollection, WithHeadings, WithMa
 
     public function title(): string
     {
-        return 'Ringkasan';
+        return __('Ringkasan');
     }
 }

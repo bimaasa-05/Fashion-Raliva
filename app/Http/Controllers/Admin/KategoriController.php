@@ -25,11 +25,11 @@ class KategoriController extends Controller
             if ($request->wantsJson()) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Kategori dengan nama tersebut sudah ada.',
+                    'message' => __('Kategori dengan nama tersebut sudah ada.'),
                 ], 422);
             }
 
-            return back()->with('toast', ['message' => 'Kategori dengan nama tersebut sudah ada.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Kategori dengan nama tersebut sudah ada.'), 'icon' => 'gpp_maybe']);
         }
 
         $data['status'] = Category::STATUS_AKTIF;
@@ -52,7 +52,7 @@ class KategoriController extends Controller
         if ($request->wantsJson()) {
             return response()->json([
                 'success' => true,
-                'message' => 'Kategori "' . $category->nama_kategori . '" berhasil ditambahkan.',
+                'message' => __('Kategori ":ph1" berhasil ditambahkan.', ['ph1' => $category->nama_kategori]),
                 'kategori' => [
                     'category_id' => $category->category_id,
                     'nama_kategori' => $category->nama_kategori,
@@ -61,7 +61,7 @@ class KategoriController extends Controller
         }
 
         return back()->with('toast', [
-            'message' => 'Kategori "' . $category->nama_kategori . '" berhasil ditambahkan.',
+            'message' => __('Kategori ":ph1" berhasil ditambahkan.', ['ph1' => $category->nama_kategori]),
             'icon' => 'task_alt',
         ]);
     }

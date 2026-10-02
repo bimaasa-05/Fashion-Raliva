@@ -74,14 +74,14 @@ class PengirimanController extends Controller
     {
         if (! AdminContext::canAccessStore($pesanan->store_id)) {
             return back()->with('toast', [
-                'message' => 'Pesanan ini di luar scope toko yang Anda tugaskan.',
+                'message' => __('Pesanan ini di luar scope toko yang Anda tugaskan.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if ($pesanan->status !== Order::STATUS_SIAP_KIRIM) {
             return back()->with('toast', [
-                'message' => 'Hanya pesanan berstatus siap kirim yang dapat disiapkan pengirimannya.',
+                'message' => __('Hanya pesanan berstatus siap kirim yang dapat disiapkan pengirimannya.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -103,7 +103,7 @@ class PengirimanController extends Controller
 
             if ($service && (int) $service->courier_id !== (int) $data['courier_id']) {
                 return back()->with('toast', [
-                    'message' => 'Layanan pengiriman tidak sesuai dengan kurir yang dipilih.',
+                    'message' => __('Layanan pengiriman tidak sesuai dengan kurir yang dipilih.'),
                     'icon' => 'gpp_maybe',
                 ]);
             }
@@ -111,7 +111,7 @@ class PengirimanController extends Controller
 
         if (! $this->kurirAllowed($pesanan->store_id, (int) $data['courier_id'], $data['shipping_service_id'] ? (int) $data['shipping_service_id'] : null)) {
             return back()->with('toast', [
-                'message' => 'Kurir/layanan ini nonaktif untuk toko pesanan. Ubah di menu Metode Pengiriman.',
+                'message' => __('Kurir/layanan ini nonaktif untuk toko pesanan. Ubah di menu Metode Pengiriman.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -163,7 +163,7 @@ class PengirimanController extends Controller
         }
 
         return back()->with('toast', [
-            'message' => "Resi untuk pesanan {$pesanan->nomor_order} tersimpan. Siap ditandai dikirim.",
+            'message' => __('Resi untuk pesanan :ph75718 tersimpan. Siap ditandai dikirim.', ['ph75718' => $pesanan->nomor_order]),
             'icon' => 'task_alt',
         ]);
     }
@@ -215,21 +215,21 @@ class PengirimanController extends Controller
 
         if (! $pesanan || ! AdminContext::canAccessStore($pesanan->store_id)) {
             return back()->with('toast', [
-                'message' => 'Pengiriman ini di luar scope toko yang Anda tugaskan.',
+                'message' => __('Pengiriman ini di luar scope toko yang Anda tugaskan.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if (! in_array($pengiriman->status, [Shipment::STATUS_PENDING, Shipment::STATUS_DIPROSES], true)) {
             return back()->with('toast', [
-                'message' => 'Pengiriman ini sudah dikirim atau bermasalah.',
+                'message' => __('Pengiriman ini sudah dikirim atau bermasalah.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if (empty($pengiriman->nomor_resi)) {
             return back()->with('toast', [
-                'message' => 'Isi nomor resi terlebih dahulu sebelum menandai dikirim.',
+                'message' => __('Isi nomor resi terlebih dahulu sebelum menandai dikirim.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -266,7 +266,7 @@ class PengirimanController extends Controller
         }
 
         return back()->with('toast', [
-            'message' => "Pesanan {$pesanan->nomor_order} ditandai dikirim.",
+            'message' => __('Pesanan :ph75717 ditandai dikirim.', ['ph75717' => $pesanan->nomor_order]),
             'icon' => 'local_shipping',
         ]);
     }

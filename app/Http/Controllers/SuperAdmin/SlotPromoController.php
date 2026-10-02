@@ -75,7 +75,7 @@ class SlotPromoController extends Controller
         Notification::fireSelf(Notification::TIPE_PROMO, 'Promo Slot Dibuat', 'Promo slot "'.$promo->nama_promo.'" dibuat.', route('superadmin.promo-slot'));
 
         return back()->with('toast', [
-            'message' => 'Promo slot "'.$promo->nama_promo.'" berhasil dibuat.',
+            'message' => __('Promo slot ":ph1" berhasil dibuat.', ['ph1' => $promo->nama_promo]),
             'icon' => 'task_alt',
         ]);
     }
@@ -129,7 +129,7 @@ class SlotPromoController extends Controller
         Notification::fireSelf(Notification::TIPE_PROMO, 'Promo Slot Diperbarui', 'Promo slot "'.$promo->nama_promo.'" diperbarui.', route('superadmin.promo-slot'));
 
         return back()->with('toast', [
-            'message' => 'Promo slot "'.$promo->nama_promo.'" berhasil diperbarui.',
+            'message' => __('Promo slot ":ph1" berhasil diperbarui.', ['ph1' => $promo->nama_promo]),
             'icon' => 'task_alt',
         ]);
     }
@@ -152,7 +152,7 @@ class SlotPromoController extends Controller
         Notification::fireSelf(Notification::TIPE_PROMO, 'Promo Slot Dihapus', 'Promo slot "'.$nama.'" dihapus.', route('superadmin.promo-slot'));
 
         return back()->with('toast', [
-            'message' => 'Promo slot "'.$nama.'" berhasil dihapus.',
+            'message' => __('Promo slot ":ph1" berhasil dihapus.', ['ph1' => $nama]),
             'icon' => 'task_alt',
         ]);
     }

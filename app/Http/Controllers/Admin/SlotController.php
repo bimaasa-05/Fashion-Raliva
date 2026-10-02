@@ -101,13 +101,13 @@ class SlotController extends Controller
         }
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pengajuan Slot Terkirim', sprintf('Pengajuan pembelian %d slot diajukan.', (int) $data['jumlah_slot']), route('admin.slot'));
 
-        return back()->with('success', 'Pengajuan pembelian '.$data['jumlah_slot'].' slot diajukan. Super Admin dapat langsung menyetujui atau menolak.');
+        return back()->with('success',__('Pengajuan pembelian :ph1 slot diajukan. Super Admin dapat langsung menyetujui atau menolak.', ['ph1' => $data['jumlah_slot']]));
     }
 
     public function beliPaket(Request $request, ProductSlotPackage $paket)
     {
         if ($paket->status !== ProductSlotPackage::STATUS_AKTIF) {
-            return back()->with('toast', ['message' => 'Paket ini sedang tidak tersedia.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Paket ini sedang tidak tersedia.'), 'icon' => 'gpp_maybe']);
         }
 
         $storeIds = AdminContext::assignedStoreIds();
@@ -176,6 +176,6 @@ class SlotController extends Controller
         );
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Paket Slot Aktif', sprintf('Paket "%s" (%d slot) berhasil aktif.', $paket->nama_paket, $paket->jumlah_slot), route('admin.slot'));
 
-        return back()->with('success', 'Paket "'.$paket->nama_paket.'" ('.$paket->jumlah_slot.' slot) berhasil aktif. Kuota toko bertambah.');
+        return back()->with('success',__('Paket ":ph1" (:ph2 slot) berhasil aktif. Kuota toko bertambah.', ['ph1' => $paket->nama_paket, 'ph2' => $paket->jumlah_slot]));
     }
 }

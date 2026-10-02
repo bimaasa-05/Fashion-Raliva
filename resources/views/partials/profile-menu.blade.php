@@ -10,7 +10,7 @@
     $initials = strtoupper(mb_substr($init, 0, 2)) ?: '?';
 @endphp
 <div class="relative" data-profile-container>
-    <button type="button" data-profile-toggle class="flex items-center gap-3 hover:opacity-80 transition-opacity" aria-label="Menu profil">
+    <button type="button" data-profile-toggle class="flex items-center gap-3 hover:opacity-80 transition-opacity" aria-label="{{ __('Menu profil') }}">
         @if (empty($compact))
             <div class="text-right hidden lg:block">
                 <p class="font-label-sm text-sm text-on-surface leading-tight">{{ $displayName }}</p>
@@ -33,12 +33,12 @@
         </div>
         <a href="{{ route($profilRoute ?? 'superadmin.profil') }}" class="flex items-center gap-3 px-4 py-3 text-on-surface hover:bg-surface-container-low transition-colors">
             <span class="material-symbols-outlined text-[20px] text-on-surface-variant">person</span>
-            <span class="font-body-md text-sm">Profil</span>
+            <span class="font-body-md text-sm">{{ __('Profil') }}</span>
         </a>
         @if (!isset($showPengaturan) || $showPengaturan)
             <a href="{{ route($pengaturanRoute ?? 'superadmin.pengaturan-sistem') }}" class="flex items-center gap-3 px-4 py-3 text-on-surface hover:bg-surface-container-low transition-colors">
                 <span class="material-symbols-outlined text-[20px] text-on-surface-variant">settings</span>
-                <span class="font-body-md text-sm">Pengaturan</span>
+                <span class="font-body-md text-sm">{{ __('Pengaturan') }}</span>
             </a>
         @endif
         <form method="POST" action="{{ route('logout') }}" class="border-t border-muted-border">
@@ -49,7 +49,7 @@
             @endif
             <button type="submit" class="w-full flex items-center gap-3 px-4 py-3 text-error hover:bg-error/10 transition-colors">
                 <span class="material-symbols-outlined text-[20px]">logout</span>
-                <span class="font-body-md text-sm">Keluar</span>
+                <span class="font-body-md text-sm">{{ __('Keluar') }}</span>
             </button>
         </form>
     </div>

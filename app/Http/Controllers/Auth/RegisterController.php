@@ -57,10 +57,10 @@ class RegisterController extends Controller
 
         if ($roleName === Role::OWNER) {
             return redirect()->route('login')
-                ->with('success', 'Pendaftaran berhasil. Silakan login untuk mengajukan toko.');
+                ->with('success',__('Pendaftaran berhasil. Silakan login untuk mengajukan toko.'));
         }
 
         return redirect()->route('login')
-            ->with('success', 'Pendaftaran berhasil. Silakan login.');
+            ->with('success',__('Pendaftaran berhasil. Silakan login.'));
     }
 }

@@ -1,9 +1,9 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Notifikasi')
-@section('header-title', 'Notifikasi')
-@section('header-badge', 'Pantau')
-@section('header-subtitle', 'Semua notifikasi dari seluruh aktivitas platform Raliva.')
+@section('title', __('Notifikasi'))
+@section('header-title', __('Notifikasi'))
+@section('header-badge', __('Pantau'))
+@section('header-subtitle', __('Semua notifikasi dari seluruh aktivitas platform Raliva.'))
 
 @push('styles')
 <style>
@@ -34,10 +34,10 @@
                         </span>
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase tracking-wider border border-error/20">
                             <span class="w-1.5 h-1.5 rounded-full bg-error"></span>
-                            {{ $unread }} Belum Dibaca
+                            {{ $unread }} {{ __('Belum Dibaca') }}
                         </span>
                     </div>
-                    <p class="font-body-md text-body-md text-on-surface-variant max-w-lg">Lihat semua notifikasi dari seluruh aktivitas platform. Filter berdasarkan tipe notifikasi.</p>
+                    <p class="font-body-md text-body-md text-on-surface-variant max-w-lg">{{ __('Lihat semua notifikasi dari seluruh aktivitas platform. Filter berdasarkan tipe notifikasi.') }}</p>
                 </div>
             </div>
         </div>
@@ -50,21 +50,21 @@
             <div class="flex flex-col lg:flex-row lg:items-center gap-3 mb-6">
                 <div class="flex flex-wrap gap-2 items-center">
                     <span class="text-gold-accent material-symbols-outlined text-[16px]">filter_list</span>
-                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest self-center mr-1">Tipe:</span>
-                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide active" data-filter="tipe" data-value="">Semua</button>
-                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="tipe" data-value="order">Pesanan</button>
-                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="tipe" data-value="pembayaran">Pembayaran</button>
-                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="tipe" data-value="pengiriman">Pengiriman</button>
-                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="tipe" data-value="komplain">Komplain</button>
-                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="tipe" data-value="wallet">Wallet</button>
-                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="tipe" data-value="sistem">Sistem</button>
+                    <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest self-center mr-1">{{ __('Tipe:') }}</span>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide active" data-filter="tipe" data-value="">{{ __('Semua') }}</button>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="tipe" data-value="order">{{ __('Pesanan') }}</button>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="tipe" data-value="pembayaran">{{ __('Pembayaran') }}</button>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="tipe" data-value="pengiriman">{{ __('Pengiriman') }}</button>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="tipe" data-value="komplain">{{ __('Komplain') }}</button>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="tipe" data-value="wallet">{{ __('Wallet') }}</button>
+                    <button type="button" class="filter-chip px-4 py-2 border border-muted-border rounded-full font-label-sm text-[11px] uppercase tracking-wide text-on-surface-variant" data-filter="tipe" data-value="sistem">{{ __('Sistem') }}</button>
                 </div>
                 <div class="lg:ml-auto flex items-center gap-3">
                     <p class="text-on-surface-variant font-body-md text-xs">
                         <span id="notif-count">{{ $notifications->total() }}</span> notifikasi
                     </p>
                     <button type="button" id="mark-all-read" class="py-2 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">
-                        <span class="material-symbols-outlined text-[14px] align-middle mr-1">done_all</span>Tandai Semua Dibaca
+                        <span class="material-symbols-outlined text-[14px] align-middle mr-1">done_all</span>{{ __('Tandai Semua Dibaca') }}
                     </button>
                 </div>
             </div>
@@ -77,8 +77,8 @@
                     <li class="py-16 text-center text-on-surface-variant">
                         <div class="flex flex-col items-center gap-3">
                             <span class="material-symbols-outlined text-[48px] text-on-surface-variant/30">notifications_off</span>
-                            <p class="font-title-md text-title-md text-on-surface">Tidak Ada Notifikasi</p>
-                            <p class="text-on-surface-variant font-body-md text-sm max-w-sm">Belum ada notifikasi dari aktivitas platform.</p>
+                            <p class="font-title-md text-title-md text-on-surface">{{ __('Tidak Ada Notifikasi') }}</p>
+                            <p class="text-on-surface-variant font-body-md text-sm max-w-sm">{{ __('Belum ada notifikasi dari aktivitas platform.') }}</p>
                         </div>
                     </li>
                 @endforelse
@@ -89,8 +89,8 @@
                 <div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center">
                     <span class="material-symbols-outlined text-[28px] text-on-surface-variant">filter_list_off</span>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada notifikasi pada kategori ini.</p>
-                <button type="button" onclick="resetFilter()" class="mt-1 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Reset Filter</button>
+                <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada notifikasi pada kategori ini.') }}</p>
+                <button type="button" onclick="resetFilter()" class="mt-1 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Reset Filter') }}</button>
             </div>
 
             <!-- Pagination -->
@@ -194,7 +194,7 @@
                 item.classList.add('opacity-80');
                 item.querySelector('.notif-text')?.classList.remove('font-semibold');
             });
-            showRalivaToast('Semua notifikasi ditandai sudah dibaca.', 'done_all');
+            showRalivaToast('{{ __('Semua notifikasi ditandai sudah dibaca.') }}', 'done_all');
         });
     });
 </script>

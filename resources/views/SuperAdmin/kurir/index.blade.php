@@ -1,11 +1,11 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Kurir & Layanan')
+@section('title', __('Kurir & Layanan'))
 
-@section('header-title', 'Kurir & Layanan')
-@section('header-badge', 'Kelola')
+@section('header-title', __('Kurir & Layanan'))
+@section('header-badge', __('Kelola'))
 
-@section('header-subtitle', 'Kelola data kurir dan layanan pengiriman')
+@section('header-subtitle', __('Kelola data kurir dan layanan pengiriman'))
 
 @push('styles')
 <style>
@@ -24,19 +24,19 @@
         <div class="flex items-center gap-3">
             <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">local_shipping</span></div>
             <div>
-                <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Kurir & Layanan</h2>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">Kelola data kurir dan layanan pengiriman.</p>
+                <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">{{ __('Kurir & Layanan') }}</h2>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">{{ __('Kelola data kurir dan layanan pengiriman.') }}</p>
             </div>
         </div>
         <button type="button" onclick="openKurirForm()" class="flex items-center justify-center gap-2 px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
-            <span class="material-symbols-outlined text-[18px]">add</span> Tambah Kurir
+            <span class="material-symbols-outlined text-[18px]">add</span> {{ __('Tambah Kurir') }}
         </button>
     </section>
 
     <!-- Courier Grid -->
     <section class="space-y-gutter">
         <div class="flex justify-between items-center flex-wrap gap-2">
-            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">Daftar Kurir</h2>
+            <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight premium-heading">{{ __('Daftar Kurir') }}</h2>
             <span class="text-on-surface-variant font-body-md text-sm">{{ $stats['aktif'] }} aktif • {{ $stats['layanan'] }} layanan • total {{ $stats['total'] }}</span>
         </div>
 
@@ -54,9 +54,9 @@
                                 <span class="material-symbols-outlined text-white text-[28px]">local_shipping</span>
                             </div>
                             @if ($kurir->status !== \App\Models\Courier::STATUS_AKTIF)
-                                <span class="inline-flex px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">Non-aktif</span>
+                                <span class="inline-flex px-1.5 py-0.5 rounded bg-error/10 text-error border border-error/20 text-[9px] font-bold uppercase">{{ __('Non-aktif') }}</span>
                             @else
-                                <span class="inline-flex px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 text-[9px] font-bold uppercase">Aktif</span>
+                                <span class="inline-flex px-1.5 py-0.5 rounded bg-success/10 text-success border border-success/20 text-[9px] font-bold uppercase">{{ __('Aktif') }}</span>
                             @endif
                         </div>
                         <h3 class="font-title-md text-title-md text-on-surface group-hover:text-gold-accent transition-colors mb-1">{{ $kurir->nama_kurir }}</h3>
@@ -84,10 +84,10 @@
                                         @endif
                                     </div>
                                     <div class="flex items-center gap-1">
-                                        <button type="button" onclick="openLayananForm(this.closest('[data-layanan-id]'), {{ $kurir->courier_id }})" class="p-1 rounded text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit">
+                                        <button type="button" onclick="openLayananForm(this.closest('[data-layanan-id]'), {{ $kurir->courier_id }})" class="p-1 rounded text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="{{ __('Edit') }}">
                                             <span class="material-symbols-outlined text-[14px]">edit</span>
                                         </button>
-                                        <button type="button" onclick="openHapusLayanan(this.closest('[data-layanan-id]'))" class="p-1 rounded text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus">
+                                        <button type="button" onclick="openHapusLayanan(this.closest('[data-layanan-id]'))" class="p-1 rounded text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="{{ __('Hapus') }}">
                                             <span class="material-symbols-outlined text-[14px]">delete</span>
                                         </button>
                                     </div>
@@ -96,31 +96,31 @@
                         </div>
                     @else
                         <div class="layanan-list mt-3 pt-3 border-t border-muted-border" id="layanan-{{ $kurir->courier_id }}">
-                            <p class="text-on-surface-variant/60 text-xs italic text-center py-2">Belum ada layanan</p>
+                            <p class="text-on-surface-variant/60 text-xs italic text-center py-2">{{ __('Belum ada layanan') }}</p>
                         </div>
                     @endif
 
                     <div class="flex items-center justify-between pt-4 border-t border-muted-border mt-4">
                         <div class="flex items-center gap-1">
-                            <button type="button" onclick="toggleLayanan({{ $kurir->courier_id }})" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Lihat Layanan">
+                            <button type="button" onclick="toggleLayanan({{ $kurir->courier_id }})" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="{{ __('Lihat Layanan') }}">
                                 <span class="material-symbols-outlined text-[20px]">expand_more</span>
                             </button>
-                            <button type="button" onclick="openLayananForm(null, {{ $kurir->courier_id }})" class="p-2 rounded-lg text-on-surface-variant hover:text-success hover:bg-success/10 transition-colors" title="Tambah Layanan">
+                            <button type="button" onclick="openLayananForm(null, {{ $kurir->courier_id }})" class="p-2 rounded-lg text-on-surface-variant hover:text-success hover:bg-success/10 transition-colors" title="{{ __('Tambah Layanan') }}">
                                 <span class="material-symbols-outlined text-[20px]">add_circle</span>
                             </button>
                         </div>
                         <div class="flex items-center gap-1">
-                            <button type="button" onclick="openKurirForm(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="Edit Kurir">
+                            <button type="button" onclick="openKurirForm(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-gold-accent hover:bg-gold-accent/10 transition-colors" title="{{ __('Edit Kurir') }}">
                                 <span class="material-symbols-outlined text-[20px]">edit</span>
                             </button>
-                            <button type="button" onclick="openHapusKurir(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="Hapus Kurir">
+                            <button type="button" onclick="openHapusKurir(this.closest('[data-id]'))" class="p-2 rounded-lg text-on-surface-variant hover:text-error hover:bg-error/10 transition-colors" title="{{ __('Hapus Kurir') }}">
                                 <span class="material-symbols-outlined text-[20px]">delete</span>
                             </button>
                         </div>
                     </div>
                 </div>
             @empty
-                <p class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-12">Belum ada kurir. Tambahkan kurir pertama Anda.</p>
+                <p class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-12">{{ __('Belum ada kurir. Tambahkan kurir pertama Anda.') }}</p>
             @endforelse
         </div>
     </section>
@@ -141,30 +141,30 @@
     <form method="POST" action="" id="kurir-form" onsubmit="closeKurirModal()">
         @csrf
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKurir">Nama Kurir</label>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaKurir">{{ __('Nama Kurir') }}</label>
             <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaKurir" name="nama_kurir" type="text" maxlength="100" placeholder="JNE, J&T, SiCepat..." required />
         </div>
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="kodeKurir">Kode Kurir</label>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="kodeKurir">{{ __('Kode Kurir') }}</label>
             <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50 uppercase" id="kodeKurir" name="kode_kurir" type="text" maxlength="50" placeholder="JNE" required />
         </div>
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-3">Status</label>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-3">{{ __('Status') }}</label>
             <div class="flex gap-4">
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="radio" name="status" value="aktif" class="w-4 h-4 accent-gold-accent" checked />
-                    <span class="text-sm text-on-surface">Aktif</span>
+                    <span class="text-sm text-on-surface">{{ __('Aktif') }}</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="radio" name="status" value="nonaktif" class="w-4 h-4 accent-gold-accent" />
-                    <span class="text-sm text-on-surface">Non-aktif</span>
+                    <span class="text-sm text-on-surface">{{ __('Non-aktif') }}</span>
                 </label>
             </div>
         </div>
         @slot('footer')
             <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4">
-                <button type="button" onclick="closeKurirModal()" class="btn-modal btn-modal-ghost">Batal</button>
-                <button type="submit" form="kurir-form" id="kurir-submit-btn" class="btn-modal btn-modal-primary">Tambah Kurir</button>
+                <button type="button" onclick="closeKurirModal()" class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                <button type="submit" form="kurir-form" id="kurir-submit-btn" class="btn-modal btn-modal-primary">{{ __('Tambah Kurir') }}</button>
             </div>
         @endslot
     </form>
@@ -186,30 +186,30 @@
         @csrf
         <input type="hidden" name="courier_id" id="layananCourierId" value="" />
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaLayanan">Nama Layanan</label>
-            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaLayanan" name="nama_layanan" type="text" maxlength="100" placeholder="Reg, Yes, Same Day..." required />
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="namaLayanan">{{ __('Nama Layanan') }}</label>
+            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="namaLayanan" name="nama_layanan" type="text" maxlength="100" placeholder="{{ __('Reg, Yes, Same Day...') }}" required />
         </div>
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="estimasiHari">Estimasi Pengiriman</label>
-            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="estimasiHari" name="estimasi_hari" type="text" maxlength="50" placeholder="1-2 hari, 3 hari..." />
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="estimasiHari">{{ __('Estimasi Pengiriman') }}</label>
+            <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" id="estimasiHari" name="estimasi_hari" type="text" maxlength="50" placeholder="{{ __('1-2 hari, 3 hari...') }}" />
         </div>
         <div>
-            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-3">Status</label>
+            <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-3">{{ __('Status') }}</label>
             <div class="flex gap-4">
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="radio" name="status" value="aktif" class="w-4 h-4 accent-gold-accent" checked />
-                    <span class="text-sm text-on-surface">Aktif</span>
+                    <span class="text-sm text-on-surface">{{ __('Aktif') }}</span>
                 </label>
                 <label class="flex items-center gap-2 cursor-pointer">
                     <input type="radio" name="status" value="nonaktif" class="w-4 h-4 accent-gold-accent" />
-                    <span class="text-sm text-on-surface">Non-aktif</span>
+                    <span class="text-sm text-on-surface">{{ __('Non-aktif') }}</span>
                 </label>
             </div>
         </div>
         @slot('footer')
             <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-4">
-                <button type="button" onclick="closeLayananModal()" class="btn-modal btn-modal-ghost">Batal</button>
-                <button type="submit" form="layanan-form" id="layanan-submit-btn" class="btn-modal btn-modal-primary">Tambah Layanan</button>
+                <button type="button" onclick="closeLayananModal()" class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                <button type="submit" form="layanan-form" id="layanan-submit-btn" class="btn-modal btn-modal-primary">{{ __('Tambah Layanan') }}</button>
             </div>
         @endslot
     </form>
@@ -224,15 +224,15 @@
     <form method="POST" action="" id="hapus-kurir-form" onsubmit="closeHapusModal()" class="p-6 space-y-4">
         @csrf
         <div class="text-center">
-            <h3 class="font-title-md text-title-md text-on-surface">Hapus Kurir</h3>
-            <p class="text-on-surface-variant text-sm mt-2 mb-4">Kurir <span id="hapus-nama" class="font-bold text-on-surface">-</span> beserta semua layanannya akan dihapus permanen.</p>
+            <h3 class="font-title-md text-title-md text-on-surface">{{ __('Hapus Kurir') }}</h3>
+            <p class="text-on-surface-variant text-sm mt-2 mb-4">{{ __('Kurir') }} <span id="hapus-nama" class="font-bold text-on-surface">-</span> {{ __('beserta semua layanannya akan dihapus permanen.') }}</p>
         </div>
         <div id="hapus-warning" class="hidden"></div>
     </form>
     @slot('footer')
         <div class="flex space-x-3">
-            <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusModal()">Batal</button>
-            <button type="submit" form="hapus-kurir-form" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
+            <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusModal()">{{ __('Batal') }}</button>
+            <button type="submit" form="hapus-kurir-form" class="btn-modal btn-modal-danger flex-1">{{ __('Ya, Hapus') }}</button>
         </div>
     @endslot
 @endcomponent
@@ -246,15 +246,15 @@
     <form method="POST" action="" id="hapus-layanan-form" onsubmit="closeHapusModal()" class="p-6 space-y-4">
         @csrf
         <div class="text-center">
-            <h3 class="font-title-md text-title-md text-on-surface">Hapus Layanan</h3>
-            <p class="text-on-surface-variant text-sm mt-2 mb-4">Layanan <span id="hapus-layanan-nama" class="font-bold text-on-surface">-</span> akan dihapus permanen.</p>
+            <h3 class="font-title-md text-title-md text-on-surface">{{ __('Hapus Layanan') }}</h3>
+            <p class="text-on-surface-variant text-sm mt-2 mb-4">{{ __('Layanan') }} <span id="hapus-layanan-nama" class="font-bold text-on-surface">-</span> {{ __('akan dihapus permanen.') }}</p>
         </div>
         <div id="hapus-layanan-warning" class="hidden"></div>
     </form>
     @slot('footer')
         <div class="flex space-x-3">
-            <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusModal()">Batal</button>
-            <button type="submit" form="hapus-layanan-form" class="btn-modal btn-modal-danger flex-1">Ya, Hapus</button>
+            <button type="button" class="btn-modal btn-modal-ghost flex-1" onclick="closeHapusModal()">{{ __('Batal') }}</button>
+            <button type="submit" form="hapus-layanan-form" class="btn-modal btn-modal-danger flex-1">{{ __('Ya, Hapus') }}</button>
         </div>
     @endslot
 @endcomponent
@@ -282,21 +282,21 @@
 
         if (isEdit) {
             const d = card.dataset;
-            document.getElementById('kurir-modal-title').textContent = 'Ubah Kurir';
-            document.getElementById('kurir-modal-sub').textContent = 'Perubahan berlaku untuk semua layanan.';
+            document.getElementById('kurir-modal-title').textContent = '{{ __('Ubah Kurir') }}';
+            document.getElementById('kurir-modal-sub').textContent = '{{ __('Perubahan berlaku untuk semua layanan.') }}';
             document.getElementById('namaKurir').value = d.nama;
             document.getElementById('kodeKurir').value = d.kode;
             document.querySelector('#modal-form-kurir input[name="status"][value="' + d.status + '"]').checked = true;
             form.action = kurirUrls.update(d.id);
-            document.getElementById('kurir-submit-btn').textContent = 'Simpan Perubahan';
+            document.getElementById('kurir-submit-btn').textContent = '{{ __('Simpan Perubahan') }}';
         } else {
-            document.getElementById('kurir-modal-title').textContent = 'Tambah Kurir Baru';
-            document.getElementById('kurir-modal-sub').textContent = 'Data kurir pengiriman.';
+            document.getElementById('kurir-modal-title').textContent = '{{ __('Tambah Kurir Baru') }}';
+            document.getElementById('kurir-modal-sub').textContent = '{{ __('Data kurir pengiriman.') }}';
             document.getElementById('namaKurir').value = '';
             document.getElementById('kodeKurir').value = '';
             document.querySelector('#modal-form-kurir input[name="status"][value="aktif"]').checked = true;
             form.action = kurirUrls.store;
-            document.getElementById('kurir-submit-btn').textContent = 'Tambah Kurir';
+            document.getElementById('kurir-submit-btn').textContent = '{{ __('Tambah Kurir') }}';
         }
 
         document.getElementById('modal-form-kurir').classList.remove('hidden');
@@ -317,21 +317,21 @@
 
         if (isEdit) {
             const d = el.dataset;
-            document.getElementById('layanan-modal-title').textContent = 'Ubah Layanan';
-            document.getElementById('layanan-modal-sub').textContent = 'Perubahan berlaku untuk pengiriman mendatang.';
+            document.getElementById('layanan-modal-title').textContent = '{{ __('Ubah Layanan') }}';
+            document.getElementById('layanan-modal-sub').textContent = '{{ __('Perubahan berlaku untuk pengiriman mendatang.') }}';
             document.getElementById('namaLayanan').value = d.layananNama;
             document.getElementById('estimasiHari').value = d.layananEstimasi || '';
             document.querySelector('#modal-form-layanan input[name="status"][value="' + d.layananStatus + '"]').checked = true;
             form.action = kurirUrls.updateLayanan(d.layananId);
-            document.getElementById('layanan-submit-btn').textContent = 'Simpan Perubahan';
+            document.getElementById('layanan-submit-btn').textContent = '{{ __('Simpan Perubahan') }}';
         } else {
-            document.getElementById('layanan-modal-title').textContent = 'Tambah Layanan';
-            document.getElementById('layanan-modal-sub').textContent = 'Layanan pengiriman untuk kurir ini.';
+            document.getElementById('layanan-modal-title').textContent = '{{ __('Tambah Layanan') }}';
+            document.getElementById('layanan-modal-sub').textContent = '{{ __('Layanan pengiriman untuk kurir ini.') }}';
             document.getElementById('namaLayanan').value = '';
             document.getElementById('estimasiHari').value = '';
             document.querySelector('#modal-form-layanan input[name="status"][value="aktif"]').checked = true;
             form.action = kurirUrls.storeLayanan;
-            document.getElementById('layanan-submit-btn').textContent = 'Tambah Layanan';
+            document.getElementById('layanan-submit-btn').textContent = '{{ __('Tambah Layanan') }}';
         }
 
         document.getElementById('modal-form-layanan').classList.remove('hidden');

@@ -37,7 +37,7 @@ class PromoController extends Controller
         $storeId = $storeIds[0] ?? null;
 
         if (! $storeId) {
-            return back()->with('error', 'Admin belum ditugaskan ke toko mana pun.');
+            return back()->with('error',__('Admin belum ditugaskan ke toko mana pun.'));
         }
 
         $validated = $request->validate([
@@ -67,7 +67,7 @@ class PromoController extends Controller
 
         Notification::fireSelf(Notification::TIPE_PROMO, 'Promo Ditambahkan', sprintf('Promo "%s" (kode %s) berhasil ditambahkan.', $validated['nama_promo'], strtoupper($validated['kode_promo'])), route('admin.promo'));
 
-        return redirect()->route('admin.promo')->with('success', 'Promo berhasil ditambahkan.');
+        return redirect()->route('admin.promo')->with('success',__('Promo berhasil ditambahkan.'));
     }
 
     public function update(Request $request, Promotion $promo)
@@ -101,7 +101,7 @@ class PromoController extends Controller
 
         Notification::fireSelf(Notification::TIPE_PROMO, 'Promo Diperbarui', sprintf('Promo "%s" berhasil diperbarui.', $promo->nama_promo), route('admin.promo'));
 
-        return back()->with('success', 'Promo berhasil diperbarui.');
+        return back()->with('success',__('Promo berhasil diperbarui.'));
     }
 
     public function destroy(Promotion $promo)
@@ -114,7 +114,7 @@ class PromoController extends Controller
 
         Notification::fireSelf(Notification::TIPE_PROMO, 'Promo Dihapus', sprintf('Promo "%s" telah dihapus.', $promo->nama_promo), route('admin.promo'));
 
-        return back()->with('success', 'Promo berhasil dihapus.');
+        return back()->with('success',__('Promo berhasil dihapus.'));
     }
 
     public function toggle(Promotion $promo)
@@ -127,6 +127,6 @@ class PromoController extends Controller
 
         Notification::fireSelf(Notification::TIPE_PROMO, 'Status Promo Diubah', sprintf('Promo "%s" kini %s.', $promo->nama_promo, $promo->status), route('admin.promo'));
 
-        return back()->with('success', 'Status promo diubah menjadi '.ucfirst($promo->status).'.');
+        return back()->with('success',__('Status promo diubah menjadi :ph1.', ['ph1' => ucfirst($promo->status)]));
     }
 }
