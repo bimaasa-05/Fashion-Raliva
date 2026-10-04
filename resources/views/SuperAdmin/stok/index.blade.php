@@ -208,7 +208,7 @@
     'id' => 'detail-stok',
     'dataModal' => true,
     'icon' => 'inventory_2',
-    'title' => 'Detail Stok',
+    'title' => __('Detail Stok'),
     'subtitle' => '<span data-slot="judul-nama">-</span>',
     'subtitleRaw' => true,
     'size' => 'xl',

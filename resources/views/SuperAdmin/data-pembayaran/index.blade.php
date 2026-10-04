@@ -223,7 +223,7 @@
     'id' => 'detail-pembayaran',
     'dataModal' => true,
     'icon' => 'payments',
-    'title' => 'Detail Pembayaran',
+    'title' => __('Detail Pembayaran'),
     'subtitle' => '<span data-slot="nomor"></span>',
     'subtitleRaw' => true,
     'size' => 'lg',

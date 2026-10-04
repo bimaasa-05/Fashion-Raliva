@@ -340,7 +340,7 @@
     'id' => 'modal-detail',
     'dataModal' => true,
     'icon' => 'badge',
-    'title' => 'Detail Staff',
+    'title' => __('Detail Staff'),
     'subtitle' => '<span id="detail-nama">-</span>',
     'subtitleRaw' => true,
 ])
@@ -382,8 +382,8 @@
     'id' => 'modal-tambah-staff',
     'dataModal' => true,
     'icon' => 'person_add',
-    'title' => 'Tambah Staff',
-    'subtitle' => 'Tugaskan user yang sudah ada ke toko.',
+    'title' => __('Tambah Staff'),
+    'subtitle' => __('Tugaskan user yang sudah ada ke toko.'),
 ])
     <form method="POST" action="{{ route('superadmin.store-staff.store') }}" id="tambah-staff-form" class="space-y-5">
         @csrf

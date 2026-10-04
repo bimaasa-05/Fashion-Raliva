@@ -238,7 +238,7 @@
     'id' => 'detail-supplier',
     'dataModal' => true,
     'icon' => 'local_shipping',
-    'title' => 'Detail Supplier',
+    'title' => __('Detail Supplier'),
     'subtitle' => '<span data-slot="nama">-</span>',
     'subtitleRaw' => true,
     'size' => 'xl',

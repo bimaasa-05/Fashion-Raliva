@@ -487,8 +487,8 @@
     'id' => 'modal-help-cat-tambah',
     'dataModal' => true,
     'icon' => 'category',
-    'title' => 'Tambah Kategori Bantuan',
-    'subtitle' => 'Kartu kategori yang tampil di halaman Pusat Bantuan Customer.',
+    'title' => __('Tambah Kategori Bantuan'),
+    'subtitle' => __('Kartu kategori yang tampil di halaman Pusat Bantuan Customer.'),
 ])
     <form method="POST" action="{{ route('superadmin.pengaturan-sistem.help.kategori.store') }}" id="form-help-cat-tambah" class="space-y-4">
         @csrf
@@ -524,8 +524,8 @@
     'id' => 'modal-help-cat-edit',
     'dataModal' => true,
     'icon' => 'edit',
-    'title' => 'Edit Kategori Bantuan',
-    'subtitle' => 'Ubah detail kategori bantuan Customer.',
+    'title' => __('Edit Kategori Bantuan'),
+    'subtitle' => __('Ubah detail kategori bantuan Customer.'),
 ])
     <form id="form-help-cat-edit" method="POST" action="" class="space-y-4">
         @csrf @method('PUT')
@@ -567,8 +567,8 @@
     'id' => 'modal-help-faq-tambah',
     'dataModal' => true,
     'icon' => 'quiz',
-    'title' => 'Tambah FAQ',
-    'subtitle' => 'Atur pertanyaan bantuan Customer dalam satu kategori.',
+    'title' => __('Tambah FAQ'),
+    'subtitle' => __('Atur pertanyaan bantuan Customer dalam satu kategori.'),
     'size' => 'lg',
 ])
     <form method="POST" action="{{ route('superadmin.pengaturan-sistem.help.faq.store') }}" id="form-help-faq-tambah" class="space-y-4">
@@ -618,8 +618,8 @@
     'id' => 'modal-help-faq-edit',
     'dataModal' => true,
     'icon' => 'edit_note',
-    'title' => 'Edit FAQ',
-    'subtitle' => 'Perbarui pertanyaan, jawaban, dan kategori bantuan.',
+    'title' => __('Edit FAQ'),
+    'subtitle' => __('Perbarui pertanyaan, jawaban, dan kategori bantuan.'),
     'size' => 'lg',
 ])
     <form id="form-help-faq-edit" method="POST" action="" class="space-y-4">
@@ -675,8 +675,8 @@
     'id' => 'modal-help-kat-hapus',
     'dataModal' => true,
     'icon' => 'delete_forever',
-    'title' => 'Hapus Kategori Bantuan',
-    'subtitle' => 'Tindakan ini tidak bisa dibatalkan.',
+    'title' => __('Hapus Kategori Bantuan'),
+    'subtitle' => __('Tindakan ini tidak bisa dibatalkan.'),
 ])
     <form id="form-help-kat-hapus" method="POST" action="" class="space-y-4">
         @csrf @method('DELETE')
@@ -698,8 +698,8 @@
     'id' => 'modal-help-faq-hapus',
     'dataModal' => true,
     'icon' => 'delete_forever',
-    'title' => 'Hapus FAQ',
-    'subtitle' => 'Tindakan ini tidak bisa dibatalkan.',
+    'title' => __('Hapus FAQ'),
+    'subtitle' => __('Tindakan ini tidak bisa dibatalkan.'),
 ])
     <form id="form-help-faq-hapus" method="POST" action="" class="space-y-4">
         @csrf @method('DELETE')

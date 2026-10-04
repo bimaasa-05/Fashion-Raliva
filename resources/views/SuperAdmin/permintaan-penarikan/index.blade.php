@@ -292,7 +292,7 @@
     'dataModal' => true,
     'zIndex' => 60,
     'icon' => 'local_atm',
-    'title' => 'Tandai Sudah Dibayar',
+    'title' => __('Tandai Sudah Dibayar'),
 ])
     <form method="POST" action="" id="paid-form" enctype="multipart/form-data" onsubmit="hideDialog('paid-dialog')">
         @csrf

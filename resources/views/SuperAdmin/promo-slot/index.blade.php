@@ -168,9 +168,9 @@
         'id' => 'modal-buat-promo',
         'dataModal' => true,
         'icon' => 'local_offer',
-        'title' => 'Buat Promo Slot',
+        'title' => __('Buat Promo Slot'),
         'titleId' => 'promo-modal-title',
-        'subtitle' => 'Diskon berlaku saat Owner membeli paket slot ini.',
+        'subtitle' => __('Diskon berlaku saat Owner membeli paket slot ini.'),
         'subtitleId' => 'promo-modal-sub',
         'size' => 'lg',
     ])

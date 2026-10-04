@@ -169,8 +169,8 @@
     'dataModal' => true,
     'close' => 'closeDetailModal',
     'icon' => 'rate_review',
-    'title' => 'Detail Ulasan',
-    'subtitle' => 'Informasi lengkap ulasan produk',
+    'title' => __('Detail Ulasan'),
+    'subtitle' => __('Informasi lengkap ulasan produk'),
     'size' => 'lg',
 ])
     <!-- Reviewer info -->
