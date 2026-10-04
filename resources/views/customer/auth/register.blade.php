@@ -567,7 +567,7 @@
     <div class="relative z-10 w-full max-w-lg max-h-[80vh] flex flex-col bg-surface-container-lowest border-2 border-secondary rounded-lg frame-gold shadow-xl overflow-hidden" style="max-width: min(32rem, calc(100vw - 2rem));">
         <div class="flex items-center justify-between gap-sm px-md py-sm border-b border-outline-variant">
             <h3 class="font-title-md text-title-md text-on-surface truncate" id="doc-modal-title"></h3>
-            <button type="button" id="doc-modal-close" aria-label="Tutup" class="w-9 h-9 shrink-0 rounded-full border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary flex items-center justify-center transition-colors">
+            <button type="button" id="doc-modal-close" aria-label="{{ __('Tutup') }}" class="w-9 h-9 shrink-0 rounded-full border border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary flex items-center justify-center transition-colors">
                 <span class="material-symbols-outlined text-[20px]">close</span>
             </button>
         </div>
