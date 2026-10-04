@@ -646,9 +646,9 @@
             <div
                 class="sticky top-0 z-10 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
                 <div>
-                    <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Tambah Pesanan') }}</h3>
-                    <p class="text-on-surface-variant text-sm mt-1">{{ __('Pilih status customer') }} (<b>Online</b> = {{ __('user terdaftar') }},
-                        <b>Offline</b> = {{ __('tamu') }}). {{ __('Cara terima barang ditentukan belakangan di Pengiriman.') }}</p>
+                    <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Pesanan</h3>
+                    <p class="text-on-surface-variant text-sm mt-1">Pilih status customer (<b>Online</b> = user terdaftar,
+                        <b>Offline</b> = tamu). Pesanan offline bisa pilih <b>Ambil di Toko</b> atau <b>Diantar Kurir</b> di bawah; kurir & resi dilengkapi di Pengiriman.</p>
                 </div>
                 <button type="button" data-modal-close
                     class="text-on-surface-variant hover:text-on-surface transition-colors"><span
@@ -750,6 +750,61 @@
                                 class="raliva-input" />
                             <p class="text-xs text-on-surface-variant mt-1">{{ __('Format jpg/png, maks 4MB.') }}</p>
                         </div>
+                    </div>
+
+                    {{-- Cara terima barang (offline): ambil atau diantar kurir --}}
+                    <div class="pt-3 border-t border-muted-border">
+                        <span class="raliva-label">Cara Terima Barang</span>
+                        <div class="grid grid-cols-2 gap-3 mt-2">
+                            <label
+                                class="flex items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
+                                <input type="radio" class="sr-only" name="fulfillment" value="ambil" checked
+                                    onchange="toggleFulfillment()" /> Ambil di Toko
+                            </label>
+                            <label
+                                class="flex items-center justify-center px-3 py-3 border border-muted-border rounded-lg text-on-surface-variant font-label-sm text-[11px] uppercase cursor-pointer hover:bg-surface-container-low hover:border-gold-accent hover:text-gold-accent transition-all has-[:checked]:border-gold-accent has-[:checked]:bg-gold-accent/10 has-[:checked]:text-gold-accent">
+                                <input type="radio" class="sr-only" name="fulfillment" value="diantar"
+                                    onchange="toggleFulfillment()" /> Diantar Kurir
+                            </label>
+                        </div>
+                    </div>
+                    <div id="diantar-fields" class="space-y-3 hidden">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div>
+                                <label class="raliva-label" for="tp-courier">Kurir <span
+                                        class="text-error">*</span></label>
+                                <select id="tp-courier" name="courier_id" class="raliva-select"
+                                    onchange="filterLayanan()">
+                                    <option value="">— Pilih Kurir —</option>
+                                    @foreach (($couriers ?? []) as $kur)
+                                        @if (in_array((int) $kur->courier_id, array_map('intval', (array) ($kurirAktif ?? [])), true))
+                                            <option value="{{ $kur->courier_id }}">{{ $kur->nama_kurir }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                            </div>
+                            <div>
+                                <label class="raliva-label" for="tp-service">Layanan</label>
+                                <select id="tp-service" name="shipping_service_id" class="raliva-select"
+                                    onchange="updateOngkir()">
+                                    <option value="">— Pilih Layanan —</option>
+                                    @foreach (($couriers ?? []) as $kur)
+                                        @foreach (($kur->services ?? []) as $srv)
+                                            <option value="{{ $srv->shipping_service_id }}"
+                                                data-courier="{{ $kur->courier_id }}"
+                                                data-tarif="{{ (int) ($srv->tarif ?? 0) }}" class="hidden">
+                                                {{ $srv->nama_layanan }} — Rp
+                                                {{ number_format((float) ($srv->tarif ?? 0), 0, ',', '.') }}
+                                            </option>
+                                        @endforeach
+                                    @endforeach
+                                </select>
+                            </div>
+                        </div>
+                        <p id="ongkir-info" class="text-xs text-on-surface-variant">Ongkir mengikuti tarif layanan yang dipilih (dihitung server saat disimpan).</p>
+                        @if (($couriers ?? collect())->flatMap(fn ($k) => $k->services ?? [])->isEmpty())
+                            <p class="text-xs text-error">Belum ada layanan kurir — tambah dulu di menu Metode Pengiriman.</p>
+                        @endif
                     </div>
                 </div>
 
@@ -871,6 +926,7 @@
                 const el = document.querySelector(`[name="${n}"]`);
                 if (el) el.toggleAttribute('disabled', online);
             });
+            toggleFulfillment();
             recalculateTotal();
         }
 
@@ -884,6 +940,51 @@
             if (bukti) bukti.toggleAttribute('required', transfer);
             if (acc) acc.toggleAttribute('disabled', !transfer);
             if (bukti) bukti.toggleAttribute('disabled', !transfer);
+        }
+
+        function isOnlineOrder() {
+            return document.querySelector('#modal-tambah-pesanan input[name="tipe_pesanan"]:checked')?.value ===
+                'online';
+        }
+
+        function toggleFulfillment() {
+            const diantar = !isOnlineOrder() &&
+                document.querySelector('#modal-tambah-pesanan input[name="fulfillment"]:checked')?.value ===
+                'diantar';
+            document.getElementById('diantar-fields').classList.toggle('hidden', !diantar);
+            const kurir = document.getElementById('tp-courier');
+            const srv = document.getElementById('tp-service');
+            if (kurir) {
+                kurir.toggleAttribute('required', diantar);
+                kurir.toggleAttribute('disabled', !diantar);
+            }
+            if (srv) srv.toggleAttribute('disabled', isOnlineOrder());
+            document.querySelectorAll('#modal-tambah-pesanan input[name="fulfillment"]').forEach(r => {
+                r.toggleAttribute('disabled', isOnlineOrder());
+            });
+            if (diantar) filterLayanan();
+            recalculateTotal();
+        }
+
+        function filterLayanan() {
+            const kurirId = document.getElementById('tp-courier')?.value || '';
+            const srv = document.getElementById('tp-service');
+            if (!srv) return;
+            srv.querySelectorAll('option[data-courier]').forEach(o => {
+                o.classList.toggle('hidden', !!kurirId && o.dataset.courier !== kurirId);
+            });
+            const cur = srv.querySelector('option[value="' + srv.value + '"]');
+            if (srv.value && (!cur || cur.classList.contains('hidden'))) srv.value = '';
+            updateOngkir();
+        }
+
+        function updateOngkir() {
+            const srv = document.getElementById('tp-service');
+            const opt = srv ? srv.querySelector('option[value="' + srv.value + '"]') : null;
+            const tarif = parseInt((opt && opt.dataset.tarif) || '0', 10) || 0;
+            const info = document.getElementById('ongkir-info');
+            if (info) info.textContent = 'Ongkir: Rp ' + tarif.toLocaleString('id-ID') + ' (dihitung server saat disimpan).';
+            recalculateTotal();
         }
 
         function addItemRow() {
@@ -982,7 +1083,16 @@
                 if (subtotalEl) subtotalEl.textContent = 'Rp ' + (harga * qty).toLocaleString('id-ID');
             });
             const grand = document.getElementById('grand-total');
-            if (grand) grand.textContent = total.toLocaleString('id-ID');
+            const diantarAktif = !document.getElementById('offline-fields')?.classList.contains('hidden') &&
+                document.querySelector('#modal-tambah-pesanan input[name="fulfillment"]:checked')?.value ===
+                'diantar';
+            let ongkir = 0;
+            if (diantarAktif) {
+                const srv = document.getElementById('tp-service');
+                const opt = srv ? srv.querySelector('option[value="' + srv.value + '"]') : null;
+                ongkir = parseInt((opt && opt.dataset.tarif) || '0', 10) || 0;
+            }
+            if (grand) grand.textContent = (total + ongkir).toLocaleString('id-ID');
         }
 
         // Seed first item row when tambah modal opens

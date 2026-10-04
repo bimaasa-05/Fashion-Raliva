@@ -47,7 +47,7 @@ class TransaksiController extends Controller
         $kategoriPemasukan = ['Penjualan', 'Investor', 'Modal', 'Komisi', 'Lainnya'];
         $kategoriPengeluaran = StoreExpense::whereIn('store_id', $storeIds)
             ->select('kategori')->distinct()->pluck('kategori')->filter()->values()->all();
-        foreach (['Operasional', 'Bahan', 'Bonus', 'Gaji', 'Sewa', 'Lainnya'] as $wajib) {
+        foreach (['Operasional', 'Bahan', 'Bonus', 'Gaji', 'Sewa', 'Slot', 'Lainnya'] as $wajib) {
             if (! in_array($wajib, $kategoriPengeluaran, true)) $kategoriPengeluaran[] = $wajib;
         }
 

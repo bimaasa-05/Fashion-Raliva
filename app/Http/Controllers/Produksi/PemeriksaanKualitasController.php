@@ -82,6 +82,12 @@ class PemeriksaanKualitasController extends Controller
 
             $order->update([
                 'status' => Order::STATUS_SIAP_KIRIM,
+                // Snapshot angka produksi SEBELUM ditimpa agar "Hasil Produksi"
+                // vs "Hasil QC" bisa tampil berdampingan dan berbeda.
+                'hasil_produksi_berhasil' => $order->jumlah_berhasil,
+                'hasil_produksi_gagal' => $order->jumlah_gagal,
+                'hasil_qc_lulus' => $data['jumlah_lulus'],
+                'hasil_qc_gagal' => $gagal,
                 'jumlah_berhasil' => $data['jumlah_lulus'],
                 // jumlah_gagal tetap cacat produksi (bukan sisa kirim).
                 'jumlah_gagal' => $gagal,
@@ -115,7 +121,7 @@ class PemeriksaanKualitasController extends Controller
             ActivityLogger::resolveActorId(),
             route('admin.pengiriman'));
 
-        return back()->with('toast', [
+        return redirect()->route('produksi.pemeriksaan-kualitas', ['tab' => 'siap'])->with('toast', [
             'message' => $kurang > 0
                 ? __('Pesanan :ph1 lulus QC. Kurang :ph2 pcs diambil dari Gudang.', ['ph1' => $order->nomor_order, 'ph2' => $kurang])
                 : __('Pesanan :ph1 lulus QC + packing. Siap dikirim.', ['ph1' => $order->nomor_order]),
@@ -141,10 +147,18 @@ class PemeriksaanKualitasController extends Controller
             'catatan.min' => 'Keterangan gagal minimal 10 karakter.',
         ]);
 
+        $totalQty = (int) $order->items()->sum('quantity');
+
         $lama = $order->only(['status', 'qc_perlu_admin_pada']);
         $order->update([
             'qc_perlu_admin_pada' => now(),
             'qc_perlu_admin_catatan' => $data['catatan'],
+            // Angka QC tercatat agar tampil (bukan "-"): gagal semua,
+            // berhasil 0. Status tetap menunggu_qc + flag Admin.
+            'hasil_produksi_berhasil' => $order->jumlah_berhasil,
+            'hasil_produksi_gagal' => $order->jumlah_gagal,
+            'hasil_qc_lulus' => 0,
+            'hasil_qc_gagal' => $totalQty,
         ]);
 
         ActivityLogger::log('produksi.qc.gagal', Order::class, $order->order_id, $lama,

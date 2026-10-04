@@ -22,10 +22,10 @@ class AdminContext
 
     public static function fallbackAdmin(): ?User
     {
-        return User::whereHas('role', fn ($query) => $query->where('nama_role', Role::ADMIN))
-            ->whereHas('storeAssignments', fn ($query) => $query->where('status', 'aktif'))
-            ->orderBy('user_id')
-            ->first();
+        // Fail-closed: JANGAN menebak admin lain. Mengembalikan admin pertama
+        // membuat user yang salah melihat data toko admin tersebut (bocor).
+        // Pemanggil yang butuh admin wajib memastikan user login role Admin.
+        return null;
     }
 
     /**

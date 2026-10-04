@@ -15,7 +15,10 @@ class DataProdukController extends Controller
     public function index(Request $request)
     {
         $q = $request->input('q');
+        // Isolasi toko: Admin hanya melihat produk tokonya sendiri.
+        $scopeIds = AdminContext::assignedStoreIds();
         $products = Product::with(['category', 'store', 'variants.warehouseStocks', 'materialRequirements.material', 'operationalCosts', 'images' => fn ($qq) => $qq->orderBy('urutan')])
+            ->whereIn('store_id', $scopeIds)
             ->when($q, fn ($query) => $query->where('nama_produk', 'like', "%{$q}%"))
             ->orderByDesc('created_at')
             ->orderByDesc('product_id')
@@ -36,12 +39,13 @@ class DataProdukController extends Controller
         }
 
         $stats = [
-            'total' => Product::count(),
-            'aktif' => Product::where('status', 'aktif')->count(),
-            'pending' => Product::where('status', 'pending')->count(),
-            'ditolak' => Product::where('status', 'ditolak')->count(),
+            'total' => Product::whereIn('store_id', $scopeIds)->count(),
+            'aktif' => Product::whereIn('store_id', $scopeIds)->where('status', 'aktif')->count(),
+            'pending' => Product::whereIn('store_id', $scopeIds)->where('status', 'pending')->count(),
+            'ditolak' => Product::whereIn('store_id', $scopeIds)->where('status', 'ditolak')->count(),
         ];
-        $pendingUpdateIds = \App\Models\ProductUpdateRequest::where('status', \App\Models\ProductUpdateRequest::STATUS_PENDING)
+        $pendingUpdateIds = \App\Models\ProductUpdateRequest::whereIn('store_id', $scopeIds)
+            ->where('status', \App\Models\ProductUpdateRequest::STATUS_PENDING)
             ->pluck('product_id')
             ->all();
 
