@@ -92,7 +92,7 @@
                             <p class="text-xs text-on-surface-variant mt-0.5">{{ __('Kuota gratis otomatis untuk toko yang baru disetujui. Saat ini') }} <span class="font-bold text-on-surface">{{ number_format($slotAwalDefault) }} slot</span>{{ __('. Kuota toko yang sudah ada tidak terpengaruh.') }}</p>
                         </div>
                     </div>
-                    <form method="POST" action="{{ route('superadmin.slot-produk.default') }}" onsubmit="return openConfirmSlot(event, 'Slot awal toko baru akan diubah. Lanjutkan?')" class="flex items-center gap-2">
+                    <form method="POST" action="{{ route('superadmin.slot-produk.default') }}" onsubmit="return openConfirmSlot(event, '{{ __('Slot awal toko baru akan diubah. Lanjutkan?') }}')" class="flex items-center gap-2">
                         @csrf
                         @method('PUT')
                         <input type="number" name="slot_awal" min="0" max="100000" value="{{ $slotAwalDefault }}" required class="w-28 bg-transparent border border-muted-border rounded-lg px-3 py-2 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" aria-label="{{ __('Jumlah slot awal') }}" />
@@ -109,7 +109,7 @@
                             <p class="text-xs text-on-surface-variant mt-0.5">{{ __('Harga satuan untuk pembelian slot fleksibel oleh Owner. Saat ini') }} <span class="font-bold text-on-surface">Rp {{ number_format($hargaPerSlot) }}</span> {{ __('per slot. Total = jumlah slot × harga satuan.') }}</p>
                         </div>
                     </div>
-                    <form method="POST" action="{{ route('superadmin.slot-produk.harga-per-slot') }}" onsubmit="return openConfirmSlot(event, 'Harga per slot akan diubah. Lanjutkan?')" class="flex items-center gap-2">
+                    <form method="POST" action="{{ route('superadmin.slot-produk.harga-per-slot') }}" onsubmit="return openConfirmSlot(event, '{{ __('Harga per slot akan diubah. Lanjutkan?') }}')" class="flex items-center gap-2">
                         @csrf
                         @method('PUT')
                         <input type="number" name="harga_per_slot" min="100" max="100000" value="{{ $hargaPerSlot }}" required class="w-32 bg-transparent border border-muted-border rounded-lg px-3 py-2 font-body-md text-sm focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" aria-label="{{ __('Harga per slot') }}" />
@@ -268,13 +268,13 @@
                             </div>
                             <div class="text-2xl font-bold text-gold-accent mb-4">Rp {{ number_format($paket->harga, 0, ',', '.') }}</div>
                             <ul class="space-y-2 font-body-md text-sm text-on-surface-variant flex-1 mb-5">
-                                <li class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">check_circle</span>{{ number_format($paket->jumlah_slot) }} slot produk</li>
-                                <li class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">check_circle</span>{{ number_format($paket->durasi_hari) }} hari masa berlaku</li>
+                                <li class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">check_circle</span>{{ sprintf(__('%s slot produk'), number_format($paket->jumlah_slot)) }}</li>
+                                <li class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">check_circle</span>{{ sprintf(__('%s hari masa berlaku'), number_format($paket->durasi_hari)) }}</li>
                             </ul>
-                            <form method="POST" action="{{ route('superadmin.slot-produk.paket.toggle', $paket->slot_package_id) }}" onsubmit="return openConfirmSlot(event, '{{ $paket->status === \App\Models\ProductSlotPackage::STATUS_AKTIF ? 'Nonaktifkan paket ini?' : 'Aktifkan paket ini?' }}')">
+                            <form method="POST" action="{{ route('superadmin.slot-produk.paket.toggle', $paket->slot_package_id) }}" onsubmit="return openConfirmSlot(event, '{{ $paket->status === \App\Models\ProductSlotPackage::STATUS_AKTIF ? __('Nonaktifkan paket ini?') : __('Aktifkan paket ini?') }}')">
                                 @csrf
                                 <button type="submit" class="w-full min-h-11 rounded-lg border text-xs font-semibold transition-colors {{ $paket->status === \App\Models\ProductSlotPackage::STATUS_AKTIF ? 'border-error/40 text-error hover:bg-error/10' : 'border-success/40 text-success hover:bg-success/10' }}">
-                                    {{ $paket->status === \App\Models\ProductSlotPackage::STATUS_AKTIF ? 'Nonaktifkan' : 'Aktifkan' }}
+                                    {{ $paket->status === \App\Models\ProductSlotPackage::STATUS_AKTIF ? __('Nonaktifkan') : __('Aktifkan') }}
                                 </button>
                             </form>
                         </article>
@@ -370,7 +370,7 @@
                                         <button type="button" onclick="openTolakModal({{ $rmt->slot_purchase_id }}, '{{ addslashes($rmt->store->nama_toko ?? '-') }}')" class="min-h-11 px-4 rounded-lg border border-error/40 text-error text-xs font-semibold hover:bg-error/10 transition-colors inline-flex items-center justify-center gap-1.5 w-full sm:w-auto">
                                             <span class="material-symbols-outlined text-[15px]">block</span>{{ __('Tolak') }}
                                         </button>
-                                        <form method="POST" action="{{ route('superadmin.slot-produk.permintaan.setujui', $rmt->slot_purchase_id) }}" onsubmit="return openConfirmSlot(event, 'Setujui dan tambahkan {{ $rmt->jumlah_slot }} slot (Rp {{ number_format((float) $rmt->total_harga, 0, ',', '.') }}) untuk toko ini?')">
+                                        <form method="POST" action="{{ route('superadmin.slot-produk.permintaan.setujui', $rmt->slot_purchase_id) }}" onsubmit="return openConfirmSlot(event, '{{ sprintf(__('Setujui dan tambahkan %s slot (Rp %s) untuk toko ini?'), $rmt->jumlah_slot, number_format((float) $rmt->total_harga, 0, ',', '.')) }}')">
                                             @csrf
                                             <button type="submit" class="w-full min-h-11 px-4 rounded-lg bg-deep-onyx text-on-primary text-xs font-semibold hover:bg-black transition-colors btn-premium inline-flex items-center justify-center gap-1.5">
                                                 <span class="material-symbols-outlined text-[15px]">check_circle</span>{{ __('Setujui & Tambah Slot') }}
@@ -397,7 +397,7 @@
     'id' => 'modal-tambah',
     'dataModal' => true,
     'icon' => 'add_box',
-    'title' => 'Tambah Slot Manual',
+    'title' => __('Tambah Slot Manual'),
     'subtitle' => '<span id="tambah-toko-nama">-</span>',
     'subtitleRaw' => true,
 ])
@@ -425,8 +425,8 @@
     'id' => 'modal-tambah-paket',
     'dataModal' => true,
     'icon' => 'inventory_2',
-    'title' => 'Tambah Paket Baru',
-    'subtitle' => 'Paket Slot',
+    'title' => __('Tambah Paket Baru'),
+    'subtitle' => __('Paket Slot'),
 ])
     <form method="POST" action="{{ route('superadmin.slot-produk.paket.store') }}" id="tambah-paket-form" class="space-y-5">
         @csrf
@@ -462,7 +462,7 @@
     'id' => 'modal-tolak',
     'dataModal' => true,
     'icon' => 'block',
-    'title' => 'Tolak Permintaan',
+    'title' => __('Tolak Permintaan'),
     'subtitle' => '<span id="tolak-toko-nama">-</span>',
     'subtitleRaw' => true,
 ])

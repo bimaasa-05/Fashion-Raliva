@@ -213,8 +213,8 @@
         'id' => 'modal-edit-komisi',
         'dataModal' => true,
         'icon' => 'percent',
-        'title' => 'Perbarui Tarif Komisi',
-        'subtitle' => 'Berlaku untuk seluruh transaksi baru di semua toko.',
+        'title' => __('Perbarui Tarif Komisi'),
+        'subtitle' => __('Berlaku untuk seluruh transaksi baru di semua toko.'),
         'size' => 'lg',
         'zIndex' => 80,
         'close' => 'closeEditForm',
@@ -321,7 +321,7 @@
     </div>
     @slot('footer')
         <div class="flex flex-col gap-4">
-            <button type="button" class="btn-modal btn-modal-primary w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden'); document.getElementById('komisi-form').submit();">Konfirmasi &amp; Terapkan</button>
+            <button type="button" class="btn-modal btn-modal-primary w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden'); document.getElementById('komisi-form').submit();">{{ __('Konfirmasi & Terapkan') }}</button>
             <button type="button" class="btn-modal btn-modal-ghost w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden')">{{ __('Batal') }}</button>
         </div>
     @endslot

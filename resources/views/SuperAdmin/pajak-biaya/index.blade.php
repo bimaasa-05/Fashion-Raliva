@@ -166,8 +166,8 @@
     'id' => 'modal-edit-biaya',
     'dataModal' => true,
     'icon' => 'percent',
-    'title' => 'Ubah Pajak Penjualan (PPN)',
-    'subtitle' => 'Sesuaikan dengan tarif PPN yang berlaku.',
+    'title' => __('Ubah Pajak Penjualan (PPN)'),
+    'subtitle' => __('Sesuaikan dengan tarif PPN yang berlaku.'),
     'size' => 'lg',
     'zIndex' => 80,
 ])
@@ -222,7 +222,7 @@
     </div>
     @slot('footer')
         <div class="flex flex-col gap-4">
-            <button class="btn-modal btn-modal-primary w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden'); document.getElementById('edit-fee-form').submit();">Konfirmasi &amp; Terapkan</button>
+            <button class="btn-modal btn-modal-primary w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden'); document.getElementById('edit-fee-form').submit();">{{ __('Konfirmasi & Terapkan') }}</button>
             <button class="btn-modal btn-modal-ghost w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden')">{{ __('Batal') }}</button>
         </div>
     @endslot
