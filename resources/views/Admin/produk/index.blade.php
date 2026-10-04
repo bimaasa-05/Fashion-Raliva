@@ -523,10 +523,10 @@
                     fotos.forEach(f => {
                         const lab = document.createElement('label');
                         lab.className = 'relative aspect-[3/4] rounded-lg overflow-hidden border border-muted-border cursor-pointer group has-[:checked]:border-error has-[:checked]:ring-2 has-[:checked]:ring-error/40';
-                        lab.title = 'Centang untuk hapus';
+                        lab.title = '{{ __('Centang untuk hapus') }}';
                         lab.innerHTML = `<img src="${f.url}" alt="" class="w-full h-full object-cover" loading="lazy" />
                             <input type="checkbox" name="hapus_foto_ids[]" value="${f.id}" class="sr-only" />
-                            <span class="absolute inset-x-0 bottom-0 text-center text-[10px] font-bold uppercase py-1 bg-black/55 text-white opacity-0 group-has-[:checked]:opacity-100 transition-opacity">Hapus</span>`;
+                            <span class="absolute inset-x-0 bottom-0 text-center text-[10px] font-bold uppercase py-1 bg-black/55 text-white opacity-0 group-has-[:checked]:opacity-100 transition-opacity">{{ __('Hapus') }}</span>`;
                         fotoBox.appendChild(lab);
                     });
                 }
@@ -1170,7 +1170,7 @@ function initKategoriCombobox(prefix) {
         })
         .then(r => r.json().then(j => ({ ok: r.ok, j })))
         .then(({ ok, j }) => {
-            if (!ok || !j.success) throw new Error(j.message || 'Gagal menyimpan kategori.');
+            if (!ok || !j.success) throw new Error(j.message || '{{ __('Gagal menyimpan kategori.') }}');
             document.querySelectorAll('[data-ktg-list]').forEach((otherList) => {
                 const li = document.createElement('li');
                 li.setAttribute('role', 'option');
@@ -1281,7 +1281,7 @@ initKategoriCombobox('edit');
             <input type="checkbox" name="warna[]" value="${escapeHtml(nama)}" class="sr-only peer" checked />
             <span class="w-6 h-6 rounded-full border border-outline-variant shadow-inner peer-checked:ring-2 peer-checked:ring-gold-accent peer-checked:ring-offset-1 ring-offset-surface-container-lowest transition-all" style="background-color: ${colorInput.value};"></span>
             <span class="font-body-md text-xs text-on-surface peer-checked:text-gold-accent">${escapeHtml(nama)}</span>
-            <button type="button" class="text-on-surface-variant hover:text-error transition-colors" title="Hapus warna" onclick="(function(el){var cb=el.closest('label').querySelector('input[type=checkbox]'); if(cb&&window.__warnaCustomHex)delete window.__warnaCustomHex[cb.value]; el.closest('label').remove(); renderVarianStok();})(this)">
+            <button type="button" class="text-on-surface-variant hover:text-error transition-colors" title="{{ __('Hapus warna') }}" onclick="(function(el){var cb=el.closest('label').querySelector('input[type=checkbox]'); if(cb&&window.__warnaCustomHex)delete window.__warnaCustomHex[cb.value]; el.closest('label').remove(); renderVarianStok();})(this)">
                 <span class="material-symbols-outlined text-[14px]">close</span>
             </button>
         `;

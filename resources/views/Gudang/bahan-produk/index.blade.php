@@ -165,7 +165,7 @@
                         </label>
                     </div>
                     <div class="flex justify-end">
-                        <button type="button" data-bahan-hapus class="text-xs font-semibold text-error hover:underline">Hapus bahan</button>
+                        <button type="button" data-bahan-hapus class="text-xs font-semibold text-error hover:underline">{{ __('Hapus bahan') }}</button>
                     </div>
                 `;
                 row.querySelector('[data-bahan-hapus]').addEventListener('click', () => row.remove());
