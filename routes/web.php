@@ -570,7 +570,7 @@ Route::prefix('owner')->name('owner.')->middleware(['auth', 'role:Owner', 'store
     Route::post('/notifikasi/tandai-dibaca', function (Request $request) {
         Notification::where('user_id', auth()->id())->whereNull('dibaca_pada')->update(['dibaca_pada' => now()]);
 
-        return back()->with('success', 'Notifikasi ditandai dibaca.');
+        return back()->with('success', __('Notifikasi ditandai dibaca.'));
     })->name('notifikasi.tandai-dibaca');
     Route::get('/profil', [OwnerProfilController::class, 'index'])->name('profil');
     Route::put('/profil', [OwnerProfilController::class, 'update'])->name('profil.update');

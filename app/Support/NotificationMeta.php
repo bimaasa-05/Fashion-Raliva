@@ -38,7 +38,9 @@ class NotificationMeta
 
     public static function for(string $tipe): array
     {
-        return static::MAP[$tipe] ?? ['icon' => 'notifications', 'label' => 'Sistem', 'tone' => 'neutral'];
+        $item = static::MAP[$tipe] ?? ['icon' => 'notifications', 'label' => 'Sistem', 'tone' => 'neutral'];
+
+        return ['icon' => $item['icon'], 'label' => __($item['label']), 'tone' => $item['tone']];
     }
 
     public static function icon(string $tipe): string

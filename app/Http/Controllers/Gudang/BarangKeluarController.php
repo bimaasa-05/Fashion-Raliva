@@ -59,11 +59,11 @@ class BarangKeluarController extends Controller
             'jumlah' => 'required|integer|min:1',
             'alasan' => 'nullable|string|max:500',
         ], [
-            'product_variant_id.required' => 'Produk wajib dipilih.',
-            'product_variant_id.exists' => 'Produk tidak valid.',
-            'jumlah.required' => 'Jumlah wajib diisi.',
-            'jumlah.integer' => 'Jumlah harus berupa angka.',
-            'jumlah.min' => 'Jumlah minimal 1.',
+            'product_variant_id.required' => __('Produk wajib dipilih.'),
+            'product_variant_id.exists' => __('Produk tidak valid.'),
+            'jumlah.required' => __('Jumlah wajib diisi.'),
+            'jumlah.integer' => __('Jumlah harus berupa angka.'),
+            'jumlah.min' => __('Jumlah minimal 1.'),
         ]);
 
         try {
@@ -74,7 +74,7 @@ class BarangKeluarController extends Controller
                     ->first();
 
                 if (! $stok || $stok->jumlah_stok < $data['jumlah']) {
-                    throw new \RuntimeException('Stok tidak mencukupi.');
+                    throw new \RuntimeException(__('Stok tidak mencukupi.'));
                 }
 
                 $affected = WarehouseStock::where('warehouse_stock_id', $stok->warehouse_stock_id)
@@ -82,7 +82,7 @@ class BarangKeluarController extends Controller
                     ->decrement('jumlah_stok', $data['jumlah']);
 
                 if ($affected === 0) {
-                    throw new \RuntimeException('Stok tidak mencukupi.');
+                    throw new \RuntimeException(__('Stok tidak mencukupi.'));
                 }
 
                 StockMovement::create([

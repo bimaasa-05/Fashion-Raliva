@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(5)->by($key)->response(function () use ($request) {
                 return back()
                     ->withInput($request->only('email'))
-                    ->withErrors(['email' => 'Terlalu banyak percobaan login. Silakan coba lagi dalam 1 menit.']);
+                    ->withErrors(['email' => __('Terlalu banyak percobaan login. Silakan coba lagi dalam 1 menit.')]);
             });
         });
 
