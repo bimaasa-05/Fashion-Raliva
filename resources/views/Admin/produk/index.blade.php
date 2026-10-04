@@ -587,7 +587,7 @@
                     <span class="material-symbols-outlined text-[22px] text-on-surface-variant/60 group-hover:text-gold-accent transition-colors animate-[spin_2.5s_linear_infinite] motion-reduce:animate-none" data-foto-icon>progress_activity</span>
                     <span class="text-[10px] text-on-surface-variant" data-foto-label>Foto Baru</span>
                     <span class="hidden absolute top-1 left-1 w-6 h-6 rounded-full bg-secondary text-white items-center justify-center" data-foto-check><span class="material-symbols-outlined text-[14px]">check_circle</span></span>
-                    <button type="button" class="hidden absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white items-center justify-center hover:bg-error transition-colors" data-foto-hapus title="Hapus foto" onclick="hapusFotoSlot(event, this)"><span class="material-symbols-outlined text-[14px]">close</span></button>
+                    <button type="button" class="hidden absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white items-center justify-center hover:bg-error transition-colors" data-foto-hapus title="{{ __('Hapus foto') }}" onclick="hapusFotoSlot(event, this)"><span class="material-symbols-outlined text-[14px]">close</span></button>
                 `;
                 grid.appendChild(lab);
             }
@@ -833,7 +833,7 @@
                         <span class="material-symbols-outlined text-[22px] text-on-surface-variant/60 group-hover:text-gold-accent transition-colors animate-[spin_2.5s_linear_infinite] motion-reduce:animate-none" data-foto-icon>progress_activity</span>
                         <span class="text-[10px] text-on-surface-variant" data-foto-label>Foto {{ $i + 1 }}</span>
                         <span class="hidden absolute top-1 left-1 w-6 h-6 rounded-full bg-secondary text-white items-center justify-center" data-foto-check><span class="material-symbols-outlined text-[14px]">check_circle</span></span>
-                        <button type="button" class="hidden absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white items-center justify-center hover:bg-error transition-colors" data-foto-hapus title="Hapus foto" onclick="hapusFotoSlot(event, this)"><span class="material-symbols-outlined text-[14px]">close</span></button>
+                        <button type="button" class="hidden absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white items-center justify-center hover:bg-error transition-colors" data-foto-hapus title="{{ __('Hapus foto') }}" onclick="hapusFotoSlot(event, this)"><span class="material-symbols-outlined text-[14px]">close</span></button>
                     </label>
                 @endfor
             </div>
@@ -895,20 +895,20 @@
                     <button type="button" onclick="document.getElementById('custom-size-fields').classList.toggle('hidden')" class="px-4 py-2 rounded-lg border border-dashed border-gold-accent/40 text-gold-accent text-xs font-medium hover:bg-gold-accent/5 transition-colors">+ Custom</button>
                 </div>
                 <div id="custom-size-fields" class="hidden mt-3 p-3 border border-muted-border rounded-lg bg-surface-container-low space-y-2">
-                    <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">Ukuran Custom (isi yang relevan)</p>
+                    <p class="text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Ukuran Custom (isi yang relevan)') }}</p>
                     <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                        <input type="text" inputmode="numeric" data-ribuan-int name="custom_ld" placeholder="Lingkar Dada (cm)" class="raliva-input text-sm" />
-                        <input type="text" inputmode="numeric" data-ribuan-int name="custom_pb" placeholder="Panjang Baju (cm)" class="raliva-input text-sm" />
-                        <input type="text" inputmode="numeric" data-ribuan-int name="custom_lb" placeholder="Lebar Bahu (cm)" class="raliva-input text-sm" />
-                        <input type="text" inputmode="numeric" data-ribuan-int name="custom_lt" placeholder="Lingkar Tangan (cm)" class="raliva-input text-sm" />
-                        <input type="text" inputmode="numeric" data-ribuan-int name="custom_pl" placeholder="Panjang Lengan (cm)" class="raliva-input text-sm" />
+                        <input type="text" inputmode="numeric" data-ribuan-int name="custom_ld" placeholder="{{ __('Lingkar Dada (cm)') }}" class="raliva-input text-sm" />
+                        <input type="text" inputmode="numeric" data-ribuan-int name="custom_pb" placeholder="{{ __('Panjang Baju (cm)') }}" class="raliva-input text-sm" />
+                        <input type="text" inputmode="numeric" data-ribuan-int name="custom_lb" placeholder="{{ __('Lebar Bahu (cm)') }}" class="raliva-input text-sm" />
+                        <input type="text" inputmode="numeric" data-ribuan-int name="custom_lt" placeholder="{{ __('Lingkar Tangan (cm)') }}" class="raliva-input text-sm" />
+                        <input type="text" inputmode="numeric" data-ribuan-int name="custom_pl" placeholder="{{ __('Panjang Lengan (cm)') }}" class="raliva-input text-sm" />
                     </div>
-                    <button type="button" onclick="addCustomSize()" class="px-3 py-1.5 bg-deep-onyx text-on-primary text-xs rounded">Tambah Ukuran Custom</button>
+                    <button type="button" onclick="addCustomSize()" class="px-3 py-1.5 bg-deep-onyx text-on-primary text-xs rounded">{{ __('Tambah Ukuran Custom') }}</button>
                 </div>
                 <input type="hidden" name="ukuran_terpilih" id="ukuran-terpilih" />
             </div>
             <div>
-                <p class="raliva-label mb-2">Warna <span class="text-xs font-normal text-on-surface-variant">(klik untuk pilih, bisa lebih dari satu)</span></p>
+                <p class="raliva-label mb-2">{{ __('Warna') }} <span class="text-xs font-normal text-on-surface-variant">({{ __('klik untuk pilih, bisa lebih dari satu') }})</span></p>
                 <div class="grid grid-cols-4 sm:grid-cols-5 gap-2" id="warna-presets">
                     @foreach ([['Navy', '#22304a'], ['Camel', '#c19a6b'], ['Putih', '#f5f3f3'], ['Merah', '#c62828'], ['Biru', '#2360a8'], ['Kuning', '#e6b91e'], ['Marun', '#7d2b33'], ['Hijau', '#2e7d32'], ['Emerald', '#046e4c'], ['Coral', '#f2875c'], ['Teal', '#0f766e'], ['Cream', '#f6ecd9'], ['Violet', '#7c3aed'], ['Sage', '#9caf88']] as $color)
                         <label class="warna-chip flex flex-col items-center gap-1 py-2 rounded-lg border border-muted-border cursor-pointer hover:border-gold-accent transition-colors has-[:checked]:bg-gold-accent/10 has-[:checked]:border-gold-accent" data-warna-value="{{ $color[0] }}" data-hex="{{ $color[1] }}">
@@ -920,37 +920,37 @@
                 </div>
                 <div class="mt-3">
                     <button type="button" id="warna-custom-toggle" class="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-dashed border-gold-accent/40 text-gold-accent text-xs font-medium hover:bg-gold-accent/5 transition-colors">
-                        <span class="material-symbols-outlined text-[16px]">palette</span> + Warna Sendiri
+                        <span class="material-symbols-outlined text-[16px]">palette</span> + {{ __('Warna Sendiri') }}
                     </button>
                     <div id="warna-custom-fields" class="hidden mt-3 p-3 border border-muted-border rounded-lg bg-surface-container-low space-y-3">
                         <div class="flex items-center gap-3 flex-wrap">
-                            <label title="Pilih warna" class="relative w-10 h-10 rounded-full border border-muted-border shadow-inner cursor-pointer overflow-hidden shrink-0" id="warna-custom-preview" style="background-color:#1c1b1b;">
-                                <input type="color" id="warna-custom-color" value="#1c1b1b" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" title="Pilih warna" />
+                            <label title="{{ __('Pilih warna') }}" class="relative w-10 h-10 rounded-full border border-muted-border shadow-inner cursor-pointer overflow-hidden shrink-0" id="warna-custom-preview" style="background-color:#1c1b1b;">
+                                <input type="color" id="warna-custom-color" value="#1c1b1b" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" title="{{ __('Pilih warna') }}" />
                             </label>
                             <div class="flex items-center gap-1.5 shrink-0">
                                 <span class="text-on-surface-variant font-bold text-sm">#</span>
-                                <input type="text" id="warna-custom-hex" placeholder="f4f4f4" maxlength="6" autocomplete="off" spellcheck="false" class="raliva-input text-sm font-mono uppercase" style="width: 7.5rem;" title="Ketik kode warna hex, cth: f4f4f4" />
+                                <input type="text" id="warna-custom-hex" placeholder="f4f4f4" maxlength="6" autocomplete="off" spellcheck="false" class="raliva-input text-sm font-mono uppercase" style="width: 7.5rem;" title="{{ __('Ketik kode warna hex, cth: f4f4f4') }}" />
                             </div>
-                            <input type="text" id="warna-custom-name" placeholder="Nama warna (wajib bila tambah warna) — cth: Tosca" maxlength="30" class="raliva-input text-sm flex-1" style="width:auto;min-width:10rem;" />
-                            <button type="button" id="warna-custom-add" class="px-4 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium shrink-0">Tambah</button>
+                            <input type="text" id="warna-custom-name" placeholder="{{ __('Nama warna (wajib bila tambah warna) — cth: Tosca') }}" maxlength="30" class="raliva-input text-sm flex-1" style="width:auto;min-width:10rem;" />
+                            <button type="button" id="warna-custom-add" class="px-4 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium shrink-0">{{ __('Tambah') }}</button>
                         </div>
                         <div id="warna-custom-chips" class="flex flex-wrap gap-2"></div>
                     </div>
                 </div>
             </div>
             <div>
-                <p class="raliva-label mb-1">Stok per Varian</p>
-                <p class="text-xs text-on-surface-variant mb-3">Setelah pilih ukuran, isi stok untuk setiap varian. Warna boleh dikosongkan.</p>
+                <p class="raliva-label mb-1">{{ __('Stok per Varian') }}</p>
+                <p class="text-xs text-on-surface-variant mb-3">{{ __('Setelah pilih ukuran, isi stok untuk setiap varian. Warna boleh dikosongkan.') }}</p>
                 <div id="varian-stok-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-2"></div>
-                <div id="varian-stok-empty" class="mt-2 p-4 border border-dashed border-outline-variant rounded-lg text-center text-xs text-on-surface-variant">Belum ada varian. Pilih ukuran di atas untuk mengatur stok per varian.</div>
+                <div id="varian-stok-empty" class="mt-2 p-4 border border-dashed border-outline-variant rounded-lg text-center text-xs text-on-surface-variant">{{ __('Belum ada varian. Pilih ukuran di atas untuk mengatur stok per varian.') }}</div>
                 <input type="hidden" name="stok_awal" id="fp-stok-synced" value="0" />
             </div>
         </div>
 
         <div class="sticky bottom-0 -mx-6 px-6 py-4 bg-surface-container-lowest border-t border-muted-border flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter">
-            <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
+            <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Batal') }}</button>
             <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined text-[16px]">check_circle</span>Simpan Produk
+                <span class="material-symbols-outlined text-[16px]">check_circle</span>{{ __('Simpan Produk') }}
             </button>
         </div>
     </form>
@@ -1053,7 +1053,7 @@ function addCustomSize() {
     if (lb) parts.push('LB=' + lb);
     if (lt) parts.push('LT=' + lt);
     if (pl) parts.push('PL=' + pl);
-    if (parts.length === 0) { alert('Isi minimal 1 ukuran custom.'); return; }
+    if (parts.length === 0) { alert('{{ __('Isi minimal 1 ukuran custom.') }}'); return; }
     const label = parts.join(' / ');
     const container = document.getElementById('ukuran-chips');
     const chip = document.createElement('button');
@@ -1131,7 +1131,7 @@ function initKategoriCombobox(prefix) {
             const empty = document.createElement('li');
             empty.setAttribute('data-category-empty', '');
             empty.className = 'px-4 py-6 text-center text-xs text-on-surface-variant';
-            empty.textContent = 'Kategori "' + search.value + '" tidak ditemukan.';
+            empty.textContent = '{{ __('Kategori "%s" tidak ditemukan.') }}'.replace('%s', search.value);
             list.appendChild(empty);
         }
     });

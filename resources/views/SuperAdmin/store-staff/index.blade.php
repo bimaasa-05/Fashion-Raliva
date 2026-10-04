@@ -392,7 +392,7 @@
             <div class="relative" id="formStore-dd">
                 <button type="button" data-dd-trigger id="formStore-trigger" onclick="toggleDropdown('formStore')" aria-haspopup="listbox" aria-expanded="false"
                     class="w-full flex items-center justify-between gap-2 bg-surface-container-lowest border border-muted-border rounded-lg px-3.5 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10 transition-all duration-200 cursor-pointer text-left">
-                    <span id="formStore-label" class="truncate">-- Pilih Toko --</span>
+                    <span id="formStore-label" class="truncate">{{ __('-- Pilih Toko --') }}</span>
                     <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="formStore-chevron">expand_more</span>
                 </button>
                 <div id="formStore-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"
@@ -411,7 +411,7 @@
             <div class="relative" id="formUser-dd">
                 <button type="button" data-dd-trigger id="formUser-trigger" onclick="toggleDropdown('formUser')" aria-haspopup="listbox" aria-expanded="false"
                     class="w-full flex items-center justify-between gap-2 bg-surface-container-lowest border border-muted-border rounded-lg px-3.5 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent focus:ring-4 focus:ring-gold-accent/10 transition-all duration-200 cursor-pointer text-left">
-                    <span id="formUser-label" class="truncate">-- Pilih User --</span>
+                    <span id="formUser-label" class="truncate">{{ __('-- Pilih User --') }}</span>
                     <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="formUser-chevron">expand_more</span>
                 </button>
                 <div id="formUser-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"

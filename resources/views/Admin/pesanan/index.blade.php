@@ -8,22 +8,22 @@
 @php
     $badgeMap = [
         \App\Models\Order::STATUS_PENDING_PAYMENT => [
-            'label' => 'Menunggu Bayar',
+            'label' => __('Menunggu Bayar'),
             'class' => \App\Support\StatusStyle::CLASS_ACCENT,
         ],
         \App\Models\Order::STATUS_MENUNGGU_PRODUKSI => [
-            'label' => 'Menunggu Produksi',
+            'label' => __('Menunggu Produksi'),
             'class' => \App\Support\StatusStyle::CLASS_AMBER,
         ],
-        \App\Models\Order::STATUS_DIBAYAR => ['label' => 'Baru', 'class' => \App\Support\StatusStyle::CLASS_AMBER],
-        \App\Models\Order::STATUS_DIPROSES => ['label' => 'Diproses', 'class' => \App\Support\StatusStyle::CLASS_AMBER],
-        \App\Models\Order::STATUS_DIKIRIM => ['label' => 'Dikirim', 'class' => \App\Support\StatusStyle::CLASS_SKY],
-        \App\Models\Order::STATUS_SELESAI => ['label' => 'Selesai', 'class' => \App\Support\StatusStyle::CLASS_SUCCESS],
+        \App\Models\Order::STATUS_DIBAYAR => ['label' => __('Baru'), 'class' => \App\Support\StatusStyle::CLASS_AMBER],
+        \App\Models\Order::STATUS_DIPROSES => ['label' => __('Diproses'), 'class' => \App\Support\StatusStyle::CLASS_AMBER],
+        \App\Models\Order::STATUS_DIKIRIM => ['label' => __('Dikirim'), 'class' => \App\Support\StatusStyle::CLASS_SKY],
+        \App\Models\Order::STATUS_SELESAI => ['label' => __('Selesai'), 'class' => \App\Support\StatusStyle::CLASS_SUCCESS],
         \App\Models\Order::STATUS_DIBATALKAN => [
-            'label' => 'Dibatalkan',
+            'label' => __('Dibatalkan'),
             'class' => 'bg-error/10 text-error border-error/20',
         ],
-        \App\Models\Order::STATUS_REFUND => ['label' => 'Refund', 'class' => 'bg-error/10 text-error border-error/20'],
+        \App\Models\Order::STATUS_REFUND => ['label' => __('Refund'), 'class' => 'bg-error/10 text-error border-error/20'],
     ];
 @endphp
 
@@ -112,7 +112,7 @@
                     @forelse ($orders as $pesanan)
                         @php
                             $badge = $badgeMap[$pesanan->status] ?? [
-                                'label' => ucfirst($pesanan->status),
+                                'label' => \App\Support\StatusStyle::label($pesanan->status),
                                 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
                             ];
                             $custName =
@@ -236,7 +236,7 @@
             @forelse ($orders as $pesanan)
                 @php
                     $badge = $badgeMap[$pesanan->status] ?? [
-                        'label' => ucfirst($pesanan->status),
+                        'label' => \App\Support\StatusStyle::label($pesanan->status),
                         'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
                     ];
                     $custName = $pesanan->checkout?->nama_penerima ?? ($pesanan->checkout?->user?->nama_lengkap ?? '-');
@@ -459,7 +459,7 @@
                     <div class="flex justify-between gap-4">
                         <dt class="text-on-surface-variant shrink-0">{{ __('Status') }}</dt>
                         <dd class="text-on-surface text-right">
-                            {{ $badgeMap[$pesanan->status]['label'] ?? ucfirst($pesanan->status) }}</dd>
+                            {{ $badgeMap[$pesanan->status]['label'] ?? \App\Support\StatusStyle::label($pesanan->status) }}</dd>
                     </div>
                     @if (!is_null($pesanan->jumlah_berhasil) || !is_null($pesanan->jumlah_gagal) || $pesanan->tanggal_qc || $pesanan->qc_perlu_admin_pada)
                         <div class="flex justify-between gap-4 pt-3 border-t border-muted-border">
@@ -916,7 +916,7 @@
                     <span class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Subtotal</span>
                     <span class="item-subtotal text-sm font-bold text-gold-accent whitespace-nowrap">Rp 0</span>
                 </div>
-                <button type="button" onclick="removeItemRow(this)" class="shrink-0 mb-0.5 px-2 py-2 rounded-lg border border-error/20 text-error hover:bg-error/10 transition-colors" title="Hapus baris">
+                <button type="button" onclick="removeItemRow(this)" class="shrink-0 mb-0.5 px-2 py-2 rounded-lg border border-error/20 text-error hover:bg-error/10 transition-colors" title="{{ __('Hapus baris') }}">
                     <span class="material-symbols-outlined text-[18px]">delete</span>
                 </button>
             </div>

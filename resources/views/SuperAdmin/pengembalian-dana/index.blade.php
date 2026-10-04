@@ -9,12 +9,12 @@
 
 @php
     $badgeMap = [
-        'requested' => ['label' => 'Menunggu Keputusan', 'class' => \App\Support\StatusStyle::badgeClass('requested')],
-        'menunggu' => ['label' => 'Menunggu Keputusan', 'class' => \App\Support\StatusStyle::badgeClass('menunggu')],
-        'disetujui' => ['label' => 'Disetujui', 'class' => \App\Support\StatusStyle::badgeClass('disetujui')],
-        'selesai' => ['label' => 'Selesai', 'class' => \App\Support\StatusStyle::badgeClass('selesai')],
-        'ditolak' => ['label' => 'Ditolak', 'class' => \App\Support\StatusStyle::badgeClass('ditolak')],
-        'escalated' => ['label' => 'Eskalasi', 'class' => \App\Support\StatusStyle::badgeClass('eskalasi')],
+        'requested' => ['label' => __('Menunggu Keputusan'), 'class' => \App\Support\StatusStyle::badgeClass('requested')],
+        'menunggu' => ['label' => __('Menunggu Keputusan'), 'class' => \App\Support\StatusStyle::badgeClass('menunggu')],
+        'disetujui' => ['label' => __('Disetujui'), 'class' => \App\Support\StatusStyle::badgeClass('disetujui')],
+        'selesai' => ['label' => __('Selesai'), 'class' => \App\Support\StatusStyle::badgeClass('selesai')],
+        'ditolak' => ['label' => __('Ditolak'), 'class' => \App\Support\StatusStyle::badgeClass('ditolak')],
+        'escalated' => ['label' => __('Eskalasi'), 'class' => \App\Support\StatusStyle::badgeClass('eskalasi')],
     ];
 @endphp
 

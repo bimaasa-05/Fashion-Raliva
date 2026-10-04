@@ -204,7 +204,7 @@
     function openConfirmPeringkat(e, msg, aksi) {
         e.preventDefault();
         _pendingPeringkatForm = e.target;
-        document.getElementById('confirm-peringkat-desc').textContent = msg || 'Hapus slot iklan ini?';
+        document.getElementById('confirm-peringkat-desc').textContent = msg || '{{ __('Hapus slot iklan ini?') }}';
         const titleEl = document.getElementById('confirm-peringkat-title');
         const iconWrap = document.getElementById('confirm-peringkat-icon');
         const iconSym = document.getElementById('confirm-peringkat-icon-sym');

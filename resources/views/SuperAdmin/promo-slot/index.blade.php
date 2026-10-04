@@ -180,7 +180,7 @@
             <div>
                 <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="slot_package_id">{{ __('Paket Slot') }}</label>
                 <select class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="slot_package_id" name="slot_package_id" required>
-                    <option value="">-- Pilih Paket --</option>
+                    <option value="">{{ __('-- Pilih Paket --') }}</option>
                     @foreach ($packages as $pkg)
                         <option value="{{ $pkg->slot_package_id }}" data-harga="{{ $pkg->harga }}">{{ $pkg->nama_paket }} ({{ $pkg->jumlah_slot }} slot) &mdash; Rp {{ number_format((float) ($pkg->harga ?? 0), 0, ',', '.') }}</option>
                     @endforeach
@@ -205,7 +205,7 @@
                     <div class="relative" id="promoTipe-dd">
                         <button type="button" data-dd-trigger id="promoTipe-trigger" onclick="toggleDropdown('promoTipe')" aria-haspopup="listbox" aria-expanded="false"
                             class="w-full flex items-center justify-between gap-2 bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md text-on-surface focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors cursor-pointer text-left">
-                            <span id="promoTipe-label" data-dd-label class="truncate">-- Pilih Tipe --</span>
+                            <span id="promoTipe-label" data-dd-label class="truncate">{{ __('-- Pilih Tipe --') }}</span>
                             <span class="material-symbols-outlined text-[18px] text-on-surface-variant transition-transform duration-200" data-dd-chevron id="promoTipe-chevron">expand_more</span>
                         </button>
                         <div id="promoTipe-menu" data-dropdown-menu role="listbox" style="transform-origin: top left"

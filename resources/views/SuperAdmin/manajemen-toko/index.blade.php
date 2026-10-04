@@ -324,7 +324,7 @@
                 + '<span class="inline-flex shrink-0 items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border ' + badgeClass + '"><span class="material-symbols-outlined fill text-[12px]">' + badgeIcon + '</span>' + badgeLabel + '</span>'
                 + '</div>'
                 + '<div class="flex items-center justify-between mt-4 pt-3 border-t border-muted-border gap-2 flex-wrap">'
-                + '<a href="' + previewUrl(d.path) + '" target="_blank" rel="noopener" class="text-[11px] font-bold uppercase tracking-wider text-gold-accent inline-flex items-center gap-1 whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">visibility</span>Lihat</a>'
+                + '<a href="' + previewUrl(d.path) + '" target="_blank" rel="noopener" class="text-[11px] font-bold uppercase tracking-wider text-gold-accent inline-flex items-center gap-1 whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">visibility</span>{{ __('Lihat') }}</a>'
                 + actions
                 + '</div>'
                 + '</div>';

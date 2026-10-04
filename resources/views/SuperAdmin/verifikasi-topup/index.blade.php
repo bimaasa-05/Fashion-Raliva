@@ -9,12 +9,12 @@
 
 @php
     $badgeMap = [
-        'pending' => ['label' => 'Menunggu Bayar', 'class' => \App\Support\StatusStyle::badgeClass('pending')],
-        'menunggu_verifikasi' => ['label' => 'Menunggu Verifikasi', 'class' => \App\Support\StatusStyle::badgeClass('menunggu_verifikasi')],
-        'terverifikasi' => ['label' => 'Terverifikasi', 'class' => \App\Support\StatusStyle::badgeClass('terverifikasi')],
-        'ditolak' => ['label' => 'Ditolak', 'class' => \App\Support\StatusStyle::badgeClass('ditolak')],
-        'dibatalkan' => ['label' => 'Dibatalkan', 'class' => \App\Support\StatusStyle::badgeClass('dibatalkan')],
-        'kadaluarsa' => ['label' => 'Kadaluarsa', 'class' => \App\Support\StatusStyle::badgeClass('kadaluarsa')],
+        'pending' => ['label' => __('Menunggu Bayar'), 'class' => \App\Support\StatusStyle::badgeClass('pending')],
+        'menunggu_verifikasi' => ['label' => __('Menunggu Verifikasi'), 'class' => \App\Support\StatusStyle::badgeClass('menunggu_verifikasi')],
+        'terverifikasi' => ['label' => __('Terverifikasi'), 'class' => \App\Support\StatusStyle::badgeClass('terverifikasi')],
+        'ditolak' => ['label' => __('Ditolak'), 'class' => \App\Support\StatusStyle::badgeClass('ditolak')],
+        'dibatalkan' => ['label' => __('Dibatalkan'), 'class' => \App\Support\StatusStyle::badgeClass('dibatalkan')],
+        'kadaluarsa' => ['label' => __('Kadaluarsa'), 'class' => \App\Support\StatusStyle::badgeClass('kadaluarsa')],
     ];
 @endphp
 
@@ -75,13 +75,13 @@
             </div>
             <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
             <div id="chip-group" class="flex flex-wrap gap-2">
-                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
-                <button type="button" data-chip="menunggu_verifikasi" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menunggu ({{ $stats['menunggu'] }})</button>
-                <button type="button" data-chip="pending" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Belum Bayar ({{ $stats['pending'] }})</button>
-                <button type="button" data-chip="terverifikasi" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Terverifikasi ({{ $stats['terverifikasi'] }})</button>
-                <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditolak ({{ $stats['ditolak'] }})</button>
-                <button type="button" data-chip="dibatalkan" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Dibatalkan ({{ $stats['dibatalkan'] }})</button>
-                <button type="button" data-chip="kadaluarsa" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kadaluarsa ({{ $stats['kadaluarsa'] }})</button>
+                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Semua (%d)'), $stats['semua']) }}</button>
+                <button type="button" data-chip="menunggu_verifikasi" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Menunggu (%d)'), $stats['menunggu']) }}</button>
+                <button type="button" data-chip="pending" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Belum Bayar (%d)'), $stats['pending']) }}</button>
+                <button type="button" data-chip="terverifikasi" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Terverifikasi (%d)'), $stats['terverifikasi']) }}</button>
+                <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Ditolak (%d)'), $stats['ditolak']) }}</button>
+                <button type="button" data-chip="dibatalkan" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Dibatalkan (%d)'), $stats['dibatalkan']) }}</button>
+                <button type="button" data-chip="kadaluarsa" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Kadaluarsa (%d)'), $stats['kadaluarsa']) }}</button>
             </div>
         </div>
 

@@ -841,8 +841,8 @@
                             ? `<img src="${k.foto}" alt="${k.nama}" class="w-7 h-7 rounded-full object-cover shrink-0">`
                             : `<span class="w-7 h-7 rounded-full bg-surface-container-high border border-outline-variant flex items-center justify-center text-[10px] font-bold text-on-surface shrink-0">${k.initial || ''}</span>`;
                         const dot = k.status === 'aktif'
-                            ? '<span class="w-1.5 h-1.5 rounded-full bg-success status-dot-pulse shrink-0" title="Aktif"></span>'
-                            : '<span class="w-1.5 h-1.5 rounded-full bg-error shrink-0" title="Nonaktif"></span>';
+                            ? '<span class="w-1.5 h-1.5 rounded-full bg-success status-dot-pulse shrink-0" title="{{ __('Aktif') }}"></span>'
+                            : '<span class="w-1.5 h-1.5 rounded-full bg-error shrink-0" title="{{ __('Nonaktif') }}"></span>';
                         if (k.user_id) {
                             return `<li>
                                 <button type="button" onclick="openKaryawanDetail(${k.user_id})" class="flex w-full items-center gap-2.5 px-2 -mx-2 py-1.5 rounded-lg hover:bg-surface-container-low transition-colors text-left group/row">
@@ -938,8 +938,8 @@
                 warehousesWrap.classList.remove('hidden');
                 data.warehouses.forEach(w => {
                     const dot = w.status === 'aktif'
-                        ? '<span class="w-1.5 h-1.5 rounded-full bg-secondary status-dot-pulse" title="Aktif"></span>'
-                        : '<span class="w-1.5 h-1.5 rounded-full bg-error" title="Nonaktif"></span>';
+                        ? '<span class="w-1.5 h-1.5 rounded-full bg-secondary status-dot-pulse" title="{{ __('Aktif') }}"></span>'
+                        : '<span class="w-1.5 h-1.5 rounded-full bg-error" title="{{ __('Nonaktif') }}"></span>';
                     warehousesList.innerHTML += `
                         <div class="flex items-center gap-2.5 p-2.5 rounded-lg border border-muted-border/40 bg-surface-container-lowest">
                             <span class="material-symbols-outlined text-gold-accent text-[18px] shrink-0">warehouse</span>

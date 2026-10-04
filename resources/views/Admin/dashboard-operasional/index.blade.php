@@ -38,7 +38,7 @@
             <div class="flex items-center gap-2 flex-wrap">
                 <p class="raliva-figure text-xl {{ ! $store ? 'text-on-surface-variant' : 'text-on-surface' }}">{{ $store?->nama_toko ?? 'Toko' }}</p>
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full {{ $store?->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' }} text-[10px] font-bold uppercase border">
-                    <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === 'aktif' ? 'verified' : 'schedule' }}</span>{{ $store ? ucfirst($store->status) : __('Menunggu') }}
+                    <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === 'aktif' ? 'verified' : 'schedule' }}</span>{{ $store ? \App\Support\StatusStyle::label($store->status) : __('Menunggu') }}
                 </span>
             </div>
             <p class="text-on-surface-variant font-body-md text-sm mt-0.5">{{ $store?->alamat ?? __('Alamat toko') }} • {{ $store ? __('Aktif sejak').' '.optional($store->created_at)->translatedFormat('M Y') : __('Toko') }}</p>
@@ -196,7 +196,7 @@
                     <li class="py-3 border-b last:border-b-0 border-muted-border">
                         <div class="flex items-center justify-between gap-3">
                             <p class="font-body-md text-sm text-on-surface truncate">{{ $komplain->subjek }}</p>
-                            <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ \App\Support\StatusStyle::badgeClass($komplain->status) }}">{{ $komplain->status === \App\Models\Complaint::STATUS_OPEN ? __('Terbuka') : ucfirst($komplain->status) }}</span>
+                            <span class="shrink-0 inline-flex items-center px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ \App\Support\StatusStyle::badgeClass($komplain->status) }}">{{ $komplain->status === \App\Models\Complaint::STATUS_OPEN ? __('Terbuka') : \App\Support\StatusStyle::label($komplain->status) }}</span>
                         </div>
                         <p class="text-xs text-on-surface-variant mt-1">{{ $komplain->user?->nama_lengkap ?? '-' }} &#8226; {{ $komplain->store?->nama_toko ?? '-' }} &#8226; {{ $komplain->dibuat_pada?->translatedFormat('d M') }}</p>
                     </li>

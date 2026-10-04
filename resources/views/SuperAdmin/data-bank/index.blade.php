@@ -155,7 +155,7 @@
                                         <div class="w-14 h-14 rounded-2xl bg-surface-container-low border border-muted-border flex items-center justify-center">
                                             <span class="material-symbols-outlined text-[26px] text-on-surface-variant">account_balance</span>
                                         </div>
-                                        <p class="font-body-md text-sm text-on-surface-variant">Belum ada bank terdaftar. Klik "Tambah Bank" untuk membuat metode transfer baru.</p>
+                                        <p class="font-body-md text-sm text-on-surface-variant">{{ __('Belum ada bank terdaftar. Klik "Tambah Bank" untuk membuat metode transfer baru.') }}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -212,7 +212,7 @@
                             <div class="w-14 h-14 rounded-2xl bg-surface-container-low border border-muted-border flex items-center justify-center">
                                 <span class="material-symbols-outlined text-[26px] text-on-surface-variant">account_balance</span>
                             </div>
-                            <p class="font-body-md text-sm text-on-surface-variant">Belum ada bank terdaftar. Klik "Tambah Bank" untuk membuat metode transfer baru.</p>
+                            <p class="font-body-md text-sm text-on-surface-variant">{{ __('Belum ada bank terdaftar. Klik "Tambah Bank" untuk membuat metode transfer baru.') }}</p>
                         </div>
                     </div>
                 @endforelse
@@ -293,7 +293,7 @@
                                         <div class="w-14 h-14 rounded-2xl bg-surface-container-low border border-muted-border flex items-center justify-center">
                                             <span class="material-symbols-outlined text-[26px] text-on-surface-variant">account_balance_wallet</span>
                                         </div>
-                                        <p class="font-body-md text-sm text-on-surface-variant">Belum ada e-wallet terdaftar. Klik "Tambah E-Wallet" untuk menambahkan.</p>
+                                        <p class="font-body-md text-sm text-on-surface-variant">{{ __('Belum ada e-wallet terdaftar. Klik "Tambah E-Wallet" untuk menambahkan.') }}</p>
                                     </div>
                                 </td>
                             </tr>
@@ -349,7 +349,7 @@
                             <div class="w-14 h-14 rounded-2xl bg-surface-container-low border border-muted-border flex items-center justify-center">
                                 <span class="material-symbols-outlined text-[26px] text-on-surface-variant">account_balance_wallet</span>
                             </div>
-                            <p class="font-body-md text-sm text-on-surface-variant">Belum ada e-wallet terdaftar. Klik "Tambah E-Wallet" untuk menambahkan.</p>
+                            <p class="font-body-md text-sm text-on-surface-variant">{{ __('Belum ada e-wallet terdaftar. Klik "Tambah E-Wallet" untuk menambahkan.') }}</p>
                         </div>
                     </div>
                 @endforelse

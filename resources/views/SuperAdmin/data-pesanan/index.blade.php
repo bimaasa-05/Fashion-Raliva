@@ -84,15 +84,15 @@
                 @forelse ($orders as $order)
                     @php
                         $statusMap = [
-                            'pending_payment' => ['Menunggu', \App\Support\StatusStyle::badgeClass('pending_payment')],
-                            'dibayar' => ['Dibayar', \App\Support\StatusStyle::badgeClass('dibayar')],
-                            'diproses' => ['Diproses', \App\Support\StatusStyle::badgeClass('diproses')],
-                            'dikirim' => ['Dikirim', \App\Support\StatusStyle::badgeClass('dikirim')],
-                            'selesai' => ['Selesai', \App\Support\StatusStyle::badgeClass('selesai')],
-                            'dibatalkan' => ['Dibatalkan', \App\Support\StatusStyle::badgeClass('dibatalkan')],
-                            'refund' => ['Refund', \App\Support\StatusStyle::badgeClass('refund')],
+                            'pending_payment' => [__('Menunggu'), \App\Support\StatusStyle::badgeClass('pending_payment')],
+                            'dibayar' => [__('Dibayar'), \App\Support\StatusStyle::badgeClass('dibayar')],
+                            'diproses' => [__('Diproses'), \App\Support\StatusStyle::badgeClass('diproses')],
+                            'dikirim' => [__('Dikirim'), \App\Support\StatusStyle::badgeClass('dikirim')],
+                            'selesai' => [__('Selesai'), \App\Support\StatusStyle::badgeClass('selesai')],
+                            'dibatalkan' => [__('Dibatalkan'), \App\Support\StatusStyle::badgeClass('dibatalkan')],
+                            'refund' => [__('Refund'), \App\Support\StatusStyle::badgeClass('refund')],
                         ];
-                        $st = $statusMap[$order->status] ?? [ucfirst($order->status), \App\Support\StatusStyle::CLASS_NEUTRAL];
+                        $st = $statusMap[$order->status] ?? [\App\Support\StatusStyle::label($order->status), \App\Support\StatusStyle::CLASS_NEUTRAL];
                         $pelanggan = $order->checkout?->user;
                         $pelNama = $pelanggan?->nama_lengkap ?? $order->checkout?->nama_penerima ?? '-';
                         $pelEmail = $pelanggan?->email ?? $order->checkout?->email_pelanggan ?? '';
@@ -153,15 +153,15 @@
         @forelse ($orders as $order)
             @php
                 $statusMap = [
-                    'pending_payment' => ['Menunggu', \App\Support\StatusStyle::badgeClass('pending_payment')],
-                    'dibayar' => ['Dibayar', \App\Support\StatusStyle::badgeClass('dibayar')],
-                    'diproses' => ['Diproses', \App\Support\StatusStyle::badgeClass('diproses')],
-                    'dikirim' => ['Dikirim', \App\Support\StatusStyle::badgeClass('dikirim')],
-                    'selesai' => ['Selesai', \App\Support\StatusStyle::badgeClass('selesai')],
-                    'dibatalkan' => ['Dibatalkan', \App\Support\StatusStyle::badgeClass('dibatalkan')],
-                    'refund' => ['Refund', \App\Support\StatusStyle::badgeClass('refund')],
+                    'pending_payment' => [__('Menunggu'), \App\Support\StatusStyle::badgeClass('pending_payment')],
+                    'dibayar' => [__('Dibayar'), \App\Support\StatusStyle::badgeClass('dibayar')],
+                    'diproses' => [__('Diproses'), \App\Support\StatusStyle::badgeClass('diproses')],
+                    'dikirim' => [__('Dikirim'), \App\Support\StatusStyle::badgeClass('dikirim')],
+                    'selesai' => [__('Selesai'), \App\Support\StatusStyle::badgeClass('selesai')],
+                    'dibatalkan' => [__('Dibatalkan'), \App\Support\StatusStyle::badgeClass('dibatalkan')],
+                    'refund' => [__('Refund'), \App\Support\StatusStyle::badgeClass('refund')],
                 ];
-                $st = $statusMap[$order->status] ?? [ucfirst($order->status), \App\Support\StatusStyle::CLASS_NEUTRAL];
+                $st = $statusMap[$order->status] ?? [\App\Support\StatusStyle::label($order->status), \App\Support\StatusStyle::CLASS_NEUTRAL];
                 $pelanggan = $order->checkout?->user;
                 $pelNama = $pelanggan?->nama_lengkap ?? $order->checkout?->nama_penerima ?? '-';
                 $pelEmail = $pelanggan?->email ?? $order->checkout?->email_pelanggan ?? '';
@@ -212,15 +212,15 @@
 @foreach ($orders as $order)
     @php
         $oStatusMap = [
-            'pending_payment' => ['Menunggu', \App\Support\StatusStyle::badgeClass('pending_payment')],
-            'dibayar' => ['Dibayar', \App\Support\StatusStyle::badgeClass('dibayar')],
-            'diproses' => ['Diproses', \App\Support\StatusStyle::badgeClass('diproses')],
-            'dikirim' => ['Dikirim', \App\Support\StatusStyle::badgeClass('dikirim')],
-            'selesai' => ['Selesai', \App\Support\StatusStyle::badgeClass('selesai')],
-            'dibatalkan' => ['Dibatalkan', \App\Support\StatusStyle::badgeClass('dibatalkan')],
-            'refund' => ['Refund', \App\Support\StatusStyle::badgeClass('refund')],
+            'pending_payment' => [__('Menunggu'), \App\Support\StatusStyle::badgeClass('pending_payment')],
+            'dibayar' => [__('Dibayar'), \App\Support\StatusStyle::badgeClass('dibayar')],
+            'diproses' => [__('Diproses'), \App\Support\StatusStyle::badgeClass('diproses')],
+            'dikirim' => [__('Dikirim'), \App\Support\StatusStyle::badgeClass('dikirim')],
+            'selesai' => [__('Selesai'), \App\Support\StatusStyle::badgeClass('selesai')],
+            'dibatalkan' => [__('Dibatalkan'), \App\Support\StatusStyle::badgeClass('dibatalkan')],
+            'refund' => [__('Refund'), \App\Support\StatusStyle::badgeClass('refund')],
         ];
-        $oSt = $oStatusMap[$order->status] ?? [ucfirst($order->status), 'bg-surface-container-high text-on-surface'];
+        $oSt = $oStatusMap[$order->status] ?? [\App\Support\StatusStyle::label($order->status), 'bg-surface-container-high text-on-surface'];
         $oPelanggan = $order->checkout?->user;
         $oPelNama = $oPelanggan?->nama_lengkap ?? $order->checkout?->nama_penerima ?? '-';
         $oPelEmail = $oPelanggan?->email ?? $order->checkout?->email_pelanggan ?? '';

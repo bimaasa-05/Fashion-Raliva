@@ -272,11 +272,11 @@
         <form method="POST" action="{{ route('superadmin.pengaturan-sistem.sosmed.store') }}" class="flex items-end gap-gutter flex-wrap border-t border-muted-border pt-gutter">
             @csrf
             <div class="flex-1 min-w-52">
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="nama_platform">Tambah Platform Baru</label>
-                <input class="w-full bg-transparent border border-muted-border rounded-lg p-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="nama_platform" name="nama_platform" type="text" maxlength="50" value="{{ old('nama_platform') }}" placeholder="cth: YouTube" required />
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="nama_platform">{{ __('Tambah Platform Baru') }}</label>
+                <input class="w-full bg-transparent border border-muted-border rounded-lg p-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="nama_platform" name="nama_platform" type="text" maxlength="50" value="{{ old('nama_platform') }}" placeholder="{{ __('cth: YouTube') }}" required />
                 @error('nama_platform')<p class="font-body-md text-xs text-error mt-2">{{ $message }}</p>@enderror
             </div>
-            <button type="submit" class="bg-deep-onyx text-on-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">Tambah Platform</button>
+            <button type="submit" class="bg-deep-onyx text-on-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">{{ __('Tambah Platform') }}</button>
         </form>
     </section>
 
@@ -864,7 +864,7 @@
             btn.disabled = true;
             btn.style.opacity = '0.7';
             btn.style.cursor = 'not-allowed';
-            btn.innerHTML = '<span class="inline-flex items-center gap-2"><span class="material-symbols-outlined text-[16px] spin">progress_activity</span> Menyimpan&hellip;</span>';
+            btn.innerHTML = '<span class="inline-flex items-center gap-2"><span class="material-symbols-outlined text-[16px] spin">progress_activity</span> {{ __('Menyimpan…') }}</span>';
         });
     });
 </script>
