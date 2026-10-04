@@ -93,9 +93,9 @@
                     <li>
                         <label for="kurir-default" class="block raliva-label mb-2">{{ __('Kurir Utama Toko') }}</label>
                         <select id="kurir-default" class="raliva-select">
-                            <option selected>Kurir Platform Raliva Express</option>
-                            <option>JNE Reguler</option>
-                            <option>SiCepat YES</option>
+                            <option selected>{{ __('Kurir Platform Raliva Express') }}</option>
+                            <option>{{ __('JNE Reguler') }}</option>
+                            <option>{{ __('SiCepat YES') }}</option>
                             <option>{{ __('Kurir Toko Sendiri') }}</option>
                         </select>
                     </li>

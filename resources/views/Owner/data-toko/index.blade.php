@@ -125,9 +125,9 @@
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <div class="flex items-center gap-3 mb-2">
                 <span class="material-symbols-outlined text-gold-accent">share</span>
-                <h2 class="font-title-md text-title-md text-on-surface premium-heading">Media Sosial</h2>
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Media Sosial') }}</h2>
             </div>
-            <p class="text-sm text-on-surface-variant mb-6">Tautan yang tampil di halaman Tentang toko Anda. Pilih platform atau isi nama custom bila belum tersedia.</p>
+            <p class="text-sm text-on-surface-variant mb-6">{{ __('Tautan yang tampil di halaman Tentang toko Anda. Pilih platform atau isi nama custom bila belum tersedia.') }}</p>
 
             @if(($storeSocials ?? collect())->isNotEmpty())
                 <div class="space-y-3 mb-6">
@@ -137,23 +137,23 @@
                                 <p class="font-semibold text-sm text-on-surface">{{ $social->label() }}</p>
                                 <a href="{{ $social->url }}" target="_blank" rel="noopener" class="text-xs text-gold-accent hover:underline truncate block">{{ $social->url }}</a>
                             </div>
-                            <form method="POST" action="{{ route('owner.data-toko.sosmed.destroy', $social) }}" onsubmit="return confirm('Hapus media sosial ini?')">
+                            <form method="POST" action="{{ route('owner.data-toko.sosmed.destroy', $social) }}" onsubmit="return confirm('{{ __('Hapus media sosial ini?') }}')">
                                 @csrf @method('DELETE')
-                                <button type="submit" class="px-4 py-2 border border-muted-border rounded-lg text-xs font-semibold text-error hover:border-error transition-colors">Hapus</button>
+                                <button type="submit" class="px-4 py-2 border border-muted-border rounded-lg text-xs font-semibold text-error hover:border-error transition-colors">{{ __('Hapus') }}</button>
                             </form>
                         </div>
                     @endforeach
                 </div>
             @else
-                <p class="text-sm text-on-surface-variant border border-dashed border-muted-border rounded-lg px-4 py-3 mb-6">Belum ada media sosial. Tambahkan yang pertama di bawah.</p>
+                <p class="text-sm text-on-surface-variant border border-dashed border-muted-border rounded-lg px-4 py-3 mb-6">{{ __('Belum ada media sosial. Tambahkan yang pertama di bawah.') }}</p>
             @endif
 
             <form method="POST" action="{{ route('owner.data-toko.sosmed.store') }}" class="grid grid-cols-1 md:grid-cols-3 gap-4">
                 @csrf
                 <div>
-                    <label for="sosmed-platform" class="block raliva-label mb-2">Platform</label>
+                    <label for="sosmed-platform" class="block raliva-label mb-2">{{ __('Platform') }}</label>
                     <select id="sosmed-platform" name="sosmed_platform_id" class="raliva-input">
-                        <option value="">-- Custom / pilih --</option>
+                        <option value="">{{ __('-- Custom / pilih --') }}</option>
                         @foreach($sosmedPlatforms ?? [] as $platform)
                             <option value="{{ $platform->sosmed_platform_id }}" {{ old('sosmed_platform_id') == $platform->sosmed_platform_id ? 'selected' : '' }}>{{ $platform->nama_platform }}</option>
                         @endforeach
@@ -161,17 +161,17 @@
                     @error('sosmed_platform_id') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label for="sosmed-custom" class="block raliva-label mb-2">Nama Custom <span class="font-normal normal-case">(bila platform belum ada)</span></label>
-                    <input id="sosmed-custom" name="nama_custom" type="text" maxlength="50" value="{{ old('nama_custom') }}" placeholder="cth: Threads" class="raliva-input" />
+                    <label for="sosmed-custom" class="block raliva-label mb-2">{{ __('Nama Custom') }} <span class="font-normal normal-case">({{ __('bila platform belum ada') }})</span></label>
+                    <input id="sosmed-custom" name="nama_custom" type="text" maxlength="50" value="{{ old('nama_custom') }}" placeholder="{{ __('cth: Threads') }}" class="raliva-input" />
                     @error('nama_custom') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
-                    <label for="sosmed-url" class="block raliva-label mb-2">Link / URL</label>
+                    <label for="sosmed-url" class="block raliva-label mb-2">{{ __('Link / URL') }}</label>
                     <input id="sosmed-url" name="url" type="url" maxlength="255" value="{{ old('url') }}" placeholder="https://..." required class="raliva-input" />
                     @error('url') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div class="md:col-span-3">
-                    <button type="submit" class="bg-deep-onyx text-on-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">Tambah Media Sosial</button>
+                    <button type="submit" class="bg-deep-onyx text-on-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">{{ __('Tambah Media Sosial') }}</button>
                 </div>
             </form>
         </section>

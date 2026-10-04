@@ -265,7 +265,7 @@
                 </div>
                 <div>
                     <label class="block raliva-label mb-2">{{ __('Nama Promo') }}</label>
-                    <input name="nama_promo" type="text" required placeholder="Diskon Lebaran" class="raliva-input" />
+                    <input name="nama_promo" type="text" required placeholder="{{ __('Diskon Lebaran') }}" class="raliva-input" />
                 </div>
             </div>
             <div class="grid grid-cols-2 gap-gutter">
