@@ -111,24 +111,24 @@
 <script>
     const statusMeta = {
         aktif: {
-            chipLabel: 'Aktif',
+            chipLabel: '{{ __('Aktif') }}',
             chipClass: 'inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-success/10 text-success border-success/20',
-            verification: 'Terverifikasi'
+            verification: '{{ __('Terverifikasi') }}'
         },
         pending: {
-            chipLabel: 'Menunggu Tinjauan',
+            chipLabel: '{{ __('Menunggu Tinjauan') }}',
             chipClass: 'inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-gold-accent/10 text-gold-accent border-gold-accent/30',
-            verification: 'Dokumen lengkap • Menunggu review'
+            verification: '{{ __('Dokumen lengkap • Menunggu review') }}'
         },
         nonaktif: {
-            chipLabel: 'Ditangguhkan',
+            chipLabel: '{{ __('Ditangguhkan') }}',
             chipClass: 'inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-error/10 text-error border-error/20',
-            verification: 'Ditangguhkan oleh Admin'
+            verification: '{{ __('Ditangguhkan oleh Admin') }}'
         },
         ditolak: {
-            chipLabel: 'Ditolak',
+            chipLabel: '{{ __('Ditolak') }}',
             chipClass: 'inline-flex items-center px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider border bg-error/10 text-error border-error/20',
-            verification: 'Pengajuan ditolak • Perbaiki lalu ajukan ulang'
+            verification: '{{ __('Pengajuan ditolak • Perbaiki lalu ajukan ulang') }}'
         }
     };
 
@@ -305,13 +305,13 @@
                 : (rejected ? 'bg-error/10 text-error border-error/20'
                    : 'bg-surface-container-high text-on-surface-variant border-outline-variant');
             const badgeIcon = verified ? 'check_circle' : (rejected ? 'cancel' : 'schedule');
-            const badgeLabel = verified ? 'Terverifikasi' : (rejected ? 'Ditolak' : 'Menunggu');
+            const badgeLabel = verified ? '{{ __('Terverifikasi') }}' : (rejected ? '{{ __('Ditolak') }}' : '{{ __('Menunggu') }}');
             const catatan = rejected && d.catatan ? '<p class="text-xs text-on-surface-variant mt-2">' + d.catatan + '</p>' : '';
             const metaLabelSafe = meta.label.replace(/'/g, "\\'");
             const actions = verified ? ''
                 : '<div class="flex gap-2 flex-wrap shrink-0">'
-                    + '<form method="POST" action="' + actionUrls.dokumenSetujui(storeId, d.id) + '">@csrf<button type="submit" class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-secondary/40 text-secondary hover:bg-secondary/10">Setujui</button></form>'
-                    + '<button type="button" onclick="openDocRejectModal(\'' + storeId + '\',' + d.id + ',\'' + metaLabelSafe + '\')" class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-error/40 text-error hover:bg-error/10">Tolak</button>'
+                    + '<form method="POST" action="' + actionUrls.dokumenSetujui(storeId, d.id) + '">@csrf<button type="submit" class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-secondary/40 text-secondary hover:bg-secondary/10">{{ __('Setujui') }}</button></form>'
+                    + '<button type="button" onclick="openDocRejectModal(\'' + storeId + '\',' + d.id + ',\'' + metaLabelSafe + '\')" class="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-error/40 text-error hover:bg-error/10">{{ __('Tolak') }}</button>'
                     + '</div>';
             html += '<div class="bg-surface-container-low border border-muted-border rounded-lg p-4 min-w-0">'
                 + '<div class="flex items-start gap-3">'
@@ -348,19 +348,19 @@
                 : (rejected ? 'bg-error/10 text-error border-error/20'
                    : 'bg-surface-container-high text-on-surface-variant border-outline-variant');
             const badgeIcon = verified ? 'check_circle' : (rejected ? 'cancel' : 'schedule');
-            const badgeLabel = verified ? 'Terverifikasi' : (rejected ? 'Ditolak' : 'Menunggu');
+            const badgeLabel = verified ? '{{ __('Terverifikasi') }}' : (rejected ? '{{ __('Ditolak') }}' : '{{ __('Menunggu') }}');
             const missId = 'all-doc-missing-' + d.id;
             const onerr = 'this.style.display=\'none\';document.getElementById(\'' + missId + '\').style.display=\'flex\';';
             const isPdf = /\.pdf$/i.test(d.path);
             const preview = isPdf
                 ? '<div class="w-full h-40 bg-surface-container-low border border-muted-border rounded-lg flex flex-col items-center justify-center gap-2">'
                     + '<span class="material-symbols-outlined text-[40px] text-gold-accent">picture_as_pdf</span>'
-                    + '<span class="text-[10px] font-label-sm uppercase tracking-widest text-on-surface-variant">Dokumen PDF</span>'
+                    + '<span class="text-[10px] font-label-sm uppercase tracking-widest text-on-surface-variant">{{ __('Dokumen PDF') }}</span>'
                     + '</div>'
                 : '<img class="w-full h-40 object-cover" alt="' + meta.label + '" src="' + previewUrl(d.path) + '" loading="lazy" onerror="' + onerr + '">';
             const fallback = '<div id="' + missId + '" style="display:none" class="w-full h-40 bg-surface-container-low border border-muted-border rounded-lg flex-col items-center justify-center gap-2">'
                 + '<span class="material-symbols-outlined text-[40px] text-on-surface-variant">broken_image</span>'
-                + '<span class="text-[10px] font-label-sm uppercase tracking-widest text-on-surface-variant">File tidak ditemukan</span>'
+                + '<span class="text-[10px] font-label-sm uppercase tracking-widest text-on-surface-variant">{{ __('File tidak ditemukan') }}</span>'
                 + '</div>';
             grid.innerHTML += '<div class="bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden flex flex-col">'
                 + '<div class="relative">' + preview + fallback + '</div>'
@@ -369,7 +369,7 @@
                 + '<span class="text-[10px] font-label-sm uppercase tracking-widest text-on-surface-variant">' + meta.label + '</span>'
                 + '<span class="inline-flex shrink-0 items-center gap-1 px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border ' + badgeClass + '"><span class="material-symbols-outlined fill text-[11px]">' + badgeIcon + '</span>' + badgeLabel + '</span>'
                 + '</div>'
-                + '<a href="' + previewUrl(d.path) + '" target="_blank" rel="noopener" class="mt-auto inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-gold-accent/40 text-gold-accent hover:bg-gold-accent/10 transition-colors"><span class="material-symbols-outlined text-[14px]">open_in_new</span>Buka di Tab Baru</a>'
+                + '<a href="' + previewUrl(d.path) + '" target="_blank" rel="noopener" class="mt-auto inline-flex items-center justify-center gap-1.5 px-3 py-2 text-[10px] font-bold uppercase tracking-wider rounded-lg border border-gold-accent/40 text-gold-accent hover:bg-gold-accent/10 transition-colors"><span class="material-symbols-outlined text-[14px]">open_in_new</span>{{ __('Buka di Tab Baru') }}</a>'
                 + '</div>'
                 + '</div>';
         });
@@ -426,11 +426,11 @@
     function pageConfirm(message, options) {
         options = options || {};
         document.getElementById('confirm-message').textContent = message;
-        document.getElementById('confirm-title').textContent = options.title || 'Konfirmasi';
+        document.getElementById('confirm-title').textContent = options.title || '{{ __('Konfirmasi') }}';
         document.getElementById('confirm-sub').textContent = options.sub || '';
         const yes = document.getElementById('confirm-yes');
         yes.className = 'btn-modal ' + (options.accent === 'primary' ? 'btn-modal-primary' : 'btn-modal-danger');
-        yes.textContent = options.yesLabel || 'Ya, Lanjutkan';
+        yes.textContent = options.yesLabel || '{{ __('Ya, Lanjutkan') }}';
         _confirmCb = options.onConfirm || (function () {});
         const modal = document.getElementById('confirm-modal');
         modal.classList.remove('hidden');

@@ -545,9 +545,9 @@
         'dataModal' => true,
         'close' => 'closeUserModal',
         'icon' => 'person_add',
-        'title' => 'Tambah Pengguna Baru',
+        'title' => __('Tambah Pengguna Baru'),
         'titleId' => 'user-modal-title',
-        'subtitle' => 'Lengkapi data untuk membuat akun baru.',
+        'subtitle' => __('Lengkapi data untuk membuat akun baru.'),
         'subtitleId' => 'user-modal-sub',
     ])
         <div class="p-6 space-y-5">
@@ -663,8 +663,8 @@
 
     const rolesJson = @json($roles->pluck('role_id', 'nama_role'));
     const roleIdLabelMap = @json($roles->pluck('nama_role', 'role_id'));
-    const statusLabelMap = { aktif: 'Aktif', nonaktif: 'Non-aktif', suspend: 'Suspend' };
-    const sortLabels = { nama_asc: 'Nama A-Z', nama_desc: 'Nama Z-A', role: 'Peran', status: 'Status' };
+    const statusLabelMap = { aktif: '{{ __('Aktif') }}', nonaktif: '{{ __('Non-aktif') }}', suspend: '{{ __('Suspend') }}' };
+    const sortLabels = { nama_asc: '{{ __('Nama A-Z') }}', nama_desc: '{{ __('Nama Z-A') }}', role: '{{ __('Peran') }}', status: '{{ __('Status') }}' };
     let isEditMode = false;
 
     /* ── Custom Dropdown Helpers ── */
@@ -790,8 +790,8 @@
         document.getElementById('drawer-status').className = 'inline-flex px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (data.status === 'aktif' ? 'bg-success/10 text-success border border-success/20' : data.status === 'suspend' ? 'bg-error/10 text-error border border-error/20' : 'bg-error/10 text-error border border-error/20');
         const verified = data.is_verified ?? (data.email_verified_at != null);
         document.getElementById('drawer-verified').innerHTML = verified
-            ? '<span class="material-symbols-outlined text-[10px]">verified</span>Verified'
-            : '<span class="material-symbols-outlined text-[10px]">email</span>Belum Verified';
+            ? '<span class="material-symbols-outlined text-[10px]">verified</span>{{ __('Verified') }}'
+            : '<span class="material-symbols-outlined text-[10px]">email</span>{{ __('Belum Verified') }}';
         document.getElementById('drawer-verified').className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (verified ? 'bg-success/10 text-success border border-success/20' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant');
 
         renderDrawerAvatar(data);
@@ -803,7 +803,7 @@
         document.getElementById('nonaktifkan-form').action = urls.nonaktifkan(data.user_id);
 
         const nonaktifkanBtn = document.getElementById('nonaktifkan-btn');
-        nonaktifkanBtn.textContent = data.status === 'aktif' ? 'Nonaktifkan' : 'Aktifkan';
+        nonaktifkanBtn.textContent = data.status === 'aktif' ? '{{ __('Nonaktifkan') }}' : '{{ __('Aktifkan') }}';
         nonaktifkanBtn.className = 'w-full py-3 border font-label-sm text-[11px] uppercase tracking-widest rounded transition-colors ' + (data.status === 'aktif' ? 'border-error text-error hover:bg-error/10' : 'border-success text-success hover:bg-success/10');
 
         document.getElementById('drawer-toko-list').innerHTML = '';
@@ -996,8 +996,8 @@
         document.getElementById('drawer-status').textContent = d.status;
         document.getElementById('drawer-status').className = 'inline-flex px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (d.status === 'aktif' ? 'bg-success/10 text-success border border-success/20' : d.status === 'suspend' ? 'bg-error/10 text-error border border-error/20' : 'bg-error/10 text-error border border-error/20');
         document.getElementById('drawer-verified').innerHTML = d.verified === 'true'
-            ? '<span class="material-symbols-outlined text-[10px]">verified</span>Verified'
-            : '<span class="material-symbols-outlined text-[10px]">email</span>Belum Verified';
+            ? '<span class="material-symbols-outlined text-[10px]">verified</span>{{ __('Verified') }}'
+            : '<span class="material-symbols-outlined text-[10px]">email</span>{{ __('Belum Verified') }}';
         document.getElementById('drawer-verified').className = 'inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ' + (d.verified === 'true' ? 'bg-success/10 text-success border border-success/20' : 'bg-surface-container-high text-on-surface-variant border border-outline-variant');
 
         document.getElementById('role-form').action = urls.role(d.id);
@@ -1304,10 +1304,10 @@
         if (isAktif) {
             titleEl.textContent = '{{ __('Nonaktifkan Pengguna?') }}';
             if (isOwner) {
-                const info = tokoCount > 0 ? tokoCount + ' toko' : 'toko';
-                descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> {{ __('akan menjadi') }} <span class="font-bold text-error">nonaktif</span>{{ __('. Jika ini akun') }} <span class="font-bold">{{ __('Owner') }}</span>, <span class="font-bold">' + info + ' & staff terkait akan ikut dinonaktifkan</span> (bisa diaktifkan lagi).';
+                const info = tokoCount > 0 ? tokoCount + ' {{ __('toko') }}' : '{{ __('toko') }}';
+                descEl.innerHTML = '{{ __('Status') }} <span class="font-bold text-on-surface">"' + nama + '"</span> {{ __('akan menjadi') }} <span class="font-bold text-error">{{ __('nonaktif') }}</span>{{ __('. Jika ini akun') }} <span class="font-bold">{{ __('Owner') }}</span>, <span class="font-bold">' + info + ' {{ __('& staff terkait akan ikut dinonaktifkan') }}</span> ({{ __('bisa diaktifkan lagi') }}).';
             } else {
-                descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> {{ __('akan menjadi') }} <span class="font-bold text-error">nonaktif</span>.';
+                descEl.innerHTML = '{{ __('Status') }} <span class="font-bold text-on-surface">"' + nama + '"</span> {{ __('akan menjadi') }} <span class="font-bold text-error">{{ __('nonaktif') }}</span>.';
             }
             iconWrap.className = 'w-12 h-12 rounded-full bg-error/25 border border-error/30 flex items-center justify-center';
             iconSym.className = 'material-symbols-outlined text-[24px] text-error';
@@ -1317,10 +1317,10 @@
         } else {
             titleEl.textContent = '{{ __('Aktifkan Pengguna?') }}';
             if (isOwner) {
-                const info = tokoCount > 0 ? tokoCount + ' toko' : 'toko';
-                descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> {{ __('akan menjadi') }} <span class="font-bold text-success">aktif</span>{{ __('. Jika ini akun') }} <span class="font-bold">{{ __('Owner') }}</span>, <span class="font-bold">' + info + ' & staff terkait akan ikut diaktifkan</span>.';
+                const info = tokoCount > 0 ? tokoCount + ' {{ __('toko') }}' : '{{ __('toko') }}';
+                descEl.innerHTML = '{{ __('Status') }} <span class="font-bold text-on-surface">"' + nama + '"</span> {{ __('akan menjadi') }} <span class="font-bold text-success">{{ __('aktif') }}</span>{{ __('. Jika ini akun') }} <span class="font-bold">{{ __('Owner') }}</span>, <span class="font-bold">' + info + ' {{ __('& staff terkait akan ikut diaktifkan') }}</span>.';
             } else {
-                descEl.innerHTML = 'Status <span class="font-bold text-on-surface">"' + nama + '"</span> {{ __('akan menjadi') }} <span class="font-bold text-success">aktif</span>.';
+                descEl.innerHTML = '{{ __('Status') }} <span class="font-bold text-on-surface">"' + nama + '"</span> {{ __('akan menjadi') }} <span class="font-bold text-success">{{ __('aktif') }}</span>.';
             }
             iconWrap.className = 'w-12 h-12 rounded-full bg-success/25 border border-success/30 flex items-center justify-center';
             iconSym.className = 'material-symbols-outlined text-[24px] text-success';
