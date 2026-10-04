@@ -132,8 +132,8 @@
     <section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl overflow-hidden card-premium">
         <div class="flex items-center justify-between px-6 pt-6 pb-4 flex-wrap gap-3">
             <div class="flex items-center gap-3">
-                <h2 id="iklan-panel-title" class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ ($tab ?? 'daftar') === 'pengajuan' ? 'Pengajuan Iklan' : (($tab ?? 'daftar') === 'daftar' ? 'Daftar Peringkat Lengkap' : 'Riwayat Iklan') }}</h2>
-                <span id="iklan-panel-chip" class="inline-flex items-center px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border">{{ ($tab ?? 'daftar') === 'pengajuan' ? 'Pengajuan' : (($tab ?? 'daftar') === 'daftar' ? 'Aktif + Terjadwal' : 'Riwayat') }}</span>
+                <h2 id="iklan-panel-title" class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ ($tab ?? 'daftar') === 'pengajuan' ? __('Pengajuan Iklan') : (($tab ?? 'daftar') === 'daftar' ? __('Daftar Peringkat Lengkap') : __('Riwayat Iklan')) }}</h2>
+                <span id="iklan-panel-chip" class="inline-flex items-center px-2.5 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border">{{ ($tab ?? 'daftar') === 'pengajuan' ? __('Pengajuan') : (($tab ?? 'daftar') === 'daftar' ? __('Aktif + Terjadwal') : __('Riwayat')) }}</span>
             </div>
             <div class="flex flex-wrap items-center gap-2 max-sm:w-full max-sm:justify-start">
                 <button type="button" data-tab-btn="pengajuan" class="px-4 py-2 rounded-lg font-label-sm text-[11px] uppercase tracking-widest border transition-colors {{ ($tab ?? 'daftar') === 'pengajuan' ? 'bg-deep-onyx text-on-primary border-deep-onyx' : 'border-muted-border text-on-surface-variant hover:border-gold-accent' }}">{{ __('Pengajuan') }}</button>
@@ -247,9 +247,9 @@
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape') { closeConfirmPeringkat(); closeTolakIklan(); } });
 
     const _iklanTabMeta = {
-        pengajuan: { title: '{{ __('Pengajuan Iklan') }}', chip: 'Pengajuan' },
-        daftar: { title: '{{ __('Daftar Peringkat Lengkap') }}', chip: 'Aktif + Terjadwal' },
-        riwayat: { title: '{{ __('Riwayat Iklan') }}', chip: 'Riwayat' },
+        pengajuan: { title: '{{ __('Pengajuan Iklan') }}', chip: '{{ __('Pengajuan') }}' },
+        daftar: { title: '{{ __('Daftar Peringkat Lengkap') }}', chip: '{{ __('Aktif + Terjadwal') }}' },
+        riwayat: { title: '{{ __('Riwayat Iklan') }}', chip: '{{ __('Riwayat') }}' },
     };
     function switchIklanTab(tab) {
         ['pengajuan', 'daftar', 'riwayat'].forEach((t) => {

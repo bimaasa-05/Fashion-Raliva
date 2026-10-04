@@ -93,12 +93,12 @@
                 </div>
                 <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
                 <div id="chip-group" class="flex flex-wrap gap-2">
-                    <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
-                    <button type="button" data-chip="requested" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menunggu ({{ $stats['requested'] }})</button>
-                    <button type="button" data-chip="disetujui" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Disetujui ({{ $stats['disetujui'] }})</button>
-                    <button type="button" data-chip="escalated" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Eskalasi ({{ $stats['escalated'] }})</button>
-                    <button type="button" data-chip="selesai" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Selesai ({{ $stats['selesai'] }})</button>
-                    <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditolak ({{ $stats['ditolak'] }})</button>
+                    <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Semua (%d)'), $stats['semua']) }}</button>
+                    <button type="button" data-chip="requested" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Menunggu (%d)'), $stats['requested']) }}</button>
+                    <button type="button" data-chip="disetujui" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Disetujui (%d)'), $stats['disetujui']) }}</button>
+                    <button type="button" data-chip="escalated" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Eskalasi (%d)'), $stats['escalated']) }}</button>
+                    <button type="button" data-chip="selesai" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Selesai (%d)'), $stats['selesai']) }}</button>
+                    <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Ditolak (%d)'), $stats['ditolak']) }}</button>
                 </div>
             </div>
 
@@ -306,7 +306,7 @@
             @csrf
             <div class="text-center">
                 <h3 class="font-title-md text-title-md text-on-surface">{{ __('Setujui Refund?') }}</h3>
-                <p class="text-sm text-on-surface-variant mt-2 mb-4">{{ __('Refund') }} <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> sebesar <span class="font-bold text-on-surface">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</span> untuk pesanan {{ $refund->order?->nomor_order ?? '-' }} akan disetujui dan ditandai selesai.</p>
+                <p class="text-sm text-on-surface-variant mt-2 mb-4">{{ __('Refund') }} <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> {{ sprintf(__('sebesar %s untuk pesanan %s akan disetujui dan ditandai selesai.'), 'Rp ' . number_format((float) $refund->jumlah, 0, ',', '.'), $refund->order?->nomor_order ?? '-') }}</p>
             </div>
             @if ($isSaldoAkunRefund)
                 <div class="rounded-xl border border-emerald-500/25 bg-emerald-500/10 p-4">
@@ -325,11 +325,11 @@
             @endif
             <div class="space-y-4 text-left">
                 <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1.5">Bukti Transfer @if (!$isSaldoAkunRefund)<span class="text-error">*</span>@endif</label>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1.5">{{ __('Bukti Transfer') }} @if (!$isSaldoAkunRefund)<span class="text-error">*</span>@endif</label>
                     <input type="file" name="file_bukti" id="setujui-file-{{ $refund->refund_id }}" @if (!$isSaldoAkunRefund) required @endif accept=".jpg,.jpeg,.png,.pdf"
                         @if (!$isSaldoAkunRefund) onchange="document.getElementById('setujui-submit-{{ $refund->refund_id }}').disabled = !this.files.length" @endif
                         class="block w-full text-xs text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:bg-deep-onyx file:text-on-primary file:font-label-sm file:uppercase file:tracking-widest file:cursor-pointer border border-muted-border rounded-lg p-1 focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent" />
-                    <p class="text-[11px] text-on-surface-variant mt-1">@if ($isSaldoAkunRefund)Opsional — dana dikembalikan otomatis ke saldo akun.@else Wajib dilampirkan sebagai bukti transparansi (JPG, PNG, atau PDF, maks 5MB).@endif</p>
+                    <p class="text-[11px] text-on-surface-variant mt-1">@if ($isSaldoAkunRefund){{ __('Opsional — dana dikembalikan otomatis ke saldo akun.') }}@else {{ __('Wajib dilampirkan sebagai bukti transparansi (JPG, PNG, atau PDF, maks 5MB).') }}@endif</p>
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1.5">{{ __('Deskripsi Bukti') }}</label>
@@ -345,7 +345,7 @@
                 </button>
                 <button type="submit" form="setujui-form-{{ $refund->refund_id }}" id="setujui-submit-{{ $refund->refund_id }}" @if (!$isSaldoAkunRefund) disabled data-proof-required @endif class="btn-modal btn-modal-primary flex-1 disabled:opacity-40 disabled:cursor-not-allowed">
                     <span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>
-                    Ya, Setujui &amp; Selesai
+                    {{ __('Ya, Setujui & Selesai') }}
                 </button>
             </div>
         @endslot
@@ -362,7 +362,7 @@
             @csrf
             <div class="text-center">
                 <h3 class="font-title-md text-title-md text-on-surface">{{ __('Tandai Selesai?') }}</h3>
-                <p class="text-sm text-on-surface-variant mt-2 mb-4">{{ __('Refund') }} <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> {{ __('akan ditandai') }} <span class="font-bold text-on-surface">selesai</span> {{ __('dan Customer dikonfirmasi dana telah dikirim.') }}</p>
+                <p class="text-sm text-on-surface-variant mt-2 mb-4">{{ __('Refund') }} <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> {{ __('akan ditandai') }} <span class="font-bold text-on-surface">{{ __('selesai') }}</span> {{ __('dan Customer dikonfirmasi dana telah dikirim.') }}</p>
             </div>
             <div class="space-y-4 text-left">
                 <div>
