@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Sesi Berakhir — Raliva</title>
+<title>{{ __('Sesi Berakhir') }} — Raliva</title>
 <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fbf9f9; color: #1b1c1c;
@@ -22,10 +22,10 @@
 <body>
     <div class="card">
         <div class="icon">⏱️</div>
-        <h1>Sesi Anda Telah Berakhir</h1>
-        <p>Anda terlalu lama tidak beraktivitas sehingga halaman ini kedaluwarsa.<br/>Jangan khawatir — silakan masuk kembali, lalu ulangi tindakan terakhir Anda.</p>
-        <a class="btn" href="{{ route('login', ['expired' => 1]) }}">MASUK KEMBALI</a>
-        <a class="back" href="javascript:history.back()">← Kembali ke halaman sebelumnya</a>
+        <h1>{{ __('Sesi Anda Telah Berakhir') }}</h1>
+        <p>{{ __('Anda terlalu lama tidak beraktivitas sehingga halaman ini kedaluwarsa.') }}<br/>{{ __('Jangan khawatir — silakan masuk kembali, lalu ulangi tindakan terakhir Anda.') }}</p>
+        <a class="btn" href="{{ route('login', ['expired' => 1]) }}">{{ __('MASUK KEMBALI') }}</a>
+        <a class="back" href="javascript:history.back()">← {{ __('Kembali ke halaman sebelumnya') }}</a>
     </div>
 </body>
 </html>

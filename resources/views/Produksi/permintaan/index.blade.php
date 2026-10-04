@@ -116,12 +116,15 @@
                 </div>
                 <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
                     <div class="inline-flex bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1 flex-wrap">
-                        @foreach ([
-                            'semua' => 'Semua',
-                            'pending' => 'Pending',
-                            'disetujui' => 'Disetujui',
-                            'ditolak' => 'Ditolak',
-                        ] as $key => $label)
+                        @php
+                            $tabOptions = [
+                                'semua' => __('Semua'),
+                                'pending' => __('Pending'),
+                                'disetujui' => __('Disetujui'),
+                                'ditolak' => __('Ditolak'),
+                            ];
+                        @endphp
+                        @foreach ($tabOptions as $key => $label)
                             <a href="{{ route('produksi.permintaan', array_merge(request()->except(['status', 'page']), ['status' => $key])) }}"
                                class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors {{ $activeStatus === $key ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">{{ $label }}</a>
                         @endforeach
@@ -157,9 +160,9 @@
                                     default => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
                                 };
                                 $statusLabel = match ($p->status) {
-                                    'pending' => 'Pending',
-                                    'disetujui' => 'Disetujui',
-                                    'ditolak' => 'Ditolak',
+                                    'pending' => __('Pending'),
+                                    'disetujui' => __('Disetujui'),
+                                    'ditolak' => __('Ditolak'),
                                     default => ucfirst($p->status),
                                 };
                                 $jenisLabel = $jenisOptions[$p->jenis_permintaan] ?? ucfirst($p->jenis_permintaan);
@@ -214,7 +217,7 @@
                                             <span class="material-symbols-outlined text-[28px] text-on-surface-variant">inbox</span>
                                         </div>
                                         <p class="text-on-surface-variant font-body-md text-sm">
-                                            @if ($activeStatus === 'semua')Belum ada permintaan operasional.@else Tidak ada permintaan dengan status "{{ $activeStatus }}".@endif
+                                            @if ($activeStatus === 'semua'){{ __('Belum ada permintaan operasional.') }}@else {{ sprintf(__('Tidak ada permintaan dengan status "%s".'), match ($activeStatus) { 'pending' => __('Pending'), 'disetujui' => __('Disetujui'), 'ditolak' => __('Ditolak'), default => $activeStatus }) }}@endif
                                         </p>
                                     </div>
                                 </td>
@@ -279,7 +282,7 @@
                     <div class="py-10 text-center">
                         <span class="material-symbols-outlined text-[28px] text-on-surface-variant">inbox</span>
                         <p class="text-on-surface-variant font-body-md text-sm mt-2">
-                            @if ($activeStatus === 'semua')Belum ada permintaan operasional.@else Tidak ada permintaan dengan status "{{ $activeStatus }}".@endif
+                            @if ($activeStatus === 'semua'){{ __('Belum ada permintaan operasional.') }}@else {{ sprintf(__('Tidak ada permintaan dengan status "%s".'), match ($activeStatus) { 'pending' => __('Pending'), 'disetujui' => __('Disetujui'), 'ditolak' => __('Ditolak'), default => $activeStatus }) }}@endif
                         </p>
                     </div>
                 @endforelse

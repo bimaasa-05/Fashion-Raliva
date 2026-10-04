@@ -167,7 +167,7 @@
                 <p class="text-on-surface-variant font-body-md text-sm py-6 text-center">{{ __('Tidak ada produksi berjalan.') }}</p>
             @endif
             <a href="{{ route('produksi.data-produksi') }}" class="mt-6 w-full flex items-center justify-center gap-2 py-3 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
-                Lihat Data Produksi<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                {{ __('Lihat Data Produksi') }}<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
             </a>
         </section>
     </div>

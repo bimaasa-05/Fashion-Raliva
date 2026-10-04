@@ -94,7 +94,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="py-12 text-center text-on-surface-variant">{{ $tab === 'siap' ? 'Belum ada pesanan siap untuk dikirim.' : 'Tidak ada pesanan menunggu QC.' }}</td></tr>
+                        <tr><td colspan="5" class="py-12 text-center text-on-surface-variant">{{ $tab === 'siap' ? __('Belum ada pesanan siap untuk dikirim.') : __('Tidak ada pesanan menunggu QC.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -145,7 +145,7 @@
                     </div>
                 </article>
             @empty
-                <p class="text-center text-on-surface-variant py-10">{{ $tab === 'siap' ? 'Belum ada pesanan siap untuk dikirim.' : 'Tidak ada pesanan menunggu QC.' }}</p>
+                <p class="text-center text-on-surface-variant py-10">{{ $tab === 'siap' ? __('Belum ada pesanan siap untuk dikirim.') : __('Tidak ada pesanan menunggu QC.') }}</p>
             @endforelse
         </div>
         {{ $orders->withQueryString()->links() }}

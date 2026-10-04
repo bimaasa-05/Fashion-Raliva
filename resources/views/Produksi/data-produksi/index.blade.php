@@ -135,13 +135,13 @@
                                         $bahanTambahan = $o->bahanList->filter(fn ($b) => $b->isDariProduksi());
                                     @endphp
                                     @if ($bahanAdmin->isNotEmpty())
-                                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Bahan dari Admin ({{ $bahanAdmin->count() }})</p>
+                                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">{{ sprintf(__('Bahan dari Admin (%d)'), $bahanAdmin->count()) }}</p>
                                         @foreach ($bahanAdmin as $bahan)
                                             <p class="text-xs text-on-surface-variant">{{ $bahan->nama_bahan }}: {{ $bahan->jumlah }} {{ $bahan->satuan }}</p>
                                         @endforeach
                                     @endif
                                     @if ($bahanTambahan->isNotEmpty())
-                                        <p class="text-[10px] uppercase tracking-wider text-secondary mt-1.5 mb-1">Tambahan Produksi ({{ $bahanTambahan->count() }})</p>
+                                        <p class="text-[10px] uppercase tracking-wider text-secondary mt-1.5 mb-1">{{ sprintf(__('Tambahan Produksi (%d)'), $bahanTambahan->count()) }}</p>
                                         @foreach ($bahanTambahan as $bahan)
                                             <p class="text-xs text-secondary">{{ $bahan->nama_bahan }}: {{ $bahan->jumlah }} {{ $bahan->satuan }} <span>{{ __('(Produksi)') }}</span></p>
                                         @endforeach
@@ -166,7 +166,7 @@
                                            data-countdown-start="{{ $o->tgl_mulai_produksi->timestamp }}"
                                            data-countdown-end="{{ $o->tgl_berakhir_produksi->timestamp }}"
                                            data-countdown-progress="{{ $progressPct }}">
-                                            {{ $isBelumMulai ? 'Mulai dalam...' : ($isTerlambat ? 'Terlambat...' : 'Memuat...') }}
+                                            {{ $isBelumMulai ? __('Mulai dalam...') : ($isTerlambat ? __('Terlambat...') : __('Memuat...')) }}
                                         </p>
                                     @endif
                                 @else
@@ -292,7 +292,7 @@
                                 <p class="text-xs mt-1 countdown-badge {{ $isBelumMulai ? 'text-secondary' : ($isTerlambat ? 'text-error font-bold' : 'text-on-surface-variant') }}"
                                    data-countdown-start="{{ $o->tgl_mulai_produksi->timestamp }}"
                                    data-countdown-end="{{ $o->tgl_berakhir_produksi->timestamp }}"
-                                   data-countdown-progress="{{ $progressPct }}">{{ $isBelumMulai ? 'Mulai dalam...' : ($isTerlambat ? 'Terlambat...' : 'Memuat...') }}</p>
+                                   data-countdown-progress="{{ $progressPct }}">{{ $isBelumMulai ? __('Mulai dalam...') : ($isTerlambat ? __('Terlambat...') : __('Memuat...')) }}</p>
                             @endif
                         </div>
                     @endif
@@ -377,7 +377,7 @@
                 <p class="text-xs text-on-surface-variant">{{ __('Tambah bahan yang belum diinput Admin. Pilih dari katalog atau ketik manual.') }}</p>
                 <div id="bahan-container-produksi-{{ $o->order_id }}" class="space-y-3"></div>
                 <button type="button" onclick="addBahanProduksiRow('{{ $o->order_id }}')" class="w-full py-2.5 border border-dashed border-outline-variant rounded-lg text-xs font-semibold text-on-surface-variant hover:border-gold-accent hover:text-gold-accent transition-colors flex items-center justify-center gap-1.5">
-                    <span class="material-symbols-outlined text-[16px]">add</span> Tambah Bahan
+                    <span class="material-symbols-outlined text-[16px]">add</span> {{ __('Tambah Bahan') }}
                 </button>
             </div>
             <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex gap-3">
@@ -485,7 +485,7 @@
         row.innerHTML = `
             <div class="flex items-start justify-between gap-3">
                 <select name="bahan[${idx}][bahan_id]" class="raliva-select flex-1 min-w-0" onchange="onBahanSelectChange(this)">
-                    <option value="">— Pilih bahan / ketik manual —</option>
+                    <option value="">{{ __('— Pilih bahan / ketik manual —') }}</option>
                     ${bahanProduksiData.map(b => `<option value="${b.bahan_id}" data-nama="${b.nama_bahan}" data-satuan="${b.satuan}">${b.nama_bahan} (Stok: ${b.stok} ${b.satuan})</option>`).join('')}
                 </select>
                 <button type="button" onclick="removeBahanRow(this)" class="shrink-0 px-2.5 py-2.5 rounded-lg border border-error/20 text-error hover:bg-error/10">
@@ -498,7 +498,7 @@
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-[110px_1fr] gap-3">
                 <select name="bahan[${idx}][satuan]" required class="raliva-select w-full">
-                    <option value="">— Satuan —</option>
+                    <option value="">{{ __('— Satuan —') }}</option>
                     @foreach (\App\Models\ProductionOrderBahan::SATUAN as $st)
                         <option value="{{ $st }}">{{ $st }}</option>
                     @endforeach

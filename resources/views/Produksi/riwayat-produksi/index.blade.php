@@ -51,12 +51,15 @@
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
             <div class="inline-flex bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1 flex-wrap">
-                @foreach ([
-                    'semua' => 'Semua',
-                    'siap_kirim' => 'Siap Kirim',
-                    'dikirim' => 'Dikirim',
-                    'selesai' => 'Selesai',
-                ] as $key => $label)
+                @php
+                    $statusOptions = [
+                        'semua' => __('Semua'),
+                        'siap_kirim' => __('Siap Kirim'),
+                        'dikirim' => __('Dikirim'),
+                        'selesai' => __('Selesai'),
+                    ];
+                @endphp
+                @foreach ($statusOptions as $key => $label)
                     <a href="{{ route('produksi.riwayat-produksi', array_merge(request()->except(['status', 'page']), ['status' => $key])) }}"
                        class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors {{ $status === $key ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">{{ $label }}</a>
                 @endforeach
@@ -97,9 +100,9 @@
                                 default => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
                             };
                             $statusLabel = match ($o->status) {
-                                'siap_kirim' => 'Siap Kirim',
-                                'dikirim' => 'Dikirim',
-                                'selesai' => 'Selesai',
+                                'siap_kirim' => __('Siap Kirim'),
+                                'dikirim' => __('Dikirim'),
+                                'selesai' => __('Selesai'),
                                 default => ucfirst($o->status),
                             };
                         @endphp
@@ -145,11 +148,11 @@
                                     </div>
                                     <p class="text-on-surface-variant font-body-md text-sm">
                                         @if ($cari !== '')
-                                            Tidak ada hasil untuk pencarian "{{ $cari }}".
+                                            {{ sprintf(__('Tidak ada hasil untuk pencarian "%s".'), $cari) }}
                                         @elseif ($status !== 'semua')
-                                            Tidak ada pesanan dengan status "{{ $status }}".
+                                            {{ sprintf(__('Tidak ada pesanan dengan status "%s".'), $statusOptions[$status] ?? $status) }}
                                         @else
-                                            Belum ada riwayat produksi.
+                                            {{ __('Belum ada riwayat produksi.') }}
                                         @endif
                                     </p>
                                 </div>
@@ -173,9 +176,9 @@
                         default => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
                     };
                     $statusLabel = match ($o->status) {
-                        'siap_kirim' => 'Siap Kirim',
-                        'dikirim' => 'Dikirim',
-                        'selesai' => 'Selesai',
+                        'siap_kirim' => __('Siap Kirim'),
+                        'dikirim' => __('Dikirim'),
+                        'selesai' => __('Selesai'),
                         default => ucfirst($o->status),
                     };
                 @endphp
@@ -218,11 +221,11 @@
                     <span class="material-symbols-outlined text-[28px] text-on-surface-variant">history</span>
                     <p class="text-on-surface-variant font-body-md text-sm mt-2">
                         @if ($cari !== '')
-                            Tidak ada hasil untuk pencarian "{{ $cari }}".
+                            {{ sprintf(__('Tidak ada hasil untuk pencarian "%s".'), $cari) }}
                         @elseif ($status !== 'semua')
-                            Tidak ada pesanan dengan status "{{ $status }}".
+                            {{ sprintf(__('Tidak ada pesanan dengan status "%s".'), $statusOptions[$status] ?? $status) }}
                         @else
-                            Belum ada riwayat produksi.
+                            {{ __('Belum ada riwayat produksi.') }}
                         @endif
                     </p>
                 </div>
