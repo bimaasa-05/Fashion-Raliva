@@ -68,11 +68,11 @@ class PemeriksaanStokController extends Controller
             'stok_fisik' => 'required|integer|min:0',
             'catatan' => 'nullable|string|max:500',
         ], [
-            'product_variant_id.required' => 'Produk wajib dipilih.',
-            'product_variant_id.exists' => 'Produk tidak valid.',
-            'stok_fisik.required' => 'Jumlah stok fisik wajib diisi.',
-            'stok_fisik.integer' => 'Stok fisik harus berupa angka.',
-            'stok_fisik.min' => 'Stok fisik minimal 0.',
+            'product_variant_id.required' => __('Produk wajib dipilih.'),
+            'product_variant_id.exists' => __('Produk tidak valid.'),
+            'stok_fisik.required' => __('Jumlah stok fisik wajib diisi.'),
+            'stok_fisik.integer' => __('Stok fisik harus berupa angka.'),
+            'stok_fisik.min' => __('Stok fisik minimal 0.'),
         ]);
 
         $stokSistem = 0;
@@ -104,7 +104,7 @@ class PemeriksaanStokController extends Controller
                             ->update(['jumlah_stok' => $data['stok_fisik']]);
 
                         if ($affected === 0) {
-                            throw new \RuntimeException('Gagal menyesuaikan stok.');
+                            throw new \RuntimeException(__('Gagal menyesuaikan stok.'));
                         }
                     } else {
                         WarehouseStock::create([

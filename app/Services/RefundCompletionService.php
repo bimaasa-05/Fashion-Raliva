@@ -29,7 +29,7 @@ class RefundCompletionService
 
         if (! $store) {
             static::cleanupFile($path);
-            throw new \RuntimeException('Pesanan tidak terhubung ke toko, refund tidak dapat diselesaikan.');
+            throw new \RuntimeException(__('Pesanan tidak terhubung ke toko, refund tidak dapat diselesaikan.'));
         }
 
         $lama = $refund->only(['status']);
@@ -39,19 +39,19 @@ class RefundCompletionService
                 $locked = Refund::whereKey($refund->refund_id)->lockForUpdate()->first();
 
                 if (! $locked || $locked->status !== Refund::STATUS_DISETUJUI) {
-                    throw new \RuntimeException('Status refund sudah berubah oleh pihak lain.');
+                    throw new \RuntimeException(__('Status refund sudah berubah oleh pihak lain.'));
                 }
 
                 $wallet = Wallet::where('store_id', $store->store_id)->lockForUpdate()->first();
 
                 if (! $wallet) {
-                    throw new \RuntimeException('Wallet toko tidak ditemukan, refund dibatalkan.');
+                    throw new \RuntimeException(__('Wallet toko tidak ditemukan, refund dibatalkan.'));
                 }
 
                 $saldoSebelum = (float) $wallet->saldo_tersedia;
 
                 if ($saldoSebelum < (float) $locked->jumlah) {
-                    throw new \RuntimeException('Saldo toko tidak cukup untuk refund.');
+                    throw new \RuntimeException(__('Saldo toko tidak cukup untuk refund.'));
                 }
 
                 $wallet->decrement('saldo_tersedia', (float) $locked->jumlah);

@@ -238,7 +238,7 @@
                     <div class="flex justify-end pt-4 border-t border-muted-border">
                         <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium btn-sheen inline-flex items-center gap-2">
                             <span class="material-symbols-outlined text-[16px]">save</span>
-                            Simpan Perubahan
+                            {{ __('Simpan Perubahan') }}
                         </button>
                     </div>
                 </form>
@@ -297,7 +297,7 @@
                     <div class="flex justify-end pt-4 border-t border-muted-border">
                         <button type="submit" class="py-3 px-8 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium btn-sheen inline-flex items-center gap-2">
                             <span class="material-symbols-outlined text-[16px]">key</span>
-                            Ubah Password
+                            {{ __('Ubah Password') }}
                         </button>
                     </div>
                 </form>

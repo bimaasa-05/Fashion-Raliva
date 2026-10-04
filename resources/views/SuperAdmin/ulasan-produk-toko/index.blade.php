@@ -138,7 +138,7 @@
                             <span class="text-on-surface-variant text-xs ml-1">{{ $review->rating }}/5</span>
                         </div>
                         <!-- Ulasan preview -->
-                        <p class="text-on-surface text-sm line-clamp-2 mb-3">{{ $review->ulasan ?? 'Tidak ada ulasan teks' }}</p>
+                        <p class="text-on-surface text-sm line-clamp-2 mb-3">{{ $review->ulasan ?? __('Tidak ada ulasan teks') }}</p>
                         <!-- Date -->
                         <p class="text-on-surface-variant/60 text-[11px]">{{ $review->created_at->translatedFormat('d M Y') }}</p>
                     </div>
@@ -169,8 +169,8 @@
     'dataModal' => true,
     'close' => 'closeDetailModal',
     'icon' => 'rate_review',
-    'title' => 'Detail Ulasan',
-    'subtitle' => 'Informasi lengkap ulasan produk',
+    'title' => __('Detail Ulasan'),
+    'subtitle' => __('Informasi lengkap ulasan produk'),
     'size' => 'lg',
 ])
     <!-- Reviewer info -->
@@ -324,10 +324,10 @@
         const badge = document.getElementById('modal-status-badge');
         if (review.status === 'aktif') {
             badge.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20';
-            badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-success"></span> Aktif';
+            badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-success"></span> {{ __('Aktif') }}';
         } else {
             badge.className = 'inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-error/10 text-error text-[10px] font-bold uppercase border border-error/20';
-            badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-error"></span> Nonaktif';
+            badge.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-error"></span> {{ __('Nonaktif') }}';
         }
 
         // Stars
@@ -336,15 +336,15 @@
             starsHtml += '<span class="material-symbols-outlined text-[28px] ' + (i <= review.rating ? 'star' : 'star-empty') + '">star</span>';
         }
         document.getElementById('modal-stars').innerHTML = starsHtml;
-        document.getElementById('modal-rating-text').textContent = review.rating + ' dari 5 bintang';
+        document.getElementById('modal-rating-text').textContent = review.rating + ' {{ __('dari 5 bintang') }}';
 
         // Actions
         const actionsDiv = document.getElementById('modal-actions');
         actionsDiv.innerHTML = '';
         if (review.status === 'aktif') {
-            actionsDiv.innerHTML = '<button onclick="openToggleModal(' + review.id + ', \'nonaktifkan\', \'' + review.reviewer.replace(/'/g, "\\'") + '\')" class="flex-1 py-3 px-6 border border-error/50 text-error font-label-sm text-[11px] uppercase tracking-widest rounded-lg hover:bg-error/10 transition-colors inline-flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[16px]">block</span> Nonaktifkan</button>';
+            actionsDiv.innerHTML = '<button onclick="openToggleModal(' + review.id + ', \'nonaktifkan\', \'' + review.reviewer.replace(/'/g, "\\'") + '\')" class="flex-1 py-3 px-6 border border-error/50 text-error font-label-sm text-[11px] uppercase tracking-widest rounded-lg hover:bg-error/10 transition-colors inline-flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[16px]">block</span> {{ __('Nonaktifkan') }}</button>';
         } else {
-            actionsDiv.innerHTML = '<button onclick="openToggleModal(' + review.id + ', \'aktifkan\', \'' + review.reviewer.replace(/'/g, "\\'") + '\')" class="flex-1 py-3 px-6 border border-success/50 text-success font-label-sm text-[11px] uppercase tracking-widest rounded-lg hover:bg-success/10 transition-colors inline-flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[16px]">check_circle</span> Aktifkan</button>';
+            actionsDiv.innerHTML = '<button onclick="openToggleModal(' + review.id + ', \'aktifkan\', \'' + review.reviewer.replace(/'/g, "\\'") + '\')" class="flex-1 py-3 px-6 border border-success/50 text-success font-label-sm text-[11px] uppercase tracking-widest rounded-lg hover:bg-success/10 transition-colors inline-flex items-center justify-center gap-2"><span class="material-symbols-outlined text-[16px]">check_circle</span> {{ __('Aktifkan') }}</button>';
         }
 
         const modal = document.getElementById('detailModal');

@@ -25,7 +25,7 @@ class EnsurePermission
         if (! Auth::user()->hasPermission($kodePermission)) {
             return response()->view('errors.access-denied', [
                 'homeRoute' => EnsureRole::homeRouteFor(Auth::user()->role?->nama_role),
-                'message'   => 'Anda tidak memiliki izin ('.$kodePermission.') untuk melakukan tindakan ini.',
+                'message'   => sprintf(__('Anda tidak memiliki izin (%s) untuk melakukan tindakan ini.'), $kodePermission),
             ], 403);
         }
 

@@ -62,7 +62,7 @@
             $pct = fn ($v) => $v !== null ? number_format($v, 2, ',', '.').'%' : $nullLbl;
             $rp = fn ($v) => $v !== null ? $fmt($v) : $nullLbl;
         @endphp
-        <div class="section-title"><span class="bar"></span>{{ __('Ringkasan') }} <small>{{ ucfirst($roleFilter) }}{{ !empty($dari) || !empty($sampai) ? ' • '.($dari ?? __('awal')).' '.__('s/d').' '.($sampai ?? __('sekarang')) : '' }}</small></div>
+        <div class="section-title"><span class="bar"></span>{{ __('Ringkasan') }} <small>{{ \App\Support\StatusStyle::label($roleFilter) }}{{ !empty($dari) || !empty($sampai) ? ' • '.($dari ?? __('awal')).' '.__('s/d').' '.($sampai ?? __('sekarang')) : '' }}</small></div>
         <table class="kpi">
             <tr>
                 @if (($roleFilter ?? 'semua') === 'owner')
@@ -90,7 +90,7 @@
             </tr>
         </table>
 
-        <div class="section-title"><span class="bar"></span>{{ __('Rekap per Karyawan') }} <small>{{ ucfirst($roleFilter ?? 'semua') }}</small></div>
+        <div class="section-title"><span class="bar"></span>{{ __('Rekap per Karyawan') }} <small>{{ \App\Support\StatusStyle::label($roleFilter ?? 'semua') }}</small></div>
         <div class="table-scroll">
             <table>
                 <thead>

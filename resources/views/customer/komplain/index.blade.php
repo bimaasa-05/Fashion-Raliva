@@ -660,7 +660,7 @@ f<!DOCTYPE html>
                 headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                 signal: controller.signal
             });
-            if (!resp.ok) throw new Error('Gagal memuat pesan');
+            if (!resp.ok) throw new Error('{{ __('Gagal memuat pesan') }}');
             const messages = await resp.json();
             const same = messages.length === chatMessages.length &&
                 messages.every(function (m, i) {

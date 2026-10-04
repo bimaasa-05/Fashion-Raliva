@@ -161,7 +161,7 @@ class StatusStyle
         $item = static::MAP[$key] ?? ['label' => static::labelFromKey($key), 'class' => self::CLASS_NEUTRAL];
 
         return [
-            'label' => $label ?: $item['label'],
+            'label' => $label ? __($label) : __($item['label']),
             'class' => $item['class'],
         ];
     }
@@ -194,11 +194,14 @@ class StatusStyle
     /** map lengkap untuk JS (semua key yang dikenal) */
     public static function toJson(): array
     {
-        return static::MAP;
+        return array_map(
+            fn (array $item) => ['label' => __($item['label']), 'class' => $item['class']],
+            static::MAP
+        );
     }
 
     protected static function labelFromKey(string $key): string
     {
-        return ucwords(str_replace('_', ' ', $key));
+        return __(ucwords(str_replace('_', ' ', $key)));
     }
 }

@@ -111,12 +111,12 @@
         <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">{{ __('Kepuasan Pelanggan') }}</p>
             <div data-donut='[{"value":{{ $kepuasan['persen'] }},"color":"#8B1E3F","label":"Puas"},{"value":{{ 100 - $kepuasan['persen'] }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Rating {{ $kepuasan['rata'] > 0 ? number_format($kepuasan['rata'], 1, ',', '.') : '-' }} / 5" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-            <p class="text-[11px] text-on-surface-variant mt-1">Dari {{ number_format($kepuasan['total'], 0, ',', '.') }} ulasan</p>
+            <p class="text-[11px] text-on-surface-variant mt-1">{{ sprintf(__('Dari %s ulasan'), number_format($kepuasan['total'], 0, ',', '.')) }}</p>
         </div>
         <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">{{ __('SLA Respons Komplain') }}</p>
-            <div data-donut='[{"value":{{ $sla['total'] > 0 ? $sla['persen'] : 0 }},"color":"#c03a5a","label":"Tepat SLA"},{"value":{{ $sla['total'] > 0 ? 100 - $sla['persen'] : 100 }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="{{ $sla['total'] > 0 ? 'Target 24 Jam' : 'Belum Ada Data' }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-            <p class="text-[11px] text-on-surface-variant mt-1">{{ $sla['total'] > 0 ? 'Rata-rata balasan dalam '.$sla['rataJam'].' jam • '.number_format($sla['total'], 0, ',', '.').' komplain' : 'Belum ada komplain yang dibalas — tidak dihitung.' }}</p>
+            <div data-donut='[{"value":{{ $sla['total'] > 0 ? $sla['persen'] : 0 }},"color":"#c03a5a","label":"{{ __('Tepat SLA') }}"},{"value":{{ $sla['total'] > 0 ? 100 - $sla['persen'] : 100 }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="{{ $sla['total'] > 0 ? __('Target 24 Jam') : __('Belum Ada Data') }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+            <p class="text-[11px] text-on-surface-variant mt-1">{{ $sla['total'] > 0 ? sprintf(__('Rata-rata balasan dalam %s jam • %s komplain'), $sla['rataJam'], number_format($sla['total'], 0, ',', '.')) : __('Belum ada komplain yang dibalas — tidak dihitung.') }}</p>
         </div>
     </div>
 </section>

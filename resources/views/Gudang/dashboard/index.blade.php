@@ -38,7 +38,7 @@
             </div>
             <div>
                 <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Gudang Aktif') }}</p>
-                <p class="font-title-md text-title-md text-on-surface leading-tight">{{ $warehouse->nama_gudang ?? 'Belum ada gudang' }}</p>
+                <p class="font-title-md text-title-md text-on-surface leading-tight">{{ $warehouse->nama_gudang ?? __('Belum ada gudang') }}</p>
             </div>
         </div>
         <div class="flex items-center gap-2">

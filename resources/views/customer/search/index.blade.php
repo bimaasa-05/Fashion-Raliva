@@ -231,7 +231,7 @@
 </a>
 <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
 <div class="flex items-center gap-sm">
-<a href="{{ route('customer.chart', ['from' => 'search']) }}" aria-label="Cart" class="relative hover:opacity-80 transition-opacity flex">
+<a href="{{ route('customer.chart', ['from' => 'search']) }}" aria-label="{{ __('Cart') }}" class="relative hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
 <span class="cart-badge absolute -top-1 -right-1 bg-secondary text-on-secondary text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
 </a>
@@ -307,7 +307,7 @@
 <h3 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">{{ $a->nama_produk }}</h3>
 <span class="font-body-sm text-body-sm text-on-surface mt-1">Rp {{ number_format($sMin, 0, ',', '.') }}</span>
 </a>
-<button type="button" data-wishlist-toggle data-product-id="{{ $a->product_id }}" aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center{{ $sWl ? ' wishlisted-active' : '' }}">
+<button type="button" data-wishlist-toggle data-product-id="{{ $a->product_id }}" aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center{{ $sWl ? ' wishlisted-active' : '' }}">
 <span class="material-symbols-outlined" data-icon="favorite{{ $sWl ? '' : '_border' }}"@if($sWl) data-weight="fill"@endif>favorite{{ $sWl ? '' : '_border' }}</span>
 </button>
 </div>
@@ -340,7 +340,7 @@
 <h3 class="font-body-sm text-body-sm font-semibold text-on-surface mt-1 truncate">{{ $p->nama_produk }}</h3>
 <span class="font-body-sm text-body-sm text-on-surface mt-1">Rp {{ number_format($sMin, 0, ',', '.') }}</span>
 </a>
-<button type="button" data-wishlist-toggle data-product-id="{{ $p->product_id }}" aria-label="Add to wishlist" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center{{ $sWl ? ' wishlisted-active' : '' }}">
+<button type="button" data-wishlist-toggle data-product-id="{{ $p->product_id }}" aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center{{ $sWl ? ' wishlisted-active' : '' }}">
 <span class="material-symbols-outlined" data-icon="favorite{{ $sWl ? '' : '_border' }}"@if($sWl) data-weight="fill"@endif>favorite{{ $sWl ? '' : '_border' }}</span>
 </button>
 </div>

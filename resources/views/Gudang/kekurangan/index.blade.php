@@ -52,7 +52,7 @@
                             </td>
                             <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $o->tanggal_qc?->translatedFormat('d M Y H:i') ?? '-' }}</td>
                             <td class="py-3.5 px-4 text-right">
-                                <form method="POST" action="{{ route('gudang.kekurangan.siapkan', $o->order_id) }}" onsubmit="return confirm('Tandai kekurangan pesanan {{ $o->nomor_order }} sebagai sudah disiapkan dari gudang?');">
+                                <form method="POST" action="{{ route('gudang.kekurangan.siapkan', $o->order_id) }}" onsubmit="return confirm('{{ sprintf(__('Tandai kekurangan pesanan %s sebagai sudah disiapkan dari gudang?'), $o->nomor_order) }}');">
                                     @csrf
                                     <button type="submit" class="px-3 py-1.5 bg-deep-onyx text-on-primary text-[10px] font-bold uppercase rounded hover:opacity-90 transition-opacity btn-premium">{{ __('Tandai Sudah Disiapkan') }}</button>
                                 </form>
@@ -85,7 +85,7 @@
                                 <span class="text-on-surface-variant">× {{ $item->quantity }}</span></p>
                         @endforeach
                     </div>
-                    <form method="POST" action="{{ route('gudang.kekurangan.siapkan', $o->order_id) }}" class="mt-3 pt-3 border-t border-muted-border" onsubmit="return confirm('Tandai kekurangan pesanan {{ $o->nomor_order }} sebagai sudah disiapkan dari gudang?');">
+                    <form method="POST" action="{{ route('gudang.kekurangan.siapkan', $o->order_id) }}" class="mt-3 pt-3 border-t border-muted-border" onsubmit="return confirm('{{ sprintf(__('Tandai kekurangan pesanan %s sebagai sudah disiapkan dari gudang?'), $o->nomor_order) }}');">
                         @csrf
                         <button type="submit" class="w-full py-2.5 bg-deep-onyx text-on-primary text-[11px] font-bold uppercase rounded btn-premium">{{ __('Tandai Sudah Disiapkan') }}</button>
                     </form>

@@ -55,7 +55,7 @@ class CustomerWalletService
             $wallet = CustomerWallet::whereKey($wallet->customer_wallet_id)->lockForUpdate()->first();
 
             if ((float) $wallet->saldo_tersedia < $jumlah) {
-                throw new \RuntimeException('Saldo akun tidak mencukupi untuk pembayaran ini.');
+                throw new \RuntimeException(__('Saldo akun tidak mencukupi untuk pembayaran ini.'));
             }
 
             $sebelum = (float) $wallet->saldo_tersedia;
@@ -81,7 +81,7 @@ class CustomerWalletService
             if (CustomerWalletTransaction::where('order_id', $order->order_id)
                 ->where('jenis_transaksi', CustomerWalletTransaction::JENIS_REFUND_MASUK)
                 ->exists()) {
-                throw new \RuntimeException('Refund untuk pesanan ini sudah pernah dikembalikan ke saldo.');
+                throw new \RuntimeException(__('Refund untuk pesanan ini sudah pernah dikembalikan ke saldo.'));
             }
 
             $wallet = static::walletFor($order->checkout->user);
@@ -111,7 +111,7 @@ class CustomerWalletService
             $wallet = CustomerWallet::whereKey($wallet->customer_wallet_id)->lockForUpdate()->first();
 
             if ((float) $wallet->saldo_tersedia < $jumlah) {
-                throw new \RuntimeException('Saldo akun tidak mencukupi untuk penarikan ini.');
+                throw new \RuntimeException(__('Saldo akun tidak mencukupi untuk penarikan ini.'));
             }
 
             $sebelum = (float) $wallet->saldo_tersedia;
@@ -137,7 +137,7 @@ class CustomerWalletService
             if (CustomerWalletTransaction::where('customer_withdrawal_id', $withdrawal->customer_withdrawal_id)
                 ->where('jenis_transaksi', CustomerWalletTransaction::JENIS_PENARIKAN_MASUK)
                 ->exists()) {
-                throw new \RuntimeException('Penarikan ini sudah pernah dikembalikan ke saldo.');
+                throw new \RuntimeException(__('Penarikan ini sudah pernah dikembalikan ke saldo.'));
             }
 
             $wallet = static::walletFor($user);

@@ -9,13 +9,13 @@
 
 @php
     $badgeMap = [
-        'open' => ['label' => 'Terbuka', 'class' => \App\Support\StatusStyle::badgeClass('open')],
-        'menunggu' => ['label' => 'Terbuka', 'class' => \App\Support\StatusStyle::badgeClass('open')],
-        'baru' => ['label' => 'Baru', 'class' => \App\Support\StatusStyle::badgeClass('baru')],
-        'diproses' => ['label' => 'Diproses', 'class' => \App\Support\StatusStyle::badgeClass('diproses')],
-        'selesai' => ['label' => 'Selesai', 'class' => \App\Support\StatusStyle::badgeClass('selesai')],
-        'ditutup' => ['label' => 'Ditutup', 'class' => \App\Support\StatusStyle::badgeClass('ditutup')],
-        'escalated' => ['label' => 'Eskalasi', 'class' => \App\Support\StatusStyle::badgeClass('eskalasi')],
+        'open' => ['label' => __('Terbuka'), 'class' => \App\Support\StatusStyle::badgeClass('open')],
+        'menunggu' => ['label' => __('Terbuka'), 'class' => \App\Support\StatusStyle::badgeClass('open')],
+        'baru' => ['label' => __('Baru'), 'class' => \App\Support\StatusStyle::badgeClass('baru')],
+        'diproses' => ['label' => __('Diproses'), 'class' => \App\Support\StatusStyle::badgeClass('diproses')],
+        'selesai' => ['label' => __('Selesai'), 'class' => \App\Support\StatusStyle::badgeClass('selesai')],
+        'ditutup' => ['label' => __('Ditutup'), 'class' => \App\Support\StatusStyle::badgeClass('ditutup')],
+        'escalated' => ['label' => __('Eskalasi'), 'class' => \App\Support\StatusStyle::badgeClass('eskalasi')],
     ];
 @endphp
 
@@ -551,7 +551,7 @@
                 headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                 signal: controller.signal
             });
-            if (!resp.ok) throw new Error('Gagal memuat pesan');
+            if (!resp.ok) throw new Error('{{ __('Gagal memuat pesan') }}');
             const messages = await resp.json();
             const same = messages.length === chatMessages.length &&
                 messages.every(function (m, i) {

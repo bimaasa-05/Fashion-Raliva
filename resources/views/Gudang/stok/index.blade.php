@@ -140,7 +140,7 @@
                             <td class="p-4 text-center text-on-surface-variant">{{ $row->stok_minimum }}</td>
                             <td class="p-4 text-right font-title-md text-sm text-on-surface whitespace-nowrap">Rp {{ number_format($row->hpp, 0, ',', '.') }}</td>
                             <td class="p-4 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format($row->harga_jual, 0, ',', '.') }}</td>
-                            <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass }} text-[10px] font-bold uppercase border">{{ ucfirst($statusKey) }}</span></td>
+                            <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass }} text-[10px] font-bold uppercase border">{{ \App\Support\StatusStyle::label($statusKey) }}</span></td>
                             <td class="p-4 text-center text-on-surface-variant whitespace-nowrap">{{ $row->updated_at ? \Carbon\Carbon::parse($row->updated_at)->format('d M Y') : '-' }}</td>
                             <td class="p-4">
                                 <div class="flex items-center justify-center gap-2">
@@ -179,7 +179,7 @@
                             <p class="font-bold text-on-surface leading-tight">{{ $row->produk->nama_produk }}</p>
                             <p class="text-xs text-on-surface-variant mt-0.5">SKU {{ $row->sku }}</p>
                         </div>
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $badgeClassM }} text-[10px] font-bold uppercase border shrink-0">{{ ucfirst($statusKey) }}</span>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $badgeClassM }} text-[10px] font-bold uppercase border shrink-0">{{ \App\Support\StatusStyle::label($statusKey) }}</span>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter mb-4">
@@ -293,7 +293,7 @@
                                             <td class="p-3 text-right text-on-surface whitespace-nowrap">Rp {{ number_format($v->harga ?? 0, 0, ',', '.') }}</td>
                                             <td class="p-3 text-center font-bold {{ $vStok <= 0 ? 'text-error' : ($vStok <= $vMin ? 'text-amber-600' : 'text-on-surface') }}">{{ $vStok }}</td>
                                             <td class="p-3 text-center text-on-surface-variant">{{ $vMin }}</td>
-                                            <td class="p-3 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full {{ $vBadge }} text-[9px] font-bold uppercase border">{{ ucfirst($vStatusLabel) }}</span></td>
+                                            <td class="p-3 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full {{ $vBadge }} text-[9px] font-bold uppercase border">{{ \App\Support\StatusStyle::label($vStatusLabel) }}</span></td>
                                         </tr>
                                     @empty
                                         <tr><td colspan="6" class="p-4 text-center text-on-surface-variant">{{ __('Tidak ada variasi.') }}</td></tr>
@@ -359,7 +359,7 @@
                                         'mutasi_masuk' => 'Mutasi Masuk',
                                         'mutasi_keluar' => 'Mutasi Keluar',
                                         'penyesuaian' => 'Penyesuaian',
-                                    ][$m->tipe_pergerakan] ?? ucfirst($m->tipe_pergerakan);
+                                    ][$m->tipe_pergerakan] ?? \App\Support\StatusStyle::label($m->tipe_pergerakan);
                                     $isKeluar = in_array($m->tipe_pergerakan, ['keluar', 'mutasi_keluar']);
                                     $warna = $isKeluar ? 'text-error' : ($m->tipe_pergerakan === 'penyesuaian' ? 'text-gold-accent' : 'text-secondary');
                                 @endphp
@@ -385,7 +385,7 @@
                     <dl class="space-y-4 font-body-md text-sm">
                         <div class="flex justify-between gap-4 pb-4 border-b border-muted-border">
                             <dt class="text-on-surface-variant">Status</dt>
-                            <dd><span class="inline-flex items-center px-2 py-1 rounded-full {{ ['aman' => 'bg-success/10 text-success border-success/20', 'menipis' => 'bg-amber-500/10 text-amber-600 border-amber-500/30', 'kritis' => 'bg-error/10 text-error border-error/20', 'habis' => 'bg-error text-on-error border-error'][$row->status] }} text-[10px] font-bold uppercase border">{{ ucfirst($row->status) }}</span></dd>
+                            <dd><span class="inline-flex items-center px-2 py-1 rounded-full {{ ['aman' => 'bg-success/10 text-success border-success/20', 'menipis' => 'bg-amber-500/10 text-amber-600 border-amber-500/30', 'kritis' => 'bg-error/10 text-error border-error/20', 'habis' => 'bg-error text-on-error border-error'][$row->status] }} text-[10px] font-bold uppercase border">{{ \App\Support\StatusStyle::label($row->status) }}</span></dd>
                         </div>
                         <div class="flex justify-between gap-4">
                             <dt class="text-on-surface-variant">{{ __('Terakhir Diperbarui') }}</dt>

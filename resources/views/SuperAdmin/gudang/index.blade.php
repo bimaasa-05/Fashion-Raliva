@@ -175,7 +175,7 @@
     'id' => 'detail-gudang',
     'dataModal' => true,
     'icon' => 'warehouse',
-    'title' => 'Detail Gudang',
+    'title' => __('Detail Gudang'),
     'subtitle' => '<span data-slot="nama">-</span>',
     'subtitleRaw' => true,
     'size' => 'xl',

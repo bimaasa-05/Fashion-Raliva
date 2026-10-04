@@ -30,7 +30,7 @@ class EnsureStoreActive
 
         return redirect()->route(EnsureRole::homeRouteFor(Auth::user()->role?->nama_role))
             ->with('toast', [
-                'message' => 'Toko Anda sedang ditangguhkan. Hanya dashboard dan profil yang dapat diakses.',
+                'message' => __('Toko Anda sedang ditangguhkan. Hanya dashboard dan profil yang dapat diakses.'),
                 'icon' => 'lock',
             ]);
     }

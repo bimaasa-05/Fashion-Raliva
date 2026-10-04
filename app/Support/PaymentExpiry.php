@@ -60,8 +60,8 @@ class PaymentExpiry
                     Notification::create([
                         'user_id' => $checkout->user_id,
                         'tipe' => Notification::TIPE_PEMBAYARAN,
-                        'judul' => 'Pembayaran Kedaluwarsa',
-                        'pesan' => 'Pembayaran telah melewati batas waktu dan pesanan dibatalkan otomatis. Silakan lakukan pemesanan ulang bila masih ingin berbelanja.',
+                        'judul' => __('Pembayaran Kedaluwarsa'),
+                        'pesan' => __('Pembayaran telah melewati batas waktu dan pesanan dibatalkan otomatis. Silakan lakukan pemesanan ulang bila masih ingin berbelanja.'),
                         'url' => route('customer.order-tracking'),
                     ]);
                 }

@@ -23,7 +23,7 @@ class StoreSocialController extends Controller
     {
         $store = $this->storeAktif();
         if (! $store) {
-            return back()->with('error', 'Media sosial hanya dapat dikelola setelah toko aktif.');
+            return back()->with('error', __('Media sosial hanya dapat dikelola setelah toko aktif.'));
         }
 
         $validated = $request->validate([
@@ -31,15 +31,15 @@ class StoreSocialController extends Controller
             'nama_custom' => ['nullable', 'string', 'max:50', 'required_without:sosmed_platform_id'],
             'url' => ['required', 'url', 'max:255'],
         ], [
-            'nama_custom.required_without' => 'Pilih platform atau isi nama custom.',
-            'url.required' => 'Link/URL wajib diisi.',
-            'url.url' => 'Link harus berupa URL valid (cth: https://...).',
+            'nama_custom.required_without' => __('Pilih platform atau isi nama custom.'),
+            'url.required' => __('Link/URL wajib diisi.'),
+            'url.url' => __('Link harus berupa URL valid (cth: https://...).'),
         ]);
 
         if (! empty($validated['sosmed_platform_id'])
             && StoreSocial::where('store_id', $store->store_id)
                 ->where('sosmed_platform_id', $validated['sosmed_platform_id'])->exists()) {
-            return back()->with('error', 'Platform ini sudah ditambahkan untuk toko Anda.');
+            return back()->with('error', __('Platform ini sudah ditambahkan untuk toko Anda.'));
         }
 
         $social = StoreSocial::create([
@@ -58,14 +58,14 @@ class StoreSocialController extends Controller
             sprintf('Menambahkan media sosial "%s" pada toko "%s".', $social->label(), $store->nama_toko)
         );
 
-        return back()->with('success', 'Media sosial ditambahkan.');
+        return back()->with('success', __('Media sosial ditambahkan.'));
     }
 
     public function destroy(Request $request, StoreSocial $social)
     {
         $store = $this->storeAktif();
         if (! $store || (int) $social->store_id !== (int) $store->store_id) {
-            return back()->with('error', 'Data tidak ditemukan.');
+            return back()->with('error', __('Data tidak ditemukan.'));
         }
 
         $label = $social->label();
@@ -80,6 +80,6 @@ class StoreSocialController extends Controller
             sprintf('Menghapus media sosial "%s" dari toko "%s".', $label, $store->nama_toko)
         );
 
-        return back()->with('success', 'Media sosial dihapus.');
+        return back()->with('success', __('Media sosial dihapus.'));
     }
 }

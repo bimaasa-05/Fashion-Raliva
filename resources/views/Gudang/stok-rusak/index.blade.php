@@ -82,7 +82,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="8" class="p-10 text-center text-on-surface-variant">Tidak ada laporan stok rusak pada gudang ini. 🎉</td></tr>
+                        <tr><td colspan="8" class="p-10 text-center text-on-surface-variant">{{ __('Tidak ada laporan stok rusak pada gudang ini.') }} 🎉</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -124,7 +124,7 @@
                     </button>
                 </article>
             @empty
-                <p class="text-center text-on-surface-variant py-10">Tidak ada laporan stok rusak pada gudang ini. 🎉</p>
+                <p class="text-center text-on-surface-variant py-10">{{ __('Tidak ada laporan stok rusak pada gudang ini.') }} 🎉</p>
             @endforelse
         </div>
 

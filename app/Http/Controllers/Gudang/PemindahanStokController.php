@@ -79,14 +79,14 @@ class PemindahanStokController extends Controller
             'jumlah' => 'required|integer|min:1',
             'catatan' => 'nullable|string|max:500',
         ], [
-            'to_warehouse_id.required' => 'Gudang tujuan wajib dipilih.',
-            'to_warehouse_id.different' => 'Gudang tujuan harus berbeda dari gudang asal.',
-            'to_warehouse_id.exists' => 'Gudang tujuan tidak valid atau bukan gudang aktif pada toko yang sama.',
-            'product_variant_id.required' => 'Produk wajib dipilih.',
-            'product_variant_id.exists' => 'Produk tidak valid.',
-            'jumlah.required' => 'Jumlah wajib diisi.',
-            'jumlah.integer' => 'Jumlah harus berupa angka.',
-            'jumlah.min' => 'Jumlah minimal 1.',
+            'to_warehouse_id.required' => __('Gudang tujuan wajib dipilih.'),
+            'to_warehouse_id.different' => __('Gudang tujuan harus berbeda dari gudang asal.'),
+            'to_warehouse_id.exists' => __('Gudang tujuan tidak valid atau bukan gudang aktif pada toko yang sama.'),
+            'product_variant_id.required' => __('Produk wajib dipilih.'),
+            'product_variant_id.exists' => __('Produk tidak valid.'),
+            'jumlah.required' => __('Jumlah wajib diisi.'),
+            'jumlah.integer' => __('Jumlah harus berupa angka.'),
+            'jumlah.min' => __('Jumlah minimal 1.'),
         ]);
 
         $stok = WarehouseStock::where('warehouse_id', $warehouse->warehouse_id)
@@ -165,7 +165,7 @@ class PemindahanStokController extends Controller
                     ->firstOrFail();
 
                 if ($locked->status !== StockTransfer::STATUS_REQUESTED) {
-                    throw new \RuntimeException('Status pemindahan sudah berubah.');
+                    throw new \RuntimeException(__('Status pemindahan sudah berubah.'));
                 }
 
                 foreach ($locked->items as $item) {
@@ -175,7 +175,7 @@ class PemindahanStokController extends Controller
                         ->first();
 
                     if (! $stok || $stok->jumlah_stok < $item->jumlah) {
-                        throw new \RuntimeException('Stok gudang asal tidak mencukupi untuk pemindahan ini.');
+                        throw new \RuntimeException(__('Stok gudang asal tidak mencukupi untuk pemindahan ini.'));
                     }
                 }
 
@@ -237,7 +237,7 @@ class PemindahanStokController extends Controller
                     ->firstOrFail();
 
                 if ($locked->status !== StockTransfer::STATUS_APPROVED) {
-                    throw new \RuntimeException('Status pemindahan sudah berubah.');
+                    throw new \RuntimeException(__('Status pemindahan sudah berubah.'));
                 }
 
                 foreach ($locked->items as $item) {
@@ -299,7 +299,7 @@ class PemindahanStokController extends Controller
                     ->firstOrFail();
 
                 if (! in_array($locked->status, [StockTransfer::STATUS_REQUESTED, StockTransfer::STATUS_APPROVED], true)) {
-                    throw new \RuntimeException('Status pemindahan sudah berubah.');
+                    throw new \RuntimeException(__('Status pemindahan sudah berubah.'));
                 }
 
                 if ($locked->status === StockTransfer::STATUS_APPROVED) {
@@ -354,11 +354,11 @@ class PemindahanStokController extends Controller
                     ->first();
 
                 if (! $transfer || $transfer->to_warehouse_id !== $warehouse->warehouse_id) {
-                    throw new \RuntimeException('Pemindahan ini bukan untuk gudang aktif Anda.');
+                    throw new \RuntimeException(__('Pemindahan ini bukan untuk gudang aktif Anda.'));
                 }
 
                 if (! $transfer->canTransitionTo(StockTransfer::STATUS_RECEIVED)) {
-                    throw new \RuntimeException('Pemindahan tidak dapat diterima pada status ini.');
+                    throw new \RuntimeException(__('Pemindahan tidak dapat diterima pada status ini.'));
                 }
 
                 foreach ($transfer->items as $item) {
@@ -372,7 +372,7 @@ class PemindahanStokController extends Controller
                             ->increment('jumlah_stok', (int) $item->jumlah);
 
                         if ($updated === 0) {
-                            throw new \RuntimeException('Gagal menambah stok gudang tujuan.');
+                            throw new \RuntimeException(__('Gagal menambah stok gudang tujuan.'));
                         }
                     } else {
                         WarehouseStock::create([
@@ -401,7 +401,7 @@ class PemindahanStokController extends Controller
                     ]);
 
                 if ($affected === 0) {
-                    throw new \RuntimeException('Gagal memperbarui status pemindahan.');
+                    throw new \RuntimeException(__('Gagal memperbarui status pemindahan.'));
                 }
             }, 5);
         } catch (\RuntimeException $e) {

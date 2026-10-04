@@ -149,7 +149,7 @@
                             @php
                                 $nm = $r['nama'];
                                 $initial = collect(explode(' ', $nm))->map(fn($w)=>mb_substr($w,0,1))->slice(0,2)->implode('');
-                                $rlabel = ucfirst($r['role']);
+                                $rlabel = \App\Support\StatusStyle::label($r['role']);
                             @endphp
                             <td class="py-3.5 px-4">
                                 <div class="flex items-center gap-3">
@@ -249,7 +249,7 @@
                 @php
                     $nm = $r['nama'];
                     $initial = collect(explode(' ', $nm))->map(fn($w)=>mb_substr($w,0,1))->slice(0,2)->implode('');
-                    $rlabel = ucfirst($r['role']);
+                    $rlabel = \App\Support\StatusStyle::label($r['role']);
                 @endphp
                 <article data-table-row data-role="{{ $r['role'] }}" data-status="{{ $r['status'] }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
                     <div class="flex items-center gap-3">

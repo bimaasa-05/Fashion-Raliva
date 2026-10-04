@@ -204,7 +204,7 @@
     'id' => 'detail-produksi',
     'dataModal' => true,
     'icon' => 'factory',
-    'title' => 'Detail Produksi',
+    'title' => __('Detail Produksi'),
     'subtitle' => '<span data-slot="nomor">-</span>',
     'subtitleRaw' => true,
     'size' => 'xl',

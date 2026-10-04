@@ -9,9 +9,9 @@
 @php
     $filterChips = [
         'semua' => 'Semua',
-        'pending' => 'Pending',
-        'disetujui' => 'Disetujui',
-        'ditolak' => 'Ditolak',
+'pending' => __('Pending'),
+                                 'disetujui' => __('Disetujui'),
+                                 'ditolak' => __('Ditolak'),
     ];
 @endphp
 
@@ -79,19 +79,19 @@
                                 default => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
                             };
                             $statusLabel = match($p->status) {
-                                'pending' => 'Pending',
-                                'disetujui' => 'Disetujui',
-                                'ditolak' => 'Ditolak',
-                                default => ucfirst($p->status),
+                                'pending' => __('Pending'),
+                                'disetujui' => __('Disetujui'),
+                                'ditolak' => __('Ditolak'),
+                                default => \App\Support\StatusStyle::label($p->status),
                             };
                             $jenisLabel = match($p->jenis_permintaan) {
-                                'stok' => 'Stok',
-                                'produksi' => 'Produksi',
-                                'gudang' => 'Gudang',
-                                'pengiriman' => 'Pengiriman',
-                                'supplier' => 'Supplier',
-                                'lainnya' => 'Lainnya',
-                                default => ucfirst($p->jenis_permintaan),
+                                'stok' => __('Stok'),
+                                'produksi' => __('Produksi'),
+                                'gudang' => __('Gudang'),
+                                'pengiriman' => __('Pengiriman'),
+                                'supplier' => __('Supplier'),
+                                'lainnya' => __('Lainnya'),
+                                default => \App\Support\StatusStyle::label($p->jenis_permintaan),
                             };
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors">
@@ -161,19 +161,19 @@
                         default => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
                     };
                     $statusLabel = match($p->status) {
-                        'pending' => 'Pending',
-                        'disetujui' => 'Disetujui',
-                        'ditolak' => 'Ditolak',
-                        default => ucfirst($p->status),
+                        'pending' => __('Pending'),
+                        'disetujui' => __('Disetujui'),
+                        'ditolak' => __('Ditolak'),
+                        default => \App\Support\StatusStyle::label($p->status),
                     };
                     $jenisLabel = match($p->jenis_permintaan) {
-                        'stok' => 'Stok',
-                        'produksi' => 'Produksi',
-                        'gudang' => 'Gudang',
-                        'pengiriman' => 'Pengiriman',
-                        'supplier' => 'Supplier',
-                        'lainnya' => 'Lainnya',
-                        default => ucfirst($p->jenis_permintaan),
+                        'stok' => __('Stok'),
+                        'produksi' => __('Produksi'),
+                        'gudang' => __('Gudang'),
+                        'pengiriman' => __('Pengiriman'),
+                        'supplier' => __('Supplier'),
+                        'lainnya' => __('Lainnya'),
+                        default => \App\Support\StatusStyle::label($p->jenis_permintaan),
                     };
                 @endphp
                 <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
@@ -224,13 +224,13 @@
 @foreach ($permintaan as $p)
     @php
         $jenisLabel = match($p->jenis_permintaan) {
-            'stok' => 'Stok',
-            'produksi' => 'Produksi',
-            'gudang' => 'Gudang',
-            'pengiriman' => 'Pengiriman',
-            'supplier' => 'Supplier',
-            'lainnya' => 'Lainnya',
-            default => ucfirst($p->jenis_permintaan),
+            'stok' => __('Stok'),
+            'produksi' => __('Produksi'),
+            'gudang' => __('Gudang'),
+            'pengiriman' => __('Pengiriman'),
+            'supplier' => __('Supplier'),
+            'lainnya' => __('Lainnya'),
+            default => \App\Support\StatusStyle::label($p->jenis_permintaan),
         };
         $statusClass = match($p->status) {
             'pending' => 'bg-gold-accent/10 text-gold-accent border-gold-accent/30',
@@ -239,10 +239,10 @@
             default => 'bg-surface-container-high text-on-surface-variant border-outline-variant',
         };
         $statusLabel = match($p->status) {
-            'pending' => 'Pending',
-            'disetujui' => 'Disetujui',
-            'ditolak' => 'Ditolak',
-            default => ucfirst($p->status),
+            'pending' => __('Pending'),
+            'disetujui' => __('Disetujui'),
+            'ditolak' => __('Ditolak'),
+            default => \App\Support\StatusStyle::label($p->status),
         };
     @endphp
     

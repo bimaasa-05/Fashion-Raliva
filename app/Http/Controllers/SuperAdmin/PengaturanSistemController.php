@@ -56,8 +56,8 @@ class PengaturanSistemController extends Controller
         $data = $request->validate([
             'nama_platform' => ['required', 'string', 'max:50', 'unique:sosmed_platforms,nama_platform'],
         ], [
-            'nama_platform.required' => 'Nama platform wajib diisi.',
-            'nama_platform.unique' => 'Platform ini sudah ada.',
+            'nama_platform.required' => __('Nama platform wajib diisi.'),
+            'nama_platform.unique' => __('Platform ini sudah ada.'),
         ]);
 
         \App\Models\SosmedPlatform::create([
@@ -65,7 +65,7 @@ class PengaturanSistemController extends Controller
             'status' => \App\Models\SosmedPlatform::STATUS_AKTIF,
         ]);
 
-        return back()->with('success', 'Platform media sosial ditambahkan.');
+        return back()->with('success', __('Platform media sosial ditambahkan.'));
     }
 
     public function toggleSosmed(Request $request, \App\Models\SosmedPlatform $platform)
@@ -76,7 +76,7 @@ class PengaturanSistemController extends Controller
                 : \App\Models\SosmedPlatform::STATUS_AKTIF,
         ]);
 
-        return back()->with('success', 'Status platform diperbarui.');
+        return back()->with('success', __('Status platform diperbarui.'));
     }
 
     public function updateSettings(Request $request)

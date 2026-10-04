@@ -135,7 +135,7 @@
             updateUnreadCount();
             showRalivaToast('{{ __('Semua notifikasi ditandai sudah dibaca.') }}');
         }).catch((err) => {
-            showRalivaToast(err.message || 'Gagal menandai semua dibaca.', 'error');
+            showRalivaToast(err.message || '{{ __('Gagal menandai semua dibaca.') }}', 'error');
         }).finally(() => {
             btn.disabled = false;
             btn.textContent = original;

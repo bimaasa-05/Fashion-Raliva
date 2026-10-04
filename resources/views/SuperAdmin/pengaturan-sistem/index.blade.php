@@ -272,11 +272,11 @@
         <form method="POST" action="{{ route('superadmin.pengaturan-sistem.sosmed.store') }}" class="flex items-end gap-gutter flex-wrap border-t border-muted-border pt-gutter">
             @csrf
             <div class="flex-1 min-w-52">
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="nama_platform">Tambah Platform Baru</label>
-                <input class="w-full bg-transparent border border-muted-border rounded-lg p-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="nama_platform" name="nama_platform" type="text" maxlength="50" value="{{ old('nama_platform') }}" placeholder="cth: YouTube" required />
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="nama_platform">{{ __('Tambah Platform Baru') }}</label>
+                <input class="w-full bg-transparent border border-muted-border rounded-lg p-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="nama_platform" name="nama_platform" type="text" maxlength="50" value="{{ old('nama_platform') }}" placeholder="{{ __('cth: YouTube') }}" required />
                 @error('nama_platform')<p class="font-body-md text-xs text-error mt-2">{{ $message }}</p>@enderror
             </div>
-            <button type="submit" class="bg-deep-onyx text-on-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">Tambah Platform</button>
+            <button type="submit" class="bg-deep-onyx text-on-primary px-8 py-3 font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">{{ __('Tambah Platform') }}</button>
         </form>
     </section>
 
@@ -487,8 +487,8 @@
     'id' => 'modal-help-cat-tambah',
     'dataModal' => true,
     'icon' => 'category',
-    'title' => 'Tambah Kategori Bantuan',
-    'subtitle' => 'Kartu kategori yang tampil di halaman Pusat Bantuan Customer.',
+    'title' => __('Tambah Kategori Bantuan'),
+    'subtitle' => __('Kartu kategori yang tampil di halaman Pusat Bantuan Customer.'),
 ])
     <form method="POST" action="{{ route('superadmin.pengaturan-sistem.help.kategori.store') }}" id="form-help-cat-tambah" class="space-y-4">
         @csrf
@@ -524,8 +524,8 @@
     'id' => 'modal-help-cat-edit',
     'dataModal' => true,
     'icon' => 'edit',
-    'title' => 'Edit Kategori Bantuan',
-    'subtitle' => 'Ubah detail kategori bantuan Customer.',
+    'title' => __('Edit Kategori Bantuan'),
+    'subtitle' => __('Ubah detail kategori bantuan Customer.'),
 ])
     <form id="form-help-cat-edit" method="POST" action="" class="space-y-4">
         @csrf @method('PUT')
@@ -567,8 +567,8 @@
     'id' => 'modal-help-faq-tambah',
     'dataModal' => true,
     'icon' => 'quiz',
-    'title' => 'Tambah FAQ',
-    'subtitle' => 'Atur pertanyaan bantuan Customer dalam satu kategori.',
+    'title' => __('Tambah FAQ'),
+    'subtitle' => __('Atur pertanyaan bantuan Customer dalam satu kategori.'),
     'size' => 'lg',
 ])
     <form method="POST" action="{{ route('superadmin.pengaturan-sistem.help.faq.store') }}" id="form-help-faq-tambah" class="space-y-4">
@@ -618,8 +618,8 @@
     'id' => 'modal-help-faq-edit',
     'dataModal' => true,
     'icon' => 'edit_note',
-    'title' => 'Edit FAQ',
-    'subtitle' => 'Perbarui pertanyaan, jawaban, dan kategori bantuan.',
+    'title' => __('Edit FAQ'),
+    'subtitle' => __('Perbarui pertanyaan, jawaban, dan kategori bantuan.'),
     'size' => 'lg',
 ])
     <form id="form-help-faq-edit" method="POST" action="" class="space-y-4">
@@ -675,8 +675,8 @@
     'id' => 'modal-help-kat-hapus',
     'dataModal' => true,
     'icon' => 'delete_forever',
-    'title' => 'Hapus Kategori Bantuan',
-    'subtitle' => 'Tindakan ini tidak bisa dibatalkan.',
+    'title' => __('Hapus Kategori Bantuan'),
+    'subtitle' => __('Tindakan ini tidak bisa dibatalkan.'),
 ])
     <form id="form-help-kat-hapus" method="POST" action="" class="space-y-4">
         @csrf @method('DELETE')
@@ -698,8 +698,8 @@
     'id' => 'modal-help-faq-hapus',
     'dataModal' => true,
     'icon' => 'delete_forever',
-    'title' => 'Hapus FAQ',
-    'subtitle' => 'Tindakan ini tidak bisa dibatalkan.',
+    'title' => __('Hapus FAQ'),
+    'subtitle' => __('Tindakan ini tidak bisa dibatalkan.'),
 ])
     <form id="form-help-faq-hapus" method="POST" action="" class="space-y-4">
         @csrf @method('DELETE')
@@ -864,7 +864,7 @@
             btn.disabled = true;
             btn.style.opacity = '0.7';
             btn.style.cursor = 'not-allowed';
-            btn.innerHTML = '<span class="inline-flex items-center gap-2"><span class="material-symbols-outlined text-[16px] spin">progress_activity</span> Menyimpan&hellip;</span>';
+            btn.innerHTML = '<span class="inline-flex items-center gap-2"><span class="material-symbols-outlined text-[16px] spin">progress_activity</span> {{ __('Menyimpan…') }}</span>';
         });
     });
 </script>

@@ -66,13 +66,13 @@ class BarangMasukController extends Controller
             'jumlah' => 'required|integer|min:1',
             'alasan' => 'nullable|string|max:500',
         ], [
-            'product_variant_id.required' => 'Produk wajib dipilih.',
-            'product_variant_id.exists' => 'Produk tidak valid.',
-            'supplier_id.required' => 'Supplier wajib dipilih.',
-            'supplier_id.exists' => 'Supplier tidak valid.',
-            'jumlah.required' => 'Jumlah wajib diisi.',
-            'jumlah.integer' => 'Jumlah harus berupa angka.',
-            'jumlah.min' => 'Jumlah minimal 1.',
+            'product_variant_id.required' => __('Produk wajib dipilih.'),
+            'product_variant_id.exists' => __('Produk tidak valid.'),
+            'supplier_id.required' => __('Supplier wajib dipilih.'),
+            'supplier_id.exists' => __('Supplier tidak valid.'),
+            'jumlah.required' => __('Jumlah wajib diisi.'),
+            'jumlah.integer' => __('Jumlah harus berupa angka.'),
+            'jumlah.min' => __('Jumlah minimal 1.'),
         ]);
 
         try {
@@ -87,7 +87,7 @@ class BarangMasukController extends Controller
                         ->increment('jumlah_stok', (int) $data['jumlah']);
 
                     if ($updated === 0) {
-                        throw new \RuntimeException('Gagal memperbarui stok barang masuk.');
+                        throw new \RuntimeException(__('Gagal memperbarui stok barang masuk.'));
                     }
 
                     WarehouseStock::where('warehouse_stock_id', $stock->warehouse_stock_id)

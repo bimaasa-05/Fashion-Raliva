@@ -69,7 +69,7 @@
                 <th>{{ __('Periode') }}</th>
                 <th class="r">{{ __('Pesanan') }}</th>
                 <th class="r">{{ __('Pendapatan') }}</th>
-                <th class="r">Refund</th>
+                <th class="r">{{ __('Refund') }}</th>
                 <th class="r">{{ __('Pencairan') }}</th>
                 <th class="r">{{ __('Saldo Akhir') }}</th>
             </tr>
@@ -88,7 +88,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <td>Total</td>
+                <td>{{ __('Total') }}</td>
                 <td class="r">{{ number_format($totals['pesanan'], 0, ',', '.') }}</td>
                 <td class="r">{{ $fmt($totals['pendapatan']) }}</td>
                 <td class="r refund">{{ $fmt($totals['refund']) }}</td>
@@ -98,7 +98,7 @@
         </tfoot>
     </table>
 
-    <div class="section-title"><span class="bar"></span>{{ __('Produk Terlaris') }} <small>Top 5</small></div>
+    <div class="section-title"><span class="bar"></span>{{ __('Produk Terlaris') }} <small>{{ __('Top 5') }}</small></div>
     <table class="top">
         <thead>
             <tr>

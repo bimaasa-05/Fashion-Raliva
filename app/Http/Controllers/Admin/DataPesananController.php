@@ -466,10 +466,10 @@ class DataPesananController extends Controller
             $locked = Order::whereKey($pesanan->order_id)->lockForUpdate()->firstOrFail();
 
             if ($locked->status !== Order::STATUS_SIAP_KIRIM) {
-                throw new \RuntimeException('Status pesanan berubah, tidak dapat diselesaikan.');
+                throw new \RuntimeException(__('Status pesanan berubah, tidak dapat diselesaikan.'));
             }
             if (($locked->metode_fulfillment ?? Order::FULFILLMENT_DIANTAR) === Order::FULFILLMENT_DIANTAR) {
-                throw new \RuntimeException('Pesanan diantar kurir diselesaikan lewat pengiriman.');
+                throw new \RuntimeException(__('Pesanan diantar kurir diselesaikan lewat pengiriman.'));
             }
 
             $locked->update([
@@ -546,13 +546,13 @@ class DataPesananController extends Controller
                 $order = Order::whereKey($pesanan->order_id)->lockForUpdate()->firstOrFail();
 
                 if ($order->status !== Order::STATUS_SIAP_KIRIM) {
-                    throw new \RuntimeException('Status pesanan berubah, fulfillment tidak dapat diubah.');
+                    throw new \RuntimeException(__('Status pesanan berubah, fulfillment tidak dapat diubah.'));
                 }
                 if ($target === ($order->metode_fulfillment ?? Order::FULFILLMENT_DIANTAR)) {
-                    throw new \RuntimeException('Fulfillment pesanan memang sudah begitu.');
+                    throw new \RuntimeException(__('Fulfillment pesanan memang sudah begitu.'));
                 }
                 if ($order->shipments()->where('status', '!=', \App\Models\Shipment::STATUS_GAGAL)->exists()) {
-                    throw new \RuntimeException('Pesanan sudah memiliki pengiriman aktif.');
+                    throw new \RuntimeException(__('Pesanan sudah memiliki pengiriman aktif.'));
                 }
 
                 if ($target === Order::FULFILLMENT_AMBIL) {
@@ -732,15 +732,15 @@ class DataPesananController extends Controller
                 ->firstOrFail();
 
             if (! in_array($order->status, [Order::STATUS_PENDING_PAYMENT, Order::STATUS_DIBAYAR], true)) {
-                throw new \RuntimeException('Status pesanan berubah, tidak dapat diubah.');
+                throw new \RuntimeException(__('Status pesanan berubah, tidak dapat diubah.'));
             }
 
             if ($order->checkout?->payment || Payment::where('checkout_id', $order->checkout_id)->exists()) {
-                throw new \RuntimeException('Pesanan sudah memiliki pembayaran, tidak dapat diubah.');
+                throw new \RuntimeException(__('Pesanan sudah memiliki pembayaran, tidak dapat diubah.'));
             }
 
             if ($order->shipments->isNotEmpty()) {
-                throw new \RuntimeException('Pesanan sudah memiliki pengiriman, tidak dapat diubah.');
+                throw new \RuntimeException(__('Pesanan sudah memiliki pengiriman, tidak dapat diubah.'));
             }
 
             $removed = collect($data['removed'] ?? [])->map(fn ($id) => (int) $id)->all();
@@ -759,7 +759,7 @@ class DataPesananController extends Controller
             }
 
             if (empty($merged)) {
-                throw new \RuntimeException('Minimal 1 item tersisa; hapus via Batalkan.');
+                throw new \RuntimeException(__('Minimal 1 item tersisa; hapus via Batalkan.'));
             }
 
             $variants = ProductVariant::with(['product:product_id,store_id,nama_produk,harga_dasar', 'warehouseStocks'])
@@ -774,14 +774,14 @@ class DataPesananController extends Controller
                 $variant = $variants->get($variantId);
 
                 if (! $variant || (int) $variant->product?->store_id !== (int) $order->store_id) {
-                    throw new \RuntimeException('Varian tidak valid untuk toko ini.');
+                    throw new \RuntimeException(__('Varian tidak valid untuk toko ini.'));
                 }
 
                 $stok = (int) $variant->warehouseStocks->sum('jumlah_stok');
 
                 if ($line['qty'] > $stok) {
                     $nama = $variant->product?->nama_produk ?? 'Produk';
-                    throw new \RuntimeException("Stok {$nama} hanya tersisa {$stok}.");
+                    throw new \RuntimeException(sprintf(__('Stok %s hanya tersisa %d.'), $nama, $stok));
                 }
 
                 $harga = (float) ($variant->harga ?? $variant->product?->harga_dasar ?? 0);

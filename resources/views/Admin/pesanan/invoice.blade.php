@@ -51,7 +51,7 @@
             <p><strong>{{ __('INVOICE') }}</strong></p>
             <p>{{ $pesanan->nomor_order ?? ('#'.$pesanan->order_id) }}</p>
             <p>{{ $pesanan->created_at?->translatedFormat('d M Y H:i') ?? '-' }}</p>
-            <p>{{ __('Status') }}: <strong>{{ ucfirst(str_replace('_', ' ', $pesanan->status)) }}</strong></p>
+            <p>{{ __('Status') }}: <strong>{{ \App\Support\StatusStyle::label($pesanan->status) }}</strong></p>
         </div>
     </div>
     <div class="grid">
@@ -63,10 +63,10 @@
         </div>
         <div>
             <h4>{{ __('Pembayaran & Pengiriman') }}</h4>
-            <p>{{ $pesanan->checkout?->payment?->paymentMethod?->nama_metode ?? __('Tunai') }} — {{ ucfirst($pesanan->checkout?->payment?->status ?? '-') }}</p>
+            <p>{{ $pesanan->checkout?->payment?->paymentMethod?->nama_metode ?? __('Tunai') }} — {{ \App\Support\StatusStyle::label($pesanan->checkout?->payment?->status ?? '-') }}</p>
             @php $ship = $pesanan->shipments->first(); @endphp
             <p>{{ $ship ? ($ship->courier?->nama_kurir ?? __('Kurir')).' • '.__('Resi').' '.$ship->nomor_resi : ($pesanan->isAmbil() ? __('Ambil di toko') : __('Belum dikirim')) }}</p>
-            <p>{{ $pesanan->isOffline() ? 'Offline' : 'Online' }}@if($pesanan->catatan) • {{ __('Catatan:') }} {{ $pesanan->catatan }}@endif</p>
+            <p>{{ $pesanan->isOffline() ? __('Offline') : __('Online') }}@if($pesanan->catatan) • {{ __('Catatan:') }} {{ $pesanan->catatan }}@endif</p>
         </div>
     </div>
     <table>

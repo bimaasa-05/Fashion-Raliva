@@ -149,7 +149,7 @@
                 </tbody>
                 <tfoot>
                     <tr>
-                        <td>Total</td>
+                        <td>{{ __('Total') }}</td>
                         <td class="r">{{ number_format($totals['pesanan'], 0, ',', '.') }}</td>
                         <td class="r">{{ $fmt($totals['pendapatan']) }}</td>
                         <td class="r refund">{{ $fmt($totals['refund']) }}</td>
@@ -160,7 +160,7 @@
             </table>
         </div>
 
-        <div class="section-title"><span class="bar"></span>{{ __('Produk Terlaris') }} <small>Top 5</small></div>
+        <div class="section-title"><span class="bar"></span>{{ __('Produk Terlaris') }} <small>{{ __('Top 5') }}</small></div>
         <div class="table-scroll">
             <table class="top">
             <thead>

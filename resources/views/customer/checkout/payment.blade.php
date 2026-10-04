@@ -931,7 +931,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
     <header
         class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
         <a href="{{ $payBackUrl }}"
-            aria-label="Back" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+            aria-label="{{ __('Back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
             <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
         </a>
         <h1
