@@ -230,7 +230,7 @@ class ShopController extends Controller
 
         ['isFollowing' => $isFollowing, 'followersCount' => $followersCount] = $this->followState($store);
 
-        return view('customer.store.about', compact('store', 'reviewCount', 'averageRating', 'isFollowing', 'followersCount'));
+        return view('customer.store.about', compact('store', 'reviewCount', 'averageRating', 'isFollowing', 'followersCount', 'storeSocials'));
     }
 
     /**
