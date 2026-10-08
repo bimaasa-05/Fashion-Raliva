@@ -15,21 +15,24 @@ class VerifikasiPenarikanSaldoController extends Controller
 {
     public function index(Request $request)
     {
-        $penarikans = CustomerWithdrawal::query()
-            ->with(['user:user_id,nama_lengkap,email', 'bank:bank_id,nama_bank'])
-            ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'disetujui' THEN 1 WHEN 'dibayar' THEN 2 ELSE 3 END")
-            ->orderByDesc('diajukan_pada')
-            ->get();
+        $base = CustomerWithdrawal::query()
+            ->with(['user:user_id,nama_lengkap,email', 'bank:bank_id,nama_bank']);
 
         $stats = [
-            'semua' => $penarikans->count(),
-            'pending' => $penarikans->where('status', CustomerWithdrawal::STATUS_PENDING)->count(),
-            'nominal_menunggu' => (float) $penarikans->where('status', CustomerWithdrawal::STATUS_PENDING)->sum('jumlah_bersih'),
-            'disetujui' => $penarikans->where('status', CustomerWithdrawal::STATUS_DISETUJUI)->count(),
-            'dibayar' => $penarikans->where('status', CustomerWithdrawal::STATUS_DIBAYAR)->count(),
-            'ditolak' => $penarikans->where('status', CustomerWithdrawal::STATUS_DITOLAK)->count(),
+            'semua' => (clone $base)->count(),
+            'pending' => (clone $base)->where('status', CustomerWithdrawal::STATUS_PENDING)->count(),
+            'nominal_menunggu' => (float) (clone $base)->where('status', CustomerWithdrawal::STATUS_PENDING)->sum('jumlah_bersih'),
+            'disetujui' => (clone $base)->where('status', CustomerWithdrawal::STATUS_DISETUJUI)->count(),
+            'dibayar' => (clone $base)->where('status', CustomerWithdrawal::STATUS_DIBAYAR)->count(),
+            'ditolak' => (clone $base)->where('status', CustomerWithdrawal::STATUS_DITOLAK)->count(),
             'fee_terkumpul' => (float) $penarikans->where('status', CustomerWithdrawal::STATUS_DIBAYAR)->sum('fee'),
         ];
+
+        $penarikans = $base
+            ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'disetujui' THEN 1 WHEN 'dibayar' THEN 2 ELSE 3 END")
+            ->orderByDesc('diajukan_pada')
+            ->paginate(15)
+            ->withQueryString();
 
         return view('SuperAdmin.verifikasi-penarikan-saldo.index', [
             'penarikans' => $penarikans,
