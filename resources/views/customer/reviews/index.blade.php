@@ -277,13 +277,13 @@
 <div class="flex flex-row items-center gap-sm md:gap-md px-container-margin py-sm sticky top-16 z-30">
 <div class="flex-1 min-w-0 flex items-center gap-sm md:gap-md card-premium bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-xs md:p-sm">
 <div class="flex-1 min-w-0 flex items-center gap-sm overflow-x-auto hide-scrollbar">
-<button type="button" id="tab-written" onclick="switchTab('written')" class="cat-pill shrink-0 border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5 active">{{ __('Written') }} <span class="cat-count">{{ $reviews->count() }}</span></button>
-<button type="button" id="tab-to-review" onclick="switchTab('to-review')" class="cat-pill shrink-0 border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full">{{ __('To Review') }} <span class="cat-count">{{ $toReviewItems->count() }}</span></button>
+<button type="button" id="tab-written" onclick="switchTab('written')" class="cat-pill shrink-0 border border-secondary text-secondary font-label-sm text-label-sm rounded-full bg-secondary/5 active">{{ __('Written') }} <span class="cat-count">{{ $reviewsTotal }}</span></button>
+<button type="button" id="tab-to-review" onclick="switchTab('to-review')" class="cat-pill shrink-0 border border-outline-variant text-on-surface-variant font-label-sm text-label-sm rounded-full">{{ __('To Review') }} <span class="cat-count">{{ $toReviewTotal }}</span></button>
 </div>
 <div class="relative shrink-0 ml-auto">
 <button aria-label="{{ __('Total Reviews') }}" type="button" class="shop-action-btn border border-outline-variant hover:text-secondary hover:border-secondary transition-colors">
 <span class="material-symbols-outlined text-[20px]">rate_review</span>
-<span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">{{ $reviews->count() + $toReviewItems->count() }}</span>
+<span class="absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold">{{ $reviewsTotal + $toReviewTotal }}</span>
 </button>
 </div>
 </div>
@@ -351,6 +351,9 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('Review yang Anda tulis akan muncul di sini.') }}</p>
 </div>
 @endforelse
+@if ($reviews->hasPages())
+<div class="mt-lg flex justify-center">{{ $reviews->links() }}</div>
+@endif
 </div>
 </section>
 <!-- Panel: To Review -->
@@ -384,6 +387,9 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('Produk dari pesanan yang sudah selesai akan muncul di sini.') }}</p>
 </div>
 @endforelse
+@if ($toReviewItems->hasPages())
+<div class="mt-lg flex justify-center">{{ $toReviewItems->links() }}</div>
+@endif
 </div>
 </section>
 
