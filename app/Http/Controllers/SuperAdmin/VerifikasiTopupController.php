@@ -16,22 +16,25 @@ class VerifikasiTopupController extends Controller
 {
     public function index()
     {
-        $topups = CustomerTopup::query()
-            ->with(['user', 'payment.paymentMethod', 'payment.account', 'payment.proofs'])
-            ->orderByDesc('created_at')
-            ->get();
+        $base = CustomerTopup::query()
+            ->with(['user', 'payment.paymentMethod', 'payment.account', 'payment.proofs']);
 
         $stats = [
-            'semua' => $topups->count(),
-            'menunggu' => $topups->where('status', CustomerTopup::STATUS_MENUNGGU_VERIFIKASI)->count(),
-            'pending' => $topups->where('status', CustomerTopup::STATUS_PENDING)->count(),
-            'nominal_menunggu' => (float) $topups->where('status', CustomerTopup::STATUS_MENUNGGU_VERIFIKASI)->sum('jumlah'),
-            'terverifikasi' => $topups->where('status', CustomerTopup::STATUS_TERVERIFIKASI)->count(),
-            'total_terverifikasi' => (float) $topups->where('status', CustomerTopup::STATUS_TERVERIFIKASI)->sum('jumlah'),
-            'ditolak' => $topups->where('status', CustomerTopup::STATUS_DITOLAK)->count(),
-            'dibatalkan' => $topups->where('status', CustomerTopup::STATUS_DIBATALKAN)->count(),
-            'kadaluarsa' => $topups->where('status', CustomerTopup::STATUS_KADALUARSA)->count(),
+            'semua' => (clone $base)->count(),
+            'menunggu' => (clone $base)->where('status', CustomerTopup::STATUS_MENUNGGU_VERIFIKASI)->count(),
+            'pending' => (clone $base)->where('status', CustomerTopup::STATUS_PENDING)->count(),
+            'nominal_menunggu' => (float) (clone $base)->where('status', CustomerTopup::STATUS_MENUNGGU_VERIFIKASI)->sum('jumlah'),
+            'terverifikasi' => (clone $base)->where('status', CustomerTopup::STATUS_TERVERIFIKASI)->count(),
+            'total_terverifikasi' => (float) (clone $base)->where('status', CustomerTopup::STATUS_TERVERIFIKASI)->sum('jumlah'),
+            'ditolak' => (clone $base)->where('status', CustomerTopup::STATUS_DITOLAK)->count(),
+            'dibatalkan' => (clone $base)->where('status', CustomerTopup::STATUS_DIBATALKAN)->count(),
+            'kadaluarsa' => (clone $base)->where('status', CustomerTopup::STATUS_KADALUARSA)->count(),
         ];
+
+        $topups = $base
+            ->orderByDesc('created_at')
+            ->paginate(15)
+            ->withQueryString();
 
         return view('SuperAdmin.verifikasi-topup.index', compact('topups', 'stats'));
     }
