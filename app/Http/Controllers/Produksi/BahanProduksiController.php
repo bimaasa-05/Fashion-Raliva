@@ -35,6 +35,7 @@ class BahanProduksiController extends Controller
 
         $materials = ProductionMaterial::whereIn('store_id', $storeIds)
             ->orderBy('nama_bahan')
+            ->limit(500)
             ->get();
 
         $cari = trim((string) $request->query('cari'));
