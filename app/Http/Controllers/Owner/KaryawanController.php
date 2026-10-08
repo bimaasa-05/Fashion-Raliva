@@ -62,6 +62,9 @@ class KaryawanController extends Controller
     public function store(Request $request)
     {
         $storeId = OwnerContext::firstStoreId();
+        if (! $storeId) {
+            return back()->with('error', __('Anda belum memiliki toko untuk menambah karyawan.'))->withInput();
+        }
 
         $validated = $request->validate([
             'nama_lengkap' => ['required', 'string', 'max:150'],
