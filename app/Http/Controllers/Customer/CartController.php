@@ -110,8 +110,12 @@ class CartController extends Controller
             return response()->json(['status' => 'error', 'message' => __('Jumlah tidak valid.')], 422);
         }
 
-        if ($cartItem->cart->user_id !== Auth::id()) {
+        if (! $cartItem->cart || $cartItem->cart->user_id !== Auth::id()) {
             return response()->json(['status' => 'error', 'message' => __('Tidak diizinkan.')], 403);
+        }
+
+        if (! $cartItem->productVariant) {
+            return response()->json(['status' => 'error', 'message' => __('Produk sudah tidak tersedia.')], 422);
         }
 
         $stok = (int) $cartItem->productVariant->warehouseStocks()->sum('jumlah_stok');
@@ -138,7 +142,7 @@ class CartController extends Controller
      */
     public function destroy(CartItem $cartItem): JsonResponse
     {
-        if ($cartItem->cart->user_id !== Auth::id()) {
+        if (! $cartItem->cart || $cartItem->cart->user_id !== Auth::id()) {
             return response()->json(['status' => 'error', 'message' => __('Tidak diizinkan.')], 403);
         }
 
