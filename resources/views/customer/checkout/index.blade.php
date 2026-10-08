@@ -624,7 +624,7 @@
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Email') }} <span class="text-error">*</span></span>
                             <input name="email_pelanggan" type="email" value="{{ $prefill['email_pelanggan'] }}" required maxlength="150" class="co-input @error('email_pelanggan') is-error @enderror" placeholder="nama@email.com"/>
                             @error('email_pelanggan')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
-                            @if($isGuest)<span class="font-label-sm text-label-sm text-on-surface-variant/70">{{ __('Dipakai sebagai username akun. Password default: Raliva123') }}</span>@endif
+                            @if($isGuest)<span class="font-label-sm text-label-sm text-on-surface-variant/70">{{ __('Dipakai sebagai username akun. Password acak ditampilkan setelah checkout.') }}</span>@endif
                         </label>
                         <label class="flex flex-col gap-1.5 lg:col-span-2">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Provinsi') }} <span class="text-error">*</span></span>
@@ -762,7 +762,7 @@
                         <span id="co-total">Rp {{ number_format((float)$total, 0, ',', '.') }}</span>
                     </div>
                     @if($isGuest)
-                    <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">{{ __('Akun dan alamat akan dibuat otomatis (password: Raliva123) saat lanjut ke pembayaran.') }}</p>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">{{ __('Akun dan alamat akan dibuat otomatis (password acak ditampilkan setelah checkout) saat lanjut ke pembayaran.') }}</p>
                     @endif
                 </div>
 
