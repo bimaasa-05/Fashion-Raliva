@@ -21,7 +21,7 @@ class StokController extends Controller
             return view('Gudang.stok.index', [
                 'warehouses' => $warehouses,
                 'warehouse' => null,
-                'products' => collect(),
+                'products' => new \Illuminate\Pagination\LengthAwarePaginator(collect(), 0, 20),
                 'categories' => collect(),
                 'filters' => ['q' => null, 'kategori' => null, 'status' => null, 'sort' => 'terbaru'],
             ]);
@@ -116,10 +116,22 @@ class StokController extends Controller
 
         $categories = Category::whereIn('category_id', $products->pluck('produk.category_id')->filter()->unique())->pluck('nama_kategori');
 
+        $products = $products->values();
+        $page = max(1, (int) $request->query('page', 1));
+        $perPage = 20;
+        $total = $products->count();
+        $products = new \Illuminate\Pagination\LengthAwarePaginator(
+            $products->forPage($page, $perPage)->values(),
+            $total,
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
         return view('Gudang.stok.index', [
             'warehouses' => $warehouses,
             'warehouse' => $warehouse,
-            'products' => $products->values(),
+            'products' => $products,
             'categories' => $categories,
             'filters' => ['q' => $q, 'kategori' => $kategori, 'status' => $status, 'sort' => $sort],
         ]);
