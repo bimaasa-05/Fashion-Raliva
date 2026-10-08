@@ -18,31 +18,31 @@ class PengembalianDanaController extends Controller
     {
         $storeId = OwnerContext::firstStoreId();
 
+        $scopeToko = fn ($q) => $storeId
+            ? $q->whereHas('order', fn ($o) => $o->where('store_id', $storeId))
+            : $q->whereRaw('0 = 1');
+
         $refunds = Refund::query()
             ->with(['order', 'requester', 'reviewer', 'items'])
             ->where('status', Refund::STATUS_ESKALASI)
+            ->tap($scopeToko)
             ->orderByDesc('diajukan_pada')
-            ->get();
+            ->paginate(10, ['*'], 'eskalasi')
+            ->withQueryString();
 
         $disetujui = Refund::query()
             ->with(['order', 'requester', 'reviewer', 'items'])
             ->where('status', Refund::STATUS_DISETUJUI)
+            ->tap($scopeToko)
             ->orderByDesc('diajukan_pada')
-            ->get();
-
-        if ($storeId) {
-            $refunds = $refunds->filter(fn ($r) => (int) $r->order?->store_id === (int) $storeId)->values();
-            $disetujui = $disetujui->filter(fn ($r) => (int) $r->order?->store_id === (int) $storeId)->values();
-        } else {
-            $refunds = collect();
-            $disetujui = collect();
-        }
+            ->paginate(10, ['*'], 'riwayat')
+            ->withQueryString();
 
         return view('Owner.pengembalian-dana.index', [
             'refunds' => $refunds,
             'disetujui' => $disetujui,
-            'eskalasiCount' => $refunds->count(),
-            'disetujuiCount' => $disetujui->count(),
+            'eskalasiCount' => $refunds->total(),
+            'disetujuiCount' => $disetujui->total(),
         ]);
     }
 
