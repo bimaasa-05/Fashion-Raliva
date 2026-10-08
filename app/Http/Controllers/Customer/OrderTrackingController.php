@@ -68,7 +68,7 @@ class OrderTrackingController extends Controller
         \App\Support\PaymentExpiry::expireOverdue();
         \App\Support\OrderAutoComplete::selesaikanOtomatis();
 
-        $orders = Auth::user()->orders()
+        $base = Auth::user()->orders()
             ->with([
                 'store',
                 'items.productVariant.product.images',
@@ -78,11 +78,15 @@ class OrderTrackingController extends Controller
                 'complaints',
                 'checkout.payment.paymentMethod',
                 'checkout.payment.account',
-            ])
-            ->orderByDesc('orders.created_at')
-            ->get();
+            ]);
 
-        if ($orders->isEmpty()) {
+        $selectedOrderId = (int) $request->query('order');
+        $selected = $selectedOrderId > 0
+            ? (clone $base)->where('orders.order_id', $selectedOrderId)->first()
+            : null;
+        $selected ??= (clone $base)->orderByDesc('orders.created_at')->first();
+
+        if (! $selected) {
             return view('customer.order-tracking.index', [
                 'orders' => collect(),
                 'selected' => null,
@@ -90,9 +94,6 @@ class OrderTrackingController extends Controller
                 'isPickup' => false,
             ]);
         }
-
-        $selectedOrderId = (int) $request->query('order');
-        $selected = $orders->firstWhere('order_id', $selectedOrderId) ?? $orders->first();
 
         // Alasan pembatalan (ditulis admin) diambil dari log aktivitas — tanpa migration.
         $alasanPembatalan = null;
