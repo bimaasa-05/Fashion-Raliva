@@ -98,7 +98,7 @@
                 </div>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
                     <span class="material-symbols-outlined text-[14px]">inventory_2</span>
-                    <span id="result-count">{{ $withdrawals->count() }}</span> pengajuan
+                    <span id="result-count">{{ $withdrawals->total() }}</span> pengajuan
                 </span>
             </div>
         </div>
@@ -281,6 +281,9 @@
             @empty
                 <p class="text-center text-on-surface-variant py-10">{{ __('Tidak ada pengajuan pencairan tercatat.') }}</p>
             @endforelse
+            @if ($withdrawals->hasPages())
+                <div class="mt-6 flex justify-center">{{ $withdrawals->links() }}</div>
+            @endif
             <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">{{ __('Tidak ada pengajuan yang cocok.') }}</p>
         </div>
     </section>
