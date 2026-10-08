@@ -176,7 +176,7 @@ Route::prefix('customer')->name('customer.')->group(function () {
 
     Route::middleware('role:Customer')->group(function () {
         Route::resource('address', AddressController::class)->except(['show']);
-        Route::post('/address/{address}/set-default', [AddressController::class, 'setDefault'])->name('customer.address.set-default');
+        Route::post('/address/{address}/set-default', [AddressController::class, 'setDefault'])->name('address.set-default');
         Route::get('/chart', [CartController::class, 'index'])->name('chart');
 
         Route::patch('/cart/{cartItem}', [CartController::class, 'update'])->name('cart.update');
