@@ -98,13 +98,13 @@ class PeringkatIklanController extends Controller
 
     public function store(Request $request)
     {
-        abort(403, 'Pendaftaran slot via Super Admin dinonaktifkan. Gunakan alur Owner (bank+file+bukti).');
+        abort(403, __('Pendaftaran slot via Super Admin dinonaktifkan. Gunakan alur Owner (bank+file+bukti).'));
     }
 
     public function setujui(Request $request, AdSlot $slot)
     {
         if ($slot->status !== AdSlot::STATUS_DITUNDA) {
-            return back()->with('toast', ['message' => 'Hanya slot menunggu yang dapat disetujui.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Hanya slot menunggu yang dapat disetujui.'), 'icon' => 'gpp_maybe']);
         }
 
         $slot->loadMissing(['store', 'product']);
@@ -158,7 +158,7 @@ class PeringkatIklanController extends Controller
                 ]);
             });
         } catch (\Throwable $e) {
-            return back()->with('toast', ['message' => 'Gagal menyetujui iklan: '.$e->getMessage(), 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Gagal menyetujui iklan: :ph1', ['ph1' => $e->getMessage()]), 'icon' => 'gpp_maybe']);
         }
 
         $slot->refresh();
@@ -194,8 +194,8 @@ class PeringkatIklanController extends Controller
         }
 
         $toast = $slot->status === AdSlot::STATUS_TERJADWAL
-            ? 'Iklan disetujui dan terjadwal menunggu tanggal mulai.'
-            : 'Iklan disetujui dan aktif.';
+            ? __('Iklan disetujui dan terjadwal menunggu tanggal mulai.')
+            : __('Iklan disetujui dan aktif.');
 
         return back()->with('toast', ['message' => $toast, 'icon' => 'task_alt']);
     }
@@ -203,7 +203,7 @@ class PeringkatIklanController extends Controller
     public function tolak(Request $request, AdSlot $slot)
     {
         if ($slot->status !== AdSlot::STATUS_DITUNDA) {
-            return back()->with('toast', ['message' => 'Hanya slot menunggu yang dapat ditolak.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Hanya slot menunggu yang dapat ditolak.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -234,7 +234,7 @@ class PeringkatIklanController extends Controller
             ]);
         }
 
-        return back()->with('toast', ['message' => 'Iklan ditolak.', 'icon' => 'block']);
+        return back()->with('toast', ['message' => __('Iklan ditolak.'), 'icon' => 'block']);
     }
 
     public function destroy(AdSlot $slot)
@@ -255,7 +255,7 @@ class PeringkatIklanController extends Controller
         Notification::fireSelf(Notification::TIPE_PROMO, 'Slot Iklan Dihapus', 'Slot iklan "'.$nama.'" dihapus.', route('superadmin.peringkat-iklan'));
 
         return back()->with('toast', [
-            'message' => 'Slot iklan "'.$nama.'" berhasil dihapus.',
+            'message' => __('Slot iklan ":ph1" berhasil dihapus.', ['ph1' => $nama]),
             'icon' => 'task_alt',
         ]);
     }

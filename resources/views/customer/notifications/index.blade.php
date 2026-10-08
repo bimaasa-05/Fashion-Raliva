@@ -284,10 +284,10 @@ $isUnread = $n->dibaca_pada === null;
 </div>
 <div class="flex-grow min-w-0">
 <div class="flex justify-between items-start gap-sm">
-<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">{{ $n->judul }}</h3>
+<h3 class="font-body-sm text-body-sm font-semibold text-on-surface">{{ __($n->judul) }}</h3>
 <span class="font-label-sm text-[10px] text-on-surface-variant whitespace-nowrap mt-1">{{ $n->created_at->diffForHumans() }}</span>
 </div>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ $n->pesan }}</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __($n->pesan) }}</p>
 </div>
 @if ($isUnread)
 <span class="unread-dot w-2 h-2 rounded-full shrink-0 self-center"></span>

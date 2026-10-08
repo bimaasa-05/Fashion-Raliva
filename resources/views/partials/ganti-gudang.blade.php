@@ -6,7 +6,7 @@
 
 <div class="relative self-start sm:self-auto">
     <button type="button" data-dropdown-toggle class="w-full sm:w-auto flex items-center justify-between gap-2 border border-muted-border rounded-lg px-4 py-2.5 font-body-md text-sm text-on-surface hover:border-gold-accent transition-colors bg-surface-container-lowest min-w-[180px]">
-        <span class="truncate">{{ $warehouse->nama_gudang ?? 'Pilih Gudang' }}</span>
+        <span class="truncate">{{ $warehouse->nama_gudang ?? __('Pilih Gudang') }}</span>
         <span class="material-symbols-outlined text-[18px] shrink-0">expand_more</span>
     </button>
     <div data-dropdown-menu class="hidden absolute right-0 top-full mt-2 w-full sm:w-72 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-50 overflow-hidden">
@@ -18,7 +18,7 @@
                         <p class="font-body-md text-sm text-on-surface truncate">{{ $wh->nama_gudang }}</p>
                         <p class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant mt-0.5 truncate">{{ $wh->store->nama_toko ?? '' }}</p>
                     </div>
-                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20 shrink-0">Aktif</span>
+                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20 shrink-0">{{ __('Aktif') }}</span>
                 </div>
             @else
                 <form action="{{ route('gudang.ganti') }}" method="POST" class="w-full">
@@ -34,7 +34,7 @@
                 </form>
             @endif
         @empty
-            <div class="px-4 py-3 text-sm text-on-surface-variant">Tidak ada gudang ditugaskan.</div>
+            <div class="px-4 py-3 text-sm text-on-surface-variant">{{ __('Tidak ada gudang ditugaskan.') }}</div>
         @endforelse
     </div>
 </div>

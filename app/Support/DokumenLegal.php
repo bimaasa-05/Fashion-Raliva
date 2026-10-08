@@ -58,7 +58,7 @@ class DokumenLegal
 
     public static function pesanKurang(int $storeId): string
     {
-        return 'Pembelian slot wajib melampirkan identitas usaha: minimal salah satu dari KTP, NIB, atau NPWP sudah terverifikasi. '
-            .'Lengkapi dokumen di Pengajuan Toko terlebih dahulu.';
+        return __('Pembelian slot wajib melampirkan identitas usaha: minimal salah satu dari KTP, NIB, atau NPWP sudah terverifikasi.')
+            . ' ' . __('Lengkapi dokumen di Pengajuan Toko terlebih dahulu.');
     }
 }

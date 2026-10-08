@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laporan Toko {{ $store?->nama_toko ?? '' }} - Raliva</title>
+    <title>{{ __('Laporan Toko') }} {{ $store?->nama_toko ?? '' }} - Raliva</title>
     <style>
         @page { size: A4; margin: 16mm 14mm; }
         body { font-family: 'DejaVu Sans', sans-serif; font-size: 11px; color: #1B1C1C; }
@@ -41,37 +41,37 @@
         <tr>
             <td style="border:none;padding:0;">
                 <div class="brand">Raliva</div>
-                <h1>Laporan Toko</h1>
-                <div class="store">{{ $store?->nama_toko ?? 'Toko Saya' }}</div>
+                <h1>{{ __('Laporan Toko') }}</h1>
+                <div class="store">{{ $store?->nama_toko ?? __('Toko Saya') }}</div>
             </td>
             <td class="meta" style="border:none;padding:0;text-align:right;">
-                <div>Periode: <strong>{{ $periodeLabel }}</strong></div>
-                <div>Sampai: <strong>{{ now()->translatedFormat('d M Y') }}</strong></div>
-                <div>Dicetak: {{ now()->translatedFormat('d M Y H:i') }}</div>
+                <div>{{ __('Periode:') }} <strong>{{ $periodeLabel }}</strong></div>
+                <div>{{ __('Sampai:') }} <strong>{{ now()->translatedFormat('d M Y') }}</strong></div>
+                <div>{{ __('Dicetak:') }} {{ now()->translatedFormat('d M Y H:i') }}</div>
             </td>
         </tr>
     </table>
 
-    <div class="section-title"><span class="bar"></span>Ringkasan <small>Akumulasi</small></div>
+    <div class="section-title"><span class="bar"></span>{{ __('Ringkasan') }} <small>{{ __('Akumulasi') }}</small></div>
     <table class="kpi" style="width:100%;border-collapse:collapse;">
         <tr>
-            <td style="width:25%;"><span class="lbl">Pendapatan Bersih</span><span class="val">{{ $fmt($pendapatan) }}</span><span class="hnt">total order selesai</span></td>
-            <td style="width:25%;"><span class="lbl">Pesanan Selesai</span><span class="val">{{ number_format($pesananSelesai, 0, ',', '.') }}</span><span class="hnt">akumulasi</span></td>
-            <td style="width:25%;"><span class="lbl">Nilai Refund</span><span class="val">{{ $fmt($refund) }}</span><span class="hnt">refund selesai</span></td>
-            <td style="width:25%;"><span class="lbl">Dana Dicairkan</span><span class="val">{{ $fmt($dicairkan) }}</span><span class="hnt">withdrawal selesai</span></td>
+            <td style="width:25%;"><span class="lbl">{{ __('Pendapatan Bersih') }}</span><span class="val">{{ $fmt($pendapatan) }}</span><span class="hnt">{{ __('total order selesai') }}</span></td>
+            <td style="width:25%;"><span class="lbl">{{ __('Pesanan Selesai') }}</span><span class="val">{{ number_format($pesananSelesai, 0, ',', '.') }}</span><span class="hnt">{{ __('akumulasi') }}</span></td>
+            <td style="width:25%;"><span class="lbl">{{ __('Nilai Refund') }}</span><span class="val">{{ $fmt($refund) }}</span><span class="hnt">{{ __('refund selesai') }}</span></td>
+            <td style="width:25%;"><span class="lbl">{{ __('Dana Dicairkan') }}</span><span class="val">{{ $fmt($dicairkan) }}</span><span class="hnt">{{ __('withdrawal selesai') }}</span></td>
         </tr>
     </table>
 
-    <div class="section-title"><span class="bar"></span>Laporan Periode <small>{{ $periodeLabel }}</small></div>
+    <div class="section-title"><span class="bar"></span>{{ __('Laporan Periode') }} <small>{{ $periodeLabel }}</small></div>
     <table>
         <thead>
             <tr>
-                <th>Periode</th>
-                <th class="r">Pesanan</th>
-                <th class="r">Pendapatan</th>
-                <th class="r">Refund</th>
-                <th class="r">Pencairan</th>
-                <th class="r">Saldo Akhir</th>
+                <th>{{ __('Periode') }}</th>
+                <th class="r">{{ __('Pesanan') }}</th>
+                <th class="r">{{ __('Pendapatan') }}</th>
+                <th class="r">{{ __('Refund') }}</th>
+                <th class="r">{{ __('Pencairan') }}</th>
+                <th class="r">{{ __('Saldo Akhir') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -88,7 +88,7 @@
         </tbody>
         <tfoot>
             <tr>
-                <td>Total</td>
+                <td>{{ __('Total') }}</td>
                 <td class="r">{{ number_format($totals['pesanan'], 0, ',', '.') }}</td>
                 <td class="r">{{ $fmt($totals['pendapatan']) }}</td>
                 <td class="r refund">{{ $fmt($totals['refund']) }}</td>
@@ -98,13 +98,13 @@
         </tfoot>
     </table>
 
-    <div class="section-title"><span class="bar"></span>Produk Terlaris <small>Top 5</small></div>
+    <div class="section-title"><span class="bar"></span>{{ __('Produk Terlaris') }} <small>{{ __('Top 5') }}</small></div>
     <table class="top">
         <thead>
             <tr>
                 <th style="width:32px;">No</th>
-                <th>Produk</th>
-                <th class="r">Terjual (pcs)</th>
+                <th>{{ __('Produk') }}</th>
+                <th class="r">{{ __('Terjual (pcs)') }}</th>
             </tr>
         </thead>
         <tbody>
@@ -119,7 +119,7 @@
     </table>
 
     <div class="footer">
-        Dokumen ini dihasilkan otomatis oleh sistem Raliva &mdash; {{ $store?->nama_toko ?? '' }} &mdash; {{ now()->translatedFormat('d M Y') }}
+        {{ __('Dokumen ini dihasilkan otomatis oleh sistem Raliva') }} &mdash; {{ $store?->nama_toko ?? '' }} &mdash; {{ now()->translatedFormat('d M Y') }}
     </div>
 </body>
 </html>

@@ -55,7 +55,7 @@ class GudangController extends Controller
     {
         $storeId = OwnerContext::firstStoreId();
         if (! $storeId) {
-            return back()->with('error', 'Belum ada toko untuk ditambah gudang.');
+            return back()->with('error', __('Belum ada toko untuk ditambah gudang.'));
         }
 
         $data = $request->validate([
@@ -63,7 +63,7 @@ class GudangController extends Controller
             'alamat' => ['nullable', 'string', 'max:500'],
             'nomor_telepon' => ['nullable', 'string', 'max:30'],
         ], [
-            'nama_gudang.required' => 'Nama gudang wajib diisi.',
+            'nama_gudang.required' => __('Nama gudang wajib diisi.'),
         ]);
 
         Warehouse::create([
@@ -74,13 +74,13 @@ class GudangController extends Controller
             'status' => Warehouse::STATUS_AKTIF,
         ]);
 
-        return back()->with('success', 'Gudang "'.$data['nama_gudang'].'" ditambahkan.');
+        return back()->with('success', sprintf(__('Gudang "%s" ditambahkan.'), $data['nama_gudang']));
     }
 
     public function update(Request $request, Warehouse $warehouse): RedirectResponse
     {
         if (! OwnerContext::canAccessStore($warehouse->store_id)) {
-            return back()->with('error', 'Gudang ini di luar toko Anda.');
+            return back()->with('error', __('Gudang ini di luar toko Anda.'));
         }
 
         $data = $request->validate([
@@ -88,7 +88,7 @@ class GudangController extends Controller
             'alamat' => ['nullable', 'string', 'max:500'],
             'nomor_telepon' => ['nullable', 'string', 'max:30'],
         ], [
-            'nama_gudang.required' => 'Nama gudang wajib diisi.',
+            'nama_gudang.required' => __('Nama gudang wajib diisi.'),
         ]);
 
         $warehouse->update([
@@ -97,13 +97,13 @@ class GudangController extends Controller
             'nomor_telepon' => $data['nomor_telepon'] ?? null,
         ]);
 
-        return back()->with('success', 'Data gudang diperbarui.');
+        return back()->with('success', __('Data gudang diperbarui.'));
     }
 
     public function toggle(Request $request, Warehouse $warehouse): RedirectResponse
     {
         if (! OwnerContext::canAccessStore($warehouse->store_id)) {
-            return back()->with('error', 'Gudang ini di luar toko Anda.');
+            return back()->with('error', __('Gudang ini di luar toko Anda.'));
         }
 
         if ($warehouse->status === Warehouse::STATUS_AKTIF) {
@@ -112,32 +112,32 @@ class GudangController extends Controller
                 ->where('warehouse_id', '!=', $warehouse->warehouse_id)
                 ->exists();
             if (! $aktifLain) {
-                return back()->with('error', 'Tidak bisa menonaktifkan satu-satunya gudang aktif.');
+                return back()->with('error', __('Tidak bisa menonaktifkan satu-satunya gudang aktif.'));
             }
             $stok = (int) \App\Models\WarehouseStock::where('warehouse_id', $warehouse->warehouse_id)->sum('jumlah_stok');
             if ($stok > 0) {
-                return back()->with('error', 'Gudang masih menyimpan '.$stok.' pcs stok. Pindahkan dulu sebelum dinonaktifkan.');
+                return back()->with('error', sprintf(__('Gudang masih menyimpan %d pcs stok. Pindahkan dulu sebelum dinonaktifkan.'), $stok));
             }
             $warehouse->update(['status' => Warehouse::STATUS_NONAKTIF]);
 
-            return back()->with('success', 'Gudang dinonaktifkan.');
+            return back()->with('success', __('Gudang dinonaktifkan.'));
         }
 
         $warehouse->update(['status' => Warehouse::STATUS_AKTIF]);
 
-        return back()->with('success', 'Gudang diaktifkan kembali.');
+        return back()->with('success', __('Gudang diaktifkan kembali.'));
     }
 
     public function assignStaff(Request $request, Warehouse $warehouse): RedirectResponse
     {
         if (! OwnerContext::canAccessStore($warehouse->store_id)) {
-            return back()->with('error', 'Gudang ini di luar toko Anda.');
+            return back()->with('error', __('Gudang ini di luar toko Anda.'));
         }
 
         $data = $request->validate([
             'user_id' => ['required', 'integer', 'exists:users,user_id'],
         ], [
-            'user_id.required' => 'Pilih staff gudang.',
+            'user_id.required' => __('Pilih staff gudang.'),
         ]);
 
         $user = \App\Models\User::where('user_id', $data['user_id'])
@@ -145,7 +145,7 @@ class GudangController extends Controller
             ->where('status', 'aktif')
             ->first();
         if (! $user) {
-            return back()->with('error', 'User harus staff Gudang yang aktif.');
+            return back()->with('error', __('User harus staff Gudang yang aktif.'));
         }
 
         \App\Models\WarehouseStaff::updateOrCreate(
@@ -153,7 +153,7 @@ class GudangController extends Controller
             ['tanggal_penugasan' => now(), 'status' => 'aktif']
         );
 
-        return back()->with('success', $user->nama_lengkap.' ditugaskan ke '.$warehouse->nama_gudang.'.');
+        return back()->with('success', sprintf(__('%s ditugaskan ke %s.'), $user->nama_lengkap, $warehouse->nama_gudang));
     }
 
     public function setujui(Request $request, StockTransfer $stockTransfer): RedirectResponse
@@ -166,16 +166,16 @@ class GudangController extends Controller
                     ->first();
 
                 if (! $transfer) {
-                    throw new \RuntimeException('Pemindahan tidak ditemukan.');
+                    throw new \RuntimeException(__('Pemindahan tidak ditemukan.'));
                 }
 
                 $storeId = $transfer->fromWarehouse?->store_id;
                 if (! $storeId || ! OwnerContext::canAccessStore($storeId)) {
-                    throw new \RuntimeException('Anda tidak berhak menyetujui pemindahan ini.');
+                    throw new \RuntimeException(__('Anda tidak berhak menyetujui pemindahan ini.'));
                 }
 
                 if (! $transfer->canTransitionTo(StockTransfer::STATUS_APPROVED)) {
-                    throw new \RuntimeException('Pemindahan sudah tidak dapat disetujui.');
+                    throw new \RuntimeException(__('Pemindahan sudah tidak dapat disetujui.'));
                 }
 
                 foreach ($transfer->items as $item) {
@@ -185,7 +185,7 @@ class GudangController extends Controller
                         ->first();
 
                     if (! $asal || $asal->jumlah_stok < $item->jumlah) {
-                        throw new \RuntimeException('Stok di gudang asal tidak mencukupi untuk pemindahan ini.');
+                        throw new \RuntimeException(__('Stok di gudang asal tidak mencukupi untuk pemindahan ini.'));
                     }
 
                     $affected = WarehouseStock::where('warehouse_stock_id', $asal->warehouse_stock_id)
@@ -193,7 +193,7 @@ class GudangController extends Controller
                         ->decrement('jumlah_stok', $item->jumlah);
 
                     if ($affected === 0) {
-                        throw new \RuntimeException('Stok di gudang asal tidak mencukupi untuk pemindahan ini.');
+                        throw new \RuntimeException(__('Stok di gudang asal tidak mencukupi untuk pemindahan ini.'));
                     }
 
                     StockMovement::create([
@@ -215,18 +215,18 @@ class GudangController extends Controller
                     ]);
 
                 if ($affected === 0) {
-                    throw new \RuntimeException('Gagal menyetujui pemindahan.');
+                    throw new \RuntimeException(__('Gagal menyetujui pemindahan.'));
                 }
             }, 5);
         } catch (\RuntimeException $e) {
             return back()->with('error', $e->getMessage());
         } catch (\Throwable $e) {
-            return back()->with('error', 'Gagal menyetujui pemindahan.');
+            return back()->with('error',__('Gagal menyetujui pemindahan.'));
         }
 
-        $this->notifyPersetujuan($stockTransfer, 'disetujui', 'Pemindahan #TRF-'.$stockTransfer->stock_transfer_id.' disetujui. Stok gudang asal telah dikurangi.');
+        $this->notifyPersetujuan($stockTransfer, 'disetujui', sprintf(__('Pemindahan #TRF-%d disetujui. Stok gudang asal telah dikurangi.'), $stockTransfer->stock_transfer_id));
 
-        return back()->with('success', 'Pemindahan disetujui. Stok gudang asal telah dikurangi.');
+        return back()->with('success',__('Pemindahan disetujui. Stok gudang asal telah dikurangi.'));
     }
 
     public function tolak(Request $request, StockTransfer $stockTransfer): RedirectResponse
@@ -234,8 +234,8 @@ class GudangController extends Controller
         $data = $request->validate([
             'alasan' => 'required|string|min:10|max:500',
         ], [
-            'alasan.required' => 'Alasan penolakan wajib diisi.',
-            'alasan.min' => 'Alasan penolakan minimal 10 karakter.',
+            'alasan.required' => __('Alasan penolakan wajib diisi.'),
+            'alasan.min' => __('Alasan penolakan minimal 10 karakter.'),
         ]);
 
         try {
@@ -245,16 +245,16 @@ class GudangController extends Controller
                     ->first();
 
                 if (! $transfer) {
-                    throw new \RuntimeException('Pemindahan tidak ditemukan.');
+                    throw new \RuntimeException(__('Pemindahan tidak ditemukan.'));
                 }
 
                 $storeId = $transfer->fromWarehouse?->store_id;
                 if (! $storeId || ! OwnerContext::canAccessStore($storeId)) {
-                    throw new \RuntimeException('Anda tidak berhak menolak pemindahan ini.');
+                    throw new \RuntimeException(__('Anda tidak berhak menolak pemindahan ini.'));
                 }
 
                 if (! $transfer->canTransitionTo(StockTransfer::STATUS_CANCELLED)) {
-                    throw new \RuntimeException('Pemindahan sudah tidak dapat dibatalkan.');
+                    throw new \RuntimeException(__('Pemindahan sudah tidak dapat dibatalkan.'));
                 }
 
                 $affected = StockTransfer::where('stock_transfer_id', $transfer->stock_transfer_id)
@@ -265,18 +265,18 @@ class GudangController extends Controller
                     ]);
 
                 if ($affected === 0) {
-                    throw new \RuntimeException('Gagal menolak pemindahan.');
+                    throw new \RuntimeException(__('Gagal menolak pemindahan.'));
                 }
             }, 5);
         } catch (\RuntimeException $e) {
             return back()->with('error', $e->getMessage());
         } catch (\Throwable $e) {
-            return back()->with('error', 'Gagal menolak pemindahan.');
+            return back()->with('error',__('Gagal menolak pemindahan.'));
         }
 
-        $this->notifyPersetujuan($stockTransfer, 'ditolak', 'Pemindahan #TRF-'.$stockTransfer->stock_transfer_id.' ditolak. Alasan: '.$data['alasan']);
+        $this->notifyPersetujuan($stockTransfer, 'ditolak', sprintf(__('Pemindahan #TRF-%d ditolak. Alasan: %s'), $stockTransfer->stock_transfer_id, $data['alasan']));
 
-        return back()->with('success', 'Pemindahan ditolak.');
+        return back()->with('success',__('Pemindahan ditolak.'));
     }
 
     private function notifyPersetujuan(StockTransfer $transfer, string $aksi, string $pesan): void
@@ -285,7 +285,7 @@ class GudangController extends Controller
             Notification::create([
                 'user_id' => $transfer->requested_by,
                 'tipe' => Notification::TIPE_SISTEM,
-                'judul' => 'Pemindahan Stok '.ucfirst($aksi),
+                'judul' => sprintf(__('Pemindahan Stok %s'), $aksi === 'disetujui' ? __('Disetujui') : __('Ditolak')),
                 'pesan' => $pesan,
                 'url' => route('gudang.pemindahan'),
             ]);
@@ -294,7 +294,7 @@ class GudangController extends Controller
         NotificationService::sendToRole(
             Role::GUDANG,
             Notification::TIPE_SISTEM,
-            'Pemindahan Stok '.ucfirst($aksi),
+            sprintf(__('Pemindahan Stok %s'), $aksi === 'disetujui' ? __('Disetujui') : __('Ditolak')),
             $pesan,
             Auth::id(),
             route('gudang.pemindahan')

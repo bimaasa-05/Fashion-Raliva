@@ -4,12 +4,12 @@
 /** @var \Illuminate\Support\Collection<int, array{deskripsi:string,waktu:string}> $aktivitas */
 @endphp
 
-@section('title', 'Dashboard Admin Utama')
+@section('title', __('Dashboard Admin Utama'))
 
-@section('header-title', 'Selamat datang, Super Admin')
-@section('header-badge', 'Kelola & Lihat')
+@section('header-title', __('Selamat datang, Super Admin'))
+@section('header-badge', __('Kelola & Lihat'))
 
-@section('header-subtitle', 'Ringkasan kondisi seluruh platform Raliva.')
+@section('header-subtitle', __('Ringkasan kondisi seluruh platform Raliva.'))
 
 @section('content')
 @php
@@ -147,7 +147,7 @@
         <div class="flex flex-col items-center text-center p-3 rounded-xl bg-surface-container-low border border-muted-border">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Kepuasan Pelanggan</p>
             <div data-donut='[{"value":{{ $kepuasan['persen'] }},"color":"#8B1E3F","label":"Puas"},{"value":{{ 100 - $kepuasan['persen'] }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Rating {{ $kepuasan['rata'] > 0 ? number_format($kepuasan['rata'], 1, ',', '.') : '-' }} / 5" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-            <p class="text-[11px] text-on-surface-variant mt-1">Dari {{ number_format($kepuasan['total'], 0, ',', '.') }} ulasan</p>
+            <p class="text-[11px] text-on-surface-variant mt-1">{{ sprintf(__('Dari %s ulasan'), number_format($kepuasan['total'], 0, ',', '.')) }}</p>
         </div>
         <div class="flex flex-col items-center text-center p-3 rounded-xl bg-surface-container-low border border-muted-border">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">SLA Respons Komplain</p>
@@ -165,9 +165,9 @@
         <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
             <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Volume Pesanan &amp; Transaksi</h2>
             <div class="inline-flex self-start bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
-                <button type="button" data-order-range="7" class="order-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">7 Hari</button>
-                <button type="button" data-order-range="30" class="order-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">30 Hari</button>
-                <button type="button" data-order-range="90" class="order-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">3 Bulan</button>
+                <button type="button" data-order-range="7" class="order-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">{{ __('7 Hari') }}</button>
+                <button type="button" data-order-range="30" class="order-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">{{ __('30 Hari') }}</button>
+                <button type="button" data-order-range="90" class="order-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">{{ __('3 Bulan') }}</button>
             </div>
         </div>
         <div id="order-bars-holder" class="h-48 min-h-0"></div>
@@ -197,14 +197,14 @@
 
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Toko</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Top Toko') }}</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">emoji_events</span>
         </div>
         <div data-leaderboard='@json($topToko)'></div>
         <div class="flex items-center justify-center gap-6 mt-4 pt-4 border-t border-muted-border">
-            <a href="{{ route('superadmin.peringkat') }}#toko" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
+            <a href="{{ route('superadmin.peringkat') }}#toko" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">{{ __('Lihat Peringkat Lengkap') }}</a>
             <span class="w-px h-4 bg-muted-border"></span>
-            <a href="{{ route('superadmin.manajemen-toko') }}" class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-widest hover:underline">Kelola Semua Toko</a>
+            <a href="{{ route('superadmin.manajemen-toko') }}" class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-widest hover:underline">{{ __('Kelola Semua Toko') }}</a>
         </div>
     </section>
 </div>
@@ -212,11 +212,11 @@
 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
     <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading whitespace-nowrap">Kinerja Platform</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading sm:whitespace-nowrap">{{ __('Kinerja Platform') }}</h2>
             <div class="inline-flex self-start sm:self-auto bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1">
-                <button type="button" data-chart-range="7" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">7 Hari</button>
-                <button type="button" data-chart-range="30" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">30 Hari</button>
-                <button type="button" data-chart-range="90" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">3 Bulan</button>
+                <button type="button" data-chart-range="7" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary">{{ __('7 Hari') }}</button>
+                <button type="button" data-chart-range="30" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">{{ __('30 Hari') }}</button>
+                <button type="button" data-chart-range="90" class="chart-range-btn px-3 py-1.5 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface">{{ __('3 Bulan') }}</button>
             </div>
         </div>
         <div id="chart-wrap" class="relative h-72 md:h-80">
@@ -244,23 +244,23 @@
                 <span class="material-symbols-outlined text-on-error-container">cloud_off</span>
             </div>
             <div>
-                <p class="font-title-md text-title-md text-on-surface">Data gagal dimuat</p>
-                <p class="text-on-surface-variant font-body-md text-sm mt-1">Terjadi masalah saat mengambil data grafik. Silakan coba lagi.</p>
+                <p class="font-title-md text-title-md text-on-surface">{{ __('Data gagal dimuat') }}</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-1">{{ __('Terjadi masalah saat mengambil data grafik. Silakan coba lagi.') }}</p>
             </div>
-            <button type="button" id="chart-retry" class="mt-2 px-5 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium">Coba Lagi</button>
+            <button type="button" id="chart-retry" class="mt-2 px-5 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium">{{ __('Coba Lagi') }}</button>
         </div>
     </section>
 
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-2">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Komposisi Toko</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Komposisi Toko') }}</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">donut_small</span>
         </div>
-        <p class="text-on-surface-variant font-body-md text-xs mb-4">Sebaran status seluruh toko terdaftar.</p>
+        <p class="text-on-surface-variant font-body-md text-xs mb-4">{{ __('Sebaran status seluruh toko terdaftar.') }}</p>
         <div data-donut='@json($komposisiTokoDonut)' data-donut-label="Toko Terdaftar"></div>
         <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
             <span class="material-symbols-outlined text-[14px] text-gold-accent">sync</span>
-            Sinkron dengan Total Toko di ringkasan atas.
+            {{ __('Sinkron dengan Total Toko di ringkasan atas.') }}
         </p>
     </section>
 </div>
@@ -326,14 +326,14 @@
                 <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center">
                     <span class="material-symbols-outlined text-gold-accent">verified</span>
                 </div>
-                <p class="font-title-md text-title-md text-on-surface">Semua aman</p>
-                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada permintaan yang menunggu tindakan Anda.</p>
+                <p class="font-title-md text-title-md text-on-surface">{{ __('Semua aman') }}</p>
+                <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada permintaan yang menunggu tindakan Anda.') }}</p>
             </div>
         @endif
     </section>
 
     <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Aktivitas Terbaru</h2>
+        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">{{ __('Aktivitas Terbaru') }}</h2>
         <ul class="flex flex-col">
             @forelse($aktivitas as $act)
                 @php
@@ -361,7 +361,7 @@
                     </div>
                 </li>
             @empty
-                <li class="p-4 text-center text-on-surface-variant">Belum ada aktivitas terbaru.</li>
+                <li class="p-4 text-center text-on-surface-variant">{{ __('Belum ada aktivitas terbaru.') }}</li>
             @endforelse
         </ul>
     </section>
@@ -369,39 +369,39 @@
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Kategori</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Top Kategori') }}</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">category</span>
         </div>
         <div data-leaderboard='@json($topKategori)'></div>
-        <a href="{{ route('superadmin.peringkat') }}#kategori" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
+        <a href="{{ route('superadmin.peringkat') }}#kategori" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">{{ __('Lihat Peringkat Lengkap') }}</a>
     </section>
 
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Pelanggan</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Top Pelanggan') }}</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">military_tech</span>
         </div>
         <div data-leaderboard='@json($topPelanggan)'></div>
-        <a href="{{ route('superadmin.peringkat') }}#pelanggan" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
+        <a href="{{ route('superadmin.peringkat') }}#pelanggan" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">{{ __('Lihat Peringkat Lengkap') }}</a>
     </section>
 </div>
 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Produk</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Top Produk') }}</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">local_mall</span>
         </div>
         <div data-leaderboard='@json($topProduk)'></div>
-        <a href="{{ route('superadmin.produk') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Kelola Semua Produk</a>
+        <a href="{{ route('superadmin.produk') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">{{ __('Kelola Semua Produk') }}</a>
     </section>
 
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Top Produk Iklan</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Top Produk Iklan') }}</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">campaign</span>
         </div>
         <div data-leaderboard='@json($topProdukIklan)'></div>
-        <a href="{{ route('superadmin.peringkat-iklan') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Iklan Lengkap</a>
+        <a href="{{ route('superadmin.peringkat-iklan') }}" class="block text-center mt-4 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">{{ __('Lihat Iklan Lengkap') }}</a>
     </section>
 </div>
 
@@ -455,8 +455,8 @@
                 data: {
                     labels: data.labels,
                     datasets: [
-                        { label: 'Volume Transaksi', data: data.transaksi, borderColor: '#8B1E3F', backgroundColor: 'rgba(139, 30, 63, 0.12)', fill: true, tension: 0.38, borderWidth: 2, pointBackgroundColor: '#8B1E3F', pointRadius: 3 },
-                        { label: 'Jumlah Pesanan', data: data.pesanan, borderColor: c.tick, backgroundColor: 'transparent', fill: false, tension: 0.38, borderWidth: 2, pointBackgroundColor: c.tick, pointRadius: 3, yAxisID: 'y1' }
+                        { label: '{{ __('Volume Transaksi') }}', data: data.transaksi, borderColor: '#8B1E3F', backgroundColor: 'rgba(139, 30, 63, 0.12)', fill: true, tension: 0.38, borderWidth: 2, pointBackgroundColor: '#8B1E3F', pointRadius: 3 },
+                        { label: '{{ __('Jumlah Pesanan') }}', data: data.pesanan, borderColor: c.tick, backgroundColor: 'transparent', fill: false, tension: 0.38, borderWidth: 2, pointBackgroundColor: c.tick, pointRadius: 3, yAxisID: 'y1' }
                     ]
                 },
                 options: {

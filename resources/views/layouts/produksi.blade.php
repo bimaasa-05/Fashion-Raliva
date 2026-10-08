@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta name="user-id" content="{{ Auth::id() }}" />
-    <title>RALIVA - @yield('title', 'Staf Produksi')</title>
+    <title>RALIVA - @yield('title', __('Staf Produksi'))</title>
     @include('partials.theme-head')
     @include('partials.brand-status')
     <style>
@@ -162,7 +162,7 @@
         </button>
         <span class="font-display-lg text-headline-md tracking-widest text-on-surface">RALIVA</span>
         <div class="flex items-center gap-2">
-            <button type="button" class="theme-toggle text-on-surface hover:opacity-80 transition-opacity" aria-label="Ganti tema">
+            <button type="button" class="theme-toggle text-on-surface hover:opacity-80 transition-opacity" aria-label="{{ __('Ganti tema') }}">
                 <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
             </button>
             @include('partials.notification-panel', ['lihatSemuaRoute' => 'produksi.notifikasi'])
@@ -172,7 +172,7 @@
     </header>
 
     <!-- Side Navigation Drawer -->
-    <aside id="sidebar" class="flex fixed md:sticky md:self-start top-0 left-0 z-50 flex-col h-screen shrink-0 pt-4 pb-[88px] md:pb-section-gap px-container-margin w-72 border-r border-sidebar-border bg-sidebar -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out">
+    <aside id="sidebar" class="flex fixed md:sticky md:self-start top-0 left-0 z-50 flex-col h-screen shrink-0 pt-4 pb-[88px] md:pb-section-gap px-container-margin w-72 max-md:w-64 border-r border-sidebar-border bg-sidebar -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out">
         <div class="sidebar-head flex items-center justify-between gap-3 pt-1 pb-3">
             <div class="flex-1 flex items-center justify-center gap-3 min-w-0">
                 <div data-sidebar-text>
@@ -186,7 +186,7 @@
                     @endif
                 </div>
             </div>
-            <button type="button" id="sidebar-collapse" aria-expanded="true" aria-label="Perkecil menu sidebar" class="sidebar-collapse-btn hidden md:inline-flex w-8 h-8 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-gold-accent/70 hover:text-gold-accent items-center justify-center transition-colors shrink-0">
+            <button type="button" id="sidebar-collapse" aria-expanded="true" aria-label="{{ __('Perkecil menu sidebar') }}" class="sidebar-collapse-btn hidden md:inline-flex w-8 h-8 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-gold-accent/70 hover:text-gold-accent items-center justify-center transition-colors shrink-0">
                 <span class="material-symbols-outlined icon-chevron text-[18px] transition-transform duration-300">chevron_left</span>
             </button>
         </div>
@@ -229,15 +229,15 @@
         <header class="hidden md:flex sticky top-0 z-40 justify-between items-center px-container-margin h-20 bg-surface-container-lowest border-b border-outline-variant">
             <div>
                 <div class="flex items-center gap-3">
-                    <h1 class="font-title-md text-title-md text-on-surface">@yield('header-title', 'Dashboard Produksi')</h1>
+                    <h1 class="font-title-md text-title-md text-on-surface">@yield('header-title', __('Dashboard Produksi'))</h1>
                     @hasSection('header-badge')
                         <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-label-sm uppercase tracking-wider">@yield('header-badge')</span>
                     @endif
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">@yield('header-subtitle', 'Ringkasan permintaan, proses dan hasil produksi hari ini.')</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">@yield('header-subtitle', __('Ringkasan permintaan, proses dan hasil produksi hari ini.'))</p>
             </div>
             <div class="flex items-center gap-6">
-                <button type="button" class="theme-toggle text-on-surface hover:text-secondary transition-colors" aria-label="Ganti tema">
+                <button type="button" class="theme-toggle text-on-surface hover:text-secondary transition-colors" aria-label="{{ __('Ganti tema') }}">
                     <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
                 </button>
                 @include('partials.notification-panel', ['lihatSemuaRoute' => 'produksi.notifikasi'])
@@ -249,12 +249,12 @@
         <!-- Mobile Greeting -->
         <div class="md:hidden px-container-margin py-6">
             <div class="flex items-center gap-3 flex-wrap">
-                <h1 class="{{ request()->routeIs('produksi.dashboard') ? 'font-headline-lg-mobile text-headline-lg-mobile' : 'raliva-figure text-[24px]' }} text-on-surface">@yield('header-title', 'Dashboard Produksi')</h1>
+                <h1 class="{{ request()->routeIs('produksi.dashboard') ? 'font-headline-lg-mobile text-headline-lg-mobile' : 'raliva-figure text-[24px]' }} text-on-surface">@yield('header-title', __('Dashboard Produksi'))</h1>
                 @hasSection('header-badge')
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">@yield('header-badge')</span>
                 @endif
             </div>
-            <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Ringkasan permintaan, proses dan hasil produksi hari ini.')</p>
+            <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', __('Ringkasan permintaan, proses dan hasil produksi hari ini.'))</p>
         </div>
 
         <div class="px-container-margin pt-8 pb-section-gap flex flex-col gap-section-gap w-full">
@@ -265,12 +265,12 @@
 
     <!-- Bottom Nav Bar (Mobile) -->
     @include('partials.bottom-nav', ['items' => [
-        ['route' => 'produksi.dashboard', 'icon' => 'space_dashboard', 'label' => 'Beranda'],
-        ['route' => 'produksi.data-produksi', 'icon' => 'precision_manufacturing', 'label' => 'Produksi'],
-        ['route' => 'produksi.pemeriksaan-kualitas', 'icon' => 'fact_check', 'label' => 'QC'],
-        ['route' => 'produksi.produk-selesai', 'icon' => 'task_alt', 'label' => 'Selesai'],
-        ['route' => 'produksi.bahan-produksi', 'icon' => 'inventory', 'label' => 'Bahan'],
-        ['route' => 'produksi.profil', 'icon' => 'person', 'label' => 'Profil'],
+        ['route' => 'produksi.dashboard', 'icon' => 'space_dashboard', 'label' => __('Beranda')],
+        ['route' => 'produksi.data-produksi', 'icon' => 'precision_manufacturing', 'label' => __('Produksi')],
+        ['route' => 'produksi.pemeriksaan-kualitas', 'icon' => 'fact_check', 'label' => __('QC')],
+        ['route' => 'produksi.produk-selesai', 'icon' => 'task_alt', 'label' => __('Selesai')],
+        ['route' => 'produksi.bahan-produksi', 'icon' => 'inventory', 'label' => __('Bahan')],
+        ['route' => 'produksi.profil', 'icon' => 'person', 'label' => __('Profil')],
     ]])
 
     <!-- Toast -->
@@ -451,7 +451,7 @@ const closeAllOverlays = () => {
             });
         });
 
-        /* ===== Raliva Motion â€” satu animasi entrance seragam ===== */
+        /* ===== Raliva Motion — satu animasi entrance seragam ===== */
         window.matchReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
         const PROGRESS_COLORS = ['bg-secondary', 'bg-gold-accent', 'bg-deep-onyx'];

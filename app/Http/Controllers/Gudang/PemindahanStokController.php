@@ -58,13 +58,13 @@ class PemindahanStokController extends Controller
     public function store(Request $request)
     {
         if (! auth()->user()->hasPermission('warehouse.transfer')) {
-            abort(403, 'Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.');
+            abort(403, __('Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.'));
         }
 
         $warehouse = $this->activeWarehouse();
 
         if (! $warehouse) {
-            return back()->with('toast', ['message' => 'Tidak ada gudang aktif.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Tidak ada gudang aktif.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -79,14 +79,14 @@ class PemindahanStokController extends Controller
             'jumlah' => 'required|integer|min:1',
             'catatan' => 'nullable|string|max:500',
         ], [
-            'to_warehouse_id.required' => 'Gudang tujuan wajib dipilih.',
-            'to_warehouse_id.different' => 'Gudang tujuan harus berbeda dari gudang asal.',
-            'to_warehouse_id.exists' => 'Gudang tujuan tidak valid atau bukan gudang aktif pada toko yang sama.',
-            'product_variant_id.required' => 'Produk wajib dipilih.',
-            'product_variant_id.exists' => 'Produk tidak valid.',
-            'jumlah.required' => 'Jumlah wajib diisi.',
-            'jumlah.integer' => 'Jumlah harus berupa angka.',
-            'jumlah.min' => 'Jumlah minimal 1.',
+            'to_warehouse_id.required' => __('Gudang tujuan wajib dipilih.'),
+            'to_warehouse_id.different' => __('Gudang tujuan harus berbeda dari gudang asal.'),
+            'to_warehouse_id.exists' => __('Gudang tujuan tidak valid atau bukan gudang aktif pada toko yang sama.'),
+            'product_variant_id.required' => __('Produk wajib dipilih.'),
+            'product_variant_id.exists' => __('Produk tidak valid.'),
+            'jumlah.required' => __('Jumlah wajib diisi.'),
+            'jumlah.integer' => __('Jumlah harus berupa angka.'),
+            'jumlah.min' => __('Jumlah minimal 1.'),
         ]);
 
         $stok = WarehouseStock::where('warehouse_id', $warehouse->warehouse_id)
@@ -112,7 +112,7 @@ class PemindahanStokController extends Controller
         });
 
         if (! $stokCukup) {
-            return back()->with('toast', ['message' => 'Permintaan dibuat, tetapi stok gudang asal saat ini tidak mencukupi dan akan dicek saat persetujuan.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Permintaan dibuat, tetapi stok gudang asal saat ini tidak mencukupi dan akan dicek saat persetujuan.'), 'icon' => 'gpp_maybe']);
         }
 
         ActivityLogger::log(
@@ -134,27 +134,27 @@ class PemindahanStokController extends Controller
         );
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pemindahan Stok Diajukan', sprintf('Permintaan pemindahan %d unit berhasil dibuat, menunggu persetujuan gudang tujuan.', $data['jumlah']), route('gudang.dashboard'));
 
-        return back()->with('toast', ['message' => 'Permintaan pemindahan berhasil dibuat, menunggu persetujuan.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Permintaan pemindahan berhasil dibuat, menunggu persetujuan.'), 'icon' => 'task_alt']);
     }
 
     public function approve(Request $request, StockTransfer $transfer)
     {
         if (! auth()->user()->hasPermission('warehouse.transfer')) {
-            abort(403, 'Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.');
+            abort(403, __('Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.'));
         }
 
         $warehouse = $this->activeWarehouse();
 
         if (! $warehouse) {
-            return back()->with('toast', ['message' => 'Tidak ada gudang aktif.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Tidak ada gudang aktif.'), 'icon' => 'gpp_maybe']);
         }
 
         if ((int) $transfer->to_warehouse_id !== (int) $warehouse->warehouse_id) {
-            return back()->with('toast', ['message' => 'Hanya gudang tujuan yang dapat menyetujui pemindahan.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Hanya gudang tujuan yang dapat menyetujui pemindahan.'), 'icon' => 'gpp_maybe']);
         }
 
         if ($transfer->status !== StockTransfer::STATUS_REQUESTED) {
-            return back()->with('toast', ['message' => 'Pemindahan tidak berstatus diajukan.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pemindahan tidak berstatus diajukan.'), 'icon' => 'gpp_maybe']);
         }
 
         try {
@@ -165,7 +165,7 @@ class PemindahanStokController extends Controller
                     ->firstOrFail();
 
                 if ($locked->status !== StockTransfer::STATUS_REQUESTED) {
-                    throw new \RuntimeException('Status pemindahan sudah berubah.');
+                    throw new \RuntimeException(__('Status pemindahan sudah berubah.'));
                 }
 
                 foreach ($locked->items as $item) {
@@ -175,7 +175,7 @@ class PemindahanStokController extends Controller
                         ->first();
 
                     if (! $stok || $stok->jumlah_stok < $item->jumlah) {
-                        throw new \RuntimeException('Stok gudang asal tidak mencukupi untuk pemindahan ini.');
+                        throw new \RuntimeException(__('Stok gudang asal tidak mencukupi untuk pemindahan ini.'));
                     }
                 }
 
@@ -206,27 +206,27 @@ class PemindahanStokController extends Controller
         NotificationService::sendToRole(Role::ADMIN, Notification::TIPE_SISTEM, 'Pemindahan Disetujui', sprintf('Pemindahan ke gudang "%s" disetujui.', $warehouse->nama_gudang), auth()->id(), route('admin.pesanan'));
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pemindahan Disetujui', 'Pemindahan stok disetujui, menunggu penerimaan barang.', route('gudang.dashboard'));
 
-        return back()->with('toast', ['message' => 'Pemindahan disetujui, stok keluar dicatat.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Pemindahan disetujui, stok keluar dicatat.'), 'icon' => 'task_alt']);
     }
 
     public function receive(Request $request, StockTransfer $transfer)
     {
         if (! auth()->user()->hasPermission('warehouse.transfer')) {
-            abort(403, 'Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.');
+            abort(403, __('Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.'));
         }
 
         $warehouse = $this->activeWarehouse();
 
         if (! $warehouse) {
-            return back()->with('toast', ['message' => 'Tidak ada gudang aktif.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Tidak ada gudang aktif.'), 'icon' => 'gpp_maybe']);
         }
 
         if ((int) $transfer->to_warehouse_id !== (int) $warehouse->warehouse_id) {
-            return back()->with('toast', ['message' => 'Hanya gudang tujuan yang dapat menerima pemindahan.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Hanya gudang tujuan yang dapat menerima pemindahan.'), 'icon' => 'gpp_maybe']);
         }
 
         if ($transfer->status !== StockTransfer::STATUS_APPROVED) {
-            return back()->with('toast', ['message' => 'Pemindahan belum disetujui.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pemindahan belum disetujui.'), 'icon' => 'gpp_maybe']);
         }
 
         try {
@@ -237,7 +237,7 @@ class PemindahanStokController extends Controller
                     ->firstOrFail();
 
                 if ($locked->status !== StockTransfer::STATUS_APPROVED) {
-                    throw new \RuntimeException('Status pemindahan sudah berubah.');
+                    throw new \RuntimeException(__('Status pemindahan sudah berubah.'));
                 }
 
                 foreach ($locked->items as $item) {
@@ -268,27 +268,27 @@ class PemindahanStokController extends Controller
         NotificationService::sendToRole(Role::ADMIN, Notification::TIPE_SISTEM, 'Pemindahan Diterima', sprintf('Pemindahan ke gudang "%s" telah diterima.', $warehouse->nama_gudang), auth()->id(), route('admin.pesanan'));
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pemindahan Diterima', 'Barang pemindahan stok telah diterima.', route('gudang.dashboard'));
 
-        return back()->with('toast', ['message' => 'Pemindahan diterima, stok masuk dicatat.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Pemindahan diterima, stok masuk dicatat.'), 'icon' => 'task_alt']);
     }
 
     public function cancel(Request $request, StockTransfer $transfer)
     {
         if (! auth()->user()->hasPermission('warehouse.transfer')) {
-            abort(403, 'Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.');
+            abort(403, __('Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.'));
         }
 
         $warehouse = $this->activeWarehouse();
 
         if (! $warehouse) {
-            return back()->with('toast', ['message' => 'Tidak ada gudang aktif.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Tidak ada gudang aktif.'), 'icon' => 'gpp_maybe']);
         }
 
         if ((int) $transfer->from_warehouse_id !== (int) $warehouse->warehouse_id) {
-            return back()->with('toast', ['message' => 'Hanya gudang asal yang dapat membatalkan pemindahan.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Hanya gudang asal yang dapat membatalkan pemindahan.'), 'icon' => 'gpp_maybe']);
         }
 
         if (! in_array($transfer->status, [StockTransfer::STATUS_REQUESTED, StockTransfer::STATUS_APPROVED], true)) {
-            return back()->with('toast', ['message' => 'Pemindahan yang sudah diterima tidak dapat dibatalkan.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pemindahan yang sudah diterima tidak dapat dibatalkan.'), 'icon' => 'gpp_maybe']);
         }
 
         try {
@@ -299,7 +299,7 @@ class PemindahanStokController extends Controller
                     ->firstOrFail();
 
                 if (! in_array($locked->status, [StockTransfer::STATUS_REQUESTED, StockTransfer::STATUS_APPROVED], true)) {
-                    throw new \RuntimeException('Status pemindahan sudah berubah.');
+                    throw new \RuntimeException(__('Status pemindahan sudah berubah.'));
                 }
 
                 if ($locked->status === StockTransfer::STATUS_APPROVED) {
@@ -331,19 +331,19 @@ class PemindahanStokController extends Controller
         ActivityLogger::log('stock.transfer.cancel', StockTransfer::class, $transfer->stock_transfer_id, null, ['status' => StockTransfer::STATUS_CANCELLED], 'Membatalkan pemindahan stok.');
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pemindahan Dibatalkan', 'Permintaan pemindahan stok dibatalkan.', route('gudang.dashboard'));
 
-        return back()->with('toast', ['message' => 'Pemindahan dibatalkan.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Pemindahan dibatalkan.'), 'icon' => 'task_alt']);
     }
 
     public function terima(StockTransfer $stockTransfer)
     {
         if (! auth()->user()->hasPermission('warehouse.transfer')) {
-            abort(403, 'Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.');
+            abort(403, __('Anda tidak memiliki izin (warehouse.transfer) untuk melakukan tindakan ini.'));
         }
 
         $warehouse = $this->activeWarehouse();
 
         if (! $warehouse) {
-            return back()->with('toast', ['message' => 'Tidak ada gudang aktif.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Tidak ada gudang aktif.'), 'icon' => 'gpp_maybe']);
         }
 
         try {
@@ -354,11 +354,11 @@ class PemindahanStokController extends Controller
                     ->first();
 
                 if (! $transfer || $transfer->to_warehouse_id !== $warehouse->warehouse_id) {
-                    throw new \RuntimeException('Pemindahan ini bukan untuk gudang aktif Anda.');
+                    throw new \RuntimeException(__('Pemindahan ini bukan untuk gudang aktif Anda.'));
                 }
 
                 if (! $transfer->canTransitionTo(StockTransfer::STATUS_RECEIVED)) {
-                    throw new \RuntimeException('Pemindahan tidak dapat diterima pada status ini.');
+                    throw new \RuntimeException(__('Pemindahan tidak dapat diterima pada status ini.'));
                 }
 
                 foreach ($transfer->items as $item) {
@@ -372,7 +372,7 @@ class PemindahanStokController extends Controller
                             ->increment('jumlah_stok', (int) $item->jumlah);
 
                         if ($updated === 0) {
-                            throw new \RuntimeException('Gagal menambah stok gudang tujuan.');
+                            throw new \RuntimeException(__('Gagal menambah stok gudang tujuan.'));
                         }
                     } else {
                         WarehouseStock::create([
@@ -401,13 +401,13 @@ class PemindahanStokController extends Controller
                     ]);
 
                 if ($affected === 0) {
-                    throw new \RuntimeException('Gagal memperbarui status pemindahan.');
+                    throw new \RuntimeException(__('Gagal memperbarui status pemindahan.'));
                 }
             }, 5);
         } catch (\RuntimeException $e) {
             return back()->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
         } catch (\Throwable $e) {
-            return back()->with('toast', ['message' => 'Gagal menerima pemindahan.', 'icon' => 'error']);
+            return back()->with('toast', ['message' => __('Gagal menerima pemindahan.'), 'icon' => 'error']);
         }
 
         ActivityLogger::log(
@@ -438,7 +438,7 @@ class PemindahanStokController extends Controller
             ]);
         }
 
-        return back()->with('toast', ['message' => 'Pemindahan berhasil diterima.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Pemindahan berhasil diterima.'), 'icon' => 'task_alt']);
     }
 
     private function getProductsForWarehouse($warehouse)

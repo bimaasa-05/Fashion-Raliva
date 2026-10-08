@@ -1,10 +1,10 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Data Pembayaran')
+@section('title', __('Data Pembayaran'))
 
-@section('header-title', 'Data Pembayaran')
-@section('header-badge', 'Lihat')
-@section('header-subtitle', 'Monitor pembayaran platform dan status verifikasi untuk audit transaksi.')
+@section('header-title', __('Data Pembayaran'))
+@section('header-badge', __('Lihat'))
+@section('header-subtitle', __('Monitor pembayaran platform dan status verifikasi untuk audit transaksi.'))
 
 @section('content')
 <div class="space-y-section-gap">
@@ -15,35 +15,35 @@
         </span>
         <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
-            Data pembayaran diperbarui real-time
+            {{ __('Data pembayaran diperbarui real-time') }}
         </span>
     </div>
     <!-- Ringkasan -->
     <section>
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Pembayaran</h2>
+        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">{{ __('Ringkasan Pembayaran') }}</h2>
         <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Transaksi</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Transaksi') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface relative break-words">{{ $stats['semua'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">semua status</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">{{ __('semua status') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">payments</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Verifikasi</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Menunggu Verifikasi') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary relative break-words">{{ $stats['menunggu_verifikasi'] + $stats['pending'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">perlu ditinjau</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">{{ __('perlu ditinjau') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Berhasil</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Berhasil') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface relative break-words">{{ $stats['terverifikasi'] }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">terverifikasi</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">check_circle</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Gagal / Dibatalkan</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Gagal / Dibatalkan') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-error relative break-words">{{ $stats['ditolak'] + $stats['kadaluarsa'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">ditolak / kadaluarsa</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant relative">{{ __('ditolak / kadaluarsa') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">cancel</span>
             </div>
         </div>
@@ -52,10 +52,10 @@
     <!-- Tabel -->
     <section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Transaksi Pembayaran</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Daftar Transaksi Pembayaran') }}</h2>
             <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
                 <span class="material-symbols-outlined text-[18px]">tune</span>
-                Filter
+                {{ __('Filter') }}
                 <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
             </button>
         </div>
@@ -65,7 +65,7 @@
             <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
                 <div class="flex items-center gap-2 shrink-0">
                     <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Status') }}</span>
                 </div>
                 <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
                 <div id="chip-group" class="flex flex-wrap gap-2">
@@ -82,7 +82,7 @@
             <div class="flex flex-col sm:flex-row sm:items-center gap-3">
                 <div class="relative flex-1">
                     <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                    <input id="pembayaran-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari ID pembayaran, nama pelanggan, toko, atau metode..." />
+                    <input id="pembayaran-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="{{ __('Cari ID pembayaran, nama pelanggan, toko, atau metode...') }}" />
                     <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
                         <span class="material-symbols-outlined text-[20px]">close</span>
                     </button>
@@ -99,15 +99,15 @@
             <table class="w-full min-w-[900px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
-                        <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">No.</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">ID Pembayaran</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Metode</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Pelanggan</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Toko</th>
-                        <th class="px-6 py-4 text-right text-[10px] font-semibold tracking-widest">Jumlah</th>
-                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Tanggal</th>
-                        <th class="px-6 py-4 text-right text-[10px] font-semibold tracking-widest">Aksi</th>
+                        <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">{{ __('No.') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('ID Pembayaran') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Metode') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Pelanggan') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Toko') }}</th>
+                        <th class="px-6 py-4 text-right text-[10px] font-semibold tracking-widest">{{ __('Jumlah') }}</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Status') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Tanggal') }}</th>
+                        <th class="px-6 py-4 text-right text-[10px] font-semibold tracking-widest">{{ __('Aksi') }}</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -139,19 +139,19 @@
                             </td>
                             <td class="p-6 text-on-surface-variant text-xs">{{ $tanggal }}</td>
                             <td class="p-6 text-right">
-                                <button type="button" data-detail-open="detail-pembayaran" data-d-nomor="PAY-{{ $pay->payment_id }}" data-d-metode="{{ $pay->paymentMethod->nama_metode ?? '-' }}" data-d-pelanggan="{{ $cust->nama_lengkap ?? '-' }} ({{ $cust->email ?? '' }})" data-d-toko="{{ $pay->nama_toko }}" data-d-jumlah="Rp {{ number_format((float) $pay->jumlah, 0, ',', '.') }}" data-d-status="{{ $st[0] }}" data-d-tanggal="{{ $tanggal }}" class="px-3 py-1 bg-surface-container-lowest text-on-surface text-xs uppercase rounded hover:bg-surface-container-low transition-colors">Detail</button>
+                                <button type="button" data-detail-open="detail-pembayaran" data-d-nomor="PAY-{{ $pay->payment_id }}" data-d-metode="{{ $pay->paymentMethod->nama_metode ?? '-' }}" data-d-pelanggan="{{ $cust->nama_lengkap ?? '-' }} ({{ $cust->email ?? '' }})" data-d-toko="{{ $pay->nama_toko }}" data-d-jumlah="Rp {{ number_format((float) $pay->jumlah, 0, ',', '.') }}" data-d-status="{{ $st[0] }}" data-d-tanggal="{{ $tanggal }}" class="px-3 py-1 bg-surface-container-lowest text-on-surface text-xs uppercase rounded hover:bg-surface-container-low transition-colors">{{ __('Detail') }}</button>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="9" class="p-8 text-center text-on-surface-variant">Belum ada transaksi pembayaran tercatat.</td>
+                            <td colspan="9" class="p-8 text-center text-on-surface-variant">{{ __('Belum ada transaksi pembayaran tercatat.') }}</td>
                         </tr>
                     @endforelse
                     <tr id="empty-search" class="hidden">
                         <td colspan="9" class="p-8 text-center">
                             <div class="flex flex-col items-center gap-2">
                                 <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
-                                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada transaksi yang cocok.</p>
+                                <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada transaksi yang cocok.') }}</p>
                             </div>
                         </td>
                     </tr>
@@ -186,31 +186,31 @@
 
                     <dl class="space-y-2 font-body-md text-sm mb-4">
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Pelanggan</dt>
+                            <dt class="text-on-surface-variant">{{ __('Pelanggan') }}</dt>
                             <dd class="text-on-surface text-right">{{ $cust->nama_lengkap ?? '-' }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Toko</dt>
+                            <dt class="text-on-surface-variant">{{ __('Toko') }}</dt>
                             <dd class="text-on-surface text-right">{{ $pay->nama_toko }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Jumlah</dt>
+                            <dt class="text-on-surface-variant">{{ __('Jumlah') }}</dt>
                             <dd class="font-bold text-gold-accent text-right">@if ((float) $pay->jumlah_saldo > 0)<span class="block">Rp {{ number_format((float) $pay->jumlah, 0, ',', '.') }}</span><span class="block font-normal text-on-surface-variant text-xs">Saldo {{ number_format((float) $pay->jumlah_saldo, 0, ',', '.') }} + Transfer {{ number_format((float) $pay->sisa_transfer, 0, ',', '.') }}</span>@else Rp {{ number_format((float) $pay->jumlah, 0, ',', '.') }}@endif</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Tanggal</dt>
+                            <dt class="text-on-surface-variant">{{ __('Tanggal') }}</dt>
                             <dd class="text-on-surface text-right">{{ $tanggal }}</dd>
                         </div>
                     </dl>
 
                     <button type="button" data-detail-open="detail-pembayaran" data-d-nomor="PAY-{{ $pay->payment_id }}" data-d-metode="{{ $pay->paymentMethod->nama_metode ?? '-' }}" data-d-pelanggan="{{ $cust->nama_lengkap ?? '-' }} ({{ $cust->email ?? '' }})" data-d-toko="{{ $pay->nama_toko }}" data-d-jumlah="Rp {{ number_format((float) $pay->jumlah, 0, ',', '.') }}" data-d-status="{{ $st[0] }}" data-d-tanggal="{{ $tanggal }}" class="w-full min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
-                        <span class="material-symbols-outlined text-[18px]">visibility</span>Detail
+                        <span class="material-symbols-outlined text-[18px]">visibility</span>{{ __('Detail') }}
                     </button>
                 </article>
             @empty
-                <p class="text-center text-on-surface-variant py-10">Belum ada transaksi pembayaran tercatat.</p>
+                <p class="text-center text-on-surface-variant py-10">{{ __('Belum ada transaksi pembayaran tercatat.') }}</p>
             @endforelse
-            <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">Tidak ada transaksi yang cocok.</p>
+            <p id="empty-search-mobile" class="hidden text-center text-on-surface-variant py-10">{{ __('Tidak ada transaksi yang cocok.') }}</p>
         </div>
         @if ($payments->hasPages())
             <div class="mt-6 flex justify-center">{{ $payments->links() }}</div>
@@ -223,21 +223,21 @@
     'id' => 'detail-pembayaran',
     'dataModal' => true,
     'icon' => 'payments',
-    'title' => 'Detail Pembayaran',
+    'title' => __('Detail Pembayaran'),
     'subtitle' => '<span data-slot="nomor"></span>',
     'subtitleRaw' => true,
     'size' => 'lg',
 ])
     <dl class="space-y-4 font-body-md text-sm">
-        <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Metode</dt><dd class="text-on-surface text-right"><span data-slot="metode"></span></dd></div>
-        <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Pelanggan</dt><dd class="text-on-surface text-right"><span data-slot="pelanggan"></span></dd></div>
-        <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Toko</dt><dd class="text-on-surface text-right"><span data-slot="toko"></span></dd></div>
-        <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Jumlah</dt><dd class="font-bold text-gold-accent text-right"><span data-slot="jumlah"></span></dd></div>
-        <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">Status Verifikasi</dt><dd class="text-on-surface text-right"><span data-slot="status"></span></dd></div>
-        <div class="flex justify-between gap-4"><dt class="text-on-surface-variant shrink-0">Tanggal</dt><dd class="text-on-surface text-right"><span data-slot="tanggal"></span></dd></div>
+        <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">{{ __('Metode') }}</dt><dd class="text-on-surface text-right"><span data-slot="metode"></span></dd></div>
+        <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">{{ __('Pelanggan') }}</dt><dd class="text-on-surface text-right"><span data-slot="pelanggan"></span></dd></div>
+        <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">{{ __('Toko') }}</dt><dd class="text-on-surface text-right"><span data-slot="toko"></span></dd></div>
+        <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">{{ __('Jumlah') }}</dt><dd class="font-bold text-gold-accent text-right"><span data-slot="jumlah"></span></dd></div>
+        <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant shrink-0">{{ __('Status Verifikasi') }}</dt><dd class="text-on-surface text-right"><span data-slot="status"></span></dd></div>
+        <div class="flex justify-between gap-4"><dt class="text-on-surface-variant shrink-0">{{ __('Tanggal') }}</dt><dd class="text-on-surface text-right"><span data-slot="tanggal"></span></dd></div>
     </dl>
     @slot('footer')
-        <button type="button" data-modal-close class="btn-modal btn-modal-primary w-full">Tutup</button>
+        <button type="button" data-modal-close class="btn-modal btn-modal-primary w-full">{{ __('Tutup') }}</button>
     @endslot
 @endcomponent
 @endsection

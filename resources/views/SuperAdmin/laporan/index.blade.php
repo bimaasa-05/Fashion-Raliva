@@ -1,11 +1,11 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Laporan')
+@section('title', __('Laporan'))
 
-@section('header-title', 'Laporan & Analitik')
-@section('header-badge', 'Lihat')
+@section('header-title', __('Laporan & Analitik'))
+@section('header-badge', __('Lihat'))
 
-@section('header-subtitle', 'Laporan transaksi, komisi, toko, pengguna, refund, dan pencairan.')
+@section('header-subtitle', __('Laporan transaksi, komisi, toko, pengguna, refund, dan pencairan.'))
 
 @php
     $rangeLabels = ['7' => '7 Hari Terakhir', '30' => '1 Bulan Terakhir', '365' => '1 Tahun Terakhir'];
@@ -22,12 +22,12 @@
 
 @section('content')
 <section>
-    <h2 data-reveal class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Laporan</h2>
+    <h2 data-reveal class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">{{ __('Ringkasan Laporan') }}</h2>
     <div data-reveal-group class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
         <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hero-glow">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Pendapatan</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Pendapatan') }}</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">Rp <span data-count="{{ $totalPendapatan }}" data-count-decimals="0">{{ number_format($totalPendapatan, 0, ',', '.') }}</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>Semua transaksi berhasil</span>
+            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>{{ __('Semua transaksi berhasil') }}</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:66%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:58%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:74%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:68%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:88%"></i>
             </div>
@@ -35,9 +35,9 @@
         </div>
 
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Pesanan</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Pesanan') }}</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight"><span data-count="{{ $totalPesanan }}">{{ number_format($totalPesanan, 0, ',', '.') }}</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-gold-accent">shopping_bag</span>Pesanan berhasil</span>
+            <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-gold-accent">shopping_bag</span>{{ __('Pesanan berhasil') }}</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:50%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:70%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:64%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:80%"></i>
             </div>
@@ -45,9 +45,9 @@
         </div>
 
         <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hero-glow">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Komisi Raliva</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Komisi Raliva') }}</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold leading-tight">Rp <span data-count="{{ $komisiRaliva }}" data-count-decimals="0">{{ number_format($komisiRaliva, 0, ',', '.') }}</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>Total komisi terkumpul</span>
+            <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>{{ __('Total komisi terkumpul') }}</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:46%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:72%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:84%"></i>
             </div>
@@ -55,9 +55,9 @@
         </div>
 
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Toko Aktif</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Toko Aktif') }}</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight"><span data-count="{{ $tokoAktif }}">{{ $tokoAktif }}</span></span>
-            <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-gold-accent">storefront</span>Toko terverifikasi</span>
+            <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-gold-accent">storefront</span>{{ __('Toko terverifikasi') }}</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:30%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:35%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:32%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:42%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:52%"></i>
             </div>
@@ -70,7 +70,7 @@
     <section data-reveal class="lg:col-span-2 bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col">
         <div class="flex items-center justify-between mb-6 flex-wrap gap-3">
             <div class="flex items-center gap-3">
-                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Tren Pendapatan</h2>
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Tren Pendapatan') }}</h2>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">
                     <span class="material-symbols-outlined text-[14px]">calendar_today</span>
                     <span id="trend-badge-text">{{ $trendLabel }}</span>
@@ -101,29 +101,29 @@
         </div>
         <div id="trend-empty" class="hidden flex flex-col items-center justify-center py-16 text-center gap-2 text-on-surface-variant">
             <span class="material-symbols-outlined text-[32px] opacity-50">monitoring</span>
-            <p class="font-body-md text-sm">Belum ada transaksi pada periode ini.</p>
+            <p class="font-body-md text-sm">{{ __('Belum ada transaksi pada periode ini.') }}</p>
         </div>
         <div id="trend-error" class="hidden flex-col items-center justify-center py-16 text-center gap-2 text-on-surface-variant">
             <span class="material-symbols-outlined text-[32px] opacity-50">cloud_off</span>
-            <p class="font-body-md text-sm">Gagal memuat grafik. Pastikan CDN Chart.js dapat diakses.</p>
-            <button id="trend-retry" class="mt-2 px-4 py-2 rounded-lg border border-gold-accent/30 text-gold-accent text-xs font-bold uppercase tracking-wider hover:bg-gold-accent/10 transition-colors">Muat Ulang</button>
+            <p class="font-body-md text-sm">{{ __('Gagal memuat grafik. Pastikan CDN Chart.js dapat diakses.') }}</p>
+            <button id="trend-retry" class="mt-2 px-4 py-2 rounded-lg border border-gold-accent/30 text-gold-accent text-xs font-bold uppercase tracking-wider hover:bg-gold-accent/10 transition-colors">{{ __('Muat Ulang') }}</button>
         </div>
         <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
             <span class="material-symbols-outlined text-[14px] text-gold-accent">insights</span>
-            <span id="trend-insight-text">Pilih rentang waktu untuk melihat ringkasan.</span>
+            <span id="trend-insight-text">{{ __('Pilih rentang waktu untuk melihat ringkasan.') }}</span>
         </p>
     </section>
 
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 flex flex-col card-premium">
         <div class="flex items-center justify-between mb-4">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Toko Teratas</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Toko Teratas') }}</h2>
             <span class="material-symbols-outlined text-gold-accent text-[20px]">emoji_events</span>
         </div>
         <div data-leaderboard='@json($topToko)' class="flex-1"></div>
         <div class="flex items-center justify-center gap-6 mt-4 pt-4 border-t border-muted-border">
-            <a href="{{ route('superadmin.peringkat') }}#toko" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">Lihat Peringkat Lengkap</a>
+            <a href="{{ route('superadmin.peringkat') }}#toko" class="font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">{{ __('Lihat Peringkat Lengkap') }}</a>
             <span class="w-px h-4 bg-muted-border"></span>
-            <a href="{{ route('superadmin.manajemen-toko') }}" class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-widest hover:underline">Kelola Semua Toko</a>
+            <a href="{{ route('superadmin.manajemen-toko') }}" class="font-label-sm text-[11px] text-on-surface-variant uppercase tracking-widest hover:underline">{{ __('Kelola Semua Toko') }}</a>
         </div>
     </section>
 </div>
@@ -131,14 +131,14 @@
 <!-- Recent Transactions Table -->
 <section data-reveal class="mb-section-gap">
     <div class="flex justify-between items-center mb-6 flex-wrap gap-3">
-        <h3 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Transaksi Terbaru</h3>
+        <h3 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Transaksi Terbaru') }}</h3>
         <div class="flex items-center gap-3">
             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider text-gold-accent">
                 <span class="material-symbols-outlined text-[14px]">receipt_long</span>
                 {{ $recentTransactions->count() }} transaksi
             </span>
             <a href="{{ route('superadmin.laporan.export', ['period' => request('period', 30)]) }}" class="inline-flex items-center gap-2 px-3 py-2 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
-                <span class="material-symbols-outlined text-[18px]">download</span> Export CSV
+                <span class="material-symbols-outlined text-[18px]">download</span> {{ __('Export CSV') }}
             </a>
         </div>
     </div>
@@ -146,12 +146,12 @@
         <table class="w-full text-left border-collapse premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low/50">
-                    <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap text-center w-12">No.</th>
-                    <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Nomor Order</th>
-                    <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Tanggal</th>
-                    <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Toko</th>
-                    <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Jumlah</th>
-                    <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">Status</th>
+                    <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap text-center w-12">{{ __('No.') }}</th>
+                    <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">{{ __('Nomor Order') }}</th>
+                    <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">{{ __('Tanggal') }}</th>
+                    <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">{{ __('Toko') }}</th>
+                    <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">{{ __('Jumlah') }}</th>
+                    <th class="p-4 font-label-sm text-on-surface-variant uppercase tracking-widest font-semibold whitespace-nowrap">{{ __('Status') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -176,7 +176,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="p-8 text-center text-on-surface-variant">Belum ada transaksi tercatat.</td>
+                        <td colspan="6" class="p-8 text-center text-on-surface-variant">{{ __('Belum ada transaksi tercatat.') }}</td>
                     </tr>
                 @endforelse
             </tbody>
@@ -203,21 +203,21 @@
                 </div>
                 <dl class="space-y-2 font-body-md text-sm">
                     <div class="flex justify-between gap-3">
-                        <dt class="text-on-surface-variant">Toko</dt>
+                        <dt class="text-on-surface-variant">{{ __('Toko') }}</dt>
                         <dd class="text-on-surface text-right">{{ $tx->store->nama_toko ?? '-' }}</dd>
                     </div>
                     <div class="flex justify-between gap-3">
-                        <dt class="text-on-surface-variant">Tanggal</dt>
+                        <dt class="text-on-surface-variant">{{ __('Tanggal') }}</dt>
                         <dd class="text-on-surface-variant text-xs text-right">{{ $tx->created_at ? \Carbon\Carbon::parse($tx->created_at)->locale('id')->translatedFormat('d M Y - H.i') : '-' }}</dd>
                     </div>
                     <div class="flex justify-between gap-3">
-                        <dt class="text-on-surface-variant">Jumlah</dt>
+                        <dt class="text-on-surface-variant">{{ __('Jumlah') }}</dt>
                         <dd class="text-on-surface font-bold text-right">Rp {{ number_format((float)$tx->grand_total, 0, ',', '.') }}</dd>
                     </div>
                 </dl>
             </article>
         @empty
-            <p class="text-center text-on-surface-variant py-10">Belum ada transaksi tercatat.</p>
+            <p class="text-center text-on-surface-variant py-10">{{ __('Belum ada transaksi tercatat.') }}</p>
         @endforelse
     </div>
 </section>
@@ -291,14 +291,14 @@
 
         if (!hasData) {
             if (revenueChart) { revenueChart.destroy(); revenueChart = null; }
-            if (insightText) insightText.textContent = 'Belum ada transaksi pada rentang waktu ini.';
+            if (insightText) insightText.textContent = '{{ __('Belum ada transaksi pada rentang waktu ini.') }}';
             return;
         }
 
         if (data.best && data.best.value > 0) {
-            insightText.textContent = 'Pendapatan tertinggi pada ' + data.best.label + ' sebesar Rp ' + formatRupiah(data.best.value) + '.';
+            insightText.textContent = '{{ __('Pendapatan tertinggi pada') }} ' + data.best.label + ' {{ __('sebesar Rp') }} ' + formatRupiah(data.best.value) + '.';
         } else {
-            insightText.textContent = 'Pendapatan periode ini: Rp ' + formatRupiah(data.total || 0) + '.';
+            insightText.textContent = '{{ __('Pendapatan periode ini: Rp') }} ' + formatRupiah(data.total || 0) + '.';
         }
 
         if (!revenueChart) {
@@ -307,7 +307,7 @@
                 data: {
                     labels: data.labels,
                     datasets: [{
-                        label: 'Pendapatan',
+                        label: '{{ __('Pendapatan') }}',
                         data: data.data,
                         borderColor: '#8B1E3F',
                         backgroundColor: 'rgba(139, 30, 63, 0.12)',

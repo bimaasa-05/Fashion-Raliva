@@ -60,11 +60,22 @@ class DataPesananController extends Controller
             ->whereIn('store_id', $storeIds)
             ->orderByDesc('order_id')->limit(20)->get();
 
+        // Isolasi toko: dropdown hanya customer yang punya pesanan di toko admin.
         $customers = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', Role::CUSTOMER))
+            ->whereHas('orders', fn ($q) => $q->whereIn('store_id', $storeIds))
             ->orderByDesc('created_at')->limit(50)->get(['user_id', 'nama_lengkap', 'email', 'nomor_telepon']);
 
         $paymentAccounts = PlatformBankAccount::where('status', PlatformBankAccount::STATUS_AKTIF)
             ->orderBy('urutan')->get(['platform_bank_account_id', 'jenis', 'nama', 'kode', 'nomor_rekening', 'nama_pemilik']);
+
+        // Kurir + layanan untuk pilihan Diantar pada form pesanan offline.
+        $couriers = \App\Models\Courier::where('status', \App\Models\Courier::STATUS_AKTIF)
+            ->where(fn ($q) => $q->whereNull('store_id')->orWhereIn('store_id', $storeIds))
+            ->with(['services' => fn ($q) => $q->where('status', 'aktif')
+                ->where(fn ($qq) => $qq->whereNull('store_id')->orWhereIn('store_id', $storeIds))
+                ->orderBy('nama_layanan')])
+            ->orderBy('nama_kurir')->get();
+        $kurirAktif = $storeIds ? $this->kurirAktifToko((int) $storeIds[0]) : [];
 
         return view('Admin.pesanan.index', [
             'orders' => $orders,
@@ -74,6 +85,8 @@ class DataPesananController extends Controller
             'recentOrders' => $recentOrders,
             'customers' => $customers,
             'paymentAccounts' => $paymentAccounts,
+            'couriers' => $couriers,
+            'kurirAktif' => $kurirAktif,
         ]);
     }
 
@@ -81,14 +94,14 @@ class DataPesananController extends Controller
     {
         if (! AdminContext::canAccessStore($pesanan->store_id)) {
             return back()->with('toast', [
-                'message' => 'Pesanan ini di luar scope toko yang Anda tugaskan.',
+                'message' => __('Pesanan ini di luar scope toko yang Anda tugaskan.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if (! in_array($pesanan->status, [Order::STATUS_MENUNGGU_PRODUKSI, Order::STATUS_DIBAYAR], true)) {
             return back()->with('toast', [
-                'message' => 'Hanya pesanan berstatus Baru atau Menunggu Produksi yang dapat diproses.',
+                'message' => __('Hanya pesanan berstatus Baru atau Menunggu Produksi yang dapat diproses.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -133,9 +146,30 @@ class DataPesananController extends Controller
         );
 
         return back()->with('toast', [
-            'message' => "Pesanan {$pesanan->nomor_order} kini diproses.",
+            'message' => __('Pesanan :ph36279 kini diproses.', ['ph36279' => $pesanan->nomor_order]),
             'icon' => 'task_alt',
         ]);
+    }
+
+    /**
+     * ID kurir yang boleh dipakai toko (cermin logika PengirimanController):
+     * bila toko punya pengaturan, hanya yang is_aktif; bila belum ada, semua global.
+     *
+     * @return int[]
+     */
+    private function kurirAktifToko(int $storeId): array
+    {
+        $couriers = \App\Models\Courier::where('status', \App\Models\Courier::STATUS_AKTIF)
+            ->where(fn ($q) => $q->whereNull('store_id')->orWhere('store_id', $storeId))
+            ->pluck('courier_id')->all();
+
+        $set = \App\Models\StoreCourierSetting::where('store_id', $storeId)->get();
+        if ($set->isEmpty()) {
+            return array_map('intval', $couriers);
+        }
+
+        return $set->where('is_aktif', true)->whereNull('shipping_service_id')
+            ->pluck('courier_id')->map(fn ($v) => (int) $v)->all();
     }
 
     public function store(Request $request): \Illuminate\Http\RedirectResponse
@@ -143,7 +177,7 @@ class DataPesananController extends Controller
         $storeIds = AdminContext::assignedStoreIds();
         $storeId = $storeIds[0] ?? null;
         if (! $storeId) {
-            return back()->with('toast', ['message' => 'Admin belum ditugaskan ke toko mana pun.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Admin belum ditugaskan ke toko mana pun.'), 'icon' => 'gpp_maybe']);
         }
 
         $tipePesanan = $request->input('tipe_pesanan', 'online');
@@ -162,6 +196,9 @@ class DataPesananController extends Controller
             'payment_account_id' => ['required_if:metode_bayar,transfer', 'nullable', 'exists:platform_bank_accounts,platform_bank_account_id'],
             'bukti' => ['required_if:metode_bayar,transfer', 'nullable', 'image', 'mimes:jpeg,png,jpg', 'max:4096'],
             'catatan' => ['nullable', 'string', 'max:1000'],
+            'fulfillment' => ['nullable', 'in:ambil,diantar'],
+            'courier_id' => ['nullable', 'integer', 'exists:couriers,courier_id'],
+            'shipping_service_id' => ['nullable', 'integer', 'exists:shipping_services,shipping_service_id'],
         ], [
             'items.required' => 'Pilih minimal 1 produk.',
             'items.min' => 'Pilih minimal 1 produk.',
@@ -175,7 +212,7 @@ class DataPesananController extends Controller
 
         $items = collect($data['items'])->filter(fn ($r) => ! empty($r['product_variant_id']))->values();
         if ($items->isEmpty()) {
-            return back()->with('toast', ['message' => 'Pilih minimal 1 produk.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pilih minimal 1 produk.'), 'icon' => 'gpp_maybe']);
         }
 
         $variantIds = $items->pluck('product_variant_id')->all();
@@ -187,12 +224,12 @@ class DataPesananController extends Controller
         foreach ($items as $row) {
             $variant = $variants->get($row['product_variant_id']);
             if (! $variant || (int) $variant->product?->store_id !== (int) $storeId) {
-                return back()->with('toast', ['message' => 'Varian tidak valid untuk toko ini.', 'icon' => 'gpp_maybe']);
+                return back()->with('toast', ['message' => __('Varian tidak valid untuk toko ini.'), 'icon' => 'gpp_maybe']);
             }
             $qty = max(1, (int) $row['quantity']);
             $stok = (int) $variant->warehouseStocks->sum('jumlah_stok');
             if ($stok > 0 && $qty > $stok) {
-                return back()->with('toast', ['message' => 'Stok ' . ($variant->product?->nama_produk ?? 'produk') . ' hanya tersisa ' . $stok . '.', 'icon' => 'gpp_maybe']);
+                return back()->with('toast', ['message' => __('Stok :ph1 hanya tersisa :ph2.', ['ph1' => ($variant->product?->nama_produk ?? 'produk'), 'ph2' => $stok]), 'icon' => 'gpp_maybe']);
             }
             $harga = (float) ($variant->harga ?? $variant->product?->harga_dasar ?? 0);
             $sub = $harga * $qty;
@@ -250,9 +287,35 @@ class DataPesananController extends Controller
 
         $metodeBayar = $isOffline ? ($data['metode_bayar'] ?? 'tunai') : null;
 
-        [$pajak, $biaya, $grand] = \App\Support\PricingService::computeTotals($subtotal, 0);
+        // Cara terima: online selalu diantar; offline bisa pilih ambil/diantar.
+        $fulfillment = $isOffline ? ($data['fulfillment'] ?? 'ambil') : 'diantar';
+        if (! in_array($fulfillment, ['ambil', 'diantar'], true)) {
+            $fulfillment = $isOffline ? 'ambil' : 'diantar';
+        }
+        $ongkir = 0;
+        if ($isOffline && $fulfillment === 'diantar') {
+            $courier = \App\Models\Courier::where('courier_id', $data['courier_id'] ?? null)->first();
+            $kurirAktif = $this->kurirAktifToko($storeId);
+            if (! $courier || ! in_array((int) $courier->courier_id, $kurirAktif, true)) {
+                return back()->with('toast', ['message' => 'Pilih kurir yang aktif untuk toko ini.', 'icon' => 'gpp_maybe']);
+            }
+            if (! empty($data['shipping_service_id'])) {
+                $service = \App\Models\ShippingService::where('shipping_service_id', $data['shipping_service_id'])
+                    ->where('courier_id', $courier->courier_id)
+                    ->where('status', 'aktif')
+                    ->where(fn ($q) => $q->whereNull('store_id')->orWhere('store_id', $storeId))
+                    ->first();
+                if (! $service) {
+                    return back()->with('toast', ['message' => 'Layanan kurir tidak valid untuk toko ini.', 'icon' => 'gpp_maybe']);
+                }
+                // Otoritas tarif di server (abaikan input ongkir mentah dari form).
+                $ongkir = (int) ($service->tarif ?? 0);
+            }
+        }
 
-        $newOrder = DB::transaction(function () use ($prepared, $subtotal, $pajak, $biaya, $grand, $userId, $storeId, $isOffline, $data, $request, $metodeBayar) {
+        [$pajak, $biaya, $grand] = \App\Support\PricingService::computeTotals($subtotal, $ongkir);
+
+        $newOrder = DB::transaction(function () use ($prepared, $subtotal, $pajak, $biaya, $grand, $ongkir, $fulfillment, $userId, $storeId, $isOffline, $data, $request, $metodeBayar) {
             $checkout = \App\Models\Checkout::create([
                 'user_id' => $userId,
                 'email_pelanggan' => $data['email_pelanggan'] ?? null,
@@ -263,7 +326,7 @@ class DataPesananController extends Controller
                 'total_diskon' => 0,
                 'total_pajak' => $pajak,
                 'biaya_layanan' => $biaya,
-                'total_ongkir' => 0,
+                'total_ongkir' => $ongkir,
                 'grand_total' => $grand,
                 'status' => \App\Models\Checkout::STATUS_PENDING,
             ]);
@@ -275,10 +338,13 @@ class DataPesananController extends Controller
                 'subtotal' => $subtotal,
                 'total_pajak' => $pajak,
                 'biaya_layanan' => $biaya,
+                'total_ongkir' => $ongkir,
                 'grand_total' => $grand,
                 'status' => Order::STATUS_PENDING_PAYMENT,
                 'tipe_pesanan' => $isOffline ? Order::TIPE_PESANAN_OFFLINE : Order::TIPE_PESANAN_ONLINE,
-                'metode_fulfillment' => $isOffline ? Order::FULFILLMENT_AMBIL : Order::FULFILLMENT_DIANTAR,
+                'metode_fulfillment' => $isOffline
+                    ? ($fulfillment === 'diantar' ? Order::FULFILLMENT_DIANTAR : Order::FULFILLMENT_AMBIL)
+                    : Order::FULFILLMENT_DIANTAR,
                 'catatan' => $data['catatan'] ?? null,
             ]);
 
@@ -361,7 +427,7 @@ class DataPesananController extends Controller
             : 'Pesanan dibuat (Menunggu Pembayaran).';
 
         return back()->with('toast', [
-            'message' => 'Pesanan ' . ($newOrder->nomor_order ?? ('#' . $newOrder->order_id)) . ' ' . $msg,
+            'message' => __('Pesanan :ph1 :ph2', ['ph1' => ($newOrder->nomor_order ?? ('#' . $newOrder->order_id)), 'ph2' => $msg]),
             'icon' => 'task_alt',
         ]);
     }
@@ -371,21 +437,21 @@ class DataPesananController extends Controller
     {
         if (! AdminContext::canAccessStore($pesanan->store_id)) {
             return back()->with('toast', [
-                'message' => 'Pesanan ini di luar scope toko yang Anda tugaskan.',
+                'message' => __('Pesanan ini di luar scope toko yang Anda tugaskan.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if ($pesanan->status !== Order::STATUS_SIAP_KIRIM) {
             return back()->with('toast', [
-                'message' => 'Pesanan dapat ditandai selesai setelah QC + packing (status Siap Kirim).',
+                'message' => __('Pesanan dapat ditandai selesai setelah QC + packing (status Siap Kirim).'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if ($pesanan->isDiantar()) {
             return back()->with('toast', [
-                'message' => 'Pesanan diantar kurir diselesaikan lewat pengiriman (input resi), bukan di sini.',
+                'message' => __('Pesanan diantar kurir diselesaikan lewat pengiriman (input resi), bukan di sini.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -400,10 +466,10 @@ class DataPesananController extends Controller
             $locked = Order::whereKey($pesanan->order_id)->lockForUpdate()->firstOrFail();
 
             if ($locked->status !== Order::STATUS_SIAP_KIRIM) {
-                throw new \RuntimeException('Status pesanan berubah, tidak dapat diselesaikan.');
+                throw new \RuntimeException(__('Status pesanan berubah, tidak dapat diselesaikan.'));
             }
             if (($locked->metode_fulfillment ?? Order::FULFILLMENT_DIANTAR) === Order::FULFILLMENT_DIANTAR) {
-                throw new \RuntimeException('Pesanan diantar kurir diselesaikan lewat pengiriman.');
+                throw new \RuntimeException(__('Pesanan diantar kurir diselesaikan lewat pengiriman.'));
             }
 
             $locked->update([
@@ -428,7 +494,7 @@ class DataPesananController extends Controller
         Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Diselesaikan', sprintf('Pesanan %s ditandai selesai (diambil langsung).', $pesanan->nomor_order), route('admin.pesanan'));
 
         return back()->with('toast', [
-            'message' => "Pesanan {$pesanan->nomor_order} diselesaikan.",
+            'message' => __('Pesanan :ph36278 diselesaikan.', ['ph36278' => $pesanan->nomor_order]),
             'icon' => 'task_alt',
         ]);
     }
@@ -437,7 +503,7 @@ class DataPesananController extends Controller
     {
         if (! AdminContext::canAccessStore($pesanan->store_id)) {
             return back()->with('toast', [
-                'message' => 'Pesanan ini di luar scope toko yang Anda tugaskan.',
+                'message' => __('Pesanan ini di luar scope toko yang Anda tugaskan.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -453,21 +519,21 @@ class DataPesananController extends Controller
 
         if ($pesanan->status !== Order::STATUS_SIAP_KIRIM) {
             return back()->with('toast', [
-                'message' => 'Fulfillment hanya dapat diubah saat pesanan Siap Kirim.',
+                'message' => __('Fulfillment hanya dapat diubah saat pesanan Siap Kirim.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if ($target === ($pesanan->metode_fulfillment ?? Order::FULFILLMENT_DIANTAR)) {
             return back()->with('toast', [
-                'message' => 'Fulfillment pesanan memang sudah begitu.',
+                'message' => __('Fulfillment pesanan memang sudah begitu.'),
                 'icon' => 'info',
             ]);
         }
 
         if ($pesanan->shipments()->where('status', '!=', \App\Models\Shipment::STATUS_GAGAL)->exists()) {
             return back()->with('toast', [
-                'message' => 'Pesanan sudah memiliki pengiriman aktif — fulfillment tidak dapat diubah.',
+                'message' => __('Pesanan sudah memiliki pengiriman aktif — fulfillment tidak dapat diubah.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -480,13 +546,13 @@ class DataPesananController extends Controller
                 $order = Order::whereKey($pesanan->order_id)->lockForUpdate()->firstOrFail();
 
                 if ($order->status !== Order::STATUS_SIAP_KIRIM) {
-                    throw new \RuntimeException('Status pesanan berubah, fulfillment tidak dapat diubah.');
+                    throw new \RuntimeException(__('Status pesanan berubah, fulfillment tidak dapat diubah.'));
                 }
                 if ($target === ($order->metode_fulfillment ?? Order::FULFILLMENT_DIANTAR)) {
-                    throw new \RuntimeException('Fulfillment pesanan memang sudah begitu.');
+                    throw new \RuntimeException(__('Fulfillment pesanan memang sudah begitu.'));
                 }
                 if ($order->shipments()->where('status', '!=', \App\Models\Shipment::STATUS_GAGAL)->exists()) {
-                    throw new \RuntimeException('Pesanan sudah memiliki pengiriman aktif.');
+                    throw new \RuntimeException(__('Pesanan sudah memiliki pengiriman aktif.'));
                 }
 
                 if ($target === Order::FULFILLMENT_AMBIL) {
@@ -551,8 +617,8 @@ class DataPesananController extends Controller
 
         return back()->with('toast', [
             'message' => $target === Order::FULFILLMENT_AMBIL
-                ? "Pesanan {$pesanan->nomor_order} dialihkan ke ambil di toko."
-                : "Pesanan {$pesanan->nomor_order} dialihkan ke kirim kurir.",
+                ? __('Pesanan :ph1 dialihkan ke ambil di toko.', ['ph1' => $pesanan->nomor_order])
+                : __('Pesanan :ph1 dialihkan ke kirim kurir.', ['ph1' => $pesanan->nomor_order]),
             'icon' => 'task_alt',
         ]);
     }
@@ -561,14 +627,14 @@ class DataPesananController extends Controller
     {
         if (! AdminContext::canAccessStore($pesanan->store_id)) {
             return back()->with('toast', [
-                'message' => 'Pesanan ini di luar scope toko yang Anda tugaskan.',
+                'message' => __('Pesanan ini di luar scope toko yang Anda tugaskan.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if (! $pesanan->qc_perlu_admin_pada || $pesanan->status !== Order::STATUS_MENUNGGU_QC) {
             return back()->with('toast', [
-                'message' => 'Pesanan ini tidak dalam antrian QC Gagal.',
+                'message' => __('Pesanan ini tidak dalam antrian QC Gagal.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -621,8 +687,8 @@ class DataPesananController extends Controller
 
         return back()->with('toast', [
             'message' => $rework
-                ? "Pesanan {$pesanan->nomor_order} dikirim ulang ke Produksi."
-                : "Pesanan {$pesanan->nomor_order} dilanjutkan ke QC ulang.",
+                ? __('Pesanan :ph1 dikirim ulang ke Produksi.', ['ph1' => $pesanan->nomor_order])
+                : __('Pesanan :ph1 dilanjutkan ke QC ulang.', ['ph1' => $pesanan->nomor_order]),
             'icon' => 'task_alt',
         ]);
     }
@@ -630,21 +696,21 @@ class DataPesananController extends Controller
     public function updateItems(Request $request, Order $pesanan)
     {
         if (! AdminContext::canAccessStore($pesanan->store_id)) {
-            return back()->with('toast', ['message' => 'Pesanan ini di luar scope toko yang Anda tugaskan.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pesanan ini di luar scope toko yang Anda tugaskan.'), 'icon' => 'gpp_maybe']);
         }
 
         if (! in_array($pesanan->status, [Order::STATUS_PENDING_PAYMENT, Order::STATUS_DIBAYAR], true)) {
-            return back()->with('toast', ['message' => 'Hanya pesanan Menunggu Pembayaran atau Dibayar yang dapat diubah.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Hanya pesanan Menunggu Pembayaran atau Dibayar yang dapat diubah.'), 'icon' => 'gpp_maybe']);
         }
 
         $pesanan->loadMissing(['checkout.payment', 'shipments']);
 
         if ($pesanan->checkout?->payment || Payment::where('checkout_id', $pesanan->checkout_id)->exists()) {
-            return back()->with('toast', ['message' => 'Pesanan sudah memiliki pembayaran, tidak dapat diubah.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pesanan sudah memiliki pembayaran, tidak dapat diubah.'), 'icon' => 'gpp_maybe']);
         }
 
         if ($pesanan->shipments->isNotEmpty() || $pesanan->shipments()->exists()) {
-            return back()->with('toast', ['message' => 'Pesanan sudah memiliki pengiriman, tidak dapat diubah.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Pesanan sudah memiliki pengiriman, tidak dapat diubah.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -666,15 +732,15 @@ class DataPesananController extends Controller
                 ->firstOrFail();
 
             if (! in_array($order->status, [Order::STATUS_PENDING_PAYMENT, Order::STATUS_DIBAYAR], true)) {
-                throw new \RuntimeException('Status pesanan berubah, tidak dapat diubah.');
+                throw new \RuntimeException(__('Status pesanan berubah, tidak dapat diubah.'));
             }
 
             if ($order->checkout?->payment || Payment::where('checkout_id', $order->checkout_id)->exists()) {
-                throw new \RuntimeException('Pesanan sudah memiliki pembayaran, tidak dapat diubah.');
+                throw new \RuntimeException(__('Pesanan sudah memiliki pembayaran, tidak dapat diubah.'));
             }
 
             if ($order->shipments->isNotEmpty()) {
-                throw new \RuntimeException('Pesanan sudah memiliki pengiriman, tidak dapat diubah.');
+                throw new \RuntimeException(__('Pesanan sudah memiliki pengiriman, tidak dapat diubah.'));
             }
 
             $removed = collect($data['removed'] ?? [])->map(fn ($id) => (int) $id)->all();
@@ -693,7 +759,7 @@ class DataPesananController extends Controller
             }
 
             if (empty($merged)) {
-                throw new \RuntimeException('Minimal 1 item tersisa; hapus via Batalkan.');
+                throw new \RuntimeException(__('Minimal 1 item tersisa; hapus via Batalkan.'));
             }
 
             $variants = ProductVariant::with(['product:product_id,store_id,nama_produk,harga_dasar', 'warehouseStocks'])
@@ -708,14 +774,14 @@ class DataPesananController extends Controller
                 $variant = $variants->get($variantId);
 
                 if (! $variant || (int) $variant->product?->store_id !== (int) $order->store_id) {
-                    throw new \RuntimeException('Varian tidak valid untuk toko ini.');
+                    throw new \RuntimeException(__('Varian tidak valid untuk toko ini.'));
                 }
 
                 $stok = (int) $variant->warehouseStocks->sum('jumlah_stok');
 
                 if ($line['qty'] > $stok) {
                     $nama = $variant->product?->nama_produk ?? 'Produk';
-                    throw new \RuntimeException("Stok {$nama} hanya tersisa {$stok}.");
+                    throw new \RuntimeException(sprintf(__('Stok %s hanya tersisa %d.'), $nama, $stok));
                 }
 
                 $harga = (float) ($variant->harga ?? $variant->product?->harga_dasar ?? 0);
@@ -803,7 +869,7 @@ class DataPesananController extends Controller
         Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Diperbarui', sprintf('Pesanan %s berhasil diperbarui.', $pesanan->nomor_order), route('admin.pesanan'));
 
         return back()->with('toast', [
-            'message' => "Pesanan {$pesanan->nomor_order} diperbarui.",
+            'message' => __('Pesanan :ph36277 diperbarui.', ['ph36277' => $pesanan->nomor_order]),
             'icon' => 'task_alt',
         ]);
     }
@@ -811,7 +877,7 @@ class DataPesananController extends Controller
     public function invoice(Order $pesanan)
     {
         if (! AdminContext::canAccessStore($pesanan->store_id)) {
-            abort(403, 'Pesanan ini di luar scope toko yang Anda tugaskan.');
+            abort(403, __('Pesanan ini di luar scope toko yang Anda tugaskan.'));
         }
 
         $pesanan->load([

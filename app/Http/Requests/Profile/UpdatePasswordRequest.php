@@ -22,20 +22,20 @@ class UpdatePasswordRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'password_lama' => 'kata sandi saat ini',
-            'password_baru' => 'kata sandi baru',
-            'password_baru_confirmation' => 'konfirmasi kata sandi baru',
+            'password_lama' => __('kata sandi saat ini'),
+            'password_baru' => __('kata sandi baru'),
+            'password_baru_confirmation' => __('konfirmasi kata sandi baru'),
         ];
     }
 
     public function messages(): array
     {
         return [
-            'password_lama.required' => 'Kata sandi saat ini wajib diisi.',
-            'password_baru.required' => 'Kata sandi baru wajib diisi.',
-            'password_baru.min' => 'Kata sandi baru minimal 8 karakter.',
-            'password_baru.regex' => 'Kata sandi baru harus mengandung minimal 1 huruf kapital dan 1 angka.',
-            'password_baru.confirmed' => 'Konfirmasi kata sandi baru tidak cocok.',
+            'password_lama.required' => __('Kata sandi saat ini wajib diisi.'),
+            'password_baru.required' => __('Kata sandi baru wajib diisi.'),
+            'password_baru.min' => __('Kata sandi baru minimal 8 karakter.'),
+            'password_baru.regex' => __('Kata sandi baru harus mengandung minimal 1 huruf kapital dan 1 angka.'),
+            'password_baru.confirmed' => __('Konfirmasi kata sandi baru tidak cocok.'),
         ];
     }
 }

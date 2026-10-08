@@ -1,20 +1,20 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Verifikasi Top Up Saldo')
+@section('title', __('Verifikasi Top Up Saldo'))
 
-@section('header-title', 'Verifikasi Top Up')
-@section('header-badge', 'Super Admin')
+@section('header-title', __('Verifikasi Top Up'))
+@section('header-badge', __('Super Admin'))
 
-@section('header-subtitle', 'Verifikasi bukti top up saldo akun Customer dan terbitkan saldo ke wallet.')
+@section('header-subtitle', __('Verifikasi bukti top up saldo akun Customer dan terbitkan saldo ke wallet.'))
 
 @php
     $badgeMap = [
-        'pending' => ['label' => 'Menunggu Bayar', 'class' => \App\Support\StatusStyle::badgeClass('pending')],
-        'menunggu_verifikasi' => ['label' => 'Menunggu Verifikasi', 'class' => \App\Support\StatusStyle::badgeClass('menunggu_verifikasi')],
-        'terverifikasi' => ['label' => 'Terverifikasi', 'class' => \App\Support\StatusStyle::badgeClass('terverifikasi')],
-        'ditolak' => ['label' => 'Ditolak', 'class' => \App\Support\StatusStyle::badgeClass('ditolak')],
-        'dibatalkan' => ['label' => 'Dibatalkan', 'class' => \App\Support\StatusStyle::badgeClass('dibatalkan')],
-        'kadaluarsa' => ['label' => 'Kadaluarsa', 'class' => \App\Support\StatusStyle::badgeClass('kadaluarsa')],
+        'pending' => ['label' => __('Menunggu Bayar'), 'class' => \App\Support\StatusStyle::badgeClass('pending')],
+        'menunggu_verifikasi' => ['label' => __('Menunggu Verifikasi'), 'class' => \App\Support\StatusStyle::badgeClass('menunggu_verifikasi')],
+        'terverifikasi' => ['label' => __('Terverifikasi'), 'class' => \App\Support\StatusStyle::badgeClass('terverifikasi')],
+        'ditolak' => ['label' => __('Ditolak'), 'class' => \App\Support\StatusStyle::badgeClass('ditolak')],
+        'dibatalkan' => ['label' => __('Dibatalkan'), 'class' => \App\Support\StatusStyle::badgeClass('dibatalkan')],
+        'kadaluarsa' => ['label' => __('Kadaluarsa'), 'class' => \App\Support\StatusStyle::badgeClass('kadaluarsa')],
     ];
 @endphp
 
@@ -35,28 +35,28 @@
         </span>
         <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
             <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
-            Data top up diperbarui real-time
+            {{ __('Data top up diperbarui real-time') }}
         </span>
     </div>
     <section>
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Ringkasan Top Up</h2>
+        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">{{ __('Ringkasan Top Up') }}</h2>
         <div data-reveal-group class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Menunggu Verifikasi</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Menunggu Verifikasi') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-primary break-words">{{ $stats['menunggu'] }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">top up bukti belum diverifikasi</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('top up bukti belum diverifikasi') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">pending_actions</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-gold-accent/25 rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium hover:border-gold-accent transition-colors hero-glow">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Nominal Menunggu</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Nominal Menunggu') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold break-words">Rp {{ number_format($stats['nominal_menunggu'], 0, ',', '.') }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">belum diterbitkan</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('belum diterbitkan') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Terverifikasi</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Terverifikasi') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">Rp {{ number_format($stats['total_terverifikasi'], 0, ',', '.') }}</span>
-                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">akumulasi saldo diterbitkan</span>
+                <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('akumulasi saldo diterbitkan') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">task_alt</span>
             </div>
         </div>
@@ -64,38 +64,38 @@
 
     <section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
         <div class="flex items-center justify-between gap-3 mb-6 flex-wrap">
-            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Daftar Top Up Saldo</h2>
+            <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Daftar Top Up Saldo') }}</h2>
         </div>
 
         <!-- Filters -->
         <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
             <div class="flex items-center gap-2 shrink-0">
                 <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Status') }}</span>
             </div>
             <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
             <div id="chip-group" class="flex flex-wrap gap-2">
-                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Semua ({{ $stats['semua'] }})</button>
-                <button type="button" data-chip="menunggu_verifikasi" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Menunggu ({{ $stats['menunggu'] }})</button>
-                <button type="button" data-chip="pending" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Belum Bayar ({{ $stats['pending'] }})</button>
-                <button type="button" data-chip="terverifikasi" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Terverifikasi ({{ $stats['terverifikasi'] }})</button>
-                <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Ditolak ({{ $stats['ditolak'] }})</button>
-                <button type="button" data-chip="dibatalkan" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Dibatalkan ({{ $stats['dibatalkan'] }})</button>
-                <button type="button" data-chip="kadaluarsa" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">Kadaluarsa ({{ $stats['kadaluarsa'] }})</button>
+                <button type="button" data-chip="semua" class="chip-btn px-4 py-2 rounded-lg bg-deep-onyx border border-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Semua (%d)'), $stats['semua']) }}</button>
+                <button type="button" data-chip="menunggu_verifikasi" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Menunggu (%d)'), $stats['menunggu']) }}</button>
+                <button type="button" data-chip="pending" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Belum Bayar (%d)'), $stats['pending']) }}</button>
+                <button type="button" data-chip="terverifikasi" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Terverifikasi (%d)'), $stats['terverifikasi']) }}</button>
+                <button type="button" data-chip="ditolak" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Ditolak (%d)'), $stats['ditolak']) }}</button>
+                <button type="button" data-chip="dibatalkan" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Dibatalkan (%d)'), $stats['dibatalkan']) }}</button>
+                <button type="button" data-chip="kadaluarsa" class="chip-btn px-4 py-2 rounded-lg border border-muted-border text-on-surface-variant hover:bg-surface-container-high font-label-sm text-[11px] uppercase tracking-wider transition-all duration-200">{{ sprintf(__('Kadaluarsa (%d)'), $stats['kadaluarsa']) }}</button>
             </div>
         </div>
 
         <div class="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
             <div class="relative flex-1">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
-                <input id="topup-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama customer, email, atau nomor top up..." />
+                <input id="topup-search" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="{{ __('Cari nama customer, email, atau nomor top up...') }}" />
                 <button type="button" id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent opacity-0 transition-opacity">
                     <span class="material-symbols-outlined text-[20px]">close</span>
                 </button>
             </div>
             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
                     <span class="material-symbols-outlined text-[14px]">inventory_2</span>
-                    <span id="result-count">{{ $topups->count() }}</span> top up
+                    <span id="result-count">{{ $topups->count() }}</span> {{ __('top up') }}
                 </span>
         </div>
 
@@ -104,13 +104,13 @@
             <table class="w-full min-w-[850px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-sm uppercase">
-                        <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">No.</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Customer</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Detail Top Up</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Metode</th>
-                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">Bukti</th>
-                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
-                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">Aksi</th>
+                        <th class="px-6 py-4 w-12 text-center text-[10px] font-semibold tracking-widest">{{ __('No.') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Customer') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Detail Top Up') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Metode') }}</th>
+                        <th class="px-6 py-4 text-[10px] font-semibold tracking-widest">{{ __('Bukti') }}</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Status') }}</th>
+                        <th class="px-6 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Aksi') }}</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -160,7 +160,7 @@ $metodeTujuan = $tp->payment?->paymentMethod?->nama_metode ?? '-';
                                 @if ($proof)
                                     <a href="{{ asset('storage/' . ltrim($proof->file_bukti, '/')) }}" target="_blank" rel="noopener"
                                         class="mt-1 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-secondary hover:underline">
-                                        <span class="material-symbols-outlined text-[13px]">visibility</span>Lihat Bukti
+                                        <span class="material-symbols-outlined text-[13px]">visibility</span>{{ __('Lihat Bukti') }}
                                     </a>
                                 @else
                                     <span class="text-on-surface-variant text-xs">&mdash;</span>
@@ -175,12 +175,12 @@ $metodeTujuan = $tp->payment?->paymentMethod?->nama_metode ?? '-';
                                         <button type="button" onclick="openRejectDialog(this.closest('tr'))"
                                             class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase tracking-wider rounded-full shadow-sm hover:bg-error/20 hover:shadow hover:-translate-y-px active:translate-y-0 transition-all duration-200">
                                             <span class="material-symbols-outlined text-[14px] leading-none">block</span>
-                                            Tolak
+                                            {{ __('Tolak') }}
                                         </button>
                                         <button type="button" onclick="openApproveDialog(this.closest('tr'))"
                                             class="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black active:translate-y-0 transition-all duration-200 btn-premium">
                                             <span class="material-symbols-outlined text-[14px] leading-none">task_alt</span>
-                                            Setujui
+                                            {{ __('Setujui') }}
                                         </button>
                                     </div>
                                 @else
@@ -189,13 +189,13 @@ $metodeTujuan = $tp->payment?->paymentMethod?->nama_metode ?? '-';
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="7" class="py-12 text-center text-on-surface-variant">Tidak ada top up tercatat.</td></tr>
+                        <tr><td colspan="7" class="py-12 text-center text-on-surface-variant">{{ __('Tidak ada top up tercatat.') }}</td></tr>
                     @endforelse
                     <tr id="empty-search" class="hidden">
                         <td colspan="7" class="p-8 text-center">
                             <div class="flex flex-col items-center gap-2">
                                 <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
-                                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada top up yang cocok.</p>
+                                <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada top up yang cocok.') }}</p>
                             </div>
                         </td>
                     </tr>
@@ -245,25 +245,25 @@ $metodeTujuan = $tp->payment?->paymentMethod?->nama_metode ?? '-';
                                 <div class="flex gap-2">
                                     <button type="button" onclick="openRejectDialog(this.closest('article'))"
                                         class="inline-flex items-center gap-1 px-3 py-1.5 bg-error/10 border border-error/20 text-error font-label-sm text-[10px] uppercase tracking-wider rounded-full hover:bg-error/20 transition-all duration-200">
-                                        <span class="material-symbols-outlined text-[14px] leading-none">block</span>Tolak
+                                        <span class="material-symbols-outlined text-[14px] leading-none">block</span>{{ __('Tolak') }}
                                     </button>
                                     <button type="button" onclick="openApproveDialog(this.closest('article'))"
                                         class="inline-flex items-center gap-1 px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-wider rounded-full border border-deep-onyx hover:bg-black transition-all duration-200 btn-premium">
-                                        <span class="material-symbols-outlined text-[14px] leading-none">task_alt</span>Setujui
+                                        <span class="material-symbols-outlined text-[14px] leading-none">task_alt</span>{{ __('Setujui') }}
                                     </button>
                                 </div>
                             @endif
                             @if ($proof)
                                 <a href="{{ asset('storage/' . ltrim($proof->file_bukti, '/')) }}" target="_blank" rel="noopener"
                                     class="mt-2 inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider text-secondary hover:underline">
-                                    <span class="material-symbols-outlined text-[13px]">visibility</span>Lihat Bukti
+                                    <span class="material-symbols-outlined text-[13px]">visibility</span>{{ __('Lihat Bukti') }}
                                 </a>
                             @endif
                         </div>
                     </div>
                 </article>
             @empty
-                <p class="text-center text-on-surface-variant py-12">Tidak ada top up tercatat.</p>
+                <p class="text-center text-on-surface-variant py-12">{{ __('Tidak ada top up tercatat.') }}</p>
             @endforelse
         </div>
     </section>
@@ -277,41 +277,41 @@ $metodeTujuan = $tp->payment?->paymentMethod?->nama_metode ?? '-';
             <div class="w-14 h-14 rounded-full bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center mx-auto mb-4">
                 <span class="material-symbols-outlined text-gold-accent text-[28px]">task_alt</span>
             </div>
-            <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4 text-center">Konfirmasi Persetujuan Top Up</h3>
-            <p class="font-body-md text-body-md text-on-surface-variant mb-5 text-center">Saldo sebesar <span id="approve-nominal" class="font-title-md text-gold-accent">-</span> akan diterbitkan ke wallet <span id="approve-customer" class="font-bold text-on-surface">-</span>.</p>
+            <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4 text-center">{{ __('Konfirmasi Persetujuan Top Up') }}</h3>
+            <p class="font-body-md text-body-md text-on-surface-variant mb-5 text-center">{{ __('Saldo sebesar') }} <span id="approve-nominal" class="font-title-md text-gold-accent">-</span> {{ __('akan diterbitkan ke wallet') }} <span id="approve-customer" class="font-bold text-on-surface">-</span>.</p>
             <div class="mb-6 space-y-3 rounded-xl border border-muted-border bg-surface-container-low p-4">
-                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Detail Transfer</p>
+                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Detail Transfer') }}</p>
                 <div class="flex items-start gap-2.5">
                     <span class="material-symbols-outlined text-on-surface-variant text-[18px] mt-0.5">account_balance_wallet</span>
                     <div class="min-w-0">
-                        <p class="text-on-surface-variant text-xs">Metode Pembayaran</p>
+                        <p class="text-on-surface-variant text-xs">{{ __('Metode Pembayaran') }}</p>
                         <p id="approve-metode" class="font-bold text-on-surface break-words">-</p>
                     </div>
                 </div>
                 <div class="flex items-start gap-2.5">
                     <span class="material-symbols-outlined text-on-surface-variant text-[18px] mt-0.5">payments</span>
                     <div class="min-w-0">
-                        <p class="text-on-surface-variant text-xs">Tujuan Transfer Customer</p>
+                        <p class="text-on-surface-variant text-xs">{{ __('Tujuan Transfer Customer') }}</p>
                         <p id="approve-rekening" class="font-bold text-on-surface break-words font-mono">-</p>
                         <p id="approve-pemilik" class="text-on-surface-variant text-xs"></p>
                     </div>
                 </div>
             </div>
             <div class="mb-6">
-                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">Bukti Transfer Customer</p>
-                <img id="approve-bukti-img" src="" alt="Bukti transfer customer" class="hidden w-full max-h-72 object-contain rounded-lg border border-muted-border bg-black/5 cursor-zoom-in" onclick="openBuktiLightbox()" />
+                <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mb-2">{{ __('Bukti Transfer Customer') }}</p>
+                <img id="approve-bukti-img" src="" alt="{{ __('Bukti transfer customer') }}" class="hidden w-full max-h-72 object-contain rounded-lg border border-muted-border bg-black/5 cursor-zoom-in" onclick="openBuktiLightbox()" />
                 <p id="approve-bukti-pdf" class="hidden flex-col items-center justify-center gap-2 rounded-lg border border-muted-border bg-surface-container-low p-6 text-center text-on-surface-variant text-xs">
                     <span class="material-symbols-outlined text-[28px] leading-none">picture_as_pdf</span>
                     Bukti berupa PDF &mdash; file tidak dipratinjau.
                 </p>
                 <p id="approve-bukti-empty" class="hidden flex-col items-center justify-center gap-2 rounded-lg border border-muted-border bg-surface-container-low p-6 text-center text-on-surface-variant text-xs">
                     <span class="material-symbols-outlined text-[28px] leading-none">image_not_supported</span>
-                    Customer belum mengunggah bukti transfer.
+                    {{ __('Customer belum mengunggah bukti transfer.') }}
                 </p>
             </div>
             <div class="flex justify-end gap-4">
-                <button type="button" class="inline-flex items-center gap-1.5 border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-surface-container transition-colors" onclick="hideDialog('approve-dialog')"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
-                <button type="submit" id="approve-submit" class="inline-flex items-center gap-1.5 bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>Terbitkan Saldo</button>
+                <button type="button" class="inline-flex items-center gap-1.5 border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-surface-container transition-colors" onclick="hideDialog('approve-dialog')"><span class="material-symbols-outlined text-[16px] leading-none">close</span>{{ __('Batal') }}</button>
+                <button type="submit" id="approve-submit" class="inline-flex items-center gap-1.5 bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>{{ __('Terbitkan Saldo') }}</button>
             </div>
         </div>
     </form>
@@ -319,10 +319,10 @@ $metodeTujuan = $tp->payment?->paymentMethod?->nama_metode ?? '-';
 
 <!-- Bukti Lightbox -->
 <div class="hidden fixed inset-0 z-[999] flex items-center justify-center p-4 bg-black/85 backdrop-blur-sm" id="bukti-lightbox" onclick="if(event.target===this){closeBuktiLightbox();}">
-    <button type="button" title="Tutup" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-colors" onclick="event.stopPropagation(); closeBuktiLightbox();">
+    <button type="button" title="{{ __('Tutup') }}" class="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 flex items-center justify-center transition-colors" onclick="event.stopPropagation(); closeBuktiLightbox();">
         <span class="material-symbols-outlined text-[24px]">close</span>
     </button>
-    <img id="bukti-lightbox-img" src="" alt="Bukti transfer customer" class="max-h-[85vh] max-w-full object-contain rounded-lg shadow-2xl" onclick="event.stopPropagation()" />
+    <img id="bukti-lightbox-img" src="" alt="{{ __('Bukti transfer customer') }}" class="max-h-[85vh] max-w-full object-contain rounded-lg shadow-2xl" onclick="event.stopPropagation()" />
 </div>
 
 <!-- Reject Dialog -->
@@ -333,17 +333,17 @@ $metodeTujuan = $tp->payment?->paymentMethod?->nama_metode ?? '-';
             <div class="w-14 h-14 rounded-full bg-error/10 border border-error/25 flex items-center justify-center mx-auto mb-4">
                 <span class="material-symbols-outlined text-error text-[28px]">gpp_bad</span>
             </div>
-            <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-error mb-4 text-center">Tolak Top Up</h3>
-            <p class="font-body-md text-body-md text-on-surface-variant mb-4 text-center">Anda yakin ingin menolak top up dari <span id="reject-customer" class="font-bold text-on-surface">-</span>?</p>
+            <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-error mb-4 text-center">{{ __('Tolak Top Up') }}</h3>
+            <p class="font-body-md text-body-md text-on-surface-variant mb-4 text-center">{{ __('Anda yakin ingin menolak top up dari') }} <span id="reject-customer" class="font-bold text-on-surface">-</span>?</p>
             <div class="mb-6">
-                <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">Alasan Penolakan</label>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">{{ __('Alasan Penolakan') }}</label>
                 <textarea name="alasan" required minlength="10" maxlength="1000"
                     class="w-full border border-muted-border bg-surface-container-low p-3 font-body-md text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary h-24"
-                    placeholder="Tulis alasan... (minimal 10 karakter)"></textarea>
+                    placeholder="{{ __('Tulis alasan... (minimal 10 karakter)') }}"></textarea>
             </div>
             <div class="flex justify-end gap-4">
-                <button type="button" class="inline-flex items-center gap-1.5 border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-surface-container transition-colors" onclick="hideDialog('reject-dialog')"><span class="material-symbols-outlined text-[16px] leading-none">close</span>Batal</button>
-                <button type="submit" class="inline-flex items-center gap-1.5 bg-error text-on-error px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full shadow-sm hover:shadow-md hover:-translate-y-px hover:opacity-90 transition-all duration-200"><span class="material-symbols-outlined text-[16px] leading-none">block</span>Tolak Top Up</button>
+                <button type="button" class="inline-flex items-center gap-1.5 border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-surface-container transition-colors" onclick="hideDialog('reject-dialog')"><span class="material-symbols-outlined text-[16px] leading-none">close</span>{{ __('Batal') }}</button>
+                <button type="submit" class="inline-flex items-center gap-1.5 bg-error text-on-error px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full shadow-sm hover:shadow-md hover:-translate-y-px hover:opacity-90 transition-all duration-200"><span class="material-symbols-outlined text-[16px] leading-none">block</span>{{ __('Tolak Top Up') }}</button>
             </div>
         </div>
     </form>

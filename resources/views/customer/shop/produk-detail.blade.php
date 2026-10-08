@@ -402,17 +402,17 @@
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[120px] lg:pl-72">
     <!-- Header (Custom TopAppBar for Product Details) -->
     <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full lg:w-auto px-container-margin h-16 fixed lg:left-72 lg:right-0 z-40 border-b border-[var(--chrome-border)]">
-        <a aria-label="Go back" href="{{ route('customer.shop') }}" data-go-back class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+        <a aria-label="{{ __('Go back') }}" href="{{ route('customer.shop') }}" data-go-back class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
             <span class="material-symbols-outlined text-[24px]">arrow_back</span>
             </a>
         <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">RALIVA</h1>
         <div class="w-10"></div> <!-- Spacer for centering -->
         <div class="flex gap-xs">
             @php $isWl = in_array($product->product_id, $wishlistedIds, true); @endphp
-            <button type="button" data-wishlist-toggle data-product-id="{{ $product->product_id }}" aria-label="Wishlist" class="p-2 hover:opacity-70 transition-all duration-200 flex{{ $isWl ? ' wishlisted-active' : '' }}">
+            <button type="button" data-wishlist-toggle data-product-id="{{ $product->product_id }}" aria-label="{{ __('Wishlist') }}" class="p-2 hover:opacity-70 transition-all duration-200 flex{{ $isWl ? ' wishlisted-active' : '' }}">
                 <span class="material-symbols-outlined text-[24px]">favorite{{ $isWl ? '' : '_border' }}</span>
                 </button>
-            <a aria-label="Cart" href="{{ route('customer.chart', ['from' => 'product', 'product' => $product->product_id]) }}" class="relative p-2 hover:opacity-70 transition-all duration-200 flex">
+            <a aria-label="{{ __('Cart') }}" href="{{ route('customer.chart', ['from' => 'product', 'product' => $product->product_id]) }}" class="relative p-2 hover:opacity-70 transition-all duration-200 flex">
                 <span class="material-symbols-outlined text-[24px]">shopping_cart</span>
                 <span class="cart-badge absolute -top-1 -right-1.5 bg-secondary-fixed-dim text-on-secondary-fixed text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold{{ $cartCount ? '' : ' hidden' }}">{{ $cartCount }}</span>
                 </a>

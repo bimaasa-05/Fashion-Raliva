@@ -1,10 +1,10 @@
 @extends('layouts.owner')
 
-@section('title', 'Data Pesanan')
+@section('title', __('Data Pesanan'))
 
-@section('header-title', 'Data Pesanan')
-@section('header-badge', '18 Baru')
-@section('header-subtitle', 'Pantau pesanan toko dan perkembangan statusnya.')
+@section('header-title', __('Data Pesanan'))
+@section('header-badge', __('18 Baru'))
+@section('header-subtitle', __('Pantau pesanan toko dan perkembangan statusnya.'))
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
@@ -18,8 +18,8 @@
         <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
             <div>
-                <p class="font-bold text-sm">Belum punya toko</p>
-                <p class="text-sm text-on-surface-variant mt-1">Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk akses fitur ini.</p>
+                <p class="font-bold text-sm">{{ __('Belum punya toko') }}</p>
+                <p class="text-sm text-on-surface-variant mt-1">{{ __('Silakan') }} <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">{{ __('ajukan toko') }}</a> {{ __('untuk akses fitur ini.') }}</p>
             </div>
         </div>
     @endif
@@ -28,7 +28,7 @@
         @foreach ([['Semua', $counts['semua'], 'on-surface', 'inventory_2'], ['Baru', $counts['baru'], 'gold-accent', 'shopping_cart'], ['Diproses', $counts['diproses'], 'secondary', 'precision_manufacturing'], ['Dikirim', $counts['dikirim'], 'on-surface', 'local_shipping'], ['Selesai', $counts['selesai'], 'secondary', 'task_alt'], ['Refund', $counts['refund'], 'error', 'sync_problem'], ['Dibatalkan', $counts['dibatalkan'], 'error', 'cancel']] as $stat)
             <div data-reveal class="bg-surface-container-lowest p-5 md:p-6 border border-muted-border rounded-xl flex flex-col gap-1.5 relative overflow-hidden card-premium">
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none fill" aria-hidden="true">{{ $stat[3] }}</span>
-                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider relative z-10">{{ $stat[0] }}</span>
+                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider relative z-10">{{ __($stat[0]) }}</span>
                 <span class="raliva-figure text-2xl md:text-[26px] text-{{ $stat[2] }} relative z-10">{{ $stat[1] }}</span>
             </div>
         @endforeach
@@ -38,8 +38,8 @@
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
             <div>
-                <h2 class="font-title-md text-title-md text-on-surface premium-heading">Daftar Pesanan</h2>
-                <p class="text-xs text-on-surface-variant mt-1">Pantau seluruh pesanan masuk, status, dan detail pembayarannya.</p>
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Daftar Pesanan') }}</h2>
+                <p class="text-xs text-on-surface-variant mt-1">{{ __('Pantau seluruh pesanan masuk, status, dan detail pembayarannya.') }}</p>
             </div>
         </div>
 
@@ -47,25 +47,25 @@
         <div class="flex flex-col lg:flex-row lg:items-center gap-3 mb-6">
             <div class="relative flex-1 min-w-[220px]">
                 <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                <input type="text" placeholder="Cari kode pesanan atau customer..." data-table-search class="raliva-search" />
+                <input type="text" placeholder="{{ __('Cari kode pesanan atau customer...') }}" data-table-search class="raliva-search" />
             </div>
             <div class="flex flex-wrap items-center gap-3 lg:justify-end">
                 <select data-table-filter="status" class="raliva-select lg:w-44">
-                    <option value="">Semua Status</option>
-                    <option value="baru" @selected($status === 'baru')>Baru</option>
-                    <option value="diproses" @selected($status === 'diproses')>Diproses</option>
-                    <option value="dikirim" @selected($status === 'dikirim')>Dikirim</option>
-                    <option value="selesai" @selected($status === 'selesai')>Selesai</option>
-                    <option value="refund" @selected($status === 'refund')>Refund</option>
-                    <option value="dibatalkan" @selected($status === 'dibatalkan')>Dibatalkan</option>
+                    <option value="">{{ __('Semua Status') }}</option>
+                    <option value="baru" @selected($status === 'baru')>{{ __('Baru') }}</option>
+                    <option value="diproses" @selected($status === 'diproses')>{{ __('Diproses') }}</option>
+                    <option value="dikirim" @selected($status === 'dikirim')>{{ __('Dikirim') }}</option>
+                    <option value="selesai" @selected($status === 'selesai')>{{ __('Selesai') }}</option>
+                    <option value="refund" @selected($status === 'refund')>{{ __('Refund') }}</option>
+                    <option value="dibatalkan" @selected($status === 'dibatalkan')>{{ __('Dibatalkan') }}</option>
                 </select>
                 <select data-table-filter="period" class="raliva-select lg:w-44">
-                    <option value="">Semua Waktu</option>
-                    <option value="today" @selected($period === 'today')>Hari Ini</option>
-                    <option value="week" @selected($period === 'week')>Minggu Ini</option>
-                    <option value="month" @selected($period === 'month')>Bulan Ini</option>
+                    <option value="">{{ __('Semua Waktu') }}</option>
+                    <option value="today" @selected($period === 'today')>{{ __('Hari Ini') }}</option>
+                    <option value="week" @selected($period === 'week')>{{ __('Minggu Ini') }}</option>
+                    <option value="month" @selected($period === 'month')>{{ __('Bulan Ini') }}</option>
                 </select>
-                <button type="button" data-filter-reset class="py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">Reset</button>
+                <button type="button" data-filter-reset class="py-2.5 px-4 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap">{{ __('Reset') }}</button>
             </div>
         </div>
 
@@ -74,14 +74,14 @@
             <table class="premium-table w-full min-w-[920px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Pesanan</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Customer</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Item</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Produksi</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Total</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Pembayaran</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">Aksi</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Pesanan') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Customer') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Item') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Produksi') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Total') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Pembayaran') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">{{ __('Status') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">{{ __('Aksi') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -114,8 +114,8 @@
                                 <p class="text-xs text-on-surface-variant mt-0.5">#{{ $o->order_id }}</p>
                                 <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->nomor_order }}</p>
                             </td>
-                            <td class="py-3.5 px-4 text-on-surface">{{ $customer?->nama_lengkap ?? 'Customer' }}</td>
-                            <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $itemCount }} produk</td>
+                            <td class="py-3.5 px-4 text-on-surface">{{ $customer?->nama_lengkap ?? __('Customer') }}</td>
+                            <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $itemCount }} {{ __('produk') }}</td>
                             <td class="py-3.5 px-4">@include('partials.produksi-waktu', ['produksiOrder' => $o])</td>
                             <td class="py-3.5 px-4 font-bold text-gold-accent whitespace-nowrap">{{ 'Rp ' . number_format($o->grand_total, 0, ',', '.') }}</td>
                             <td class="py-3.5 px-4 text-on-surface-variant whitespace-nowrap">{{ $o->checkout?->payment?->paymentMethod?->nama_metode ?? '-' }}</td>
@@ -123,11 +123,11 @@
                                 <span class="inline-flex items-center px-2 py-1 rounded-full {{ $statusPill[$key] }} text-[10px] font-bold uppercase">{{ $o->status }}</span>
                             </td>
                             <td class="py-3.5 px-4 text-right">
-                                <button type="button" data-modal-open="modal-order-{{ $o->order_id }}" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">Detail</button>
+                                <button type="button" data-modal-open="modal-order-{{ $o->order_id }}" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap">{{ __('Detail') }}</button>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="8" class="py-6 text-center text-on-surface-variant">Belum ada pesanan.</td></tr>
+                        <tr><td colspan="8" class="py-6 text-center text-on-surface-variant">{{ __('Belum ada pesanan.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -151,13 +151,13 @@
                     <div class="flex items-start justify-between gap-2">
                         <div class="min-w-0">
                             <p class="font-bold text-on-surface truncate">{{ $o->nomor_order }}</p>
-                            <p class="text-xs text-on-surface-variant mt-0.5 truncate">{{ $customer?->nama_lengkap ?? 'Customer' }} • {{ $itemCount }} produk</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5 truncate">{{ $customer?->nama_lengkap ?? __('Customer') }} • {{ $itemCount }} {{ __('produk') }}</p>
                         </div>
                         <span class="inline-flex items-center px-2 py-1 rounded-full {{ $statusPill[$key] }} text-[10px] font-bold uppercase shrink-0">{{ $o->status }}</span>
                     </div>
                     @if ($o->tgl_mulai_produksi && $o->tgl_berakhir_produksi)
                         <div class="mt-3 pt-3 border-t border-muted-border">
-                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium mb-1.5">Produksi</p>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium mb-1.5">{{ __('Produksi') }}</p>
                             @include('partials.produksi-waktu', ['produksiOrder' => $o])
                         </div>
                     @endif
@@ -166,11 +166,11 @@
                             <p class="font-bold text-gold-accent">{{ 'Rp ' . number_format($o->grand_total, 0, ',', '.') }}</p>
                             <p class="text-xs text-on-surface-variant mt-0.5 truncate">{{ $o->checkout?->payment?->paymentMethod?->nama_metode ?? '-' }}</p>
                         </div>
-                        <button type="button" data-modal-open="modal-order-{{ $o->order_id }}" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap shrink-0">Detail</button>
+                        <button type="button" data-modal-open="modal-order-{{ $o->order_id }}" class="text-xs font-semibold text-gold-accent hover:underline whitespace-nowrap shrink-0">{{ __('Detail') }}</button>
                     </div>
                 </article>
             @empty
-                <p class="py-6 text-center text-on-surface-variant">Belum ada pesanan.</p>
+                <p class="py-6 text-center text-on-surface-variant">{{ __('Belum ada pesanan.') }}</p>
             @endforelse
         </div>
 
@@ -178,8 +178,8 @@
             <div class="w-14 h-14 rounded-full bg-surface-container-high flex items-center justify-center">
                 <span class="material-symbols-outlined text-[28px] text-on-surface-variant">search_off</span>
             </div>
-            <p class="text-on-surface-variant font-body-md text-sm">Tidak ada pesanan yang cocok.</p>
-            <button type="button" data-filter-reset class="mt-1 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Reset Filter</button>
+            <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada pesanan yang cocok.') }}</p>
+            <button type="button" data-filter-reset class="mt-1 px-5 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Reset Filter') }}</button>
         </div>
     </section>
 </div>
@@ -203,7 +203,7 @@
     <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
     <div class="flex items-start justify-between px-6 py-5 border-b border-muted-border shrink-0">
         <div>
-            <p class="text-xs font-medium text-on-surface-variant">Detail Pesanan</p>
+            <p class="text-xs font-medium text-on-surface-variant">{{ __('Detail Pesanan') }}</p>
             <h3 class="font-title-md text-title-md text-on-surface mt-1">{{ $o->nomor_order }}</h3>
         </div>
         <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
@@ -212,7 +212,7 @@
     </div>
     <div class="flex-1 overflow-y-auto p-6 space-y-7">
         <section>
-            <p class="text-xs font-medium text-gold-accent mb-4">Perkembangan Pesanan</p>
+            <p class="text-xs font-medium text-gold-accent mb-4">{{ __('Perkembangan Pesanan') }}</p>
             <ol class="space-y-0">
                 @php
                     $steps = [
@@ -232,7 +232,7 @@
                             <span class="material-symbols-outlined text-[16px] {{ $step[2] ? 'fill' : '' }}">{{ $step[2] ? $step[1] : 'radio_button_unchecked' }}</span>
                         </span>
                         <div class="pt-0.5">
-                            <p class="font-title-md text-sm {{ $step[2] ? 'text-on-surface' : 'text-on-surface-variant' }}">{{ $step[0] }}</p>
+                            <p class="font-title-md text-sm {{ $step[2] ? 'text-on-surface' : 'text-on-surface-variant' }}">{{ __($step[0]) }}</p>
                             @if ($i === 1 && $o->created_at)
                                 <p class="text-xs text-on-surface-variant mt-0.5">{{ $o->created_at->translatedFormat('d M, H:i') }}</p>
                             @endif
@@ -244,13 +244,13 @@
 
         @if ($o->tgl_mulai_produksi && $o->tgl_berakhir_produksi)
             <section>
-                <p class="text-xs font-medium text-gold-accent mb-4">Jadwal Produksi</p>
+                <p class="text-xs font-medium text-gold-accent mb-4">{{ __('Jadwal Produksi') }}</p>
                 @include('partials.produksi-waktu', ['produksiOrder' => $o])
             </section>
         @endif
 
         <section>
-            <p class="text-xs font-medium text-gold-accent mb-4">Produk Dipesan</p>
+            <p class="text-xs font-medium text-gold-accent mb-4">{{ __('Produk Dipesan') }}</p>
             <ul class="space-y-3">
                 @foreach ($o->items as $it)
                     <li class="flex items-center gap-3 border border-muted-border rounded-lg p-3 bg-surface-container-low">
@@ -268,32 +268,32 @@
         </section>
 
         <section>
-            <p class="text-xs font-medium text-gold-accent mb-3">Ringkasan Pembayaran</p>
+            <p class="text-xs font-medium text-gold-accent mb-3">{{ __('Ringkasan Pembayaran') }}</p>
             <dl class="space-y-2.5 font-body-md text-sm border border-muted-border rounded-lg p-4 bg-surface-container-low">
-                <div class="flex justify-between"><dt class="text-on-surface-variant">Subtotal Produk</dt><dd class="text-on-surface">Rp {{ number_format($o->subtotal, 0, ',', '.') }}</dd></div>
-                <div class="flex justify-between"><dt class="text-on-surface-variant">Diskon</dt><dd class="text-secondary">− Rp {{ number_format($o->total_diskon, 0, ',', '.') }}</dd></div>
-                <div class="flex justify-between"><dt class="text-on-surface-variant">Ongkos Kirim</dt><dd class="text-on-surface">Rp {{ number_format($o->total_ongkir, 0, ',', '.') }}</dd></div>
-                <div class="flex justify-between pt-2.5 border-t border-muted-border"><dt class="font-bold text-on-surface">Total Bayar</dt><dd class="font-bold text-gold-accent text-base">Rp {{ number_format($o->grand_total, 0, ',', '.') }}</dd></div>
+                <div class="flex justify-between"><dt class="text-on-surface-variant">{{ __('Subtotal Produk') }}</dt><dd class="text-on-surface">Rp {{ number_format($o->subtotal, 0, ',', '.') }}</dd></div>
+                <div class="flex justify-between"><dt class="text-on-surface-variant">{{ __('Diskon') }}</dt><dd class="text-secondary">− Rp {{ number_format($o->total_diskon, 0, ',', '.') }}</dd></div>
+                <div class="flex justify-between"><dt class="text-on-surface-variant">{{ __('Ongkos Kirim') }}</dt><dd class="text-on-surface">Rp {{ number_format($o->total_ongkir, 0, ',', '.') }}</dd></div>
+                <div class="flex justify-between pt-2.5 border-t border-muted-border"><dt class="font-bold text-on-surface">{{ __('Total Bayar') }}</dt><dd class="font-bold text-gold-accent text-base">Rp {{ number_format($o->grand_total, 0, ',', '.') }}</dd></div>
             </dl>
-            <p class="text-xs text-on-surface-variant mt-3 flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-gold-accent">payments</span>Metode: {{ $oPayment?->paymentMethod?->nama_metode ?? '—' }} • Customer: {{ $oCustomer?->nama_lengkap ?? '-' }} • Status bayar: {{ ucfirst($oPayment?->status ?? '-') }}</p>
+            <p class="text-xs text-on-surface-variant mt-3 flex items-center gap-1"><span class="material-symbols-outlined text-[14px] text-gold-accent">payments</span>{{ __('Metode:') }} {{ $oPayment?->paymentMethod?->nama_metode ?? '—' }} • {{ __('Customer:') }} {{ $oCustomer?->nama_lengkap ?? '-' }} • {{ __('Status bayar:') }} {{ ucfirst($oPayment?->status ?? '-') }}</p>
             @if ($oPayment?->proofs?->isNotEmpty())
                 <div class="flex flex-wrap gap-2 mt-3">
                     @foreach ($oPayment->proofs as $proof)
-                        <a href="{{ asset('storage/' . ltrim($proof->file_bukti, '/')) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors"><span class="material-symbols-outlined text-[14px]">receipt_long</span>Bukti bayar</a>
+                        <a href="{{ asset('storage/' . ltrim($proof->file_bukti, '/')) }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 px-3 py-1.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors"><span class="material-symbols-outlined text-[14px]">receipt_long</span>{{ __('Bukti bayar') }}</a>
                     @endforeach
                 </div>
             @endif
         </section>
 
         <section>
-            <p class="text-xs font-medium text-gold-accent mb-4">Alamat Penerima</p>
+            <p class="text-xs font-medium text-gold-accent mb-4">{{ __('Alamat Penerima') }}</p>
             <dl class="space-y-2.5 font-body-md text-sm border border-muted-border rounded-lg p-4 bg-surface-container-low">
-                <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Nama</dt><dd class="text-on-surface text-right">{{ $o->checkout?->nama_penerima ?? $oCustomer?->nama_lengkap ?? '-' }}</dd></div>
-                <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Telepon</dt><dd class="text-on-surface text-right">{{ $o->checkout?->nomor_telepon ?? '-' }}</dd></div>
-                <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Alamat</dt><dd class="text-on-surface text-right">{{ $o->checkout?->alamat ?? '-' }}{{ $o->checkout?->kota ? ', '.$o->checkout->kota : '' }}{{ $o->checkout?->provinsi ? ' '.$o->checkout->provinsi : '' }} {{ $o->checkout?->kode_pos ?? '' }}</dd></div>
-                <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Tipe</dt><dd class="text-on-surface text-right">{{ $o->isOffline() ? 'Offline' : 'Online' }} • {{ $o->isAmbil() ? 'Ambil di toko' : 'Diantar kurir' }}</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">{{ __('Nama') }}</dt><dd class="text-on-surface text-right">{{ $o->checkout?->nama_penerima ?? $oCustomer?->nama_lengkap ?? '-' }}</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">{{ __('Telepon') }}</dt><dd class="text-on-surface text-right">{{ $o->checkout?->nomor_telepon ?? '-' }}</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">{{ __('Alamat') }}</dt><dd class="text-on-surface text-right">{{ $o->checkout?->alamat ?? '-' }}{{ $o->checkout?->kota ? ', '.$o->checkout->kota : '' }}{{ $o->checkout?->provinsi ? ' '.$o->checkout->provinsi : '' }} {{ $o->checkout?->kode_pos ?? '' }}</dd></div>
+                <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">{{ __('Tipe') }}</dt><dd class="text-on-surface text-right">{{ $o->isOffline() ? __('Offline') : __('Online') }} • {{ $o->isAmbil() ? __('Ambil di toko') : __('Diantar kurir') }}</dd></div>
                 @if ($o->catatan)
-                    <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Catatan</dt><dd class="text-on-surface text-right">{{ $o->catatan }}</dd></div>
+                    <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">{{ __('Catatan') }}</dt><dd class="text-on-surface text-right">{{ $o->catatan }}</dd></div>
                 @endif
             </dl>
         </section>
@@ -301,20 +301,20 @@
         @php $ship = $o->shipments->first(); @endphp
         @if ($ship)
             <section>
-                <p class="text-xs font-medium text-gold-accent mb-4">Pengiriman</p>
+                <p class="text-xs font-medium text-gold-accent mb-4">{{ __('Pengiriman') }}</p>
                 <dl class="space-y-2.5 font-body-md text-sm border border-muted-border rounded-lg p-4 bg-surface-container-low">
-                    <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Kurir</dt><dd class="text-on-surface text-right">{{ $ship->courier?->nama_kurir ?? '-' }}{{ $ship->shippingService ? ' • '.$ship->shippingService->nama_layanan : '' }}</dd></div>
-                    <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Resi</dt><dd class="font-mono text-on-surface text-right">{{ $ship->nomor_resi ?? '-' }}</dd></div>
-                    <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">Status</dt><dd class="text-on-surface text-right">{{ ucfirst($ship->status) }}</dd></div>
+                    <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">{{ __('Kurir') }}</dt><dd class="text-on-surface text-right">{{ $ship->courier?->nama_kurir ?? '-' }}{{ $ship->shippingService ? ' • '.$ship->shippingService->nama_layanan : '' }}</dd></div>
+                    <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">{{ __('Resi') }}</dt><dd class="font-mono text-on-surface text-right">{{ $ship->nomor_resi ?? '-' }}</dd></div>
+                    <div class="flex justify-between gap-3"><dt class="text-on-surface-variant">{{ __('Status') }}</dt><dd class="text-on-surface text-right">{{ ucfirst($ship->status) }}</dd></div>
                 </dl>
             </section>
         @endif
     </div>
     <div class="shrink-0 border-t border-muted-border p-4 flex flex-col-reverse sm:flex-row gap-gutter">
         <button type="button" onclick="window.print()" class="flex-1 py-3 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors flex items-center justify-center gap-2">
-            <span class="material-symbols-outlined text-[16px]">download</span>Unduh Invoice
+            <span class="material-symbols-outlined text-[16px]">download</span>{{ __('Unduh Invoice') }}
         </button>
-        <button type="button" data-modal-open="modal-forward-{{ $o->order_id }}" class="flex-1 py-3 bg-deep-onyx text-on-primary rounded-lg text-sm font-semibold btn-premium">Teruskan ke Admin</button>
+        <button type="button" data-modal-open="modal-forward-{{ $o->order_id }}" class="flex-1 py-3 bg-deep-onyx text-on-primary rounded-lg text-sm font-semibold btn-premium">{{ __('Teruskan ke Admin') }}</button>
     </div>
     </div>{{-- /inner --}}
 </div>{{-- /modal root --}}
@@ -323,13 +323,13 @@
         <div class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
             <div class="flex items-center gap-3 mb-4">
                 <span class="material-symbols-outlined text-gold-accent">forward_to_inbox</span>
-                <h3 class="font-title-md text-title-md text-on-surface">Teruskan ke Admin?</h3>
+                <h3 class="font-title-md text-title-md text-on-surface">{{ __('Teruskan ke Admin?') }}</h3>
             </div>
-            <p class="text-on-surface-variant text-sm mb-6">Pesanan <span class="font-mono text-on-surface">{{ $o->nomor_order }}</span> akan diteruskan ke Admin Produksi untuk diproses. Status berubah menjadi <b>Diproses</b>.</p>
+            <p class="text-on-surface-variant text-sm mb-6">{{ __('Pesanan') }} <span class="font-mono text-on-surface">{{ $o->nomor_order }}</span> {{ __('akan diteruskan ke Admin Produksi untuk diproses. Status berubah menjadi') }} <b>{{ __('Diproses') }}</b>.</p>
             <form method="POST" action="{{ route('owner.pesanan.forward', $o->order_id) }}" class="flex gap-3">
                 @csrf
-                <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Teruskan</button>
+                <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border rounded-lg text-sm font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Batal') }}</button>
+                <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">{{ __('Teruskan') }}</button>
             </form>
         </div>
     </div>
@@ -349,7 +349,7 @@ document.addEventListener('DOMContentLoaded', function(){
       // For tambah buttons, disable if no store
       el.setAttribute('disabled','');
       el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
-      el.title = 'Ajukan toko dulu';
+      el.title = '{{ __('Ajukan toko dulu') }}';
     }
   });
   // More generic: disable all buttons in data-real except those inside pengajuan

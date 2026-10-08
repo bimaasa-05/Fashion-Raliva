@@ -1,10 +1,10 @@
 @extends('layouts.gudang')
 
-@section('title', 'Data Stok')
+@section('title', __('Data Stok'))
 
-@section('header-title', 'Data Stok')
-@section('header-badge', $warehouse->nama_gudang ?? 'Gudang')
-@section('header-subtitle', 'Kelola dan pantau stok produk di gudang Anda.')
+@section('header-title', __('Data Stok'))
+@section('header-badge', $warehouse->nama_gudang ?? __('Gudang'))
+@section('header-subtitle', __('Kelola dan pantau stok produk di gudang Anda.'))
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
@@ -18,7 +18,7 @@
             <div class="flex items-center justify-between gap-3">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant hidden md:block">Filter &amp; Pencarian</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant hidden md:block">{{ __('Filter &amp; Pencarian') }}</span>
                 </div>
                 <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors btn-premium">
                     <span class="material-symbols-outlined text-[18px]" data-filter-icon>tune</span>
@@ -30,7 +30,7 @@
                 <form method="GET" class="flex flex-col lg:flex-row lg:items-center gap-gutter">
                     <div class="relative flex-1 min-w-0">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                        <input type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Cari produk, SKU..." class="raliva-search" />
+                        <input type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="{{ __('Cari produk, SKU...') }}" class="raliva-search" />
                     </div>
                     <div class="flex flex-wrap gap-gutter">
                         @php
@@ -49,7 +49,7 @@
                             </button>
                             <div data-cs-menu role="listbox" style="transform-origin: top left"
                                 class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden py-1">
-                                <button type="button" role="option" data-cs-option="" data-cs-option-label="Semua Kategori" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                <button type="button" role="option" data-cs-option="" data-cs-option-label="{{ __('Semua Kategori') }}" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
                                     Semua Kategori<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($filters['kategori'] ?? '') === '' ? '' : 'hidden' }}">check</span>
                                 </button>
                                 @foreach ($categories as $cat)
@@ -68,7 +68,7 @@
                             </button>
                             <div data-cs-menu role="listbox" style="transform-origin: top left"
                                 class="hidden absolute left-0 right-0 top-full mt-2 z-50 bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden py-1">
-                                <button type="button" role="option" data-cs-option="" data-cs-option-label="Semua Status" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
+                                <button type="button" role="option" data-cs-option="" data-cs-option-label="{{ __('Semua Status') }}" class="w-full flex items-center justify-between gap-2 text-left px-4 py-2.5 font-body-md text-sm text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer">
                                     Semua Status<span data-cs-check class="material-symbols-outlined text-[18px] text-gold-accent {{ ($filters['status'] ?? '') === '' ? '' : 'hidden' }}">check</span>
                                 </button>
                                 @foreach ($csStatusMap as $key => $label)
@@ -95,7 +95,7 @@
                             </div>
                             <input type="hidden" name="sort" value="{{ $csSortKey }}" data-cs-input />
                         </div>
-                        <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Terapkan</button>
+                        <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">{{ __('Terapkan') }}</button>
                         <a href="{{ route('gudang.stok') }}" class="px-3 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface-variant hover:text-on-surface hover:border-gold-accent transition-colors">Reset</a>
                     </div>
                 </form>
@@ -107,16 +107,16 @@
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant text-xs font-medium">
                         <th class="p-4 text-center w-12">No.</th>
-                        <th class="p-4 text-left">Produk</th>
+                        <th class="p-4 text-left">{{ __('Produk') }}</th>
                         <th class="p-4 text-center">SKU</th>
-                        <th class="p-4 text-center">Variasi</th>
-                        <th class="p-4 text-center">Stok Tersedia</th>
-                        <th class="p-4 text-center">Minimum Stok</th>
+                        <th class="p-4 text-center">{{ __('Variasi') }}</th>
+                        <th class="p-4 text-center">{{ __('Stok Tersedia') }}</th>
+                        <th class="p-4 text-center">{{ __('Minimum Stok') }}</th>
                         <th class="p-4 text-right">HPP</th>
-                        <th class="p-4 text-right">Harga Jual</th>
+                        <th class="p-4 text-right">{{ __('Harga Jual') }}</th>
                         <th class="p-4 text-center">Status</th>
-                        <th class="p-4 text-center">Updated</th>
-                        <th class="p-4 text-center">Action</th>
+                        <th class="p-4 text-center">{{ __('Updated') }}</th>
+                        <th class="p-4 text-center">{{ __('Action') }}</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -140,21 +140,21 @@
                             <td class="p-4 text-center text-on-surface-variant">{{ $row->stok_minimum }}</td>
                             <td class="p-4 text-right font-title-md text-sm text-on-surface whitespace-nowrap">Rp {{ number_format($row->hpp, 0, ',', '.') }}</td>
                             <td class="p-4 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format($row->harga_jual, 0, ',', '.') }}</td>
-                            <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass }} text-[10px] font-bold uppercase border">{{ ucfirst($statusKey) }}</span></td>
+                            <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $badgeClass }} text-[10px] font-bold uppercase border">{{ \App\Support\StatusStyle::label($statusKey) }}</span></td>
                             <td class="p-4 text-center text-on-surface-variant whitespace-nowrap">{{ $row->updated_at ? \Carbon\Carbon::parse($row->updated_at)->format('d M Y') : '-' }}</td>
                             <td class="p-4">
                                 <div class="flex items-center justify-center gap-2">
-                                    <button type="button" data-modal-open="stok-detail-{{ $loop->iteration }}" title="Lihat Detail" class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface-variant hover:text-gold-accent hover:border-gold-accent transition-colors">
+                                    <button type="button" data-modal-open="stok-detail-{{ $loop->iteration }}" title="{{ __('Lihat Detail') }}" class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface-variant hover:text-gold-accent hover:border-gold-accent transition-colors">
                                         <span class="material-symbols-outlined text-[18px]">visibility</span>
                                     </button>
-                                    <a href="{{ route('gudang.riwayat-stok') }}" title="Riwayat" class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface-variant hover:text-gold-accent hover:border-gold-accent transition-colors">
+                                    <a href="{{ route('gudang.riwayat-stok') }}" title="{{ __('Riwayat') }}" class="w-9 h-9 rounded-lg border border-muted-border flex items-center justify-center text-on-surface-variant hover:text-gold-accent hover:border-gold-accent transition-colors">
                                         <span class="material-symbols-outlined text-[18px]">history</span>
                                     </a>
                                 </div>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="11" class="p-10 text-center text-on-surface-variant">Belum ada data stok pada gudang ini.</td></tr>
+                        <tr><td colspan="11" class="p-10 text-center text-on-surface-variant">{{ __('Belum ada data stok pada gudang ini.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -179,23 +179,23 @@
                             <p class="font-bold text-on-surface leading-tight">{{ $row->produk->nama_produk }}</p>
                             <p class="text-xs text-on-surface-variant mt-0.5">SKU {{ $row->sku }}</p>
                         </div>
-                        <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $badgeClassM }} text-[10px] font-bold uppercase border shrink-0">{{ ucfirst($statusKey) }}</span>
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full {{ $badgeClassM }} text-[10px] font-bold uppercase border shrink-0">{{ \App\Support\StatusStyle::label($statusKey) }}</span>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-gutter mb-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter mb-4">
                         <div class="bg-surface-container-low border border-muted-border rounded-lg p-3">
-                            <p class="raliva-label">Stok Tersedia</p>
+                            <p class="raliva-label">{{ __('Stok Tersedia') }}</p>
                             <p class="font-title-md text-lg {{ $stockClassM }} leading-tight">{{ $row->total_stok }} <span class="text-[11px] text-on-surface-variant font-normal">unit</span></p>
                         </div>
                         <div class="bg-surface-container-low border border-muted-border rounded-lg p-3">
-                            <p class="raliva-label">Min. Stok</p>
+                            <p class="raliva-label">{{ __('Min. Stok') }}</p>
                             <p class="font-title-md text-lg text-on-surface leading-tight">{{ $row->stok_minimum }}</p>
                         </div>
                     </div>
 
                     <dl class="space-y-2 font-body-md text-sm mb-4">
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Variasi</dt>
+                            <dt class="text-on-surface-variant">{{ __('Variasi') }}</dt>
                             <dd class="text-on-surface text-right">{{ $row->variasi ?: '-' }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
@@ -203,16 +203,16 @@
                             <dd class="text-on-surface text-right">Rp {{ number_format($row->hpp, 0, ',', '.') }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Harga Jual</dt>
+                            <dt class="text-on-surface-variant">{{ __('Harga Jual') }}</dt>
                             <dd class="text-gold-accent text-right font-bold">Rp {{ number_format($row->harga_jual, 0, ',', '.') }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Diperbarui</dt>
+                            <dt class="text-on-surface-variant">{{ __('Diperbarui') }}</dt>
                             <dd class="text-on-surface text-right">{{ $row->updated_at ? \Carbon\Carbon::parse($row->updated_at)->format('d M Y') : '-' }}</dd>
                         </div>
                     </dl>
 
-                    <div class="grid grid-cols-2 gap-gutter">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
                         <button type="button" data-modal-open="stok-detail-{{ $loop->iteration }}" class="min-h-11 inline-flex items-center justify-center gap-2 rounded-lg border border-muted-border text-xs font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
                             <span class="material-symbols-outlined text-[18px]">visibility</span>Detail
                         </button>
@@ -222,7 +222,7 @@
                     </div>
                 </article>
             @empty
-                <p class="text-center text-on-surface-variant py-10">Belum ada data stok pada gudang ini.</p>
+                <p class="text-center text-on-surface-variant py-10">{{ __('Belum ada data stok pada gudang ini.') }}</p>
             @endforelse
         </div>
 
@@ -245,13 +245,13 @@
                     </button>
                 </div>
                 <div class="p-6 space-y-5">
-                    <div class="grid grid-cols-2 gap-gutter">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-gutter">
                         <div class="bg-surface-container-low border border-muted-border rounded-lg p-4">
-                            <p class="raliva-label">Total Stok Tersedia</p>
+                            <p class="raliva-label">{{ __('Total Stok Tersedia') }}</p>
                             <p class="raliva-figure text-[26px] {{ in_array($row->status, ['kritis', 'habis']) ? 'text-error' : 'text-on-surface' }}">{{ $row->total_stok }}</p>
                         </div>
                         <div class="bg-surface-container-low border border-muted-border rounded-lg p-4">
-                            <p class="raliva-label">Minimum Stok</p>
+                            <p class="raliva-label">{{ __('Minimum Stok') }}</p>
                             <p class="raliva-figure text-[26px] text-on-surface">{{ $row->stok_minimum }}</p>
                         </div>
                     </div>
@@ -259,16 +259,16 @@
                     <div class="bg-surface-container-low border border-muted-border rounded-lg overflow-hidden">
                         <div class="px-4 py-3 border-b border-muted-border flex items-center gap-2">
                             <span class="material-symbols-outlined text-[16px] text-gold-accent">inventory_2</span>
-                            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant font-semibold">Detail per Variasi</p>
+                            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant font-semibold">{{ __('Detail per Variasi') }}</p>
                         </div>
                         <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
+                            <table class="w-full min-w-[560px] text-sm">
                                 <thead>
                                     <tr class="border-b border-muted-border bg-surface-container-high/50">
-                                        <th class="p-3 text-left font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Variasi</th>
+                                        <th class="p-3 text-left font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Variasi') }}</th>
                                         <th class="p-3 text-left font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">SKU</th>
-                                        <th class="p-3 text-right font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Harga</th>
-                                        <th class="p-3 text-center font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Stok</th>
+                                        <th class="p-3 text-right font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Harga') }}</th>
+                                        <th class="p-3 text-center font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Stok') }}</th>
                                         <th class="p-3 text-center font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Min.</th>
                                         <th class="p-3 text-center font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Status</th>
                                     </tr>
@@ -293,10 +293,10 @@
                                             <td class="p-3 text-right text-on-surface whitespace-nowrap">Rp {{ number_format($v->harga ?? 0, 0, ',', '.') }}</td>
                                             <td class="p-3 text-center font-bold {{ $vStok <= 0 ? 'text-error' : ($vStok <= $vMin ? 'text-amber-600' : 'text-on-surface') }}">{{ $vStok }}</td>
                                             <td class="p-3 text-center text-on-surface-variant">{{ $vMin }}</td>
-                                            <td class="p-3 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full {{ $vBadge }} text-[9px] font-bold uppercase border">{{ ucfirst($vStatusLabel) }}</span></td>
+                                            <td class="p-3 text-center"><span class="inline-flex items-center px-2 py-0.5 rounded-full {{ $vBadge }} text-[9px] font-bold uppercase border">{{ \App\Support\StatusStyle::label($vStatusLabel) }}</span></td>
                                         </tr>
                                     @empty
-                                        <tr><td colspan="6" class="p-4 text-center text-on-surface-variant">Tidak ada variasi.</td></tr>
+                                        <tr><td colspan="6" class="p-4 text-center text-on-surface-variant">{{ __('Tidak ada variasi.') }}</td></tr>
                                     @endforelse
                                 </tbody>
                             </table>
@@ -305,7 +305,7 @@
 
                     <div class="bg-gradient-to-r from-gold-accent/10 to-transparent border border-gold-accent/25 rounded-lg p-4 flex items-center justify-between gap-3">
                         <div>
-                            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Nilai Persediaan</p>
+                            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Nilai Persediaan') }}</p>
                             <p class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent leading-tight">Rp {{ number_format($row->hpp * $row->total_stok, 0, ',', '.') }}</p>
                         </div>
                     </div>
@@ -314,17 +314,17 @@
                     <div class="bg-surface-container-low border border-muted-border rounded-lg overflow-hidden">
                         <div class="px-4 py-3 border-b border-muted-border flex items-center gap-2">
                             <span class="material-symbols-outlined text-[16px] text-gold-accent">category</span>
-                            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant font-semibold">Rincian Bahan</p>
+                            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant font-semibold">{{ __('Rincian Bahan') }}</p>
                         </div>
                         @if ($row->resep->isNotEmpty())
                             <div class="overflow-x-auto">
                                 <table class="w-full text-sm">
                                     <thead>
                                         <tr class="border-b border-muted-border bg-surface-container-high/50">
-                                            <th class="p-3 text-left font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Bahan</th>
-                                            <th class="p-3 text-right font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Jumlah / Unit</th>
-                                            <th class="p-3 text-center font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Satuan</th>
-                                            <th class="p-3 text-right font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">Biaya / Unit</th>
+                                            <th class="p-3 text-left font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Bahan') }}</th>
+                                            <th class="p-3 text-right font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Jumlah / Unit') }}</th>
+                                            <th class="p-3 text-center font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Satuan') }}</th>
+                                            <th class="p-3 text-right font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Biaya / Unit') }}</th>
                                         </tr>
                                     </thead>
                                     <tbody class="divide-y divide-muted-border">
@@ -340,8 +340,7 @@
                                 </table>
                             </div>
                         @else
-                            <p class="p-4 text-sm text-on-surface-variant">Belum ada resep bahan untuk produk ini (dinput
-                                Admin saat menambahkan produk).</p>
+                            <p class="p-4 text-sm text-on-surface-variant">{{ __('Belum ada resep bahan untuk produk ini (dinput Admin saat menambahkan produk).') }}</p>
                         @endif
                     </div>
 
@@ -349,7 +348,7 @@
                     <div class="bg-surface-container-low border border-muted-border rounded-lg overflow-hidden">
                         <div class="px-4 py-3 border-b border-muted-border flex items-center gap-2">
                             <span class="material-symbols-outlined text-[16px] text-gold-accent">history</span>
-                            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant font-semibold">Riwayat Stok (10 Terakhir)</p>
+                            <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant font-semibold">{{ __('Riwayat Stok (10 Terakhir)') }}</p>
                         </div>
                         <ul class="divide-y divide-muted-border">
                             @forelse ($row->riwayat as $m)
@@ -360,7 +359,7 @@
                                         'mutasi_masuk' => 'Mutasi Masuk',
                                         'mutasi_keluar' => 'Mutasi Keluar',
                                         'penyesuaian' => 'Penyesuaian',
-                                    ][$m->tipe_pergerakan] ?? ucfirst($m->tipe_pergerakan);
+                                    ][$m->tipe_pergerakan] ?? \App\Support\StatusStyle::label($m->tipe_pergerakan);
                                     $isKeluar = in_array($m->tipe_pergerakan, ['keluar', 'mutasi_keluar']);
                                     $warna = $isKeluar ? 'text-error' : ($m->tipe_pergerakan === 'penyesuaian' ? 'text-gold-accent' : 'text-secondary');
                                 @endphp
@@ -378,8 +377,7 @@
                                     <span class="text-sm font-bold {{ $warna }} shrink-0">{{ $m->jumlah > 0 ? '+' . $m->jumlah : $m->jumlah }}</span>
                                 </li>
                             @empty
-                                <li class="p-4 text-sm text-on-surface-variant text-center">Belum ada pergerakan stok
-                                    produk ini.</li>
+                                <li class="p-4 text-sm text-on-surface-variant text-center">{{ __('Belum ada pergerakan stok produk ini.') }}</li>
                             @endforelse
                         </ul>
                     </div>
@@ -387,17 +385,17 @@
                     <dl class="space-y-4 font-body-md text-sm">
                         <div class="flex justify-between gap-4 pb-4 border-b border-muted-border">
                             <dt class="text-on-surface-variant">Status</dt>
-                            <dd><span class="inline-flex items-center px-2 py-1 rounded-full {{ ['aman' => 'bg-success/10 text-success border-success/20', 'menipis' => 'bg-amber-500/10 text-amber-600 border-amber-500/30', 'kritis' => 'bg-error/10 text-error border-error/20', 'habis' => 'bg-error text-on-error border-error'][$row->status] }} text-[10px] font-bold uppercase border">{{ ucfirst($row->status) }}</span></dd>
+                            <dd><span class="inline-flex items-center px-2 py-1 rounded-full {{ ['aman' => 'bg-success/10 text-success border-success/20', 'menipis' => 'bg-amber-500/10 text-amber-600 border-amber-500/30', 'kritis' => 'bg-error/10 text-error border-error/20', 'habis' => 'bg-error text-on-error border-error'][$row->status] }} text-[10px] font-bold uppercase border">{{ \App\Support\StatusStyle::label($row->status) }}</span></dd>
                         </div>
                         <div class="flex justify-between gap-4">
-                            <dt class="text-on-surface-variant">Terakhir Diperbarui</dt>
+                            <dt class="text-on-surface-variant">{{ __('Terakhir Diperbarui') }}</dt>
                             <dd class="text-on-surface">{{ $row->updated_at ? \Carbon\Carbon::parse($row->updated_at)->format('d M Y H:i') : '-' }}</dd>
                         </div>
                     </dl>
 
                     <div class="flex gap-gutter pt-2">
-                        <a href="{{ route('gudang.riwayat-stok') }}" class="flex-1 text-center py-3 border border-muted-border rounded-lg text-sm font-semibold text-gold-accent hover:bg-gold-accent/10 hover:border-gold-accent/40 transition-colors">Lihat Riwayat</a>
-                        <button type="button" data-modal-close class="flex-1 py-3 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">Tutup</button>
+                        <a href="{{ route('gudang.riwayat-stok') }}" class="flex-1 text-center py-3 border border-muted-border rounded-lg text-sm font-semibold text-gold-accent hover:bg-gold-accent/10 hover:border-gold-accent/40 transition-colors">{{ __('Lihat Riwayat') }}</a>
+                        <button type="button" data-modal-close class="flex-1 py-3 bg-deep-onyx text-on-primary text-sm font-semibold rounded btn-premium">{{ __('Tutup') }}</button>
                     </div>
                 </div>
             </div>

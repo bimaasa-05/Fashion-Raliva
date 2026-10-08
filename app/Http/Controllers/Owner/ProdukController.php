@@ -101,7 +101,7 @@ class ProdukController extends Controller
             abort(403);
         }
         if (! in_array($product->status, [Product::STATUS_PENDING, Product::STATUS_DITOLAK, Product::STATUS_DRAFT], true)) {
-            return back()->with('error', 'Hanya produk pending, ditolak, atau draft yang bisa diubah.');
+            return back()->with('error',__('Hanya produk pending, ditolak, atau draft yang bisa diubah.'));
         }
 
         $data = $request->validate([
@@ -159,7 +159,7 @@ class ProdukController extends Controller
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Produk Diperbarui', sprintf('Produk "%s" berhasil diperbarui.', $product->nama_produk), route('owner.produk'));
 
-        return back()->with('success', 'Produk berhasil diperbarui.');
+        return back()->with('success',__('Produk berhasil diperbarui.'));
     }
 
     public function destroy(Product $product)
@@ -174,7 +174,7 @@ class ProdukController extends Controller
         $hasAds = AdSlot::where('product_id', $product->product_id)->exists();
 
         if ($hasOrders || $hasReviews || $hasAds) {
-            return back()->with('error', 'Produk tidak dapat dihapus karena memiliki riwayat (pesanan/ulasan/slot iklan). Nonaktifkan saja bila perlu.');
+            return back()->with('error',__('Produk tidak dapat dihapus karena memiliki riwayat (pesanan/ulasan/slot iklan). Nonaktifkan saja bila perlu.'));
         }
 
         $lama = $product->only(['nama_produk', 'status']);
@@ -187,7 +187,7 @@ class ProdukController extends Controller
                 $product->delete();
             });
         } catch (QueryException $e) {
-            return back()->with('error', 'Produk tidak dapat dihapus karena terkait data lain. Nonaktifkan saja bila perlu.');
+            return back()->with('error',__('Produk tidak dapat dihapus karena terkait data lain. Nonaktifkan saja bila perlu.'));
         }
 
         foreach ($paths as $p) {
@@ -198,7 +198,7 @@ class ProdukController extends Controller
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Produk Dihapus', sprintf('Produk "%s" telah dihapus.', $lama['nama_produk'] ?? ''), route('owner.produk'));
 
-        return back()->with('success', 'Produk berhasil dihapus.');
+        return back()->with('success',__('Produk berhasil dihapus.'));
     }
 
     public function status(Request $request, Product $product)
@@ -221,7 +221,7 @@ class ProdukController extends Controller
         $to = $data['status'];
 
         if (! isset($allowed[$from]) || ! in_array($to, $allowed[$from], true)) {
-            return back()->with('error', 'Perubahan status tidak diizinkan.');
+            return back()->with('error',__('Perubahan status tidak diizinkan.'));
         }
 
         if ($to === $from) {
@@ -234,7 +234,7 @@ class ProdukController extends Controller
                 $total = SlotService::totalQuota($storeId);
                 $used = SlotService::usedSlots($storeId);
 
-                return redirect()->route('owner.kelola-slot')->with('error', sprintf('Kuota slot produk penuh (%d/%d). Tambah slot terlebih dahulu.', $used, $total));
+                return redirect()->route('owner.kelola-slot')->with('error', sprintf(__('Kuota slot produk penuh (%d/%d). Tambah slot terlebih dahulu.'), $used, $total));
             }
         }
 
@@ -258,6 +258,6 @@ class ProdukController extends Controller
             Notification::fireSelf(Notification::TIPE_SISTEM, 'Produk '.$label, sprintf('Produk "%s" %s.', $product->nama_produk, strtolower($label)), route('owner.produk'));
         }
 
-        return back()->with('success', sprintf('Status produk diubah menjadi %s.', $to));
+        return back()->with('success', sprintf(__('Status produk diubah menjadi %s.'), $to));
     }
 }

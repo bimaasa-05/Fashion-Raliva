@@ -47,7 +47,7 @@ class TransaksiController extends Controller
         $kategoriPemasukan = ['Penjualan', 'Investor', 'Modal', 'Komisi', 'Lainnya'];
         $kategoriPengeluaran = StoreExpense::whereIn('store_id', $storeIds)
             ->select('kategori')->distinct()->pluck('kategori')->filter()->values()->all();
-        foreach (['Operasional', 'Bahan', 'Bonus', 'Gaji', 'Sewa', 'Lainnya'] as $wajib) {
+        foreach (['Operasional', 'Bahan', 'Bonus', 'Gaji', 'Sewa', 'Slot', 'Lainnya'] as $wajib) {
             if (! in_array($wajib, $kategoriPengeluaran, true)) $kategoriPengeluaran[] = $wajib;
         }
 
@@ -59,7 +59,7 @@ class TransaksiController extends Controller
         $storeIds = AdminContext::assignedStoreIds();
         $storeId = $storeIds[0] ?? null;
         if (! $storeId) {
-            return back()->with('toast', ['message' => 'Admin belum ditugaskan ke toko mana pun.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Admin belum ditugaskan ke toko mana pun.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -96,7 +96,7 @@ class TransaksiController extends Controller
             sprintf('Pemasukan Rp %s dicatat.', number_format($data['jumlah'], 0, ',', '.')),
             route('admin.transaksi'));
 
-        return back()->with('toast', ['message' => $omzetSaja ? 'Pemasukan omzet dicatat (tidak masuk saldo tarik).' : 'Pemasukan berhasil dicatat.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => $omzetSaja ? __('Pemasukan omzet dicatat (tidak masuk saldo tarik).') : __('Pemasukan berhasil dicatat.'), 'icon' => 'task_alt']);
     }
 
     public function storePengeluaran(Request $request)
@@ -104,7 +104,7 @@ class TransaksiController extends Controller
         $storeIds = AdminContext::assignedStoreIds();
         $storeId = $storeIds[0] ?? null;
         if (! $storeId) {
-            return back()->with('toast', ['message' => 'Admin belum ditugaskan ke toko mana pun.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Admin belum ditugaskan ke toko mana pun.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -144,6 +144,6 @@ class TransaksiController extends Controller
             sprintf('Pengeluaran Rp %s dicatat.', number_format($data['nominal'], 0, ',', '.')),
             route('admin.transaksi'));
 
-        return back()->with('toast', ['message' => 'Pengeluaran berhasil dicatat.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Pengeluaran berhasil dicatat.'), 'icon' => 'task_alt']);
     }
 }

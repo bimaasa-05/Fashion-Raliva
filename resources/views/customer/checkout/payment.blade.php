@@ -931,7 +931,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
     <header
         class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
         <a href="{{ $payBackUrl }}"
-            aria-label="Back" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+            aria-label="{{ __('Back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
             <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
         </a>
         <h1
@@ -1422,7 +1422,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
         <span id="btn-unggah-text">{{ __('Unggah Bukti Pembayaran') }}</span>
     </button>
 
-    <div id="btn-pair" class="{{ $buktiTerakhir ? 'grid grid-cols-2 gap-sm' : 'grid grid-cols-2 gap-sm hidden' }}">
+    <div id="btn-pair" class="{{ $buktiTerakhir ? 'grid grid-cols-1 sm:grid-cols-2 gap-sm' : 'grid grid-cols-1 sm:grid-cols-2 gap-sm hidden' }}">
         <button type="button" id="btn-ganti"
             class="w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest border border-outline text-on-surface hover:bg-surface-container-high transition-colors">
             <span class="material-symbols-outlined text-[20px]">photo_camera_back</span>

@@ -20,18 +20,18 @@ class ForgotPasswordController extends Controller
         $request->validate([
             'email' => ['required', 'email'],
         ], [
-            'email.required' => 'Email wajib diisi.',
-            'email.email' => 'Format email tidak valid.',
+            'email.required' => __('Email wajib diisi.'),
+            'email.email' => __('Format email tidak valid.'),
         ]);
 
         $status = Password::sendResetLink($request->only('email'));
 
         if (in_array($status, [Password::RESET_LINK_SENT, Password::INVALID_USER], true)) {
-            return back()->with('status', 'Jika email terdaftar, kami telah mengirim tautan reset password ke email tersebut.');
+            return back()->with('status', __('Jika email terdaftar, kami telah mengirim tautan reset password ke email tersebut.'));
         }
 
         return back()
             ->withInput($request->only('email'))
-            ->withErrors(['email' => 'Permintaan reset password terlalu sering. Silakan coba lagi nanti.']);
+            ->withErrors(['email' => __('Permintaan reset password terlalu sering. Silakan coba lagi nanti.')]);
     }
 }

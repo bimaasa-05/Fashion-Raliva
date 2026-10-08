@@ -41,7 +41,7 @@ class VerifikasiPenarikanSaldoController extends Controller
     {
         if ($penarikan->status !== CustomerWithdrawal::STATUS_PENDING) {
             return back()->with('toast', [
-                'message' => 'Hanya pengajuan berstatus menunggu yang dapat disetujui.',
+                'message' => __('Hanya pengajuan berstatus menunggu yang dapat disetujui.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -109,7 +109,7 @@ class VerifikasiPenarikanSaldoController extends Controller
     {
         if ($penarikan->status !== CustomerWithdrawal::STATUS_PENDING) {
             return back()->with('toast', [
-                'message' => 'Hanya pengajuan berstatus menunggu yang dapat ditolak.',
+                'message' => __('Hanya pengajuan berstatus menunggu yang dapat ditolak.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -157,7 +157,7 @@ class VerifikasiPenarikanSaldoController extends Controller
         Notification::fireSelf(Notification::TIPE_WALLET, 'Penarikan Saldo Ditolak', sprintf('Penarikan saldo Rp %s ditolak.', number_format((float) $penarikan->jumlah, 0, ',', '.')), route('superadmin.verifikasi-penarikan-saldo'));
 
         return back()->with('toast', [
-            'message' => 'Pengajuan penarikan ditolak dan saldo dikembalikan.',
+            'message' => __('Pengajuan penarikan ditolak dan saldo dikembalikan.'),
             'icon' => 'block',
         ]);
     }
@@ -166,7 +166,7 @@ class VerifikasiPenarikanSaldoController extends Controller
     {
         if ($penarikan->status !== CustomerWithdrawal::STATUS_DISETUJUI) {
             return back()->with('toast', [
-                'message' => 'Hanya penarikan berstatus disetujui yang dapat ditandai dibayar.',
+                'message' => __('Hanya penarikan berstatus disetujui yang dapat ditandai dibayar.'),
                 'icon' => 'gpp_maybe',
             ]);
         }

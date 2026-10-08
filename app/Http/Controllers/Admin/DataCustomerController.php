@@ -17,14 +17,18 @@ class DataCustomerController extends Controller
         $roleId = Role::where('nama_role', Role::CUSTOMER)->value('role_id');
         $storeIds = AdminContext::assignedStoreIds();
 
-        $customers = User::withCount(['orders as total_pesanan'])
-            ->withSum('orders', 'grand_total')
-            ->with(['orders' => fn ($q) => $q->latest()->limit(5), 'reviews' => fn ($q) => $q->latest()->limit(5)])
+        // Isolasi toko: hanya customer berelasi order di toko admin; agregat
+        // (total pesanan, omzet) dan drawer order/review juga di-scope toko.
+        // Customer tanpa order tidak tampil sampai punya order pertama
+        // (order offline auto-create customer; online dibuat via storefront).
+        $customers = User::withCount(['orders as total_pesanan' => fn ($q) => $q->whereIn('store_id', $storeIds)])
+            ->withSum(['orders' => fn ($q) => $q->whereIn('store_id', $storeIds)], 'grand_total')
+            ->with([
+                'orders' => fn ($q) => $q->whereIn('store_id', $storeIds)->latest()->limit(5),
+                'reviews' => fn ($q) => $q->whereIn('store_id', $storeIds)->latest()->limit(5),
+            ])
             ->where('role_id', $roleId)
-            ->where(function ($q) use ($storeIds) {
-                $q->whereHas('orders', fn ($qq) => $qq->whereIn('store_id', $storeIds))
-                    ->orWhereDoesntHave('orders');
-            })
+            ->whereHas('orders', fn ($qq) => $qq->whereIn('store_id', $storeIds))
             ->orderByDesc('created_at')
             ->paginate(20);
 
@@ -36,7 +40,7 @@ class DataCustomerController extends Controller
         $roleId = Role::where('nama_role', Role::CUSTOMER)->value('role_id');
 
         if (! $roleId) {
-            return back()->with('error', 'Role customer belum tersedia.');
+            return back()->with('error',__('Role customer belum tersedia.'));
         }
 
         $data = $request->validate([
@@ -70,6 +74,6 @@ class DataCustomerController extends Controller
             route('admin.customer')
         );
 
-        return back()->with('success', 'Customer ' . $customer->nama_lengkap . ' berhasil ditambahkan.');
+        return back()->with('success',__('Customer :ph1 berhasil ditambahkan.', ['ph1' => $customer->nama_lengkap]));
     }
 }

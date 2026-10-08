@@ -142,6 +142,9 @@ class SaldoController extends Controller
 
         $katExpList = StoreExpense::where('store_id', $store->store_id)
             ->select('kategori')->distinct()->pluck('kategori')->filter()->values()->all();
+        foreach (['Operasional', 'Bahan', 'Bonus', 'Gaji', 'Sewa', 'Slot', 'Lainnya'] as $wajib) {
+            if (! in_array($wajib, $katExpList, true)) $katExpList[] = $wajib;
+        }
 
         $filterKatIn = trim((string) $request->input('kat_in', ''));
         $pemasukanList = $wallet->transactions()
@@ -202,7 +205,7 @@ class SaldoController extends Controller
         $user = $request->user();
         $store = OwnerContext::currentStore($user);
         if (! $store) {
-            return back()->with('error', 'Toko tidak ditemukan.');
+            return back()->with('error',__('Toko tidak ditemukan.'));
         }
 
         $validated = $request->validate([
@@ -242,7 +245,7 @@ class SaldoController extends Controller
 
         Notification::fireSelf(Notification::TIPE_WALLET, 'Pengeluaran Dicatat', sprintf('Pengeluaran "%s" senilai Rp %s dicatat.', $validated['nama'], number_format((float) $validated['nominal'], 0, ',', '.')), route('owner.keuangan'));
 
-        return redirect()->route('owner.keuangan')->with('success', 'Pengeluaran berhasil dicatat.');
+        return redirect()->route('owner.keuangan')->with('success',__('Pengeluaran berhasil dicatat.'));
     }
 
     public function storePemasukan(Request $request)
@@ -250,7 +253,7 @@ class SaldoController extends Controller
         $user = $request->user();
         $store = OwnerContext::currentStore($user);
         if (! $store) {
-            return back()->with('error', 'Toko tidak ditemukan.');
+            return back()->with('error',__('Toko tidak ditemukan.'));
         }
         $validated = $request->validate([
             'sumber' => ['required', 'string', 'max:150'],
@@ -283,8 +286,8 @@ class SaldoController extends Controller
         Notification::fireSelf(Notification::TIPE_WALLET, 'Pemasukan Dicatat', sprintf('Pemasukan dari %s senilai Rp %s dicatat.', $validated['sumber'], number_format((float) $validated['nominal'], 0, ',', '.')), route('owner.keuangan'));
 
         return redirect()->route('owner.keuangan')->with('success', $omzetSaja
-            ? 'Pemasukan omzet dicatat (tidak masuk saldo tarik).'
-            : 'Pemasukan berhasil dicatat.');
+            ? __('Pemasukan omzet dicatat (tidak masuk saldo tarik).')
+            : __('Pemasukan berhasil dicatat.'));
     }
 
     public function storePencairan(Request $request)
@@ -300,7 +303,7 @@ class SaldoController extends Controller
         $wallet = $store?->wallet;
 
         if (! $wallet) {
-            return back()->with('error', 'Dompet toko tidak ditemukan.');
+            return back()->with('error',__('Dompet toko tidak ditemukan.'));
         }
 
         $locked = (float) $wallet->withdrawals()
@@ -308,7 +311,7 @@ class SaldoController extends Controller
             ->sum('jumlah');
         $available = (float) $wallet->saldo_tersedia - $locked;
         if ($available < (float) $request->jumlah) {
-            return back()->with('error', 'Saldo tersedia tidak mencukupi (termasuk opsi pencairan yang sedang menunggu).');
+            return back()->with('error',__('Saldo tersedia tidak mencukupi (termasuk opsi pencairan yang sedang menunggu).'));
         }
 
         $bankAccount = $store->bankAccounts()->findOrFail($request->bank_account_id);
@@ -334,6 +337,6 @@ class SaldoController extends Controller
         );
         Notification::fireSelf(Notification::TIPE_WALLET, 'Pencairan Diajukan', sprintf('Pengajuan pencairan Rp %s berhasil diajukan.', number_format((float) $request->jumlah, 0, ',', '.')), route('owner.keuangan'));
 
-        return redirect()->route('owner.keuangan')->with('success', 'Permintaan pencairan berhasil diajukan.');
+        return redirect()->route('owner.keuangan')->with('success',__('Permintaan pencairan berhasil diajukan.'));
     }
 }

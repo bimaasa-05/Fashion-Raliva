@@ -50,14 +50,14 @@ class VerifikasiPembayaranController extends Controller
     {
         if (! $this->inScope($pembayaran)) {
             return back()->with('toast', [
-                'message' => 'Pembayaran ini di luar scope toko yang Anda tugaskan.',
+                'message' => __('Pembayaran ini di luar scope toko yang Anda tugaskan.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if ($pembayaran->status !== Payment::STATUS_MENUNGGU_VERIFIKASI) {
             return back()->with('toast', [
-                'message' => 'Hanya pembayaran berstatus menunggu verifikasi yang dapat disetujui.',
+                'message' => __('Hanya pembayaran berstatus menunggu verifikasi yang dapat disetujui.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -101,7 +101,7 @@ class VerifikasiPembayaranController extends Controller
             });
         } catch (\RuntimeException $e) {
             return back()->with('toast', [
-                'message' => $e->getMessage().' Pembayaran tidak disetujui.',
+                'message' => __(':ph1 Pembayaran tidak disetujui.', ['ph1' => $e->getMessage()]),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -147,7 +147,7 @@ class VerifikasiPembayaranController extends Controller
         Notification::fireSelf(Notification::TIPE_PEMBAYARAN, 'Pembayaran Diverifikasi', sprintf('Pembayaran checkout #%d diverifikasi.', $pembayaran->checkout_id), route('admin.verifikasi-pembayaran'));
 
         return back()->with('toast', [
-            'message' => 'Pembayaran diverifikasi. Pesanan kini berstatus menunggu produksi.',
+            'message' => __('Pembayaran diverifikasi. Pesanan kini berstatus menunggu produksi.'),
             'icon' => 'task_alt',
         ]);
     }
@@ -156,14 +156,14 @@ class VerifikasiPembayaranController extends Controller
     {
         if (! $this->inScope($pembayaran)) {
             return back()->with('toast', [
-                'message' => 'Pembayaran ini di luar scope toko yang Anda tugaskan.',
+                'message' => __('Pembayaran ini di luar scope toko yang Anda tugaskan.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if ($pembayaran->status !== Payment::STATUS_MENUNGGU_VERIFIKASI) {
             return back()->with('toast', [
-                'message' => 'Hanya pembayaran berstatus menunggu verifikasi yang dapat ditolak.',
+                'message' => __('Hanya pembayaran berstatus menunggu verifikasi yang dapat ditolak.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -201,7 +201,7 @@ class VerifikasiPembayaranController extends Controller
         Notification::fireSelf(Notification::TIPE_PEMBAYARAN, 'Pembayaran Ditolak', sprintf('Pembayaran checkout #%d ditolak.', $pembayaran->checkout_id), route('admin.verifikasi-pembayaran'));
 
         return back()->with('toast', [
-            'message' => 'Pembayaran ditolak. Customer dinotifikasi untuk upload ulang.',
+            'message' => __('Pembayaran ditolak. Customer dinotifikasi untuk upload ulang.'),
             'icon' => 'block',
         ]);
     }

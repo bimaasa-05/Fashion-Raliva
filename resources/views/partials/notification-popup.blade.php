@@ -64,10 +64,10 @@
             el.innerHTML =
                 '<span class="material-symbols-outlined text-[22px] mt-0.5 shrink-0" style="color:' + tone + '">' + (ICONS[item.type] || 'notifications') + '</span>' +
                 '<div class="min-w-0 flex-1">' +
-                '<p class="font-label-sm text-[10px] uppercase tracking-wider" style="color:' + tone + '">' + (item.judul || 'Notifikasi') + '</p>' +
+                '<p class="font-label-sm text-[10px] uppercase tracking-wider" style="color:' + tone + '">' + (item.judul || @js(__('Notifikasi'))) + '</p>' +
                 '<p class="font-body-md text-[13px] text-on-surface leading-snug mt-0.5">' + (item.message || item.isi || '') + '</p>' +
                 '</div>' +
-                '<button class="shrink-0 text-on-surface-variant hover:text-on-surface transition-colors" aria-label="Tutup"><span class="material-symbols-outlined text-[18px]">close</span></button>';
+                '<button class="shrink-0 text-on-surface-variant hover:text-on-surface transition-colors" aria-label="{{ __('Tutup') }}"><span class="material-symbols-outlined text-[18px]">close</span></button>';
             const closeBtn = el.querySelector('button');
             el.addEventListener('click', (e) => {
                 if (e.target.closest('button')) return;

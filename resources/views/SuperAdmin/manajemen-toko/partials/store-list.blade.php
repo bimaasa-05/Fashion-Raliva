@@ -76,31 +76,31 @@
                 <div class="grid grid-cols-3 gap-3 mb-5">
                     <div class="bg-surface-container-low rounded-lg py-3 text-center">
                         <span class="block font-title-md {{ $isSuspended ? 'text-on-surface-variant' : 'text-on-surface' }}">{{ $item->products_count }}</span>
-                        <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-0.5">Produk</span>
+                        <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-0.5">{{ __('Produk') }}</span>
                     </div>
                     <div class="bg-surface-container-low rounded-lg py-3 text-center">
                         <span class="block font-title-md {{ $isSuspended ? 'text-on-surface-variant' : 'text-on-surface' }}">{{ $item->orders_count }}</span>
-                        <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-0.5">Pesanan</span>
+                        <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-0.5">{{ __('Pesanan') }}</span>
                     </div>
                     <div class="bg-surface-container-low rounded-lg py-3 text-center">
                         <span class="block font-title-md {{ $isSuspended ? 'text-on-surface-variant' : 'text-on-surface' }} flex items-center justify-center gap-1">{{ $item->rating ?? '--' }} @if($item->rating)<span class="material-symbols-outlined text-[14px] filled text-secondary">star</span>@endif</span>
-                        <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-0.5">Rating</span>
+                        <span class="block text-[9px] font-label-sm text-on-surface-variant uppercase tracking-widest mt-0.5">{{ __('Rating') }}</span>
                     </div>
                 </div>
                 @if ($item->update_request)
                     <button type="button" onclick="event.stopPropagation()" data-modal-open="modal-perubahan-{{ $item->update_request->store_update_request_id }}" class="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg bg-gold-accent text-white font-label-sm text-[11px] uppercase tracking-widest hover:brightness-110 transition btn-premium shadow-sm">
-                        <span class="material-symbols-outlined text-[16px]">edit_note</span>Perubahan Data Menunggu
+                        <span class="material-symbols-outlined text-[16px]">edit_note</span>{{ __('Perubahan Data Menunggu') }}
                     </button>
                 @endif
                 <div class="flex items-center justify-between pt-4 border-t border-muted-border">
-                    <span class="toko-detail-hint font-label-sm text-[11px] uppercase tracking-widest text-gold-accent inline-flex items-center gap-1">Lihat Detail <span class="material-symbols-outlined text-[14px]">arrow_forward</span></span>
+                    <span class="toko-detail-hint font-label-sm text-[11px] uppercase tracking-widest text-gold-accent inline-flex items-center gap-1">{{ __('Lihat Detail') }} <span class="material-symbols-outlined text-[14px]">arrow_forward</span></span>
                     <span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">place</span>{{ $item->location }}</span>
                     <span class="font-label-sm text-[10px] text-on-surface-variant uppercase tracking-wider inline-flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">call</span>{{ $item->model->nomor_telepon ?? '-' }}</span>
                 </div>
             </div>
         </article>
     @empty
-        <p id="toko-kosong" class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-12">Tidak ada toko pada status ini.</p>
+        <p id="toko-kosong" class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-12">{{ __('Tidak ada toko pada status ini.') }}</p>
         <div id="store-table-view" class="hidden"></div>
     @endforelse
 </div>
@@ -110,13 +110,13 @@
         <table class="w-full min-w-[860px] text-left bg-surface-container-lowest rounded-xl">
             <thead>
                 <tr class="text-[10px] font-label-sm uppercase tracking-widest text-on-surface-variant border-b border-muted-border">
-                    <th class="px-5 py-3.5 font-bold">Toko</th>
-                    <th class="px-5 py-3.5 font-bold">Status</th>
-                    <th class="px-5 py-3.5 font-bold">Lokasi</th>
-                    <th class="px-5 py-3.5 text-center font-bold">Produk</th>
-                    <th class="px-5 py-3.5 text-center font-bold">Pesanan</th>
-                    <th class="px-5 py-3.5 text-center font-bold">Rating</th>
-                    <th class="px-5 py-3.5 text-right font-bold">Detail</th>
+                    <th class="px-5 py-3.5 font-bold">{{ __('Toko') }}</th>
+                    <th class="px-5 py-3.5 font-bold">{{ __('Status') }}</th>
+                    <th class="px-5 py-3.5 font-bold">{{ __('Lokasi') }}</th>
+                    <th class="px-5 py-3.5 text-center font-bold">{{ __('Produk') }}</th>
+                    <th class="px-5 py-3.5 text-center font-bold">{{ __('Pesanan') }}</th>
+                    <th class="px-5 py-3.5 text-center font-bold">{{ __('Rating') }}</th>
+                    <th class="px-5 py-3.5 text-right font-bold">{{ __('Detail') }}</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-muted-border">
@@ -160,7 +160,7 @@
                                     <p class="text-[10px] font-label-sm text-on-surface-variant uppercase tracking-wider mt-0.5">{{ $item->owner_nama }}</p>
                                     @if ($item->update_request)
                                         <button type="button" onclick="event.stopPropagation()" data-modal-open="modal-perubahan-{{ $item->update_request->store_update_request_id }}" class="mt-1 inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-gold-accent text-white text-[9px] font-bold uppercase tracking-widest hover:brightness-110 transition">
-                                            <span class="material-symbols-outlined text-[12px]">edit_note</span>Perubahan menunggu
+                                            <span class="material-symbols-outlined text-[12px]">edit_note</span>{{ __('Perubahan menunggu') }}
                                         </button>
                                     @endif
                                 </div>
@@ -174,7 +174,7 @@
                         <td class="px-5 py-4 text-center font-title-md text-on-surface">{{ $item->orders_count }}</td>
                         <td class="px-5 py-4 text-center font-title-md text-on-surface flex items-center justify-center gap-1">{{ $item->rating ?? '--' }} @if($item->rating)<span class="material-symbols-outlined text-[14px] filled text-secondary">star</span>@endif</td>
                         <td class="px-5 py-4 text-right">
-                            <span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-gold-accent">Lihat <span class="material-symbols-outlined text-[16px]">chevron_right</span></span>
+                            <span class="inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest text-gold-accent">{{ __('Lihat') }} <span class="material-symbols-outlined text-[16px]">chevron_right</span></span>
                         </td>
                     </tr>
                 @endforeach
@@ -183,7 +183,7 @@
     </div>
 @endif
 
-<p id="toko-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-12">Tidak ada toko yang cocok.</p>
+<p id="toko-empty-search" class="hidden text-center text-on-surface-variant font-body-md text-sm py-12">{{ __('Tidak ada toko yang cocok.') }}</p>
 
 @if ($stores->hasPages())
     <div class="mt-6 flex justify-center">{{ $stores->links() }}</div>
@@ -198,7 +198,7 @@
             <div class="relative mx-auto w-full max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
                 <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
                     <div>
-                        <p class="raliva-label text-gold-accent">Perubahan Data Toko</p>
+                        <p class="raliva-label text-gold-accent">{{ __('Perubahan Data Toko') }}</p>
                         <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $st->nama_toko }}</h3>
                         <p class="text-on-surface-variant text-xs mt-1">Diajukan {{ $pr->created_at?->translatedFormat('d M Y H:i') ?? '-' }}</p>
                     </div>
@@ -207,24 +207,24 @@
                 <div class="p-6 space-y-3 text-sm">
                     @foreach ([['Nama Toko', $st->nama_toko, $pr->nama_toko], ['Kategori', $st->kategori ?? '-', $pr->kategori ?? '-'], ['Alamat', $st->alamat, $pr->alamat], ['Telepon', $st->nomor_telepon, $pr->nomor_telepon]] as $row)
                         <div class="grid grid-cols-2 gap-3 border border-muted-border rounded-lg p-3 {{ $row[1] != $row[2] ? 'border-gold-accent/40 bg-gold-accent/5' : '' }}">
-                            <div><p class="text-[10px] uppercase text-on-surface-variant">{{ $row[0] }} (lama)</p><p class="text-on-surface mt-0.5">{{ $row[1] }}</p></div>
-                            <div><p class="text-[10px] uppercase text-on-surface-variant">{{ $row[0] }} (baru)</p><p class="font-bold text-on-surface mt-0.5">{{ $row[2] }}</p></div>
+                            <div><p class="text-[10px] uppercase text-on-surface-variant">{{ $row[0] }} {{ __('(lama)') }}</p><p class="text-on-surface mt-0.5">{{ $row[1] }}</p></div>
+                            <div><p class="text-[10px] uppercase text-on-surface-variant">{{ $row[0] }} {{ __('(baru)') }}</p><p class="font-bold text-on-surface mt-0.5">{{ $row[2] }}</p></div>
                         </div>
                     @endforeach
                     <div class="border border-muted-border rounded-lg p-3">
-                        <p class="text-[10px] uppercase text-on-surface-variant">Deskripsi (baru)</p>
+                        <p class="text-[10px] uppercase text-on-surface-variant">{{ __('Deskripsi (baru)') }}</p>
                         <p class="text-on-surface mt-0.5">{{ $pr->deskripsi ?? '-' }}</p>
                     </div>
                 </div>
                 <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border p-4 flex gap-3">
                     <form method="POST" action="{{ route('superadmin.manajemen-toko.perubahan.tolak', [$st->store_id, $pr->store_update_request_id]) }}" class="flex-1 flex gap-2">
                         @csrf
-                        <input type="text" name="alasan" required minlength="3" maxlength="1000" placeholder="Alasan penolakan..." class="raliva-input flex-1 text-sm" />
-                        <button type="submit" class="px-5 py-2.5 bg-error/10 border border-error/20 text-error text-xs font-semibold rounded-lg hover:bg-error hover:text-white transition-colors shrink-0">Tolak</button>
+                        <input type="text" name="alasan" required minlength="3" maxlength="1000" placeholder="{{ __('Alasan penolakan...') }}" class="raliva-input flex-1 text-sm" />
+                        <button type="submit" class="px-5 py-2.5 bg-error/10 border border-error/20 text-error text-xs font-semibold rounded-lg hover:bg-error hover:text-white transition-colors shrink-0">{{ __('Tolak') }}</button>
                     </form>
                     <form method="POST" action="{{ route('superadmin.manajemen-toko.perubahan.setujui', [$st->store_id, $pr->store_update_request_id]) }}" class="shrink-0">
                         @csrf
-                        <button type="submit" class="px-5 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded-lg btn-premium h-full">Setujui</button>
+                        <button type="submit" class="px-5 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded-lg btn-premium h-full">{{ __('Setujui') }}</button>
                     </form>
                 </div>
             </div>

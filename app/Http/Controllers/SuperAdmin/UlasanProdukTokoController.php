@@ -74,7 +74,7 @@ class UlasanProdukTokoController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Ulasan Dinonaktifkan', 'Ulasan berhasil dinonaktifkan.', route('superadmin.ulasan-produk-toko'));
 
         return back()->with('toast', [
-            'message' => 'Ulasan berhasil dinonaktifkan.',
+            'message' => __('Ulasan berhasil dinonaktifkan.'),
             'icon' => 'task_alt',
         ]);
     }
@@ -108,7 +108,7 @@ class UlasanProdukTokoController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Ulasan Diaktifkan Kembali', 'Ulasan berhasil diaktifkan kembali.', route('superadmin.ulasan-produk-toko'));
 
         return back()->with('toast', [
-            'message' => 'Ulasan berhasil diaktifkan kembali.',
+            'message' => __('Ulasan berhasil diaktifkan kembali.'),
             'icon' => 'task_alt',
         ]);
     }

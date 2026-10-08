@@ -32,7 +32,7 @@ class ProfileController extends Controller
         $user->update($data);
 
         return redirect()->route('customer.account')->with('toast', [
-            'message' => 'Profil berhasil diperbarui.',
+            'message' => __('Profil berhasil diperbarui.'),
             'icon' => 'task_alt',
         ]);
     }
@@ -45,7 +45,7 @@ class ProfileController extends Controller
 
         if (! Hash::check($data['password_lama'], $user->password)) {
             return back()->withErrors([
-                'password_lama' => 'Kata sandi saat ini salah.',
+                'password_lama' => __('Kata sandi saat ini salah.'),
             ])->withInput();
         }
 
@@ -53,7 +53,7 @@ class ProfileController extends Controller
         $user->save();
 
         return redirect()->route('customer.account')->with('toast', [
-            'message' => 'Kata sandi berhasil diperbarui.',
+            'message' => __('Kata sandi berhasil diperbarui.'),
             'icon' => 'task_alt',
         ]);
     }

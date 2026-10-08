@@ -14,7 +14,7 @@
                 'promo' => 'local_offer',
                 default => 'settings',
             },
-            'html' => '<span class="font-bold">' . e($n->user->nama_lengkap ?? '-') . '</span> — ' . $n->pesan,
+            'html' => '<span class="font-bold">' . e($n->user->nama_lengkap ?? '-') . '</span> — ' . __($n->pesan),
             'time' => $n->created_at->diffForHumans(),
         ])
         ->all();
@@ -30,7 +30,7 @@
     <meta charset="utf-8" />
     <meta name="user-id" content="{{ Auth::id() }}" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>RALIVA - @yield('title', 'Super Admin')</title>
+    <title>RALIVA - @yield('title', __('Super Admin'))</title>
     @include('partials.theme-head')
     <style>
         /* SuperAdmin RALIVA burgundy override — scoped only to this layout (hanya Super Admin) */
@@ -237,14 +237,14 @@
     </header>
 
     <!-- Side Navigation Drawer -->
-    <aside id="sidebar" class="flex fixed md:sticky md:self-start top-0 left-0 z-50 flex-col h-screen shrink-0 pt-4 pb-[88px] md:pb-section-gap px-container-margin w-72 border-r border-sidebar-border bg-sidebar -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out">
+    <aside id="sidebar" class="flex fixed md:sticky md:self-start top-0 left-0 z-50 flex-col h-screen shrink-0 pt-4 pb-[88px] md:pb-section-gap px-container-margin w-72 max-md:w-64 border-r border-sidebar-border bg-sidebar -translate-x-full md:translate-x-0 transition-all duration-300 ease-in-out">
         <div class="sidebar-head flex items-center justify-between gap-3 pt-1 pb-3">
             <div class="flex-1 flex items-center justify-center gap-3 min-w-0">
                 <div data-sidebar-text>
                     <span class="font-display-lg text-title-md text-on-sidebar tracking-widest block leading-tight">RALIVA</span>
                 </div>
             </div>
-            <button type="button" id="sidebar-collapse" aria-expanded="true" aria-label="Perkecil menu sidebar" class="sidebar-collapse-btn hidden md:inline-flex w-8 h-8 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-gold-accent/70 hover:text-gold-accent items-center justify-center transition-colors shrink-0">
+            <button type="button" id="sidebar-collapse" aria-expanded="true" aria-label="{{ __('Perkecil menu sidebar') }}" class="sidebar-collapse-btn hidden md:inline-flex w-8 h-8 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-gold-accent/70 hover:text-gold-accent items-center justify-center transition-colors shrink-0">
                 <span class="material-symbols-outlined icon-chevron text-[18px] transition-transform duration-300">chevron_left</span>
             </button>
         </div>
@@ -277,11 +277,11 @@
             @include('partials.sidebar-menu')
         </nav>
         <div class="shrink-0 border-t border-sidebar-border/70 mt-2 pt-2">
-            <button type="button" class="theme-toggle w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-on-sidebar hover:bg-gold-accent/10 transition-colors" aria-label="Ganti tema">
+            <button type="button" class="theme-toggle w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-on-sidebar hover:bg-gold-accent/10 transition-colors" aria-label="{{ __('Ganti tema') }}">
                 <span class="material-symbols-outlined text-[20px] text-gold-accent/80 shrink-0" data-theme-icon>light_mode</span>
                 <span data-sidebar-text class="min-w-0 flex-1 text-left">
-                    <span class="block text-[13px] font-semibold leading-tight">Tampilan</span>
-                    <span class="block text-[11px] opacity-60">Terang / Gelap</span>
+                    <span class="block text-[13px] font-semibold leading-tight">{{ __('Tampilan') }}</span>
+                    <span class="block text-[11px] opacity-60">{{ __('Terang / Gelap') }}</span>
                 </span>
                 <span data-sidebar-text class="relative shrink-0 w-10 h-6 rounded-full bg-sidebar-border/60 dark:bg-gold-accent/50 transition-colors" aria-hidden="true">
                     <span class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-surface shadow transition-transform dark:translate-x-4"></span>
@@ -299,12 +299,12 @@
         <header class="hidden md:flex sticky top-0 z-40 justify-between items-center px-container-margin h-20 bg-surface-container-lowest border-b border-outline-variant">
             <div>
                 <div class="flex items-center gap-3">
-                    <h1 class="font-title-md text-title-md text-on-surface">@yield('header-title', 'Dashboard')</h1>
+                    <h1 class="font-title-md text-title-md text-on-surface">@yield('header-title', __('Dashboard'))</h1>
                     @hasSection('header-badge')
                         <span class="inline-flex items-center px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-label-sm uppercase tracking-wider">@yield('header-badge')</span>
                     @endif
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">@yield('header-subtitle', 'Ini yang terjadi hari ini.')</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">@yield('header-subtitle', __('Ini yang terjadi hari ini.'))</p>
             </div>
             <div class="flex items-center gap-6">
             @include('partials.notification-panel', ['items' => $saNotifItems, 'lihatSemuaRoute' => 'superadmin.notifikasi', 'unread' => $saNotifUnread, 'markReadRoute' => 'superadmin.notifikasi.tandai-dibaca'])
@@ -315,12 +315,12 @@
         <!-- Mobile Greeting -->
         <div class="md:hidden px-container-margin py-6">
             <div class="flex items-center gap-3 flex-wrap">
-                <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">@yield('header-title', 'Dashboard')</h1>
+                <h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">@yield('header-title', __('Dashboard'))</h1>
                 @hasSection('header-badge')
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">@yield('header-badge')</span>
                 @endif
             </div>
-            <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', 'Ini yang terjadi hari ini.')</p>
+            <p class="text-on-surface-variant font-body-md mt-1">@yield('header-subtitle', __('Ini yang terjadi hari ini.'))</p>
         </div>
 
         <div class="page-enter px-container-margin pt-8 pb-section-gap flex flex-col gap-6 w-full">
@@ -332,11 +332,11 @@
     <!-- Bottom Nav Bar (Mobile) -->
     @include('partials.bottom-nav', [
         'items' => [
-            ['route' => 'superadmin.dashboard', 'icon' => 'dashboard', 'label' => 'Beranda'],
-            ['route' => 'superadmin.manajemen-toko', 'icon' => 'storefront', 'label' => 'Data Toko', 'badge' => 'toko'],
-            ['route' => 'superadmin.moderasi-produk', 'icon' => 'inventory_2', 'label' => 'Moderasi', 'badge' => 'produk'],
-            ['route' => 'superadmin.perubahan-produk', 'icon' => 'edit_note', 'label' => 'Perubahan Produk', 'badge' => 'perubahan_produk'],
-            ['route' => 'superadmin.profil', 'icon' => 'person', 'label' => 'Profil'],
+            ['route' => 'superadmin.dashboard', 'icon' => 'dashboard', 'label' => __('Beranda')],
+            ['route' => 'superadmin.manajemen-toko', 'icon' => 'storefront', 'label' => __('Data Toko'), 'badge' => 'toko'],
+            ['route' => 'superadmin.moderasi-produk', 'icon' => 'inventory_2', 'label' => __('Moderasi'), 'badge' => 'produk'],
+            ['route' => 'superadmin.perubahan-produk', 'icon' => 'edit_note', 'label' => __('Perubahan Produk'), 'badge' => 'perubahan_produk'],
+            ['route' => 'superadmin.profil', 'icon' => 'person', 'label' => __('Profil')],
         ],
         'badgeCounts' => \App\Support\SuperAdminBadgeCounter::counts(),
     ])

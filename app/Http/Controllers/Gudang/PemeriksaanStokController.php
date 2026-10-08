@@ -54,13 +54,13 @@ class PemeriksaanStokController extends Controller
     public function store(Request $request)
     {
         if (! auth()->user()->hasPermission('warehouse.stock_adjust')) {
-            abort(403, 'Anda tidak memiliki izin (warehouse.stock_adjust) untuk melakukan tindakan ini.');
+            abort(403, __('Anda tidak memiliki izin (warehouse.stock_adjust) untuk melakukan tindakan ini.'));
         }
 
         $warehouse = $this->activeWarehouse();
 
         if (! $warehouse) {
-            return back()->with('toast', ['message' => 'Tidak ada gudang aktif.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Tidak ada gudang aktif.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -68,11 +68,11 @@ class PemeriksaanStokController extends Controller
             'stok_fisik' => 'required|integer|min:0',
             'catatan' => 'nullable|string|max:500',
         ], [
-            'product_variant_id.required' => 'Produk wajib dipilih.',
-            'product_variant_id.exists' => 'Produk tidak valid.',
-            'stok_fisik.required' => 'Jumlah stok fisik wajib diisi.',
-            'stok_fisik.integer' => 'Stok fisik harus berupa angka.',
-            'stok_fisik.min' => 'Stok fisik minimal 0.',
+            'product_variant_id.required' => __('Produk wajib dipilih.'),
+            'product_variant_id.exists' => __('Produk tidak valid.'),
+            'stok_fisik.required' => __('Jumlah stok fisik wajib diisi.'),
+            'stok_fisik.integer' => __('Stok fisik harus berupa angka.'),
+            'stok_fisik.min' => __('Stok fisik minimal 0.'),
         ]);
 
         $stokSistem = 0;
@@ -104,7 +104,7 @@ class PemeriksaanStokController extends Controller
                             ->update(['jumlah_stok' => $data['stok_fisik']]);
 
                         if ($affected === 0) {
-                            throw new \RuntimeException('Gagal menyesuaikan stok.');
+                            throw new \RuntimeException(__('Gagal menyesuaikan stok.'));
                         }
                     } else {
                         WarehouseStock::create([
@@ -128,7 +128,7 @@ class PemeriksaanStokController extends Controller
         } catch (\RuntimeException $e) {
             return back()->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
         } catch (\Throwable $e) {
-            return back()->with('toast', ['message' => 'Gagal menyimpan pemeriksaan stok.', 'icon' => 'error']);
+            return back()->with('toast', ['message' => __('Gagal menyimpan pemeriksaan stok.'), 'icon' => 'error']);
         }
 
         ActivityLogger::log(
@@ -150,7 +150,7 @@ class PemeriksaanStokController extends Controller
         );
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pemeriksaan Stok Disimpan', sprintf('Opname di gudang "%s" berhasil disimpan.', $warehouse->nama_gudang), route('gudang.dashboard'));
 
-        return back()->with('toast', ['message' => 'Pemeriksaan stok berhasil disimpan.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Pemeriksaan stok berhasil disimpan.'), 'icon' => 'task_alt']);
     }
 
     private function getProductsForWarehouse($warehouse)

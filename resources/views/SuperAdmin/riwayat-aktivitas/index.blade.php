@@ -1,11 +1,11 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Riwayat Aktivitas')
+@section('title', __('Riwayat Aktivitas'))
 
-@section('header-title', 'Riwayat Aktivitas')
-@section('header-badge', 'Lihat')
+@section('header-title', __('Riwayat Aktivitas'))
+@section('header-badge', __('Lihat'))
 
-@section('header-subtitle', 'Catatan audit tindakan penting pengguna dan admin sistem.')
+@section('header-subtitle', __('Catatan audit tindakan penting pengguna dan admin sistem.'))
 
 @push('styles')
 <style>
@@ -81,9 +81,9 @@
     <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 card-premium">
         <div class="flex items-center gap-2 mb-3">
             <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-            <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Kategori</span>
+            <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Kategori') }}</span>
             <a href="{{ route('superadmin.riwayat-aktivitas.export', ['kategori' => request('kategori')]) }}" class="ml-auto inline-flex items-center gap-1.5 px-3 py-1.5 border border-muted-border rounded-lg text-[11px] font-semibold text-on-surface hover:border-gold-accent hover:text-gold-accent transition-colors">
-                <span class="material-symbols-outlined text-[16px]">download</span> Export CSV
+                <span class="material-symbols-outlined text-[16px]">download</span> {{ __('Export CSV') }}
             </a>
         </div>
         <div class="flex overflow-x-auto filter-scroll pb-2 -mx-gutter px-gutter md:mx-0 md:px-0 space-x-4">
@@ -143,7 +143,7 @@
         </div>
     @empty
         <div class="text-center text-on-surface-variant font-body-md text-sm py-8">
-            Belum ada aktivitas tercatat.
+            {{ __('Belum ada aktivitas tercatat.') }}
         </div>
     @endforelse
 

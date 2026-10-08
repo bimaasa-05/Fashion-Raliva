@@ -1,11 +1,11 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Perubahan Produk')
+@section('title', __('Perubahan Produk'))
 
-@section('header-title', 'Perubahan Produk')
-@section('header-badge', 'Review')
+@section('header-title', __('Perubahan Produk'))
+@section('header-badge', __('Review'))
 
-@section('header-subtitle', 'Bandingkan pengajuan Admin sebelum menyetujui atau menolak perubahan produk.')
+@section('header-subtitle', __('Bandingkan pengajuan Admin sebelum menyetujui atau menolak perubahan produk.'))
 
 @section('content')
 @include('partials.flash-toast')
@@ -42,14 +42,14 @@
             </div>
 
             <details class="mt-4 border border-muted-border rounded-lg bg-surface-container-low" open>
-                <summary class="cursor-pointer px-4 py-3 text-xs font-bold uppercase tracking-widest text-on-surface">Perbandingan data utama</summary>
+                <summary class="cursor-pointer px-4 py-3 text-xs font-bold uppercase tracking-widest text-on-surface">{{ __('Perbandingan data utama') }}</summary>
                 <div class="overflow-x-auto border-t border-muted-border">
                     <table class="w-full min-w-[640px] text-sm">
                         <thead>
                             <tr class="text-left text-[10px] uppercase tracking-widest text-on-surface-variant">
-                                <th class="px-4 py-2">Field</th>
-                                <th class="px-4 py-2">Sebelum</th>
-                                <th class="px-4 py-2">Sesudah</th>
+                                <th class="px-4 py-2">{{ __('Field') }}</th>
+                                <th class="px-4 py-2">{{ __('Sebelum') }}</th>
+                                <th class="px-4 py-2">{{ __('Sesudah') }}</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -70,9 +70,9 @@
                     <h3 class="text-xs font-bold uppercase tracking-widest text-on-surface mb-3">Foto sebelum ({{ count($diff['beforeImages']) }})</h3>
                     <div class="grid grid-cols-3 gap-2">
                         @forelse ($diff['beforeImages'] as $foto)
-                            <img src="{{ photo_url($foto) }}" alt="Foto lama" class="w-full aspect-[3/4] object-cover rounded-lg border border-muted-border" loading="lazy" />
+                            <img src="{{ photo_url($foto) }}" alt="{{ __('Foto lama') }}" class="w-full aspect-[3/4] object-cover rounded-lg border border-muted-border" loading="lazy" />
                         @empty
-                            <p class="text-xs text-on-surface-variant">Tidak ada foto lama.</p>
+                            <p class="text-xs text-on-surface-variant">{{ __('Tidak ada foto lama.') }}</p>
                         @endforelse
                     </div>
                 </div>
@@ -80,30 +80,30 @@
                     <h3 class="text-xs font-bold uppercase tracking-widest text-on-surface mb-3">Foto sesudah ({{ count($diff['afterImages']) }})</h3>
                     <div class="grid grid-cols-3 gap-2">
                         @forelse ($diff['afterImages'] as $foto)
-                            <img src="{{ photo_url($foto) }}" alt="Foto usulan" class="w-full aspect-[3/4] object-cover rounded-lg border border-gold-accent/40" loading="lazy" />
+                            <img src="{{ photo_url($foto) }}" alt="{{ __('Foto usulan') }}" class="w-full aspect-[3/4] object-cover rounded-lg border border-gold-accent/40" loading="lazy" />
                         @empty
-                            <p class="text-xs text-on-surface-variant">Semua foto dihapus atau tidak ada foto baru.</p>
+                            <p class="text-xs text-on-surface-variant">{{ __('Semua foto dihapus atau tidak ada foto baru.') }}</p>
                         @endforelse
                     </div>
                     @if (count($diff['removed'] ?? []) > 0)
-                        <p class="text-xs text-error mt-3">{{ count($diff['removed']) }} foto lama diusulkan untuk dihapus.</p>
+                        <p class="text-xs text-error mt-3">{{ count($diff['removed']) }} {{ __('foto lama diusulkan untuk dihapus.') }}</p>
                     @endif
                 </div>
             </div>
 
             <details class="mt-4 border border-muted-border rounded-lg bg-surface-container-low">
-                <summary class="cursor-pointer px-4 py-3 text-xs font-bold uppercase tracking-widest text-on-surface">Perbandingan varian dan stok</summary>
+                <summary class="cursor-pointer px-4 py-3 text-xs font-bold uppercase tracking-widest text-on-surface">{{ __('Perbandingan varian dan stok') }}</summary>
                 <div class="overflow-x-auto border-t border-muted-border">
                     @php $keys = collect($diff['beforeVariants'])->keys()->merge(collect($diff['afterVariants'])->keys())->unique()->values(); @endphp
                     @if ($keys->isEmpty())
-                        <p class="px-4 py-3 text-xs text-on-surface-variant">Tidak ada perubahan varian yang diusulkan.</p>
+                        <p class="px-4 py-3 text-xs text-on-surface-variant">{{ __('Tidak ada perubahan varian yang diusulkan.') }}</p>
                     @else
                         <table class="w-full min-w-[720px] text-sm">
                             <thead>
                                 <tr class="text-left text-[10px] uppercase tracking-widest text-on-surface-variant">
-                                    <th class="px-4 py-2">Varian</th>
-                                    <th class="px-4 py-2">Sebelum</th>
-                                    <th class="px-4 py-2">Sesudah</th>
+                                    <th class="px-4 py-2">{{ __('Varian') }}</th>
+                                    <th class="px-4 py-2">{{ __('Sebelum') }}</th>
+                                    <th class="px-4 py-2">{{ __('Sesudah') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -131,14 +131,14 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-4">
                     <form method="POST" action="{{ route('superadmin.perubahan-produk.setujui', [$item->product_id, $item->product_update_request_id]) }}" class="flex items-center justify-between gap-3 border border-success/25 bg-success/5 rounded-lg px-4 py-3">
                         @csrf
-                        <p class="text-xs text-on-surface">Setujui dan berlakukan semua perubahan di atas.</p>
-                        <button type="submit" class="px-4 py-2 bg-deep-onyx text-on-primary text-xs font-bold uppercase tracking-widest rounded btn-premium">Setujui</button>
+                        <p class="text-xs text-on-surface">{{ __('Setujui dan berlakukan semua perubahan di atas.') }}</p>
+                        <button type="submit" class="px-4 py-2 bg-deep-onyx text-on-primary text-xs font-bold uppercase tracking-widest rounded btn-premium">{{ __('Setujui') }}</button>
                     </form>
                     <form method="POST" action="{{ route('superadmin.perubahan-produk.tolak', [$item->product_id, $item->product_update_request_id]) }}" class="border border-error/25 bg-error/5 rounded-lg px-4 py-3 space-y-2">
                         @csrf
-                        <label class="block text-xs font-bold uppercase tracking-widest text-error" for="alasan-{{ $item->product_update_request_id }}">Tolak beserta alasan</label>
-                        <textarea id="alasan-{{ $item->product_update_request_id }}" name="alasan" required minlength="10" maxlength="1000" rows="2" class="raliva-textarea w-full text-sm" placeholder="Minimal 10 karakter"></textarea>
-                        <button type="submit" class="w-full px-4 py-2 border border-error/40 text-error text-xs font-bold uppercase tracking-widest rounded hover:bg-error/10">Tolak</button>
+                        <label class="block text-xs font-bold uppercase tracking-widest text-error" for="alasan-{{ $item->product_update_request_id }}">{{ __('Tolak beserta alasan') }}</label>
+                        <textarea id="alasan-{{ $item->product_update_request_id }}" name="alasan" required minlength="10" maxlength="1000" rows="2" class="raliva-textarea w-full text-sm" placeholder="{{ __('Minimal 10 karakter') }}"></textarea>
+                        <button type="submit" class="w-full px-4 py-2 border border-error/40 text-error text-xs font-bold uppercase tracking-widest rounded hover:bg-error/10">{{ __('Tolak') }}</button>
                     </form>
                 </div>
             @else
@@ -146,7 +146,7 @@
             @endif
         </article>
     @empty
-        <p class="text-center text-on-surface-variant text-sm py-12">Belum ada pengajuan pada status ini.</p>
+        <p class="text-center text-on-surface-variant text-sm py-12">{{ __('Belum ada pengajuan pada status ini.') }}</p>
     @endforelse
 </div>
 @endsection

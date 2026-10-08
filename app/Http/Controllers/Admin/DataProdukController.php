@@ -15,7 +15,10 @@ class DataProdukController extends Controller
     public function index(Request $request)
     {
         $q = $request->input('q');
+        // Isolasi toko: Admin hanya melihat produk tokonya sendiri.
+        $scopeIds = AdminContext::assignedStoreIds();
         $products = Product::with(['category', 'store', 'variants.warehouseStocks', 'materialRequirements.material', 'operationalCosts', 'images' => fn ($qq) => $qq->orderBy('urutan')])
+            ->whereIn('store_id', $scopeIds)
             ->when($q, fn ($query) => $query->where('nama_produk', 'like', "%{$q}%"))
             ->orderByDesc('created_at')
             ->orderByDesc('product_id')
@@ -36,12 +39,13 @@ class DataProdukController extends Controller
         }
 
         $stats = [
-            'total' => Product::count(),
-            'aktif' => Product::where('status', 'aktif')->count(),
-            'pending' => Product::where('status', 'pending')->count(),
-            'ditolak' => Product::where('status', 'ditolak')->count(),
+            'total' => Product::whereIn('store_id', $scopeIds)->count(),
+            'aktif' => Product::whereIn('store_id', $scopeIds)->where('status', 'aktif')->count(),
+            'pending' => Product::whereIn('store_id', $scopeIds)->where('status', 'pending')->count(),
+            'ditolak' => Product::whereIn('store_id', $scopeIds)->where('status', 'ditolak')->count(),
         ];
-        $pendingUpdateIds = \App\Models\ProductUpdateRequest::where('status', \App\Models\ProductUpdateRequest::STATUS_PENDING)
+        $pendingUpdateIds = \App\Models\ProductUpdateRequest::whereIn('store_id', $scopeIds)
+            ->where('status', \App\Models\ProductUpdateRequest::STATUS_PENDING)
             ->pluck('product_id')
             ->all();
 
@@ -67,7 +71,7 @@ class DataProdukController extends Controller
     {
         $storeId = AdminContext::assignedStoreIds()[0] ?? null;
         if (! $storeId) {
-            return back()->with('error', 'Admin belum ditugaskan ke toko mana pun.');
+            return back()->with('error',__('Admin belum ditugaskan ke toko mana pun.'));
         }
 
         $request->merge([
@@ -97,24 +101,24 @@ class DataProdukController extends Controller
             'warna' => 'nullable|array',
             'warna_hex' => 'nullable|array',
         ], [
-            'nama_produk.required' => 'Nama produk wajib diisi.',
-            'harga_dasar.required' => 'Harga dasar wajib diisi.',
-            'harga_dasar.numeric' => 'Harga harus berupa angka.',
-            'harga_dasar.min' => 'Harga minimal Rp 1.',
-            'harga_dasar.max' => 'Harga maksimal Rp 999.999.999.999.',
-            'hpp.required' => 'HPP / Modal wajib diisi.',
-            'hpp.min' => 'HPP minimal Rp 1.',
-            'category_id.required' => 'Kategori wajib dipilih.',
-            'tipe_produk.required' => 'Tipe produk wajib dipilih.',
-            'deskripsi.required' => 'Deskripsi wajib diisi.',
-            'deskripsi.min' => 'Deskripsi minimal 10 karakter.',
-            'foto_produk.required' => 'Minimal 1 foto produk wajib diunggah.',
-            'foto_produk.min' => 'Minimal 1 foto produk wajib diunggah.',
-            'ukuran_terpilih.required' => 'Pilih minimal 1 ukuran.',
-            'varian_stok.required' => 'Isi stok untuk setiap varian.',
-            'varian_stok.min' => 'Isi stok untuk setiap varian.',
-            'varian_stok.*.stok.required' => 'Stok tiap varian wajib diisi.',
-            'varian_stok.*.stok.min' => 'Stok tiap varian minimal 10.',
+            'nama_produk.required' => __('Nama produk wajib diisi.'),
+            'harga_dasar.required' => __('Harga dasar wajib diisi.'),
+            'harga_dasar.numeric' => __('Harga harus berupa angka.'),
+            'harga_dasar.min' => __('Harga minimal Rp 1.'),
+            'harga_dasar.max' => __('Harga maksimal Rp 999.999.999.999.'),
+            'hpp.required' => __('HPP / Modal wajib diisi.'),
+            'hpp.min' => __('HPP minimal Rp 1.'),
+            'category_id.required' => __('Kategori wajib dipilih.'),
+            'tipe_produk.required' => __('Tipe produk wajib dipilih.'),
+            'deskripsi.required' => __('Deskripsi wajib diisi.'),
+            'deskripsi.min' => __('Deskripsi minimal 10 karakter.'),
+            'foto_produk.required' => __('Minimal 1 foto produk wajib diunggah.'),
+            'foto_produk.min' => __('Minimal 1 foto produk wajib diunggah.'),
+            'ukuran_terpilih.required' => __('Pilih minimal 1 ukuran.'),
+            'varian_stok.required' => __('Isi stok untuk setiap varian.'),
+            'varian_stok.min' => __('Isi stok untuk setiap varian.'),
+            'varian_stok.*.stok.required' => __('Stok tiap varian wajib diisi.'),
+            'varian_stok.*.stok.min' => __('Stok tiap varian minimal 10.'),
         ]);
 
         // Warna satu lapis dengan validasi utama (melempar ValidationException yang sama).
@@ -129,7 +133,7 @@ class DataProdukController extends Controller
             $used = \App\Support\SlotService::usedSlots((int) $storeId);
 
             return redirect()->route('admin.produk', ['slot_habis' => 1])->withInput()
-                ->with('error', sprintf('Kuota slot produk penuh (%d/%d). Pilih Beli Slot atau Beli Paket di bawah.', $used, $total));
+                ->with('error', sprintf(__('Kuota slot produk penuh (%d/%d). Pilih Beli Slot atau Beli Paket di bawah.'), $used, $total));
         }
 
         // Unggah foto dulu (kumpulkan path), lalu 1 transaksi untuk semua baris DB master.
@@ -204,7 +208,7 @@ class DataProdukController extends Controller
             route('gudang.bahan-produk')
         );
 
-        return back()->with('success', 'Produk diajukan. Menunggu moderasi Super Admin.');
+        return back()->with('success',__('Produk diajukan. Menunggu moderasi Super Admin.'));
     }
 
     private function createVariants(Product $product, array $data, \App\Models\Warehouse $warehouse): void
@@ -257,7 +261,7 @@ class DataProdukController extends Controller
     {
         $assignedStores = AdminContext::assignedStoreIds();
         if (! in_array($product->store_id, $assignedStores, true)) {
-            return back()->with('error', 'Anda tidak memiliki akses untuk mengubah produk toko ini.');
+            return back()->with('error',__('Anda tidak memiliki akses untuk mengubah produk toko ini.'));
         }
 
         $request->merge([
@@ -306,7 +310,7 @@ class DataProdukController extends Controller
             ->where('status', \App\Models\ProductUpdateRequest::STATUS_PENDING)
             ->exists()
         ) {
-            return back()->with('error', 'Produk ini sudah mempunyai pengajuan perubahan yang menunggu keputusan Super Admin.');
+            return back()->with('error',__('Produk ini sudah mempunyai pengajuan perubahan yang menunggu keputusan Super Admin.'));
         }
 
         $existingImages = \App\Models\ProductImage::where('product_id', $product->product_id)
@@ -318,7 +322,7 @@ class DataProdukController extends Controller
             ->all();
         $newFiles = collect($request->file('foto_produk', []))->filter(fn ($file) => $file && $file->isValid())->values();
         if (($existingImages->count() - count($removeIds) + $newFiles->count()) > 5) {
-            return back()->with('error', 'Maksimal total 5 foto. Hapus foto lama dulu sebelum menambah foto baru.');
+            return back()->with('error',__('Maksimal total 5 foto. Hapus foto lama dulu sebelum menambah foto baru.'));
         }
 
         $product->load(['category', 'images' => fn ($query) => $query->orderBy('urutan'), 'variants.warehouseStocks']);
@@ -412,6 +416,6 @@ class DataProdukController extends Controller
             route('admin.produk')
         );
 
-        return back()->with('success', 'Perubahan produk diajukan. Berlaku setelah disetujui Super Admin.');
+        return back()->with('success',__('Perubahan produk diajukan. Berlaku setelah disetujui Super Admin.'));
     }
 }

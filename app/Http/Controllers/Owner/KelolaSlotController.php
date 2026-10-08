@@ -100,7 +100,7 @@ class KelolaSlotController extends Controller
     {
         $storeId = OwnerContext::firstStoreId();
         if (! $storeId) {
-            return back()->with('error', 'Anda belum memiliki toko.');
+            return back()->with('error',__('Anda belum memiliki toko.'));
         }
 
         if (! DokumenLegal::satisfied($storeId)) {
@@ -153,6 +153,6 @@ class KelolaSlotController extends Controller
             ]);
         }
 
-        return back()->with('success', 'Pengajuan pembelian '.$data['jumlah_slot'].' slot (Rp '.number_format($totalHarga, 0, ',', '.').') diajukan. Super Admin dapat langsung menyetujui atau menolak.');
+        return back()->with('success',__('Pengajuan pembelian :ph1 slot (Rp :ph2) diajukan. Super Admin dapat langsung menyetujui atau menolak.', ['ph1' => $data['jumlah_slot'], 'ph2' => number_format($totalHarga, 0, ',', '.')]));
     }
 }

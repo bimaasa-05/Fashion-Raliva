@@ -1,10 +1,10 @@
 @extends('layouts.produksi')
 
-@section('title', 'Bahan Produksi')
+@section('title', __('Bahan Produksi'))
 
-@section('header-title', 'Bahan Produksi')
-@section('header-badge', $stats['total'] . ' Bahan')
-@section('header-subtitle', 'Kelola stok bahan baku untuk produksi. Tambah bahan sesuai kebutuhan toko.')
+@section('header-title', __('Bahan Produksi'))
+@section('header-badge', $stats['total'] . ' ' . __('Bahan'))
+@section('header-subtitle', __('Kelola stok bahan baku untuk produksi. Tambah bahan sesuai kebutuhan toko.'))
 
 @push('styles')
 <style>
@@ -30,21 +30,21 @@
         {{-- Stats --}}
         <section data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-gutter">
             <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Total Bahan</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Bahan') }}</span>
                 <span class="raliva-figure text-[26px] text-on-surface">{{ $stats['total'] }}</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">terdaftar di toko</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">{{ __('terdaftar di toko') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">science</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Aktif</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Aktif') }}</span>
                 <span class="raliva-figure text-[26px] text-secondary">{{ $stats['aktif'] }}</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">siap dipakai</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">{{ __('siap dipakai') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">check_circle</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">Stok Menipis</span>
+                <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Stok Menipis') }}</span>
                 <span class="raliva-figure text-[26px] text-error">{{ $stats['menipis'] }}</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">perlu restock</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">{{ __('perlu restock') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-error/15 fill pointer-events-none select-none" aria-hidden="true">warning</span>
             </div>
         </section>
@@ -52,38 +52,38 @@
         {{-- Form Tambah Bahan --}}
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
             <div class="flex items-center justify-between mb-4">
-                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Tambah Bahan Produksi</h3>
-                <button type="button" onclick="document.getElementById('form-tambah-bahan').classList.toggle('hidden')" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded btn-premium">+ Tambah</button>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Tambah Bahan Produksi') }}</h3>
+                <button type="button" onclick="document.getElementById('form-tambah-bahan').classList.toggle('hidden')" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded btn-premium">{{ __('+ Tambah') }}</button>
             </div>
             <form id="form-tambah-bahan" method="POST" action="{{ route('produksi.bahan-produksi.store') }}" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                 @csrf
                 <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Nama Bahan *</label>
+                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">{{ __('Nama Bahan') }} *</label>
                     <input type="text" name="nama_bahan" required class="raliva-input w-full" />
                 </div>
                 <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Kategori *</label>
+                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">{{ __('Kategori') }} *</label>
                     <select name="kategori" required class="raliva-select w-full">
-                        <option value="kain">Kain</option>
-                        <option value="aksesoris">Aksesoris</option>
-                        <option value="kemasan">Kemasan</option>
-                        <option value="lainnya">Lainnya</option>
+                        <option value="kain">{{ __('Kain') }}</option>
+                        <option value="aksesoris">{{ __('Aksesoris') }}</option>
+                        <option value="kemasan">{{ __('Kemasan') }}</option>
+                        <option value="lainnya">{{ __('Lainnya') }}</option>
                     </select>
                 </div>
                 <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Satuan *</label>
-                    <input type="text" name="satuan" required placeholder="meter, pcs, roll" class="raliva-input w-full" />
+                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">{{ __('Satuan') }} *</label>
+                    <input type="text" name="satuan" required placeholder="{{ __('meter, pcs, roll') }}" class="raliva-input w-full" />
                 </div>
                 <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Stok Awal</label>
+                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">{{ __('Stok Awal') }}</label>
                     <input type="number" name="stok" min="0" value="0" class="raliva-input w-full" />
                 </div>
                 <div>
-                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Stok Minimum</label>
+                    <label class="block text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">{{ __('Stok Minimum') }}</label>
                     <input type="number" name="stok_minimum" min="0" value="0" class="raliva-input w-full" />
                 </div>
                 <div class="flex items-end">
-                    <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Simpan</button>
+                    <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">{{ __('Simpan') }}</button>
                 </div>
             </form>
         </section>
@@ -94,14 +94,14 @@
                 <div class="flex items-center gap-3 flex-wrap w-full lg:w-auto">
                     <div class="relative flex-1 min-w-[220px]">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                        <input type="text" placeholder="Cari bahan..." data-table-search class="raliva-search" />
+                        <input type="text" placeholder="{{ __('Cari bahan...') }}" data-table-search class="raliva-search" />
                     </div>
                     <select data-table-filter="kategori-bahan" class="raliva-select">
-                        <option value="">Semua Kategori</option>
-                        <option value="kain">Kain</option>
-                        <option value="aksesoris">Aksesoris</option>
-                        <option value="kemasan">Kemasan</option>
-                        <option value="lainnya">Lainnya</option>
+                        <option value="">{{ __('Semua Kategori') }}</option>
+                        <option value="kain">{{ __('Kain') }}</option>
+                        <option value="aksesoris">{{ __('Aksesoris') }}</option>
+                        <option value="kemasan">{{ __('Kemasan') }}</option>
+                        <option value="lainnya">{{ __('Lainnya') }}</option>
                     </select>
                 </div>
             </div>
@@ -110,9 +110,9 @@
                 <table class="premium-table w-full min-w-[800px] font-body-md text-sm">
                     <thead>
                         <tr class="border-b border-muted-border text-left">
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Nama Bahan</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Kategori</th>
-                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Stok</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Nama Bahan') }}</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Kategori') }}</th>
+                            <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">{{ __('Stok') }}</th>
                             <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Min.</th>
                             <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Supplier</th>
                             <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">Status</th>
@@ -131,14 +131,14 @@
                                 <td class="py-3.5 px-4 text-on-surface-variant">{{ $b->supplier?->nama_supplier ?? '-' }}</td>
                                 <td class="py-3.5 px-4 text-center">
                                     @if ($low)
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">Menipis</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">{{ __('Menipis') }}</span>
                                     @else
-                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20">Aman</span>
+                                        <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase border border-success/20">{{ __('Aman') }}</span>
                                     @endif
                                 </td>
                             </tr>
                         @empty
-                            <tr><td colspan="6" class="py-12 text-center text-on-surface-variant">Belum ada bahan produksi.</td></tr>
+                            <tr><td colspan="6" class="py-12 text-center text-on-surface-variant">{{ __('Belum ada bahan produksi.') }}</td></tr>
                         @endforelse
                     </tbody>
                 </table>

@@ -87,7 +87,7 @@ class OwnerLaporanPeriodeSheet implements FromCollection, WithHeadings, WithMapp
 
         $result[] = [
             'no' => '',
-            'periode' => 'Total',
+            'periode' => __('Total'),
             'pesanan' => $totals['pesanan'],
             'pendapatan' => $totals['pendapatan'],
             'refund' => $totals['refund'],
@@ -103,7 +103,7 @@ class OwnerLaporanPeriodeSheet implements FromCollection, WithHeadings, WithMapp
      */
     public function headings(): array
     {
-        return ['Periode', 'Pesanan', 'Pendapatan', 'Refund', 'Pencairan', 'Saldo Akhir'];
+        return [__('Periode'), __('Pesanan'), __('Pendapatan'), __('Refund'), __('Pencairan'), __('Saldo Akhir')];
     }
 
     /**
@@ -124,6 +124,6 @@ class OwnerLaporanPeriodeSheet implements FromCollection, WithHeadings, WithMapp
 
     public function title(): string
     {
-        return 'Periode';
+        return __('Periode');
     }
 }

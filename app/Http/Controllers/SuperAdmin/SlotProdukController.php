@@ -9,6 +9,7 @@ use App\Models\Setting;
 use App\Models\SlotGrant;
 use App\Models\SlotPurchaseRequest;
 use App\Models\Store;
+use App\Models\StoreExpense;
 use App\Support\ActivityLogger;
 use App\Support\SlotService;
 use Illuminate\Http\Request;
@@ -259,14 +260,14 @@ class SlotProdukController extends Controller
     {
         if ($rmt->status !== SlotPurchaseRequest::STATUS_PENDING) {
             return back()->with('toast', [
-                'message' => 'Permintaan sudah diproses.',
+                'message' => __('Permintaan sudah diproses.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if ($rmt->payment_status === SlotPurchaseRequest::PEMBAYARAN_DITOLAK) {
             return back()->with('toast', [
-                'message' => 'Pembayaran permintaan ini ditolak; tidak dapat disetujui.',
+                'message' => __('Pembayaran permintaan ini ditolak; tidak dapat disetujui.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -311,6 +312,25 @@ class SlotProdukController extends Controller
                     SlotPurchaseRequest::class
                 );
 
+                // Pengeluaran toko: pembelian slot adalah beban kas toko (dibayar
+                // via transfer eksternal + bukti, bukan dari saldo wallet —
+                // jadi hanya StoreExpense, tanpa decrement wallet).
+                // Idempoten: nama expense unik per permintaan.
+                $namaExpense = sprintf(
+                    'Pembelian %d slot fleksibel (req #%d)',
+                    $locked->jumlah_slot,
+                    $locked->slot_purchase_id
+                );
+                StoreExpense::firstOrCreate(
+                    ['store_id' => $locked->store_id, 'nama' => $namaExpense],
+                    [
+                        'kategori' => 'Slot',
+                        'nominal' => (float) $locked->total_harga,
+                        'tanggal' => now()->toDateString(),
+                        'dibuat_oleh' => Auth::id(),
+                    ]
+                );
+
                 $lama = $locked->only(['status']);
                 $locked->update([
                     'status' => SlotPurchaseRequest::STATUS_DISETUJUI,
@@ -331,7 +351,7 @@ class SlotProdukController extends Controller
             });
         } catch (\Throwable $e) {
             return back()->with('toast', [
-                'message' => 'Gagal menyetujui pembelian slot: '.$e->getMessage(),
+                'message' => __('Gagal menyetujui pembelian slot: :ph1', ['ph1' => $e->getMessage()]),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -346,7 +366,7 @@ class SlotProdukController extends Controller
     {
         if ($rmt->status !== SlotPurchaseRequest::STATUS_PENDING) {
             return back()->with('toast', [
-                'message' => 'Permintaan sudah diproses.',
+                'message' => __('Permintaan sudah diproses.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -378,7 +398,7 @@ class SlotProdukController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pembelian Slot Ditolak', sprintf('Pembelian %d slot toko "%s" ditolak.', $rmt->jumlah_slot, $rmt->store->nama_toko ?? '-'), route('superadmin.slot-produk'));
 
         return back()->with('toast', [
-            'message' => 'Permintaan pembelian slot ditolak.',
+            'message' => __('Permintaan pembelian slot ditolak.'),
             'icon' => 'block',
         ]);
     }

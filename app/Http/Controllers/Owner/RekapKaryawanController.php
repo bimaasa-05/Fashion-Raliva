@@ -67,7 +67,7 @@ class RekapKaryawanController extends Controller
     {
         $storeId = OwnerContext::firstStoreId();
         if (! $storeId) {
-            return back()->with('toast', ['message' => 'Belum ada toko untuk diekspor.', 'icon' => 'storefront']);
+            return back()->with('toast', ['message' => __('Belum ada toko untuk diekspor.'), 'icon' => 'storefront']);
         }
 
         [$rows, $roleFilter, $dari, $sampai] = $this->siapkanExport($request, $storeId);

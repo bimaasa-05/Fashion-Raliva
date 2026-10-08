@@ -51,13 +51,13 @@ class BarangMasukController extends Controller
     public function store(Request $request)
     {
         if (! auth()->user()->hasPermission('warehouse.stock_in')) {
-            abort(403, 'Anda tidak memiliki izin (warehouse.stock_in) untuk melakukan tindakan ini.');
+            abort(403, __('Anda tidak memiliki izin (warehouse.stock_in) untuk melakukan tindakan ini.'));
         }
 
         $warehouse = $this->activeWarehouse();
 
         if (! $warehouse) {
-            return back()->with('toast', ['message' => 'Tidak ada gudang aktif.', 'icon' => 'gpp_maybe']);
+            return back()->with('toast', ['message' => __('Tidak ada gudang aktif.'), 'icon' => 'gpp_maybe']);
         }
 
         $data = $request->validate([
@@ -66,13 +66,13 @@ class BarangMasukController extends Controller
             'jumlah' => 'required|integer|min:1',
             'alasan' => 'nullable|string|max:500',
         ], [
-            'product_variant_id.required' => 'Produk wajib dipilih.',
-            'product_variant_id.exists' => 'Produk tidak valid.',
-            'supplier_id.required' => 'Supplier wajib dipilih.',
-            'supplier_id.exists' => 'Supplier tidak valid.',
-            'jumlah.required' => 'Jumlah wajib diisi.',
-            'jumlah.integer' => 'Jumlah harus berupa angka.',
-            'jumlah.min' => 'Jumlah minimal 1.',
+            'product_variant_id.required' => __('Produk wajib dipilih.'),
+            'product_variant_id.exists' => __('Produk tidak valid.'),
+            'supplier_id.required' => __('Supplier wajib dipilih.'),
+            'supplier_id.exists' => __('Supplier tidak valid.'),
+            'jumlah.required' => __('Jumlah wajib diisi.'),
+            'jumlah.integer' => __('Jumlah harus berupa angka.'),
+            'jumlah.min' => __('Jumlah minimal 1.'),
         ]);
 
         try {
@@ -87,7 +87,7 @@ class BarangMasukController extends Controller
                         ->increment('jumlah_stok', (int) $data['jumlah']);
 
                     if ($updated === 0) {
-                        throw new \RuntimeException('Gagal memperbarui stok barang masuk.');
+                        throw new \RuntimeException(__('Gagal memperbarui stok barang masuk.'));
                     }
 
                     WarehouseStock::where('warehouse_stock_id', $stock->warehouse_stock_id)
@@ -115,7 +115,7 @@ class BarangMasukController extends Controller
         } catch (\RuntimeException $e) {
             return back()->with('toast', ['message' => $e->getMessage(), 'icon' => 'gpp_maybe']);
         } catch (\Throwable $e) {
-            return back()->with('toast', ['message' => 'Gagal mencatat barang masuk.', 'icon' => 'error']);
+            return back()->with('toast', ['message' => __('Gagal mencatat barang masuk.'), 'icon' => 'error']);
         }
 
         ActivityLogger::log(
@@ -137,7 +137,7 @@ class BarangMasukController extends Controller
         );
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Barang Masuk Dicatat', sprintf('%d unit barang masuk dicatat di gudang "%s".', $data['jumlah'], $warehouse->nama_gudang), route('gudang.dashboard'));
 
-        return back()->with('toast', ['message' => 'Barang masuk berhasil dicatat.', 'icon' => 'task_alt']);
+        return back()->with('toast', ['message' => __('Barang masuk berhasil dicatat.'), 'icon' => 'task_alt']);
     }
 
     private function getProductsForWarehouse($warehouse)

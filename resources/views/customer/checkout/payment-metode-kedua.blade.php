@@ -4,7 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>RALIVA - {{ __('Checkout') }} â€” {{ __('Bayar') }}</title>
+    <title>RALIVA - {{ __('Checkout') }} — {{ __('Bayar') }}</title>
     <script>
         if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');
     </script>
@@ -966,7 +966,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
     <header
         class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
         <a href="{{ $backToPaymentUrl }}"
-            aria-label="Back" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+            aria-label="{{ __('Back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
             <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
         </a>
         <h1
@@ -1257,7 +1257,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                             <span id="btn-unggah-text">{{ __('Unggah Bukti Pembayaran') }}</span>
                                         </button>
 
-                                        <div id="btn-pair" class="{{ $buktiTerakhir ? 'grid grid-cols-2 gap-sm' : 'grid grid-cols-2 gap-sm hidden' }}">
+                                        <div id="btn-pair" class="{{ $buktiTerakhir ? 'grid grid-cols-1 sm:grid-cols-2 gap-sm' : 'grid grid-cols-1 sm:grid-cols-2 gap-sm hidden' }}">
                                             <button type="button" id="btn-ganti"
                                                 class="w-full inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest border border-outline text-on-surface hover:bg-surface-container-high transition-colors">
                                                 <span class="material-symbols-outlined text-[20px]">photo_camera_back</span>
@@ -1299,7 +1299,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                         <div class="detail-row">
                             <span>{{ __('Metode') }}</span>
                             <div class="text-right">
-                                <strong id="rincian-metode" class="block">{{ __('Saldo Akun + â€”') }}</strong>
+                                <strong id="rincian-metode" class="block">{{ __('Saldo Akun + —') }}</strong>
                                 <span id="rincian-akun"
                                     class="block text-xs text-on-surface-variant font-normal mt-0.5">{{ $payment->account?->nama ?? '' }}</span>
                             </div>
@@ -1320,7 +1320,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                         </div>
                         <div class="detail-row">
                             <span>{{ __('Batas Waktu') }}</span>
-                            <strong>{{ $payment->batas_waktu?->format('d M Y, H:i') ?? 'â€”' }}</strong>
+                            <strong>{{ $payment->batas_waktu?->format('d M Y, H:i') ?? '—' }}</strong>
                         </div>
                         <div class="detail-row">
                             <span>{{ __('Status') }}</span>
@@ -1365,7 +1365,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                     class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
                                     {{ __('Metode Pembayaran') }}</p>
                                 <p class="font-body-lg text-body-lg font-semibold text-on-surface mt-xs">
-                                    {{ $payment->paymentMethod?->nama_metode ?? 'â€”' }}</p>
+                                    {{ $payment->paymentMethod?->nama_metode ?? '—' }}</p>
                             </div>
                             <div class="border border-outline-variant rounded-lg p-md">
                                 <p
@@ -1379,7 +1379,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                     class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">
                                     {{ __('Batas Waktu') }}</p>
                                 <p class="font-body-lg text-body-lg font-semibold text-on-surface mt-xs">
-                                    {{ $payment->batas_waktu?->format('d M Y, H:i') ?? 'â€”' }}</p>
+                                    {{ $payment->batas_waktu?->format('d M Y, H:i') ?? '—' }}</p>
                             </div>
                         </div>
                         <p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed mt-lg">
@@ -1403,7 +1403,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
                                 @endforeach
                             </span></div>
                         <div class="detail-row"><span>{{ __('Metode') }}</span><strong
-                                class="text-right">{{ $payment->paymentMethod?->nama_metode ?? 'â€”' }}</strong></div>
+                                class="text-right">{{ $payment->paymentMethod?->nama_metode ?? '—' }}</strong></div>
                         <div class="detail-row"><span>{{ __('Total') }}</span><strong
                                 class="text-[var(--chrome-accent)]">Rp
                                 {{ number_format((float) $payment->jumlah, 0, ',', '.') }}</strong></div>

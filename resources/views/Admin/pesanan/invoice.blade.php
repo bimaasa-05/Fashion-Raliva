@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Invoice {{ $pesanan->nomor_order ?? ('#'.$pesanan->order_id) }}</title>
+    <title>{{ __('Invoice') }} {{ $pesanan->nomor_order ?? ('#'.$pesanan->order_id) }}</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Manrope', Arial, sans-serif; color: #1c1b1b; background: #fff; padding: 32px; }
@@ -38,8 +38,8 @@
 <body>
 <div class="sheet">
     <div class="toolbar">
-        <button type="button" class="btn-print" onclick="window.print()">Cetak Invoice</button>
-        <a href="{{ route('admin.pesanan') }}" class="btn-back">&larr; Kembali</a>
+        <button type="button" class="btn-print" onclick="window.print()">{{ __('Cetak Invoice') }}</button>
+        <a href="{{ route('admin.pesanan') }}" class="btn-back">&larr; {{ __('Kembali') }}</a>
     </div>
     <div class="kop">
         <div>
@@ -48,30 +48,30 @@
             <p style="font-size:12px;color:#555;">{{ $pesanan->store?->alamat ?? '' }}</p>
         </div>
         <div class="meta">
-            <p><strong>INVOICE</strong></p>
+            <p><strong>{{ __('INVOICE') }}</strong></p>
             <p>{{ $pesanan->nomor_order ?? ('#'.$pesanan->order_id) }}</p>
             <p>{{ $pesanan->created_at?->translatedFormat('d M Y H:i') ?? '-' }}</p>
-            <p>Status: <strong>{{ ucfirst(str_replace('_', ' ', $pesanan->status)) }}</strong></p>
+            <p>{{ __('Status') }}: <strong>{{ \App\Support\StatusStyle::label($pesanan->status) }}</strong></p>
         </div>
     </div>
     <div class="grid">
         <div>
-            <h4>Ditagihkan Kepada</h4>
+            <h4>{{ __('Ditagihkan Kepada') }}</h4>
             <p><strong>{{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</strong></p>
             <p>{{ $pesanan->checkout?->nomor_telepon ?? '-' }}</p>
             <p>{{ $pesanan->checkout?->alamat ?? '-' }}</p>
         </div>
         <div>
-            <h4>Pembayaran & Pengiriman</h4>
-            <p>{{ $pesanan->checkout?->payment?->paymentMethod?->nama_metode ?? 'Tunai' }} — {{ ucfirst($pesanan->checkout?->payment?->status ?? '-') }}</p>
+            <h4>{{ __('Pembayaran & Pengiriman') }}</h4>
+            <p>{{ $pesanan->checkout?->payment?->paymentMethod?->nama_metode ?? __('Tunai') }} — {{ \App\Support\StatusStyle::label($pesanan->checkout?->payment?->status ?? '-') }}</p>
             @php $ship = $pesanan->shipments->first(); @endphp
-            <p>{{ $ship ? ($ship->courier?->nama_kurir ?? 'Kurir').' • Resi '.$ship->nomor_resi : ($pesanan->isAmbil() ? 'Ambil di toko' : 'Belum dikirim') }}</p>
-            <p>{{ $pesanan->isOffline() ? 'Offline' : 'Online' }}@if($pesanan->catatan) • Catatan: {{ $pesanan->catatan }}@endif</p>
+            <p>{{ $ship ? ($ship->courier?->nama_kurir ?? __('Kurir')).' • '.__('Resi').' '.$ship->nomor_resi : ($pesanan->isAmbil() ? __('Ambil di toko') : __('Belum dikirim')) }}</p>
+            <p>{{ $pesanan->isOffline() ? __('Offline') : __('Online') }}@if($pesanan->catatan) • {{ __('Catatan:') }} {{ $pesanan->catatan }}@endif</p>
         </div>
     </div>
     <table>
         <thead>
-            <tr><th>Produk</th><th class="r">Harga</th><th class="r">Qty</th><th class="r">Subtotal</th></tr>
+            <tr><th>{{ __('Produk') }}</th><th class="r">{{ __('Harga') }}</th><th class="r">{{ __('Qty') }}</th><th class="r">{{ __('Subtotal') }}</th></tr>
         </thead>
         <tbody>
             @foreach ($pesanan->items as $it)
@@ -85,15 +85,15 @@
         </tbody>
     </table>
     <div class="total-box">
-        <div><span>Subtotal</span><span>Rp {{ number_format((float) ($pesanan->subtotal ?? 0), 0, ',', '.') }}</span></div>
-        <div><span>Pajak</span><span>Rp {{ number_format((float) ($pesanan->total_pajak ?? 0), 0, ',', '.') }}</span></div>
-        <div><span>Layanan</span><span>Rp {{ number_format((float) ($pesanan->biaya_layanan ?? 0), 0, ',', '.') }}</span></div>
-        <div><span>Ongkir</span><span>Rp {{ number_format((float) ($pesanan->total_ongkir ?? 0), 0, ',', '.') }}</span></div>
-        <div class="grand"><span>Total</span><span>Rp {{ number_format((float) ($pesanan->grand_total ?? 0), 0, ',', '.') }}</span></div>
+        <div><span>{{ __('Subtotal') }}</span><span>Rp {{ number_format((float) ($pesanan->subtotal ?? 0), 0, ',', '.') }}</span></div>
+        <div><span>{{ __('Pajak') }}</span><span>Rp {{ number_format((float) ($pesanan->total_pajak ?? 0), 0, ',', '.') }}</span></div>
+        <div><span>{{ __('Layanan') }}</span><span>Rp {{ number_format((float) ($pesanan->biaya_layanan ?? 0), 0, ',', '.') }}</span></div>
+        <div><span>{{ __('Ongkir') }}</span><span>Rp {{ number_format((float) ($pesanan->total_ongkir ?? 0), 0, ',', '.') }}</span></div>
+        <div class="grand"><span>{{ __('Total') }}</span><span>Rp {{ number_format((float) ($pesanan->grand_total ?? 0), 0, ',', '.') }}</span></div>
     </div>
-    <p class="note">Invoice ini dicetak dari sistem Raliva Fashion pada {{ now()->translatedFormat('d M Y H:i') }}.</p>
+    <p class="note">{{ __('Invoice ini dicetak dari sistem Raliva Fashion pada') }} {{ now()->translatedFormat('d M Y H:i') }}.</p>
     <div class="sign">
-        <div><p>Pelanggan</p><br><br><p>( ........................ )</p></div>
+        <div><p>{{ __('Pelanggan') }}</p><br><br><p>( ........................ )</p></div>
         <div><p>{{ $pesanan->store?->nama_toko ?? 'Toko' }}</p><br><br><p>( ........................ )</p></div>
     </div>
 </div>

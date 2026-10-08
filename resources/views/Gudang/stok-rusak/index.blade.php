@@ -1,10 +1,10 @@
 @extends('layouts.gudang')
 
-@section('title', 'Stok Rusak')
+@section('title', __('Stok Rusak'))
 
-@section('header-title', 'Stok Rusak')
-@section('header-badge', $warehouse->nama_gudang ?? 'Gudang')
-@section('header-subtitle', 'Laporkan dan pantau produk rusak/bermasalah di gudang Anda.')
+@section('header-title', __('Stok Rusak'))
+@section('header-badge', $warehouse->nama_gudang ?? __('Gudang'))
+@section('header-subtitle', __('Laporkan dan pantau produk rusak/bermasalah di gudang Anda.'))
 
 @section('content')
 @php
@@ -26,7 +26,7 @@
             <div class="flex items-center justify-between gap-3 flex-wrap">
                 <div class="flex items-center gap-3">
                     <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant hidden md:block">Filter &amp; Pencarian</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant hidden md:block">{{ __('Filter &amp; Pencarian') }}</span>
                 </div>
                 <div class="flex items-center gap-2">
                     <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors btn-premium">
@@ -44,9 +44,9 @@
                 <form method="GET" class="flex flex-col sm:flex-row sm:items-center gap-gutter">
                     <div class="relative flex-1 min-w-0">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
-                        <input type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="Cari produk..." class="raliva-search" />
+                        <input type="text" name="q" value="{{ $filters['q'] ?? '' }}" placeholder="{{ __('Cari produk...') }}" class="raliva-search" />
                     </div>
-                    <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">Cari</button>
+                    <button type="submit" class="px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase tracking-widest rounded btn-premium">{{ __('Cari') }}</button>
                 </form>
             </div>
         </div>
@@ -56,13 +56,13 @@
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
                         <th class="p-4 text-center w-12">No.</th>
-                        <th class="p-4 text-left">Produk</th>
-                        <th class="p-4 text-center">Jumlah Rusak</th>
-                        <th class="p-4 text-left">Alasan</th>
-                        <th class="p-4 text-center">Petugas</th>
-                        <th class="p-4 text-center">Tanggal</th>
-                        <th class="p-4 text-center">Current Stok</th>
-                        <th class="p-4 text-center">Action</th>
+                        <th class="p-4 text-left">{{ __('Produk') }}</th>
+                        <th class="p-4 text-center">{{ __('Jumlah Rusak') }}</th>
+                        <th class="p-4 text-left">{{ __('Alasan') }}</th>
+                        <th class="p-4 text-center">{{ __('Petugas') }}</th>
+                        <th class="p-4 text-center">{{ __('Tanggal') }}</th>
+                        <th class="p-4 text-center">{{ __('Current Stok') }}</th>
+                        <th class="p-4 text-center">{{ __('Action') }}</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -76,13 +76,13 @@
                             <td class="p-4 text-center">{{ $s->created_at?->format('d M Y • H:i') ?? '-' }}</td>
                             <td class="p-4 text-center text-on-surface-variant">{{ $s->productVariant?->warehouseStocks?->firstWhere('warehouse_id', $warehouse?->warehouse_id)?->jumlah_stok ?? '-' }}</td>
                             <td class="p-4 text-center">
-                                <button type="button" data-modal-open="sr-detail-{{ $loop->iteration }}" title="Lihat Detail" class="w-9 h-9 mx-auto rounded-lg border border-muted-border flex items-center justify-center text-on-surface-variant hover:text-gold-accent hover:border-gold-accent transition-colors">
+                                <button type="button" data-modal-open="sr-detail-{{ $loop->iteration }}" title="{{ __('Lihat Detail') }}" class="w-9 h-9 mx-auto rounded-lg border border-muted-border flex items-center justify-center text-on-surface-variant hover:text-gold-accent hover:border-gold-accent transition-colors">
                                     <span class="material-symbols-outlined text-[18px]">visibility</span>
                                 </button>
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="8" class="p-10 text-center text-on-surface-variant">Tidak ada laporan stok rusak pada gudang ini. 🎉</td></tr>
+                        <tr><td colspan="8" class="p-10 text-center text-on-surface-variant">{{ __('Tidak ada laporan stok rusak pada gudang ini.') }} 🎉</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -102,19 +102,19 @@
 
                     <dl class="space-y-2 font-body-md text-sm mb-4">
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Alasan</dt>
+                            <dt class="text-on-surface-variant">{{ __('Alasan') }}</dt>
                             <dd class="text-on-surface text-right max-w-[60%]">{{ $s->alasan ?: '-' }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Petugas</dt>
+                            <dt class="text-on-surface-variant">{{ __('Petugas') }}</dt>
                             <dd class="text-on-surface text-right">{{ $s->creator?->nama_lengkap ?? '-' }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Tanggal</dt>
+                            <dt class="text-on-surface-variant">{{ __('Tanggal') }}</dt>
                             <dd class="text-on-surface text-right">{{ $s->created_at?->format('d M Y • H:i') ?? '-' }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
-                            <dt class="text-on-surface-variant">Current Stok</dt>
+                            <dt class="text-on-surface-variant">{{ __('Current Stok') }}</dt>
                             <dd class="text-on-surface-variant text-right">{{ $s->productVariant?->warehouseStocks?->firstWhere('warehouse_id', $warehouse?->warehouse_id)?->jumlah_stok ?? '-' }}</dd>
                         </div>
                     </dl>
@@ -124,7 +124,7 @@
                     </button>
                 </article>
             @empty
-                <p class="text-center text-on-surface-variant py-10">Tidak ada laporan stok rusak pada gudang ini. 🎉</p>
+                <p class="text-center text-on-surface-variant py-10">{{ __('Tidak ada laporan stok rusak pada gudang ini.') }} 🎉</p>
             @endforelse
         </div>
 
@@ -142,7 +142,7 @@
             <div class="relative mx-auto mt-16 md:mt-24 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl p-6 max-h-[80vh] overflow-y-auto">
                 <div class="flex items-start justify-between gap-4 mb-6">
                     <div>
-                        <h3 class="font-title-md text-title-md text-on-surface">Detail Laporan Stok Rusak</h3>
+                        <h3 class="font-title-md text-title-md text-on-surface">{{ __('Detail Laporan Stok Rusak') }}</h3>
                         <p class="text-on-surface-variant font-label-sm text-xs uppercase tracking-wider mt-1">{{ $s->productVariant?->product?->nama_produk ?? '-' }} · {{ $s->productVariant?->sku ?? '' }}</p>
                     </div>
                     <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
@@ -150,13 +150,13 @@
                     </button>
                 </div>
                 <dl class="space-y-4 font-body-md text-sm">
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Produk</dt><dd class="text-on-surface text-right">{{ $s->productVariant?->product?->nama_produk ?? '-' }}<span class="block text-xs text-on-surface-variant mt-0.5">{{ $s->productVariant?->warna ?? '' }} {{ $s->productVariant?->ukuran ?? '' }}</span></dd></div>
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Jumlah Rusak</dt><dd class="text-error font-bold">{{ $s->jumlah_rusak }} unit</dd></div>
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Alasan/Keterangan</dt><dd class="text-on-surface text-right max-w-[60%]">{{ $s->alasan ?: '-' }}</dd></div>
-                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">Petugas</dt><dd class="text-on-surface">{{ $s->creator?->nama_lengkap ?? '-' }}</dd></div>
-                    <div class="flex justify-between gap-4"><dt class="text-on-surface-variant">Tanggal Laporan</dt><dd class="text-on-surface">{{ $s->created_at?->format('d M Y • H:i') ?? '-' }}</dd></div>
+                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">{{ __('Produk') }}</dt><dd class="text-on-surface text-right">{{ $s->productVariant?->product?->nama_produk ?? '-' }}<span class="block text-xs text-on-surface-variant mt-0.5">{{ $s->productVariant?->warna ?? '' }} {{ $s->productVariant?->ukuran ?? '' }}</span></dd></div>
+                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">{{ __('Jumlah Rusak') }}</dt><dd class="text-error font-bold">{{ $s->jumlah_rusak }} unit</dd></div>
+                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">{{ __('Alasan/Keterangan') }}</dt><dd class="text-on-surface text-right max-w-[60%]">{{ $s->alasan ?: '-' }}</dd></div>
+                    <div class="flex justify-between gap-4 pb-4 border-b border-muted-border"><dt class="text-on-surface-variant">{{ __('Petugas') }}</dt><dd class="text-on-surface">{{ $s->creator?->nama_lengkap ?? '-' }}</dd></div>
+                    <div class="flex justify-between gap-4"><dt class="text-on-surface-variant">{{ __('Tanggal Laporan') }}</dt><dd class="text-on-surface">{{ $s->created_at?->format('d M Y • H:i') ?? '-' }}</dd></div>
                 </dl>
-                <button type="button" data-modal-close class="w-full mt-6 py-3 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Tutup</button>
+                <button type="button" data-modal-close class="w-full mt-6 py-3 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">{{ __('Tutup') }}</button>
             </div>
         </div>
     @endforeach
@@ -166,7 +166,7 @@
         <div class="relative mx-auto mt-10 md:mt-16 w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 shadow-xl max-h-[85vh] overflow-y-auto">
             <div class="sticky top-0 bg-surface-container-lowest flex items-start justify-between gap-4 px-6 pt-6 pb-4 border-b border-muted-border">
                 <div>
-                    <h3 class="font-title-md text-title-md text-on-surface premium-heading">Catat Stok Rusak</h3>
+                    <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Catat Stok Rusak') }}</h3>
                     <p class="text-on-surface-variant font-body-md text-sm mt-1">Gudang Aktif: {{ $warehouse->nama_gudang ?? '-' }}</p>
                 </div>
                 <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface transition-colors">
@@ -176,9 +176,9 @@
             <form action="{{ route('gudang.stok-rusak.store') }}" method="POST" class="p-6 space-y-5">
                 @csrf
                 <div>
-                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Produk</label>
+                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">{{ __('Produk') }}</label>
                     <select name="product_variant_id" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent">
-                        <option value="">Pilih Produk</option>
+                        <option value="">{{ __('Pilih Produk') }}</option>
                         @foreach ($products as $ws)
                             @php
                                 $pv = $ws->productVariant;
@@ -191,20 +191,20 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Jumlah Rusak</label>
+                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">{{ __('Jumlah Rusak') }}</label>
                     <input type="number" name="jumlah_rusak" min="1" value="1" required class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface focus:outline-none focus:border-gold-accent" />
                 </div>
                 <div>
-                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">Alasan / Keterangan</label>
-                    <textarea name="alasan" rows="3" placeholder="Detail kerusakan, lokasi penemuan, foto pendukung (opsional)" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent resize-none"></textarea>
+                    <label class="block font-label-sm text-[11px] uppercase tracking-wider text-on-surface-variant mb-2">{{ __('Alasan / Keterangan') }}</label>
+                    <textarea name="alasan" rows="3" placeholder="{{ __('Detail kerusakan, lokasi penemuan, foto pendukung (opsional)') }}" class="w-full bg-surface-container-lowest border border-muted-border rounded-lg px-3 py-2.5 font-body-md text-sm text-on-surface placeholder:text-on-surface-variant focus:outline-none focus:border-gold-accent resize-none"></textarea>
                 </div>
                 <div class="flex items-start gap-3 p-4 border border-error/30 bg-error-container/60 rounded-lg">
                     <span class="material-symbols-outlined text-error mt-0.5 text-[20px]">info</span>
-                    <p class="font-body-md text-xs text-on-error-container">Pelaporan stok rusak akan mengurangi stok tersedia setelah diverifikasi oleh Admin Toko.</p>
+                    <p class="font-body-md text-xs text-on-error-container">{{ __('Pelaporan stok rusak akan mengurangi stok tersedia setelah diverifikasi oleh Admin Toko.') }}</p>
                 </div>
                 <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-gutter pt-2">
-                    <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                    <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">Laporkan</button>
+                    <button type="button" data-modal-close class="py-3 px-6 border border-muted-border rounded-lg font-label-sm text-[11px] uppercase tracking-widest text-on-surface hover:border-gold-accent transition-colors">{{ __('Batal') }}</button>
+                    <button type="submit" class="py-3 px-6 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium">{{ __('Laporkan') }}</button>
                 </div>
             </form>
         </div>

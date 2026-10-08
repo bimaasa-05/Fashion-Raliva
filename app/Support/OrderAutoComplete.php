@@ -109,8 +109,8 @@ class OrderAutoComplete
                 Notification::create([
                     'user_id' => $locked->store->owner_id,
                     'tipe' => Notification::TIPE_ORDER,
-                    'judul' => 'Pesanan Diambil Otomatis',
-                    'pesan' => sprintf('Pesanan offline %s diselesaikan otomatis karena sudah %s hari siap diambil tanpa konfirmasi.', $locked->nomor_order, $batasHari),
+                    'judul' => __('Pesanan Diambil Otomatis'),
+                    'pesan' => sprintf(__('Pesanan offline %s diselesaikan otomatis karena sudah %s hari siap diambil tanpa konfirmasi.'), $locked->nomor_order, $batasHari),
                 ]);
             }
 
@@ -119,8 +119,8 @@ class OrderAutoComplete
                 Notification::create([
                     'user_id' => $customerId,
                     'tipe' => Notification::TIPE_ORDER,
-                    'judul' => 'Pesanan Ditandai Selesai',
-                    'pesan' => sprintf('Pesanan %s dianggap selesai karena sudah %s hari tidak diambil. Silakan cek detail pesanan Anda.', $locked->nomor_order, $batasHari),
+                    'judul' => __('Pesanan Ditandai Selesai'),
+                    'pesan' => sprintf(__('Pesanan %s dianggap selesai karena sudah %s hari tidak diambil. Silakan cek detail pesanan Anda.'), $locked->nomor_order, $batasHari),
                     'url' => route('customer.order-tracking', ['order' => $locked->order_id]),
                 ]);
             }
@@ -167,8 +167,8 @@ class OrderAutoComplete
                 Notification::create([
                     'user_id' => $locked->store->owner_id,
                     'tipe' => Notification::TIPE_ORDER,
-                    'judul' => 'Pesanan Selesai Otomatis',
-                    'pesan' => sprintf('Pesanan %s diselesaikan otomatis karena melewati %s hari tanpa konfirmasi customer.', $locked->nomor_order, $batasHari),
+                    'judul' => __('Pesanan Selesai Otomatis'),
+                    'pesan' => sprintf(__('Pesanan %s diselesaikan otomatis karena melewati %s hari tanpa konfirmasi customer.'), $locked->nomor_order, $batasHari),
                 ]);
             }
 
@@ -177,8 +177,8 @@ class OrderAutoComplete
                 Notification::create([
                     'user_id' => $customerId,
                     'tipe' => Notification::TIPE_ORDER,
-                    'judul' => 'Pesanan Diselesaikan Otomatis',
-                    'pesan' => sprintf('Pesanan %s dianggap selesai karena tidak dikonfirmasi dalam %s hari. Silakan cek detail pesanan Anda.', $locked->nomor_order, $batasHari),
+                    'judul' => __('Pesanan Diselesaikan Otomatis'),
+                    'pesan' => sprintf(__('Pesanan %s dianggap selesai karena tidak dikonfirmasi dalam %s hari. Silakan cek detail pesanan Anda.'), $locked->nomor_order, $batasHari),
                     'url' => route('customer.order-tracking', ['order' => $locked->order_id]),
                 ]);
             }

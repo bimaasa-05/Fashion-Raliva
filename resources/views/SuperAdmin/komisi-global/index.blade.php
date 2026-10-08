@@ -1,11 +1,11 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Komisi Raliva')
+@section('title', __('Komisi Raliva'))
 
-@section('header-title', 'Komisi Raliva')
-@section('header-badge', 'Kelola')
+@section('header-title', __('Komisi Raliva'))
+@section('header-badge', __('Kelola'))
 
-@section('header-subtitle', 'Atur persentase komisi platform yang berlaku untuk semua transaksi berhasil.')
+@section('header-subtitle', __('Atur persentase komisi platform yang berlaku untuk semua transaksi berhasil.'))
 
 @push('styles')
 <style>
@@ -56,24 +56,24 @@
                 <div class="flex flex-wrap items-center gap-3 mb-6">
                     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase tracking-wider border border-secondary/20">
                         <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
-                        Aktif • Berlaku Global
+                        {{ __('Aktif • Berlaku Global') }}
                     </span>
                     <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant">Diperbarui {{ now()->translatedFormat('d M Y') }}</span>
                 </div>
-                <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2">Tarif Komisi Saat Ini</p>
+                <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2">{{ __('Tarif Komisi Saat Ini') }}</p>
                 <div class="flex items-end gap-4 mb-4">
                     <span id="current-rate" class="font-display-lg text-gradient-gold text-7xl md:text-8xl leading-none tracking-tight">{{ number_format($komisi, 0, ',', '.') }}%</span>
                     <span class="material-symbols-outlined text-gold-accent text-[28px] mb-2 fill">trending_up</span>
                 </div>
-                <p class="font-body-md text-body-md text-on-surface-variant max-w-md">Diterapkan otomatis ke penjualan toko di seluruh platform. Perubahan tarif akan tercatat dalam riwayat audit.</p>
+                <p class="font-body-md text-body-md text-on-surface-variant max-w-md">{{ __('Diterapkan otomatis ke penjualan toko di seluruh platform. Perubahan tarif akan tercatat dalam riwayat audit.') }}</p>
                 <div class="flex flex-wrap gap-gutter mt-8">
                     <button id="btn-ubah-komisi" type="button" class="bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase px-8 py-4 tracking-widest rounded-lg hover:bg-tertiary-container transition-colors btn-premium inline-flex items-center gap-2" data-modal-open="modal-edit-komisi">
                         <span class="material-symbols-outlined text-[18px]">edit</span>
-                        Ubah Komisi
+                        {{ __('Ubah Komisi') }}
                     </button>
                     <a href="#riwayat-komisi" class="border border-muted-border text-on-surface font-label-sm text-label-sm uppercase px-8 py-4 tracking-widest rounded-lg hover:border-gold-accent hover:text-gold-accent transition-colors inline-flex items-center gap-2">
                         <span class="material-symbols-outlined text-[18px]">history</span>
-                        Lihat Riwayat
+                        {{ __('Lihat Riwayat') }}
                     </a>
                 </div>
             </div>
@@ -86,7 +86,7 @@
                     </svg>
                     <div class="absolute inset-0 flex flex-col items-center justify-center text-center rotate-0">
                         <span class="font-title-md text-title-md text-on-surface leading-none" id="gauge-value">{{ number_format($komisi, 0, ',', '.') }}%</span>
-                        <span class="font-label-sm text-[9px] text-on-surface-variant uppercase tracking-widest mt-1">dari skala<br />maks. 15%</span>
+                        <span class="font-label-sm text-[9px] text-on-surface-variant uppercase tracking-widest mt-1">{{ __('dari skala') }}<br />{{ __('maks. 15%') }}</span>
                     </div>
                 </div>
             </div>
@@ -94,30 +94,30 @@
     </section>
 
     <section>
-        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">Dampak Komisi Bulan Ini</h2>
+        <h2 class="font-title-md text-title-md mb-6 uppercase tracking-wider text-on-surface premium-heading">{{ __('Dampak Komisi Bulan Ini') }}</h2>
         <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Estimasi Komisi</span>
+                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">{{ __('Estimasi Komisi') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">Rp {{ number_format($stats['estimasi_komisi'], 0, ',', '.') }}</span>
                 <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-secondary">trending_{{ $stats['persen_komisi'] >= 0 ? 'up' : 'down' }}"></span>{{ $stats['persen_komisi'] >= 0 ? '+' : '' }}{{ $stats['persen_komisi'] }}% vs bulan lalu</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
             </div>
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Transaksi Berkomisi</span>
+                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">{{ __('Transaksi Berkomisi') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ number_format($stats['transaksi'], 0, ',', '.') }}</span>
                 <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-secondary">trending_{{ $stats['persen_transaksi'] >= 0 ? 'up' : 'down' }}"></span>{{ $stats['persen_transaksi'] >= 0 ? '+' : '' }}{{ $stats['persen_transaksi'] }}% vs bulan lalu</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
             </div>
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Toko Terdampak</span>
+                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">{{ __('Toko Terdampak') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['toko'] }}</span>
-                <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-on-surface-variant">storefront</span>aktif bulan ini</span>
+                <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-on-surface-variant">storefront</span>{{ __('aktif bulan ini') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">storefront</span>
             </div>
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">Perubahan Tarif</span>
+                <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">{{ __('Perubahan Tarif') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['perubahan'] }}×</span>
-                <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant">sepanjang masa</span>
+                <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant">{{ __('sepanjang masa') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">history</span>
             </div>
         </div>
@@ -126,18 +126,18 @@
     <section class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 md:p-8 card-premium">
         <div class="flex items-start justify-between gap-4 mb-6 flex-wrap">
             <div>
-                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Simulator Dampak Komisi</h2>
-                <p class="text-on-surface-variant font-body-md text-sm mt-1">Hitung pembagian pendapatan antara platform dan toko secara real-time.</p>
+                <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Simulator Dampak Komisi') }}</h2>
+                <p class="text-on-surface-variant font-body-md text-sm mt-1">{{ __('Hitung pembagian pendapatan antara platform dan toko secara real-time.') }}</p>
             </div>
             <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase tracking-wider border border-gold-accent/30">
                 <span class="material-symbols-outlined text-[14px]">bolt</span>
-                Real-time
+                {{ __('Real-time') }}
             </span>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-3" for="sim-sales">Estimasi Penjualan Toko / Bulan</label>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-3" for="sim-sales">{{ __('Estimasi Penjualan Toko / Bulan') }}</label>
                 <div class="relative">
                     <div class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none font-body-md">Rp</div>
                     <input type="number" id="sim-sales" min="0" step="1000000" value="50000000"
@@ -151,23 +151,23 @@
                 </div>
                 <p class="text-on-surface-variant font-body-md text-xs mt-4 flex items-start gap-2">
                     <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">info</span>
-                    Simulasi menggunakan tarif aktif dan belum termasuk pajak serta biaya payment gateway.
+                    {{ __('Simulasi menggunakan tarif aktif dan belum termasuk pajak serta biaya payment gateway.') }}
                 </p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
                 <div class="rounded-xl p-6 bg-gradient-to-br from-gold-accent/15 via-gold-accent/5 to-transparent border border-gold-accent/25">
-                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant block mb-2">Komisi Platform</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant block mb-2">{{ __('Komisi Platform') }}</span>
                     <span id="sim-commission" class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent block leading-tight">Rp 2.500.000</span>
-                    <span class="text-xs text-on-surface-variant mt-2 block">5% dari penjualan</span>
+                    <span class="text-xs text-on-surface-variant mt-2 block">{{ __('5% dari penjualan') }}</span>
                 </div>
                 <div class="rounded-xl p-6 bg-surface-container-low border border-muted-border">
-                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant block mb-2">Diterima Toko</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant block mb-2">{{ __('Diterima Toko') }}</span>
                     <span id="sim-store" class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface block leading-tight">Rp 47.500.000</span>
-                    <span class="text-xs text-on-surface-variant mt-2 block">95% dari penjualan</span>
+                    <span class="text-xs text-on-surface-variant mt-2 block">{{ __('95% dari penjualan') }}</span>
                 </div>
                 <div class="sm:col-span-2 rounded-xl border border-muted-border bg-surface-container-low px-5 py-4 flex items-center justify-between">
-                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Total Penjualan</span>
+                    <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Total Penjualan') }}</span>
                     <span id="sim-total" class="font-title-md text-title-md text-on-surface">Rp 50.000.000</span>
                 </div>
             </div>
@@ -175,7 +175,7 @@
     </section>
 
     <section id="riwayat-komisi" class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 md:p-8 card-premium scroll-mt-24">
-        <h2 class="font-title-md text-title-md mb-8 uppercase tracking-wider text-on-surface premium-heading">Riwayat Perubahan Tarif</h2>
+        <h2 class="font-title-md text-title-md mb-8 uppercase tracking-wider text-on-surface premium-heading">{{ __('Riwayat Perubahan Tarif') }}</h2>
         <ol class="relative border-l border-muted-border ml-3 space-y-6">
             @forelse ($riwayat as $item)
                 <li class="pl-8 relative">
@@ -184,12 +184,12 @@
                         <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant">{{ $item['tanggal']->translatedFormat('d M Y') }}</span>
                         @if ($item['nilai_lama'] && $item['nilai_baru'])
                             @if ((float) $item['nilai_baru'] > (float) $item['nilai_lama'])
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20">Naik</span>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20">{{ __('Naik') }}</span>
                             @elseif ((float) $item['nilai_baru'] < (float) $item['nilai_lama'])
-                                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[9px] font-bold uppercase border border-secondary/20">Turun</span>
+                                <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[9px] font-bold uppercase border border-secondary/20">{{ __('Turun') }}</span>
                             @endif
                         @else
-                            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">Inisial</span>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ __('Inisial') }}</span>
                         @endif
                     </div>
                     <div class="flex flex-wrap items-center gap-2 mb-1">
@@ -198,12 +198,12 @@
                             <span class="material-symbols-outlined text-[16px] text-gold-accent">east</span>
                         @endif
                         <span class="font-title-md text-title-md {{ $loop->first ? 'text-gradient-gold' : 'text-on-surface' }} font-bold">{{ ($item['nilai_baru'] ?? $item['nilai_lama'] ?? '—') }}%</span>
-                        <span class="text-on-surface-variant font-body-md text-sm">• oleh <span class="text-on-surface font-bold">{{ $item['oleh'] }}</span></span>
+                        <span class="text-on-surface-variant font-body-md text-sm">{{ __('• oleh') }} <span class="text-on-surface font-bold">{{ $item['oleh'] }}</span></span>
                     </div>
                     <p class="text-on-surface-variant font-body-md text-sm">{{ $item['deskripsi'] }}</p>
                 </li>
             @empty
-                <li class="pl-8 relative text-on-surface-variant text-sm italic">Belum ada riwayat perubahan tarif komisi.</li>
+                <li class="pl-8 relative text-on-surface-variant text-sm italic">{{ __('Belum ada riwayat perubahan tarif komisi.') }}</li>
             @endforelse
         </ol>
     </section>
@@ -213,8 +213,8 @@
         'id' => 'modal-edit-komisi',
         'dataModal' => true,
         'icon' => 'percent',
-        'title' => 'Perbarui Tarif Komisi',
-        'subtitle' => 'Berlaku untuk seluruh transaksi baru di semua toko.',
+        'title' => __('Perbarui Tarif Komisi'),
+        'subtitle' => __('Berlaku untuk seluruh transaksi baru di semua toko.'),
         'size' => 'lg',
         'zIndex' => 80,
         'close' => 'closeEditForm',
@@ -223,25 +223,25 @@
             @csrf
             @method('PUT')
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="commissionRate">Tarif Baru (%)</label>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="commissionRate">{{ __('Tarif Baru (%)') }}</label>
                 <div class="relative max-w-xs">
-                    <input class="w-full bg-transparent border border-muted-border p-4 font-headline-lg-mobile text-headline-lg-mobile focus:outline-none focus:border-gold-accent transition-colors placeholder-on-surface-variant/50" id="commissionRate" name="komisi_persen" max="15" min="0" oninput="updatePreview(this.value)" placeholder="misal 5.5" step="0.1" type="number" value="{{ $komisi }}" required />
+                    <input class="w-full bg-transparent border border-muted-border p-4 font-headline-lg-mobile text-headline-lg-mobile focus:outline-none focus:border-gold-accent transition-colors placeholder-on-surface-variant/50" id="commissionRate" name="komisi_persen" max="15" min="0" oninput="updatePreview(this.value)" placeholder="{{ __('misal 5.5') }}" step="0.1" type="number" value="{{ $komisi }}" required />
                     <div class="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant pointer-events-none font-title-md">%</div>
                 </div>
-                <p class="text-xs text-on-surface-variant mt-2">Batas aman internal: 0–15%.</p>
+                <p class="text-xs text-on-surface-variant mt-2">{{ __('Batas aman internal: 0–15%.') }}</p>
             </div>
             <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="updateNotes">Catatan Perubahan (Internal)</label>
-                <textarea class="w-full bg-transparent border border-muted-border p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="updateNotes" name="catatan" placeholder="Alasan perubahan ini..." rows="3"></textarea>
+                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="updateNotes">{{ __('Catatan Perubahan (Internal)') }}</label>
+                <textarea class="w-full bg-transparent border border-muted-border p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent transition-colors resize-none placeholder-on-surface-variant/50" id="updateNotes" name="catatan" placeholder="{{ __('Alasan perubahan ini...') }}" rows="3"></textarea>
             </div>
             <div class="bg-surface-container border border-gold-accent/20 p-container-margin flex flex-col sm:flex-row justify-between items-start sm:items-center gap-gutter rounded-lg">
-                <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Pratinjau</span><span class="font-body-md text-body-md">Dari penjualan Rp 1.000.000</span></div>
-                <div class="text-right"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">Pendapatan Platform</span><span class="font-title-md text-title-md text-gold-accent" id="preview-amount">Rp {{ number_format($komisi * 10000, 0, ',', '.') }}</span></div>
+                <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">{{ __('Pratinjau') }}</span><span class="font-body-md text-body-md">{{ __('Dari penjualan Rp 1.000.000') }}</span></div>
+                <div class="text-right"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">{{ __('Pendapatan Platform') }}</span><span class="font-title-md text-title-md text-gold-accent" id="preview-amount">Rp {{ number_format($komisi * 10000, 0, ',', '.') }}</span></div>
             </div>
         @slot('footer')
             <div class="flex gap-4">
-                <button class="btn-modal btn-modal-ghost flex-1" onclick="closeEditForm();" type="button">Batal</button>
-                <button class="btn-modal btn-modal-primary flex-1" type="submit" form="komisi-form">Tinjau Perubahan</button>
+                <button class="btn-modal btn-modal-ghost flex-1" onclick="closeEditForm();" type="button">{{ __('Batal') }}</button>
+                <button class="btn-modal btn-modal-primary flex-1" type="submit" form="komisi-form">{{ __('Tinjau Perubahan') }}</button>
             </div>
         @endslot
         </form>
@@ -315,14 +315,14 @@
 ])
     <div class="p-6 space-y-4">
         <div class="text-center">
-            <h3 class="font-display-lg text-headline-lg-mobile md:text-headline-lg">Konfirmasi Perubahan</h3>
-            <p class="font-body-md text-body-md text-on-surface-variant mt-2">Anda akan mengubah tarif komisi global platform. Perubahan ini berlaku untuk semua transaksi selanjutnya dan akan tercatat dalam audit trail.</p>
+            <h3 class="font-display-lg text-headline-lg-mobile md:text-headline-lg">{{ __('Konfirmasi Perubahan') }}</h3>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-2">{{ __('Anda akan mengubah tarif komisi global platform. Perubahan ini berlaku untuk semua transaksi selanjutnya dan akan tercatat dalam audit trail.') }}</p>
         </div>
     </div>
     @slot('footer')
         <div class="flex flex-col gap-4">
-            <button type="button" class="btn-modal btn-modal-primary w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden'); document.getElementById('komisi-form').submit();">Konfirmasi &amp; Terapkan</button>
-            <button type="button" class="btn-modal btn-modal-ghost w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden')">Batal</button>
+            <button type="button" class="btn-modal btn-modal-primary w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden'); document.getElementById('komisi-form').submit();">{{ __('Konfirmasi & Terapkan') }}</button>
+            <button type="button" class="btn-modal btn-modal-ghost w-full" onclick="document.getElementById('confirm-dialog').classList.add('hidden')">{{ __('Batal') }}</button>
         </div>
     @endslot
 @endcomponent

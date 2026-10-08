@@ -147,7 +147,7 @@
 </head>
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col lg:pl-72">
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-    <a href="{{ route('customer.home') }}" aria-label="Home" class="p-2 -ml-2 hover:opacity-70 flex"><span class="material-symbols-outlined">home</span></a>
+    <a href="{{ route('customer.home') }}" aria-label="{{ __('Home') }}" class="p-2 -ml-2 hover:opacity-70 flex"><span class="material-symbols-outlined">home</span></a>
     <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[220px] text-center">{{ __('Selesai') }}</h1>
     <div class="w-10"></div>
 </header>
@@ -357,7 +357,7 @@
                         <span class="text-emerald-600 font-medium">Rp {{ number_format((float)$payment->jumlah_saldo, 0,',','.') }}</span>
                     </div>
                     <div class="flex justify-between text-sm">
-                        <span class="text-on-surface-variant">{{ __('Transfer (') . ($payment->paymentMethod?->nama_metode ?? __('Metode Kedua')) . ')' }}</span>
+                        <span class="text-on-surface-variant">{{ __('Transfer (:ph1)', ['ph1' => $payment->paymentMethod?->nama_metode ?? __('Metode Kedua')]) }}</span>
                         <span class="text-on-surface">Rp {{ number_format((float)$payment->sisa_transfer, 0,',','.') }}</span>
                     </div>
                     @endif
@@ -446,7 +446,7 @@
                 @endif
                 @if ((float) $payment->jumlah_saldo > 0)
                 <div class="co-bb-row"><span>{{ __('Dibayar Saldo') }}</span><span class="text-emerald-600">Rp {{ number_format((float)$payment->jumlah_saldo, 0, ',', '.') }}</span></div>
-                <div class="co-bb-row"><span>{{ __('Transfer (') . ($payment->paymentMethod?->nama_metode ?? __('Metode Kedua')) . ')' }}</span><span>Rp {{ number_format((float)$payment->sisa_transfer, 0, ',', '.') }}</span></div>
+                <div class="co-bb-row"><span>{{ __('Transfer (:ph1)', ['ph1' => $payment->paymentMethod?->nama_metode ?? __('Metode Kedua')]) }}</span><span>Rp {{ number_format((float)$payment->sisa_transfer, 0, ',', '.') }}</span></div>
                 @endif
                 <div class="co-bb-row total"><span>{{ __('Total Dibayar') }}</span><span>Rp {{ number_format((float)$payment->jumlah, 0, ',', '.') }}</span></div>
             </div>

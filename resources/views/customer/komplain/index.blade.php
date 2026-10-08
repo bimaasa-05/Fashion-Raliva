@@ -660,7 +660,7 @@ f<!DOCTYPE html>
                 headers: { 'Accept': 'application/json', 'X-Requested-With': 'XMLHttpRequest' },
                 signal: controller.signal
             });
-            if (!resp.ok) throw new Error('Gagal memuat pesan');
+            if (!resp.ok) throw new Error('{{ __('Gagal memuat pesan') }}');
             const messages = await resp.json();
             const same = messages.length === chatMessages.length &&
                 messages.every(function (m, i) {
@@ -1159,7 +1159,7 @@ f<!DOCTYPE html>
         const panel = document.getElementById(panelId);
         if (!panel || panel.dataset.rendered) return;
         panel.dataset.inputId = inputId;
-        panel.innerHTML = '<div class="grid grid-cols-8 gap-1">' + CHAT_EMOJI.map(function (e) {
+        panel.innerHTML = '<div class="grid grid-cols-6 sm:grid-cols-8 gap-1">' + CHAT_EMOJI.map(function (e) {
             return '<button type="button" data-emoji="' + e + '" onclick="insertEmojiTo(this)" class="w-9 h-9 flex items-center justify-center text-[20px] leading-none rounded-lg hover:bg-surface-container-low transition-colors cursor-pointer">' + e + '</button>';
         }).join('') + '</div>';
         panel.dataset.rendered = '1';

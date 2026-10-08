@@ -73,7 +73,7 @@ class AddressController extends Controller
         Address::create($validated);
 
         return $this->redirectBack($request, 'customer.address.index')->with('toast', [
-            'message' => 'Alamat berhasil ditambahkan.',
+            'message' => __('Alamat berhasil ditambahkan.'),
             'icon' => 'task_alt',
         ]);
     }
@@ -132,7 +132,7 @@ class AddressController extends Controller
         $address->update($validated);
 
         return $this->redirectBack($request, 'customer.address.index')->with('toast', [
-            'message' => 'Alamat berhasil diperbarui.',
+            'message' => __('Alamat berhasil diperbarui.'),
             'icon' => 'task_alt',
         ]);
     }
@@ -147,7 +147,7 @@ class AddressController extends Controller
         $address->delete();
 
         return back()->with('toast', [
-            'message' => 'Alamat berhasil dihapus.',
+            'message' => __('Alamat berhasil dihapus.'),
             'icon' => 'delete',
         ]);
     }
@@ -163,7 +163,7 @@ class AddressController extends Controller
         $address->update(['is_default' => true]);
 
         return back()->with('toast', [
-            'message' => 'Alamat default berhasil diperbarui.',
+            'message' => __('Alamat default berhasil diperbarui.'),
             'icon' => 'task_alt',
         ]);
     }
@@ -174,7 +174,7 @@ class AddressController extends Controller
     protected function authorizeAddress(Address $address)
     {
         if ($address->user_id !== Auth::id()) {
-            abort(403, 'Alamat tidak ditemukan.');
+            abort(403, __('Alamat tidak ditemukan.'));
         }
     }
 

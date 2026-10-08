@@ -1,11 +1,11 @@
 ﻿@extends('layouts.admin')
 
-@section('title', 'Pengiriman')
+@section('title', __('Pengiriman'))
 
-@section('header-title', 'Pengiriman')
-@section('header-badge', 'Kelola')
+@section('header-title', __('Pengiriman'))
+@section('header-badge', __('Kelola'))
 
-@section('header-subtitle', 'Kelola pengiriman kurir dan pesanan ambil-di-toko yang siap diambil pelanggan.')
+@section('header-subtitle', __('Kelola pengiriman kurir dan pesanan ambil-di-toko yang siap diambil pelanggan.'))
 
 @section('content')
 @include('partials.flash-toast')
@@ -14,13 +14,13 @@
     <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <div>
-                <h2 class="font-title-md text-title-md text-on-surface premium-heading">Kelola Pengiriman &amp; Penyerahan</h2>
-                <p class="font-body-md text-xs text-on-surface-variant mt-1">Input resi kurir untuk pesanan diantar atau konfirmasi serah terima barang untuk pesanan ambil di toko.</p>
+                <h2 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Kelola Pengiriman & Penyerahan') }}</h2>
+                <p class="font-body-md text-xs text-on-surface-variant mt-1">{{ __('Input resi kurir untuk pesanan diantar atau konfirmasi serah terima barang untuk pesanan ambil di toko.') }}</p>
             </div>
             <div class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 overflow-x-auto shrink-0">
-                <button type="button" data-ship-tab="semua" class="ship-tab px-4 py-2 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">Semua</button>
-                <button type="button" data-ship-tab="diantar" class="ship-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Diantar (Kurir)</button>
-                <button type="button" data-ship-tab="ambil" class="ship-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">Diambil di Toko</button>
+                <button type="button" data-ship-tab="semua" class="ship-tab px-4 py-2 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">{{ __('Semua') }}</button>
+                <button type="button" data-ship-tab="diantar" class="ship-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">{{ __('Diantar (Kurir)') }}</button>
+                <button type="button" data-ship-tab="ambil" class="ship-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">{{ __('Diambil di Toko') }}</button>
             </div>
         </div>
 
@@ -35,9 +35,9 @@
         <div class="space-y-4" data-ship-queue>
             <div class="flex items-center gap-2 pb-2 border-b border-muted-border">
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">pending_actions</span>
-                <h3 class="font-title-md text-sm font-bold uppercase tracking-wider text-on-surface">Antrian Penyerahan</h3>
-                <span class="px-2 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold">{{ $antrian->count() }} Paket</span>
-                <span class="text-[11px] text-on-surface-variant">• Diantar = input resi kurir • Ambil = konfirmasi diambil</span>
+                <h3 class="font-title-md text-sm font-bold uppercase tracking-wider text-on-surface">{{ __('Antrian Penyerahan') }}</h3>
+                <span class="px-2 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold">{{ $antrian->count() }} {{ __('Paket') }}</span>
+                <span class="text-[11px] text-on-surface-variant">{{ __('Diantar = input resi kurir • Ambil = konfirmasi diambil') }}</span>
             </div>
             @forelse ($antrian as $item)
                 @php $pesanan = $item['order']; @endphp
@@ -46,19 +46,19 @@
                     <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                         <div>
                             <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-mono text-[10px] font-bold">AMBIL</span>
+                                <span class="px-2 py-0.5 rounded bg-surface-container-high text-on-surface-variant font-mono text-[10px] font-bold">{{ __('AMBIL') }}</span>
                                 <p class="font-mono text-sm text-on-surface-variant">{{ $pesanan->nomor_order }} &#8226; {{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</p>
                             </div>
                             <p class="font-title-md text-title-md text-on-surface mt-1">{{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->implode(', '), 60) }}</p>
                             <p class="font-body-md text-sm text-on-surface-variant mt-1">
                                 {{ $pesanan->checkout?->user?->nama_lengkap ?? $pesanan->checkout?->nama_penerima ?? '-' }}
                                 {{ $pesanan->checkout?->nomor_telepon ? '• '.$pesanan->checkout->nomor_telepon : '' }}
-                                &#8226; {{ $pesanan->checkout?->payment?->payment_account_id === null ? 'Tunai' : 'Transfer' }}
+                                &#8226; {{ $pesanan->checkout?->payment?->payment_account_id === null ? __('Tunai') : __('Transfer') }}
                                 &#8226; Total: Rp {{ number_format((float) $pesanan->grand_total, 0, ',', '.') }}
                             </p>
                         </div>
                         <div class="flex flex-col sm:flex-row gap-3 shrink-0 items-end">
-                            <button type="button" data-modal-open="modal-selesai-ambil-{{ $pesanan->order_id }}" class="px-5 py-2.5 bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-xs uppercase tracking-widest rounded hover:bg-secondary-container/30 transition-colors btn-premium whitespace-nowrap">Selesai (Diambil)</button>
+                            <button type="button" data-modal-open="modal-selesai-ambil-{{ $pesanan->order_id }}" class="px-5 py-2.5 bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-xs uppercase tracking-widest rounded hover:bg-secondary-container/30 transition-colors btn-premium whitespace-nowrap">{{ __('Selesai (Diambil)') }}</button>
                         </div>
                     </div>
                     @else
@@ -67,28 +67,31 @@
                         <div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <span class="px-2 py-0.5 rounded bg-secondary-container/20 text-secondary font-mono text-[10px] font-bold">DIANTAR</span>
+                                    <span class="px-2 py-0.5 rounded bg-secondary-container/20 text-secondary font-mono text-[10px] font-bold">{{ __('DIANTAR') }}</span>
                                     <p class="font-mono text-sm text-on-surface-variant">{{ $pesanan->nomor_order }} &#8226; {{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }}</p>
                                 </div>
                                 <p class="font-title-md text-title-md text-on-surface mt-1">{{ \Illuminate\Support\Str::limit($pesanan->items->pluck('nama_produk_snapshot')->implode(', '), 60) }}</p>
-                                <p class="font-body-md text-sm text-on-surface-variant mt-1">Penerima: {{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }} {{ $pesanan->checkout?->nomor_telepon ? '• '.$pesanan->checkout->nomor_telepon : '' }} &#8226; Ongkir: Rp {{ number_format((float) $pesanan->total_ongkir, 0, ',', '.') }}</p>
+                                <p class="font-body-md text-sm text-on-surface-variant mt-1">{{ __('Penerima:') }} {{ $pesanan->checkout?->nama_penerima ?? $pesanan->checkout?->user?->nama_lengkap ?? '-' }} {{ $pesanan->checkout?->nomor_telepon ? '• '.$pesanan->checkout->nomor_telepon : '' }} &#8226; {{ __('Ongkir') }}: Rp {{ number_format((float) $pesanan->total_ongkir, 0, ',', '.') }}</p>
                             </div>
                             <div class="flex flex-col sm:flex-row gap-2.5 shrink-0">
                                 @php $kurirAktif = $kurirPerToko[$pesanan->store_id] ?? $couriers->pluck('courier_id')->all(); @endphp
                                 <select name="courier_id" required data-kurir-select class="raliva-select text-xs">
-                                    <option value="">Pilih Kurir</option>
+                                    <option value="">{{ __('Pilih Kurir') }}</option>
                                     @foreach ($couriers->whereIn('courier_id', $kurirAktif) as $courier)
                                         <option value="{{ $courier->courier_id }}">{{ $courier->nama_kurir }}</option>
                                     @endforeach
                                 </select>
                                 <select name="shipping_service_id" data-layanan-select class="raliva-select text-xs">
-                                    <option value="">Layanan (opsional)</option>
+                                    <option value="">{{ __('Layanan (opsional)') }}</option>
                                     @foreach ($couriers as $courier)
                                         @foreach ($courier->services as $service)
-                                            <option value="{{ $service->shipping_service_id }}" data-courier-id="{{ $courier->courier_id }}">{{ $courier->nama_kurir }} {{ $service->nama_layanan }} (~{{ $service->estimasi_hari }} hari)</option>
+                                            <option value="{{ $service->shipping_service_id }}" data-courier-id="{{ $courier->courier_id }}">{{ $courier->nama_kurir }} {{ $service->nama_layanan }} (~{{ $service->estimasi_hari }} {{ __('hari') }})</option>
                                         @endforeach
                                     @endforeach
                                 </select>
+                                @if ($couriers->flatMap(fn ($c) => $c->services)->isEmpty())
+                                    <p class="text-xs text-error w-full">Belum ada layanan kurir — tambah dulu di menu Metode Pengiriman.</p>
+                                @endif
                                 <input required name="nomor_resi" minlength="4" maxlength="50" class="raliva-input w-full sm:w-44 text-xs" type="text" placeholder="Masukkan No. Resi" />
                                 <input name="estimasi_tiba" type="date" min="{{ date('Y-m-d') }}" class="raliva-input w-full sm:w-40 text-xs" title="Estimasi tiba (opsional)" />
                                 <button type="button" data-modal-open="modal-confirm-resi-{{ $pesanan->order_id }}" class="px-5 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-xs uppercase tracking-widest rounded hover:bg-black transition-colors btn-premium whitespace-nowrap">Simpan Resi</button>
@@ -98,23 +101,23 @@
                     @endif
                 </div>
             @empty
-                <p class="text-center text-on-surface-variant font-body-md text-sm py-4">Tidak ada pesanan menunggu penyerahan.</p>
+                <p class="text-center text-on-surface-variant font-body-md text-sm py-4">{{ __('Tidak ada pesanan menunggu penyerahan.') }}</p>
             @endforelse
-            <p class="text-[11px] text-on-surface-variant" data-ship-empty-hint hidden>Tidak ada paket pada filter ini.</p>
+            <p class="text-[11px] text-on-surface-variant" data-ship-empty-hint hidden>{{ __('Tidak ada paket pada filter ini.') }}</p>
         </div>
     </div>
 
     <section data-ship-type="diantar" class="space-y-gutter">
-        <h2 class="font-title-md text-title-md text-on-surface premium-heading">Dalam Pengiriman &amp; Riwayat</h2>
+        <h2 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Dalam Pengiriman & Riwayat') }}</h2>
         <div class="overflow-x-auto hidden md:block bg-surface-container-lowest border border-muted-border rounded-lg card-premium">
             <table class="w-full min-w-[850px] premium-table">
                 <thead>
                     <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                        <th class="p-4 text-left">Pesanan</th>
-                        <th class="p-4 text-left">Kurir / Layanan</th>
-                        <th class="p-4 text-left">Resi</th>
-                        <th class="p-4 text-center">Status</th>
-                        <th class="p-4 text-right">Aksi</th>
+                        <th class="p-4 text-left">{{ __('Pesanan') }}</th>
+                        <th class="p-4 text-left">{{ __('Kurir / Layanan') }}</th>
+                        <th class="p-4 text-left">{{ __('Resi') }}</th>
+                        <th class="p-4 text-center">{{ __('Status') }}</th>
+                        <th class="p-4 text-right">{{ __('Aksi') }}</th>
                     </tr>
                 </thead>
                 <tbody class="font-body-md text-sm">
@@ -143,12 +146,12 @@
                             <td class="p-4 text-right">
                                 <div class="flex justify-end gap-1.5 flex-wrap">
                                     @if (in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true) && $shipment->order?->status === \App\Models\Order::STATUS_SIAP_KIRIM)
-                                        <button type="button" data-modal-open="modal-edit-resi-{{ $shipment->shipment_id }}" class="px-3 py-1.5 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">Edit Resi</button>
+                                        <button type="button" data-modal-open="modal-edit-resi-{{ $shipment->shipment_id }}" class="px-3 py-1.5 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">{{ __('Edit Resi') }}</button>
                                     @endif
                                     @if (in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true) && $shipment->nomor_resi)
-                                        <button type="button" data-modal-open="modal-kirim-{{ $shipment->shipment_id }}" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Tandai Dikirim</button>
+                                        <button type="button" data-modal-open="modal-kirim-{{ $shipment->shipment_id }}" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">{{ __('Tandai Dikirim') }}</button>
                                     @elseif ($shipment->status === \App\Models\Shipment::STATUS_DIKIRIM && ! $shipment->nomor_resi)
-                                        <span class="text-error text-[10px] uppercase">Resi belum diisi</span>
+                                        <span class="text-error text-[10px] uppercase">{{ __('Resi belum diisi') }}</span>
                                     @elseif (! in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true))
                                         <span class="text-on-surface-variant text-xs uppercase">&mdash;</span>
                                     @endif
@@ -156,7 +159,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="py-12 text-center text-on-surface-variant">Belum ada data pengiriman.</td></tr>
+                        <tr><td colspan="5" class="py-12 text-center text-on-surface-variant">{{ __('Belum ada data pengiriman.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -183,29 +186,29 @@
                     </div>
                     <div class="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-muted-border">
                         <div>
-                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Kurir / Layanan</p>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Kurir / Layanan') }}</p>
                             <p class="text-sm text-on-surface mt-0.5">{{ $shipment->courier?->nama_kurir ?? '-' }} <span class="block text-xs text-on-surface-variant">{{ $shipment->shippingService?->nama_layanan ?? '-' }}</span></p>
                         </div>
                         <div>
-                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Resi</p>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Resi') }}</p>
                             <p class="font-mono text-sm text-on-surface mt-0.5">{{ $shipment->nomor_resi ?? '-' }}</p>
                         </div>
                     </div>
                     <div class="mt-3 pt-3 border-t border-muted-border flex justify-end gap-1.5 flex-wrap">
                         @if (in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true) && $shipment->order?->status === \App\Models\Order::STATUS_SIAP_KIRIM)
-                            <button type="button" data-modal-open="modal-edit-resi-{{ $shipment->shipment_id }}" class="px-3 py-1.5 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">Edit Resi</button>
+                            <button type="button" data-modal-open="modal-edit-resi-{{ $shipment->shipment_id }}" class="px-3 py-1.5 border border-gold-accent/40 text-gold-accent font-label-sm text-[10px] uppercase rounded hover:bg-gold-accent/10 transition-colors">{{ __('Edit Resi') }}</button>
                         @endif
                         @if (in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true) && $shipment->nomor_resi)
-                            <button type="button" data-modal-open="modal-kirim-{{ $shipment->shipment_id }}" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">Tandai Dikirim</button>
+                            <button type="button" data-modal-open="modal-kirim-{{ $shipment->shipment_id }}" class="px-3 py-1.5 bg-deep-onyx text-on-primary font-label-sm text-[10px] uppercase rounded hover:bg-black transition-colors btn-premium">{{ __('Tandai Dikirim') }}</button>
                         @elseif ($shipment->status === \App\Models\Shipment::STATUS_DIKIRIM && ! $shipment->nomor_resi)
-                            <span class="text-error text-[10px] uppercase">Resi belum diisi</span>
+                            <span class="text-error text-[10px] uppercase">{{ __('Resi belum diisi') }}</span>
                         @elseif (! in_array($shipment->status, [\App\Models\Shipment::STATUS_PENDING, \App\Models\Shipment::STATUS_DIPROSES], true))
                             <span class="text-on-surface-variant text-xs uppercase">&mdash;</span>
                         @endif
                     </div>
                 </article>
             @empty
-                <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada data pengiriman.</p>
+                <p class="text-on-surface-variant text-sm py-6 text-center">{{ __('Belum ada data pengiriman.') }}</p>
             @endforelse
         </div>
     </section>
@@ -218,11 +221,11 @@
             <div class="absolute inset-0 bg-black/50" data-modal-close></div>
             <form method="POST" action="{{ route('admin.pengiriman.resi', $shipment->order_id) }}" class="relative mx-auto w-[calc(100%-2rem)] max-w-lg bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl p-6 max-h-[85vh] overflow-y-auto">
                 @csrf
-                <h3 class="font-title-md text-title-md text-on-surface premium-heading">Edit Resi</h3>
+                <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Edit Resi') }}</h3>
                 <p class="text-on-surface-variant font-mono text-xs mt-1">{{ $shipment->order?->nomor_order }}</p>
                 <div class="space-y-4 mt-5">
                     <div>
-                        <label class="block raliva-label mb-2">Kurir *</label>
+                        <label class="block raliva-label mb-2">{{ __('Kurir') }} *</label>
                         @php $kurirAktifEdit = $kurirPerToko[$shipment->order?->store_id] ?? $couriers->pluck('courier_id')->all(); @endphp
                         <select name="courier_id" required class="raliva-select">
                             @foreach ($couriers->whereIn('courier_id', $kurirAktifEdit) as $courier)
@@ -231,9 +234,9 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block raliva-label mb-2">Layanan (opsional)</label>
+                        <label class="block raliva-label mb-2">{{ __('Layanan (opsional)') }}</label>
                         <select name="shipping_service_id" class="raliva-select">
-                            <option value="">— Tanpa layanan khusus —</option>
+                            <option value="">{{ __('— Tanpa layanan khusus —') }}</option>
                             @foreach ($couriers as $courier)
                                 @foreach ($courier->services as $service)
                                     <option value="{{ $service->shipping_service_id }}" @selected((int) $shipment->shipping_service_id === (int) $service->shipping_service_id)>{{ $courier->nama_kurir }} {{ $service->nama_layanan }}</option>
@@ -242,29 +245,29 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block raliva-label mb-2">Nomor Resi *</label>
+                        <label class="block raliva-label mb-2">{{ __('Nomor Resi') }} *</label>
                         <input name="nomor_resi" required minlength="4" maxlength="50" value="{{ $shipment->nomor_resi }}" class="raliva-input" type="text" />
                     </div>
                     <div>
-                        <label class="block raliva-label mb-2">Estimasi Tiba (opsional)</label>
+                        <label class="block raliva-label mb-2">{{ __('Estimasi Tiba (opsional)') }}</label>
                         <input name="estimasi_tiba" type="date" min="{{ date('Y-m-d') }}" value="{{ $shipment->estimasi_tiba?->format('Y-m-d') }}" class="raliva-input" />
                     </div>
                 </div>
                 <div class="flex gap-3 mt-6">
-                    <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">Batal</button>
-                    <button type="button" data-modal-open="modal-confirm-edit-resi-{{ $shipment->shipment_id }}" class="flex-1 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded-lg btn-premium">Simpan Resi</button>
+                    <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">{{ __('Batal') }}</button>
+                    <button type="button" data-modal-open="modal-confirm-edit-resi-{{ $shipment->shipment_id }}" class="flex-1 py-2.5 bg-deep-onyx text-on-primary text-xs font-semibold rounded-lg btn-premium">{{ __('Simpan Resi') }}</button>
                 </div>
             </form>
         </div>
         <div id="modal-confirm-edit-resi-{{ $shipment->shipment_id }}" data-modal class="fixed inset-0 z-[80] hidden items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/50" data-modal-close></div>
             <div class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
-                <p class="raliva-label text-gold-accent">Simpan Resi</p>
+                <p class="raliva-label text-gold-accent">{{ __('Simpan Resi') }}</p>
                 <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $shipment->order?->nomor_order }}</h3>
-                <p class="text-sm text-on-surface-variant mt-3">Simpan perubahan resi pengiriman ini?</p>
+                <p class="text-sm text-on-surface-variant mt-3">{{ __('Simpan perubahan resi pengiriman ini?') }}</p>
                 <div class="flex gap-3 mt-6">
-                    <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
-                    <button type="button" onclick="document.getElementById('modal-edit-resi-{{ $shipment->shipment_id }}').querySelector('form').requestSubmit()" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded btn-premium">Ya, Simpan</button>
+                    <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">{{ __('Batal') }}</button>
+                    <button type="button" onclick="document.getElementById('modal-edit-resi-{{ $shipment->shipment_id }}').querySelector('form').requestSubmit()" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded btn-premium">{{ __('Ya, Simpan') }}</button>
                 </div>
             </div>
         </div>
@@ -278,12 +281,12 @@
             <div class="absolute inset-0 bg-black/50" data-modal-close></div>
             <form method="POST" action="{{ route('admin.pengiriman.kirim', $shipment->shipment_id) }}" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
                 @csrf
-                <p class="raliva-label text-gold-accent">Tandai Dikirim</p>
+                <p class="raliva-label text-gold-accent">{{ __('Tandai Dikirim') }}</p>
                 <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $shipment->order?->nomor_order }}</h3>
-                <p class="text-sm text-on-surface-variant mt-3">Tandai sudah dikirim dengan resi <span class="font-mono font-bold text-on-surface">{{ $shipment->nomor_resi }}</span>?</p>
+                <p class="text-sm text-on-surface-variant mt-3">{{ __('Tandai sudah dikirim dengan resi') }} <span class="font-mono font-bold text-on-surface">{{ $shipment->nomor_resi }}</span>?</p>
                 <div class="flex gap-3 mt-6">
-                    <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
-                    <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded btn-premium">Ya, Kirim</button>
+                    <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">{{ __('Batal') }}</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded btn-premium">{{ __('Ya, Kirim') }}</button>
                 </div>
             </form>
         </div>
@@ -293,18 +296,18 @@
 {{-- Modal antrean penyerahan (di luar kontainer antrean) --}}
 @foreach ($antrian as $item)
     @php $pesanan = $item['order']; @endphp
-    @if ($item['tipe'] === 'offline')
+    @if ($item['tipe'] === 'ambil')
         <div id="modal-selesai-ambil-{{ $pesanan->order_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/50" data-modal-close></div>
             <form method="POST" action="{{ route('admin.pesanan.selesai', $pesanan->order_id) }}" class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
                 @csrf
-                <p class="raliva-label text-secondary">Selesai — Diambil</p>
+                <p class="raliva-label text-secondary">{{ __('Selesai — Diambil') }}</p>
                 <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $pesanan->nomor_order }}</h3>
-                <p class="text-sm text-on-surface-variant mt-3">Konfirmasi pesanan selesai & diambil customer? Dana penjualan masuk ke saldo toko.</p>
-                <input name="catatan" maxlength="500" placeholder="Catatan pengambilan (opsional)" class="raliva-input w-full text-sm mt-4" type="text" />
+                <p class="text-sm text-on-surface-variant mt-3">{{ __('Konfirmasi pesanan selesai & diambil customer? Dana penjualan masuk ke saldo toko.') }}</p>
+                <input name="catatan" maxlength="500" placeholder="{{ __('Catatan pengambilan (opsional)') }}" class="raliva-input w-full text-sm mt-4" type="text" />
                 <div class="flex gap-3 mt-6">
-                    <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
-                    <button type="submit" class="flex-1 py-2.5 bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-secondary-container/30 transition-colors btn-premium">Ya, Selesai</button>
+                    <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">{{ __('Batal') }}</button>
+                    <button type="submit" class="flex-1 py-2.5 bg-secondary-container/20 text-secondary border border-secondary/20 font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-secondary-container/30 transition-colors btn-premium">{{ __('Ya, Selesai') }}</button>
                 </div>
             </form>
         </div>
@@ -312,12 +315,12 @@
         <div id="modal-confirm-resi-{{ $pesanan->order_id }}" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
             <div class="absolute inset-0 bg-black/50" data-modal-close></div>
             <div class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
-                <p class="raliva-label text-gold-accent">Simpan Resi</p>
+                <p class="raliva-label text-gold-accent">{{ __('Simpan Resi') }}</p>
                 <h3 class="font-title-md text-title-md text-on-surface premium-heading mt-1">{{ $pesanan->nomor_order }}</h3>
-                <p class="text-sm text-on-surface-variant mt-3">Simpan resi pengiriman pesanan ini?</p>
+                <p class="text-sm text-on-surface-variant mt-3">{{ __('Simpan resi pengiriman pesanan ini?') }}</p>
                 <div class="flex gap-3 mt-6">
-                    <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">Batal</button>
-                    <button type="button" onclick="document.getElementById('form-resi-{{ $pesanan->order_id }}').requestSubmit()" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded btn-premium">Ya, Simpan</button>
+                    <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">{{ __('Batal') }}</button>
+                    <button type="button" onclick="document.getElementById('form-resi-{{ $pesanan->order_id }}').requestSubmit()" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded btn-premium">{{ __('Ya, Simpan') }}</button>
                 </div>
             </div>
         </div>

@@ -1,10 +1,10 @@
 @extends('layouts.superadmin')
 
-@section('title', 'Data Supplier')
+@section('title', __('Data Supplier'))
 
-@section('header-title', 'Data Supplier')
-@section('header-badge', 'Pantau')
-@section('header-subtitle', 'Pantau data supplier pemasok bahan baku di platform.')
+@section('header-title', __('Data Supplier'))
+@section('header-badge', __('Pantau'))
+@section('header-subtitle', __('Pantau data supplier pemasok bahan baku di platform.'))
 
 @php
     $statusBadgeMap = [
@@ -22,20 +22,20 @@
     </span>
     <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
         <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
-        Data supplier diperbarui real-time
+        {{ __('Data supplier diperbarui real-time') }}
     </span>
 </div>
 <section data-table-scope data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium">
     <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">Data Supplier Platform</h2>
+        <h2 class="font-title-md text-title-md uppercase tracking-wider text-on-surface premium-heading">{{ __('Data Supplier Platform') }}</h2>
         <div class="flex items-center gap-3 flex-wrap">
             <button type="button" data-filter-toggle class="md:hidden inline-flex items-center justify-center gap-2 px-4 py-2.5 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors">
                 <span class="material-symbols-outlined text-[18px]">tune</span>
-                Filter
+                {{ __('Filter') }}
                 <span class="material-symbols-outlined text-[18px] transition-transform duration-300" data-filter-chevron>expand_more</span>
             </button>
             <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">
-                <span class="material-symbols-outlined text-[14px]">visibility</span> Mode Pantau
+                <span class="material-symbols-outlined text-[14px]">visibility</span> {{ __('Mode Pantau') }}
             </span>
         </div>
     </div>
@@ -45,7 +45,7 @@
         <div class="mb-4 bg-surface-container-low border border-muted-border rounded-lg p-4 flex flex-col lg:flex-row lg:items-center gap-3">
             <div class="flex items-center gap-2 shrink-0">
                 <span class="material-symbols-outlined text-[18px] text-gold-accent">tune</span>
-                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Filter Status</span>
+                <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Filter Status') }}</span>
             </div>
             <div class="hidden lg:block w-px h-6 bg-muted-border"></div>
             <div id="chip-group" class="flex flex-wrap gap-2">
@@ -66,8 +66,8 @@
             <form method="GET" action="{{ route('superadmin.supplier') }}" class="relative flex-1">
                 <input type="hidden" name="status" value="{{ $activeStatus }}">
                 <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] pointer-events-none">search</span>
-                <input name="q" value="{{ $q }}" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="Cari nama supplier, kontak, kota, jenis, atau bahan..." />
-                <a href="{{ route('superadmin.supplier', ['status' => $activeStatus]) }}" aria-label="Hapus pencarian" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent transition-opacity {{ $q ? 'opacity-100' : 'opacity-0 pointer-events-none' }}">
+                <input name="q" value="{{ $q }}" class="w-full bg-surface-container-low border border-muted-border rounded-lg pl-11 pr-10 py-3 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors placeholder-on-surface-variant/50" type="text" placeholder="{{ __('Cari nama supplier, kontak, kota, jenis, atau bahan...') }}" />
+                <a href="{{ route('superadmin.supplier', ['status' => $activeStatus]) }}" aria-label="{{ __('Hapus pencarian') }}" class="absolute right-3 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-gold-accent transition-opacity {{ $q ? 'opacity-100' : 'opacity-0 pointer-events-none' }}">
                     <span class="material-symbols-outlined text-[20px]">close</span>
                 </a>
             </form>
@@ -83,13 +83,13 @@
         <table class="w-full min-w-[1080px] premium-table">
             <thead>
                 <tr class="border-b border-muted-border bg-surface-container-low text-on-surface-variant font-label-sm text-label-sm uppercase">
-                    <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">No.</th>
-                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Supplier</th>
-                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Kontak</th>
-                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Kota</th>
-                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">Bahan</th>
-                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Status</th>
-                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">Aksi</th>
+                    <th class="px-4 py-4 text-center w-12 text-[10px] font-semibold tracking-widest">{{ __('No.') }}</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Supplier') }}</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Kontak') }}</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Kota') }}</th>
+                    <th class="px-4 py-4 text-left text-[10px] font-semibold tracking-widest">{{ __('Bahan') }}</th>
+                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Status') }}</th>
+                    <th class="px-4 py-4 text-center text-[10px] font-semibold tracking-widest">{{ __('Aksi') }}</th>
                 </tr>
             </thead>
             <tbody class="font-body-md text-sm">
@@ -137,7 +137,7 @@
                                 data-status="{{ $supplier->status }}"
                                 data-bahan-json="{{ $bahanJson }}"
                                 data-modal-open="detail-supplier" class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-deep-onyx text-on-primary rounded-full text-[11px] font-bold uppercase tracking-widest border border-gold-accent/30 btn-premium focus:ring-2 focus:ring-gold-accent/20 focus:outline-none active:scale-[0.98]">
-                                <span class="material-symbols-outlined text-sm">visibility</span> Detail
+                                <span class="material-symbols-outlined text-sm">visibility</span> {{ __('Detail') }}
                             </button>
                         </td>
                     </tr>
@@ -147,10 +147,10 @@
                             @if ($activeStatus !== 'semua' || $q)
                             <div class="flex flex-col items-center gap-2">
                                 <span class="material-symbols-outlined text-on-surface-variant/50 text-[32px]">search_off</span>
-                                <p class="text-on-surface-variant font-body-md text-sm">Tidak ada supplier yang cocok.</p>
+                                <p class="text-on-surface-variant font-body-md text-sm">{{ __('Tidak ada supplier yang cocok.') }}</p>
                             </div>
                             @else
-                            <p class="text-on-surface-variant">Belum ada data supplier.</p>
+                            <p class="text-on-surface-variant">{{ __('Belum ada data supplier.') }}</p>
                             @endif
                         </td>
                     </tr>
@@ -177,19 +177,19 @@
                 </div>
                 <dl class="space-y-2 font-body-md text-sm">
                     <div class="flex justify-between gap-3">
-                        <dt class="text-on-surface-variant">Kontak</dt>
+                        <dt class="text-on-surface-variant">{{ __('Kontak') }}</dt>
                         <dd class="text-on-surface text-right">{{ $supplier->kontak ?? '-' }}</dd>
                     </div>
                     <div class="flex justify-between gap-3">
-                        <dt class="text-on-surface-variant">Email</dt>
+                        <dt class="text-on-surface-variant">{{ __('Email') }}</dt>
                         <dd class="text-on-surface text-right break-all">{{ $supplier->email ?? '-' }}</dd>
                     </div>
                     <div class="flex justify-between gap-3">
-                        <dt class="text-on-surface-variant">Kota</dt>
+                        <dt class="text-on-surface-variant">{{ __('Kota') }}</dt>
                         <dd class="text-on-surface text-right">{{ $supplier->kota ?? '-' }}</dd>
                     </div>
                     <div class="flex justify-between gap-3 items-start">
-                        <dt class="text-on-surface-variant shrink-0">Bahan</dt>
+                        <dt class="text-on-surface-variant shrink-0">{{ __('Bahan') }}</dt>
                         <dd class="text-right">
                             @if ($supplier->bahans->count() > 0)
                             <div class="flex flex-wrap gap-1.5 justify-end">
@@ -214,7 +214,7 @@
                     data-status="{{ $supplier->status }}"
                     data-bahan-json="{{ $bahanJson }}"
                     data-modal-open="detail-supplier" class="mt-4 w-full min-h-11 inline-flex items-center justify-center gap-2 bg-deep-onyx text-on-primary rounded-lg font-label-sm text-[11px] uppercase tracking-widest border border-gold-accent/30 btn-premium focus:ring-2 focus:ring-gold-accent/20 focus:outline-none active:scale-[0.98]">
-                    <span class="material-symbols-outlined text-sm">visibility</span> Detail
+                    <span class="material-symbols-outlined text-sm">visibility</span> {{ __('Detail') }}
                 </button>
             </article>
         @empty
@@ -238,41 +238,41 @@
     'id' => 'detail-supplier',
     'dataModal' => true,
     'icon' => 'local_shipping',
-    'title' => 'Detail Supplier',
+    'title' => __('Detail Supplier'),
     'subtitle' => '<span data-slot="nama">-</span>',
     'subtitleRaw' => true,
     'size' => 'xl',
 ])
     <section>
-        <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">local_shipping</span> Info Supplier</p>
+        <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">local_shipping</span> {{ __('Info Supplier') }}</p>
         <div class="bg-surface-container-low border border-muted-border rounded-lg p-4 md:p-5">
             <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 font-body-md text-sm">
                 <div>
-                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">category</span> Jenis</dt>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">category</span> {{ __('Jenis') }}</dt>
                     <dd class="text-on-surface capitalize"><span data-slot="jenis">-</span></dd>
                 </div>
                 <div>
-                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">verified</span> Status</dt>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">verified</span> {{ __('Status') }}</dt>
                     <dd><span data-slot="status-badge" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase border bg-surface-container-high text-on-surface-variant border-outline-variant"></span></dd>
                 </div>
                 <div class="sm:col-span-2">
-                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">location_on</span> Alamat</dt>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">location_on</span> {{ __('Alamat') }}</dt>
                     <dd class="text-on-surface break-words"><span data-slot="alamat">-</span></dd>
                 </div>
                 <div>
-                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">person</span> Kontak</dt>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">person</span> {{ __('Kontak') }}</dt>
                     <dd class="text-on-surface"><span data-slot="kontak">-</span></dd>
                 </div>
                 <div>
-                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">mail</span> Email</dt>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">mail</span> {{ __('Email') }}</dt>
                     <dd class="text-on-surface break-words"><span data-slot="email">-</span></dd>
                 </div>
                 <div>
-                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">location_city</span> Kota</dt>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">location_city</span> {{ __('Kota') }}</dt>
                     <dd class="text-on-surface"><span data-slot="kota">-</span></dd>
                 </div>
                 <div>
-                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">notes</span> Catatan</dt>
+                    <dt class="flex items-center gap-1.5 text-on-surface-variant text-[10px] uppercase tracking-widest mb-1.5"><span class="material-symbols-outlined text-gold-accent text-[16px]">notes</span> {{ __('Catatan') }}</dt>
                     <dd class="text-on-surface"><span data-slot="catatan">-</span></dd>
                 </div>
             </dl>
@@ -280,7 +280,7 @@
     </section>
 
     <section>
-        <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">inventory_2</span> Bahan Baku <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[9px] font-bold" id="bahan-count">-</span></p>
+        <p class="flex items-center gap-1.5 font-label-sm text-[10px] uppercase tracking-widest text-gold-accent mb-3"><span class="material-symbols-outlined text-[16px]">inventory_2</span> {{ __('Bahan Baku') }} <span class="ml-1 inline-flex items-center px-2 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[9px] font-bold" id="bahan-count">-</span></p>
         <div class="flex flex-wrap gap-2" data-bahan-wrap>
             <span class="text-on-surface-variant text-xs">-</span>
         </div>
@@ -289,10 +289,10 @@
     @slot('footer')
         <div class="flex flex-col sm:flex-row gap-3">
             <button type="button" id="supplier-copy" class="btn-modal btn-modal-ghost flex-1">
-                <span class="material-symbols-outlined text-[16px]">content_copy</span> Salin Kontak
+                <span class="material-symbols-outlined text-[16px]">content_copy</span> {{ __('Salin Kontak') }}
             </button>
             <button type="button" data-modal-close class="btn-modal btn-modal-primary flex-1">
-                <span class="material-symbols-outlined text-[16px]">close</span> Tutup
+                <span class="material-symbols-outlined text-[16px]">close</span> {{ __('Tutup') }}
             </button>
         </div>
     @endslot
@@ -360,7 +360,7 @@
                         wrap.appendChild(chip);
                     });
                 } else {
-                    wrap.innerHTML = '<span class="text-on-surface-variant text-xs">Belum ada bahan tercatat.</span>';
+                    wrap.innerHTML = '<span class="text-on-surface-variant text-xs">{{ __('Belum ada bahan tercatat.') }}</span>';
                 }
                 if (countEl) countEl.textContent = String(bahan.length);
             }
@@ -380,7 +380,7 @@
                 const text = [nama, kontak, email].filter(Boolean).join(' \u2022 ');
                 if (!text) return;
                 if (navigator.clipboard) {
-                    navigator.clipboard.writeText(text).then(() => window.showRalivaToast?.('Kontak supplier disalin', 'content_copy'));
+                    navigator.clipboard.writeText(text).then(() => window.showRalivaToast?.('{{ __('Kontak supplier disalin') }}', 'content_copy'));
                 }
             });
         }

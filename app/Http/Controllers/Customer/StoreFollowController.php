@@ -35,7 +35,7 @@ class StoreFollowController extends Controller
             ->first();
 
         if (! $store) {
-            return response()->json(['status' => 'error', 'message' => 'Toko tidak ditemukan.'], 404);
+            return response()->json(['status' => 'error', 'message' => __('Toko tidak ditemukan.')], 404);
         }
 
         $userId = Auth::id();
@@ -46,11 +46,11 @@ class StoreFollowController extends Controller
         if ($existing) {
             $existing->delete();
             $followed = false;
-            $message = 'Berhenti mengikuti toko.';
+            $message = __('Berhenti mengikuti toko.');
         } else {
             StoreFollow::create(['user_id' => $userId, 'store_id' => $id]);
             $followed = true;
-            $message = 'Mengikuti toko.';
+            $message = __('Mengikuti toko.');
 
             // Kabar ke owner: hanya sekali per pelanggan per toko,
             // supaya spam follow/batal-follow tidak membanjiri notifikasi owner.

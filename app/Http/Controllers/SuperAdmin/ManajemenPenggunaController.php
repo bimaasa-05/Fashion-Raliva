@@ -123,7 +123,7 @@ class ManajemenPenggunaController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pengguna Ditambahkan', sprintf('Pengguna "%s" (peran %s) ditambahkan.', $user->nama_lengkap, $roleName), route('superadmin.manajemen-pengguna'));
 
         return back()->with('toast', [
-            'message' => 'Pengguna "'.$user->nama_lengkap.'" berhasil ditambahkan.',
+            'message' => __('Pengguna ":ph1" berhasil ditambahkan.', ['ph1' => $user->nama_lengkap]),
             'icon' => 'task_alt',
         ]);
     }
@@ -177,7 +177,7 @@ class ManajemenPenggunaController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pengguna Diperbarui', sprintf('Data pengguna "%s" diperbarui.', $user->nama_lengkap), route('superadmin.manajemen-pengguna'));
 
         return back()->with('toast', [
-            'message' => 'Data "'.$user->nama_lengkap.'" berhasil diperbarui.',
+            'message' => __('Data ":ph1" berhasil diperbarui.', ['ph1' => $user->nama_lengkap]),
             'icon' => 'task_alt',
         ]);
     }
@@ -186,7 +186,7 @@ class ManajemenPenggunaController extends Controller
     {
         if ((int) $user->user_id === 1) {
             return back()->with('toast', [
-                'message' => 'Tidak dapat menghapus akun Super Admin utama.',
+                'message' => __('Tidak dapat menghapus akun Super Admin utama.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -208,7 +208,7 @@ class ManajemenPenggunaController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pengguna Dihapus', sprintf('Pengguna "%s" (peran %s) dihapus.', $nama, $roleName), route('superadmin.manajemen-pengguna'));
 
         return back()->with('toast', [
-            'message' => 'Pengguna "'.$nama.'" berhasil dihapus.',
+            'message' => __('Pengguna ":ph1" berhasil dihapus.', ['ph1' => $nama]),
             'icon' => 'task_alt',
         ]);
     }
@@ -343,7 +343,7 @@ class ManajemenPenggunaController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Peran Pengguna Diubah', sprintf('Peran "%s" menjadi %s.', $user->nama_lengkap, $roleBaru->nama_role), route('superadmin.manajemen-pengguna'));
 
         return back()->with('toast', [
-            'message' => 'Peran "'.$user->nama_lengkap.'" berhasil diubah menjadi '.$roleBaru->nama_role.'.',
+            'message' => __('Peran ":ph1" berhasil diubah menjadi :ph2.', ['ph1' => $user->nama_lengkap, 'ph2' => $roleBaru->nama_role]),
             'icon' => 'task_alt',
         ]);
     }
@@ -352,14 +352,14 @@ class ManajemenPenggunaController extends Controller
     {
         if ((int) $user->user_id === 1) {
             return back()->with('toast', [
-                'message' => 'Tidak dapat menonaktifkan akun Super Admin utama.',
+                'message' => __('Tidak dapat menonaktifkan akun Super Admin utama.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
 
         if (! in_array($user->status, [User::STATUS_AKTIF, User::STATUS_NONAKTIF], true)) {
             return back()->with('toast', [
-                'message' => 'Hanya pengguna berstatus aktif atau nonaktif yang dapat diubah melalui tombol ini.',
+                'message' => __('Hanya pengguna berstatus aktif atau nonaktif yang dapat diubah melalui tombol ini.'),
                 'icon' => 'gpp_maybe',
             ]);
         }
@@ -369,7 +369,7 @@ class ManajemenPenggunaController extends Controller
 
             if (! $locked || ! in_array($locked->status, [User::STATUS_AKTIF, User::STATUS_NONAKTIF], true)) {
                 return back()->with('toast', [
-                    'message' => 'Status pengguna sudah berubah oleh pihak lain.',
+                    'message' => __('Status pengguna sudah berubah oleh pihak lain.'),
                     'icon' => 'gpp_maybe',
                 ]);
             }
@@ -455,13 +455,13 @@ class ManajemenPenggunaController extends Controller
 
         if ($cascade['toko'] > 0 || $cascade['staff'] > 0) {
             return back()->with('toast', [
-                'message' => 'Status "'.$user->nama_lengkap.'" berhasil diubah menjadi '.$cascade['status'].' (+'.$cascade['staff'].' staff & '.$cascade['toko'].' toko turut di'.$cascade['status'].').',
+                'message' => __('Status ":ph1" berhasil diubah menjadi :ph2 (+:ph3 staff & :ph4 toko turut di:ph5).', ['ph1' => $user->nama_lengkap, 'ph2' => $cascade['status'], 'ph3' => $cascade['staff'], 'ph4' => $cascade['toko'], 'ph5' => $cascade['status']]),
                 'icon' => 'task_alt',
             ]);
         }
 
         return back()->with('toast', [
-            'message' => 'Status "'.$user->nama_lengkap.'" berhasil diubah menjadi '.$cascade['status'].'.',
+            'message' => __('Status ":ph1" berhasil diubah menjadi :ph2.', ['ph1' => $user->nama_lengkap, 'ph2' => $cascade['status']]),
             'icon' => 'task_alt',
         ]);
     }

@@ -268,11 +268,11 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 <section class="pt-lg mt-lg border-t border-outline-variant">
 <h3 class="font-label-caps text-label-caps text-on-surface-variant uppercase tracking-widest mb-md">{{ __('Your Rating') }}</h3>
 <div class="flex items-center gap-xs flex-wrap" id="rating-stars">
-<button aria-label="Rate 1 star" class="star-btn p-1" data-value="1" type="button"><span class="material-symbols-outlined text-[32px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span></button>
-<button aria-label="Rate 2 stars" class="star-btn p-1" data-value="2" type="button"><span class="material-symbols-outlined text-[32px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span></button>
-<button aria-label="Rate 3 stars" class="star-btn p-1" data-value="3" type="button"><span class="material-symbols-outlined text-[32px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span></button>
-<button aria-label="Rate 4 stars" class="star-btn p-1" data-value="4" type="button"><span class="material-symbols-outlined text-[32px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span></button>
-<button aria-label="Rate 5 stars" class="star-btn p-1" data-value="5" type="button"><span class="material-symbols-outlined text-[32px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span></button>
+<button aria-label="{{ __('Rate 1 star') }}" class="star-btn p-1" data-value="1" type="button"><span class="material-symbols-outlined text-[32px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span></button>
+<button aria-label="{{ __('Rate 2 stars') }}" class="star-btn p-1" data-value="2" type="button"><span class="material-symbols-outlined text-[32px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span></button>
+<button aria-label="{{ __('Rate 3 stars') }}" class="star-btn p-1" data-value="3" type="button"><span class="material-symbols-outlined text-[32px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span></button>
+<button aria-label="{{ __('Rate 4 stars') }}" class="star-btn p-1" data-value="4" type="button"><span class="material-symbols-outlined text-[32px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span></button>
+<button aria-label="{{ __('Rate 5 stars') }}" class="star-btn p-1" data-value="5" type="button"><span class="material-symbols-outlined text-[32px] text-secondary-fixed-dim" style="font-variation-settings: 'FILL' 1;">star</span></button>
 <span class="font-body-sm text-body-sm text-on-surface-variant ml-sm" id="rating-label">{{ old('rating', $review->rating) }} / 5</span>
 <input id="rating-value" name="rating" type="hidden" value="{{ old('rating', $review->rating) }}"/>
 </div>

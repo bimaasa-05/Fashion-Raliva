@@ -51,7 +51,7 @@ class PengembalianDanaController extends Controller
         $this->assertStoreOwnerScope($refund);
 
         if ($refund->status !== Refund::STATUS_ESKALASI) {
-            return back()->with('error', 'Refund sudah diproses.');
+            return back()->with('error',__('Refund sudah diproses.'));
         }
 
         $data = [
@@ -77,7 +77,7 @@ class PengembalianDanaController extends Controller
         }
         Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Refund Disetujui', sprintf('Refund %s disetujui.', $refund->kode), route('owner.pengembalian-dana'));
 
-        return back()->with('success', 'Refund '.$refund->kode.' disetujui.');
+        return back()->with('success',__('Refund :ph1 disetujui.', ['ph1' => $refund->kode]));
     }
 
     public function tolak(Request $request, Refund $refund): RedirectResponse
@@ -85,7 +85,7 @@ class PengembalianDanaController extends Controller
         $this->assertStoreOwnerScope($refund);
 
         if ($refund->status !== Refund::STATUS_ESKALASI) {
-            return back()->with('error', 'Refund sudah diproses.');
+            return back()->with('error',__('Refund sudah diproses.'));
         }
 
         $data = $request->validate([
@@ -116,7 +116,7 @@ class PengembalianDanaController extends Controller
         }
         Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Refund Ditolak', sprintf('Refund %s ditolak.', $refund->kode), route('owner.pengembalian-dana'));
 
-        return back()->with('success', 'Refund '.$refund->kode.' ditolak.');
+        return back()->with('success',__('Refund :ph1 ditolak.', ['ph1' => $refund->kode]));
     }
 
     public function selesaikan(Request $request, Refund $refund): RedirectResponse
@@ -124,7 +124,7 @@ class PengembalianDanaController extends Controller
         $this->assertStoreOwnerScope($refund);
 
         if ($refund->status !== Refund::STATUS_DISETUJUI) {
-            return back()->with('error', 'Hanya refund disetujui yang dapat diselesaikan.');
+            return back()->with('error',__('Hanya refund disetujui yang dapat diselesaikan.'));
         }
 
         $data = $request->validate([
@@ -148,7 +148,7 @@ class PengembalianDanaController extends Controller
             RefundCompletionService::complete($refund, $path, $data['deskripsi_bukti'] ?? null);
         } catch (\Throwable $e) {
             if (str_contains($e->getMessage(), 'Saldo toko tidak cukup')) {
-                return back()->with('error', 'Saldo toko tidak cukup untuk menyelesaikan refund ini.');
+                return back()->with('error',__('Saldo toko tidak cukup untuk menyelesaikan refund ini.'));
             }
 
             if (
@@ -156,7 +156,7 @@ class PengembalianDanaController extends Controller
                 || str_contains($e->getMessage(), 'Wallet toko tidak ditemukan')
                 || str_contains($e->getMessage(), 'sudah berubah')
             ) {
-                return back()->with('error', 'Refund tidak dapat diselesaikan: '.$e->getMessage());
+                return back()->with('error', __('Refund tidak dapat diselesaikan: :ph1', ['ph1' => $e->getMessage()]));
             }
 
             throw $e;
@@ -174,7 +174,7 @@ class PengembalianDanaController extends Controller
         }
         Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Refund Selesai', sprintf('Refund %s ditandai selesai.', $refund->kode), route('owner.pengembalian-dana'));
 
-        return back()->with('success', 'Refund '.$refund->kode.' ditandai selesai.');
+        return back()->with('success',__('Refund :ph1 ditandai selesai.', ['ph1' => $refund->kode]));
     }
 
     private function assertStoreOwnerScope(Refund $refund): void
@@ -182,13 +182,13 @@ class PengembalianDanaController extends Controller
         $storeId = OwnerContext::firstStoreId();
 
         if (! $storeId) {
-            abort(403, 'Toko tidak ditemukan.');
+            abort(403, __('Toko tidak ditemukan.'));
         }
 
         $order = $refund->order()->select('store_id')->first();
 
         if (! $order || (int) $order->store_id !== (int) $storeId) {
-            abort(403, 'Refund ini bukan untuk toko Anda.');
+            abort(403, __('Refund ini bukan untuk toko Anda.'));
         }
     }
 }

@@ -1,8 +1,8 @@
 @extends('layouts.owner')
 
-@section('title', 'Pencairan Dana')
-@section('header-title', 'Pencairan Dana')
-@section('header-subtitle', 'Kelola penarikan saldo toko Anda.')
+@section('title', __('Pencairan Dana'))
+@section('header-title', __('Pencairan Dana'))
+@section('header-subtitle', __('Kelola penarikan saldo toko Anda.'))
 
 @section('content')
 <div data-real class="space-y-section-gap">
@@ -10,51 +10,51 @@
         <div data-no-store-banner class="rounded-lg border border-gold-accent/30 bg-gold-accent/10 px-4 py-3 flex items-start gap-3">
             <span class="material-symbols-outlined text-gold-accent mt-0.5">storefront</span>
             <div>
-                <p class="font-bold text-sm">Belum punya toko</p>
-                <p class="text-sm text-on-surface-variant mt-1">Silakan <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">ajukan toko</a> untuk akses fitur ini.</p>
+                <p class="font-bold text-sm">{{ __('Belum punya toko') }}</p>
+                <p class="text-sm text-on-surface-variant mt-1">{{ __('Silakan') }} <a href="{{ route('owner.pengajuan-toko') }}" class="underline text-gold-accent font-semibold">{{ __('ajukan toko') }}</a> {{ __('untuk akses fitur ini.') }}</p>
             </div>
         </div>
     @endif
     <section data-reveal-group class="grid grid-cols-1 md:grid-cols-3 gap-section-gap">
         <div data-reveal class="bg-deep-onyx text-on-primary rounded-lg p-6 relative overflow-hidden flex flex-col">
             <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-on-primary/5 pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
-            <p class="raliva-label text-gold-accent relative">Saldo Tersedia</p>
+            <p class="raliva-label text-gold-accent relative">{{ __('Saldo Tersedia') }}</p>
             <p class="raliva-figure text-[34px] md:text-[42px] mt-4 relative">Rp {{ number_format($wallet?->saldo_tersedia ?? 0,0,',','.') }}</p>
             <div class="flex items-center justify-between mt-auto pt-6 relative gap-gutter flex-wrap">
                 <p class="font-body-md text-xs text-inverse-on-surface/60">{{ $store?->nama_toko ?? '-' }}</p>
-                <button type="button" data-modal-open="modal-cair" class="py-2.5 px-5 bg-gold-accent text-[#111] text-xs font-semibold rounded btn-premium shrink-0">Cairkan</button>
+                <button type="button" data-modal-open="modal-cair" class="py-2.5 px-5 bg-gold-accent text-[#111] text-xs font-semibold rounded btn-premium shrink-0">{{ __('Cairkan') }}</button>
             </div>
         </div>
 
         <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col relative overflow-hidden">
             <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">hourglass_top</span>
-            <p class="raliva-label relative">Saldo Tertahan</p>
+            <p class="raliva-label relative">{{ __('Saldo Tertahan') }}</p>
             <p class="raliva-figure text-[26px] mt-4 text-on-surface relative">Rp {{ number_format($wallet?->saldo_tertahan ?? 0,0,',','.') }}</p>
-            <p class="text-on-surface-variant font-body-md text-xs mt-auto pt-6 relative">Dana yang terkunci saat pencairan disetujui dan sedang diproses.</p>
+            <p class="text-on-surface-variant font-body-md text-xs mt-auto pt-6 relative">{{ __('Dana yang terkunci saat pencairan disetujui dan sedang diproses.') }}</p>
         </div>
 
         <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium flex flex-col relative overflow-hidden">
             <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">savings</span>
-            <p class="raliva-label relative">Total DiCairkan</p>
+            <p class="raliva-label relative">{{ __('Total DiCairkan') }}</p>
             <p class="raliva-figure text-[26px] mt-4 text-secondary relative">Rp {{ number_format($totalDicairkan ?? 0,0,',','.') }}</p>
             <div class="flex items-center justify-between mt-auto pt-6 relative gap-gutter flex-wrap">
-                <p class="font-body-md text-xs text-on-surface-variant">{{ $withdrawals->count() }} pencairan tercatat</p>
-                <a href="#riwayat" class="py-2.5 px-5 border border-muted-border text-xs font-semibold rounded-lg hover:border-gold-accent transition-colors shrink-0">Riwayat</a>
+                <p class="font-body-md text-xs text-on-surface-variant">{{ $withdrawals->count() }} {{ __('pencairan tercatat') }}</p>
+                <a href="#riwayat" class="py-2.5 px-5 border border-muted-border text-xs font-semibold rounded-lg hover:border-gold-accent transition-colors shrink-0">{{ __('Riwayat') }}</a>
             </div>
         </div>
     </section>
 
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope id="riwayat">
-        <h2 class="font-title-md text-title-md premium-heading">Riwayat Pencairan</h2>
+        <h2 class="font-title-md text-title-md premium-heading">{{ __('Riwayat Pencairan') }}</h2>
         <div data-table-wrap class="overflow-x-auto hidden md:block mt-6">
             <table class="premium-table w-full min-w-[700px] font-body-md text-sm">
                 <thead>
                     <tr class="border-b border-muted-border text-left">
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tanggal</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Jumlah</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Tujuan</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Status</th>
-                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">Bukti</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Tanggal') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Jumlah') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Tujuan') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Status') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Bukti') }}</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -76,11 +76,11 @@
                                     @if (in_array($buktiExt, ['jpg', 'jpeg', 'png'], true))
                                         <a href="{{ $buktiUrl }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-gold-accent hover:underline">
                                             <img src="{{ $buktiUrl }}" alt="{{ $buktiNama }}" class="w-8 h-8 object-cover rounded" loading="lazy" />
-                                            <span class="text-xs font-semibold">Bukti</span>
+                                            <span class="text-xs font-semibold">{{ __('Bukti') }}</span>
                                         </a>
                                     @else
                                         <a href="{{ $buktiUrl }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1 text-xs font-semibold text-gold-accent hover:underline">
-                                            <span class="material-symbols-outlined text-[14px]">description</span>Bukti
+                                            <span class="material-symbols-outlined text-[14px]">description</span>{{ __('Bukti') }}
                                         </a>
                                     @endif
                                     @if ($w->deskripsi_bukti)
@@ -92,7 +92,7 @@
                             </td>
                         </tr>
                     @empty
-                        <tr><td colspan="5" class="py-8 text-center text-on-surface-variant">Belum ada pencairan.</td></tr>
+                        <tr><td colspan="5" class="py-8 text-center text-on-surface-variant">{{ __('Belum ada pencairan.') }}</td></tr>
                     @endforelse
                 </tbody>
             </table>
@@ -109,7 +109,7 @@
                         <span class="shrink-0 inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $w->status==='dibayar' ? 'bg-amber-500/10 text-amber-600 border-amber-500/30' : ($w->status==='pending' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : 'bg-error/10 text-error border-error/20') }}">{{ $w->status }}</span>
                     </div>
                     <div class="mt-3 pt-3 border-t border-muted-border">
-                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Tujuan</p>
+                        <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Tujuan') }}</p>
                         <p class="text-sm text-on-surface mt-0.5">{{ $w->tujuan_jenis_label }} • {{ $w->tujuan_penyedia }} • {{ $w->tujuan_nomor }}</p>
                     </div>
                     @if ($w->status === 'dibayar' && $w->file_bukti)
@@ -118,10 +118,10 @@
                             $buktiMExt = strtolower(pathinfo($w->file_bukti, PATHINFO_EXTENSION));
                         @endphp
                         <div class="mt-3 pt-3 border-t border-muted-border">
-                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">Bukti transfer</p>
+                            <p class="text-[10px] uppercase tracking-wider text-on-surface-variant font-medium">{{ __('Bukti transfer') }}</p>
                             @if (in_array($buktiMExt, ['jpg', 'jpeg', 'png'], true))
                                 <a href="{{ $buktiMUrl }}" target="_blank" rel="noopener" class="block mt-2 hover:opacity-90 transition-opacity">
-                                    <img src="{{ $buktiMUrl }}" alt="bukti transfer" class="w-full max-h-48 h-auto object-contain rounded-lg" loading="lazy" />
+                                    <img src="{{ $buktiMUrl }}" alt="{{ __('bukti transfer') }}" class="w-full max-h-48 h-auto object-contain rounded-lg" loading="lazy" />
                                 </a>
                             @else
                                 <a href="{{ $buktiMUrl }}" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 text-xs font-semibold text-gold-accent hover:underline mt-2">
@@ -137,7 +137,7 @@
                     @endif
                 </article>
             @empty
-                <p class="text-on-surface-variant text-sm py-6 text-center">Belum ada pencairan.</p>
+                <p class="text-on-surface-variant text-sm py-6 text-center">{{ __('Belum ada pencairan.') }}</p>
             @endforelse
         </div>
         <div class="mt-6">
@@ -151,54 +151,54 @@
 <div id="modal-cair" data-modal class="fixed inset-0 z-[70] hidden flex items-center justify-center p-4">
     <div class="absolute inset-0 bg-black/50" data-modal-close></div>
     <div class="relative mx-auto w-full max-w-md bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl p-6">
-        <h3 class="font-title-md text-title-md premium-heading">Ajukan Pencairan</h3>
-        <p class="text-xs text-on-surface-variant mt-1">Minimal Rp 100.000 • Maksimal Rp {{ number_format((float) $available, 0, ',', '.') }}</p>
+        <h3 class="font-title-md text-title-md premium-heading">{{ __('Ajukan Pencairan') }}</h3>
+        <p class="text-xs text-on-surface-variant mt-1">{{ __('Minimal Rp 100.000') }} • {{ __('Maksimal') }} Rp {{ number_format((float) $available, 0, ',', '.') }}</p>
         <form method="POST" action="{{ route('owner.pencairan-dana.store') }}" class="mt-6 space-y-4">
             @csrf
             <div>
-                <label class="block raliva-label mb-2">Jumlah Pencairan</label>
+                <label class="block raliva-label mb-2">{{ __('Jumlah Pencairan') }}</label>
                 <div class="relative">
                     <span class="absolute left-4 top-1/2 -translate-y-1/2 text-sm font-bold text-on-surface-variant pointer-events-none">Rp</span>
                     <input name="jumlah" type="text" inputmode="numeric" data-rupiah required class="raliva-input" style="padding-left:2.75rem" placeholder="100.000" />
                 </div>
                 <div class="flex flex-wrap gap-1.5 mt-2">
                     @foreach([5 => '5%', 10 => '10%', 25 => '25%', 50 => '50%', 75 => '75%', 100 => 'Maksimal'] as $p => $label)
-                        <button type="button" data-persentase="{{ $p }}" class="quick-cair-btn text-xs px-2.5 py-1 rounded-md border border-muted-border text-on-surface-variant hover:border-gold-accent/40 hover:text-gold-accent transition-colors">{{ $label }}</button>
+                        <button type="button" data-persentase="{{ $p }}" class="quick-cair-btn text-xs px-2.5 py-1 rounded-md border border-muted-border text-on-surface-variant hover:border-gold-accent/40 hover:text-gold-accent transition-colors">{{ __($label) }}</button>
                     @endforeach
                 </div>
                 <div id="fail-cair-warning" class="hidden items-center gap-2 bg-error/10 border border-error/25 text-error rounded-lg px-3 py-2 text-xs font-body-md mt-2">
                     <span class="material-symbols-outlined text-[16px] shrink-0">info</span>
-                    <span id="fail-cair-warning-text">Saldo Anda tidak segitu.</span>
+                    <span id="fail-cair-warning-text">{{ __('Saldo Anda tidak segitu.') }}</span>
                 </div>
             </div>
             <div>
-                <label class="block raliva-label mb-2">Tipe Tujuan</label>
+                <label class="block raliva-label mb-2">{{ __('Tipe Tujuan') }}</label>
                 <input type="hidden" name="tipe_tujuan" id="tujuan-tipe" value="{{ old('tipe_tujuan') === 'e-wallet' ? 'e-wallet' : 'bank' }}" />
                 <div class="grid grid-cols-2 gap-2 p-1 bg-surface-container-low border border-muted-border rounded-xl">
-                    <button type="button" data-tujuan-tipe="bank" class="tujuan-tipe-btn py-2.5 rounded-lg text-sm font-semibold transition-colors">Bank</button>
-                    <button type="button" data-tujuan-tipe="e-wallet" class="tujuan-tipe-btn py-2.5 rounded-lg text-sm font-semibold transition-colors">E-wallet</button>
+                    <button type="button" data-tujuan-tipe="bank" class="tujuan-tipe-btn py-2.5 rounded-lg text-sm font-semibold transition-colors">{{ __('Bank') }}</button>
+                    <button type="button" data-tujuan-tipe="e-wallet" class="tujuan-tipe-btn py-2.5 rounded-lg text-sm font-semibold transition-colors">{{ __('E-wallet') }}</button>
                 </div>
             </div>
             <div id="tujuan-block-bank" class="space-y-4">
                 <div>
-                    <label class="block raliva-label mb-2">Bank Tujuan</label>
+                    <label class="block raliva-label mb-2">{{ __('Bank Tujuan') }}</label>
                     <select name="bank_id" class="raliva-select">
-                        <option value="">Pilih bank</option>
+                        <option value="">{{ __('Pilih bank') }}</option>
                         @foreach($banks as $b)
                             <option value="{{ $b->bank_id }}">{{ $b->nama_bank }} ({{ $b->kode_bank }})</option>
                         @endforeach
                     </select>
                 </div>
                 <div>
-                    <label class="block raliva-label mb-2">No. Rekening</label>
+                    <label class="block raliva-label mb-2">{{ __('No. Rekening') }}</label>
                     <input name="nomor_tujuan" type="text" inputmode="numeric" value="{{ old('nomor_tujuan') }}" required maxlength="50" class="raliva-input" placeholder="1234567890" />
                 </div>
             </div>
             <div id="tujuan-block-ewallet" class="space-y-4">
                 <div>
-                    <label class="block raliva-label mb-2">Penyedia E-wallet</label>
+                    <label class="block raliva-label mb-2">{{ __('Penyedia E-wallet') }}</label>
                     <select name="penyedia" class="raliva-select" disabled>
-                        <option value="">Pilih penyedia</option>
+                        <option value="">{{ __('Pilih penyedia') }}</option>
                         <option value="OVO">OVO</option>
                         <option value="GoPay">GoPay</option>
                         <option value="DANA">DANA</option>
@@ -207,20 +207,20 @@
                     </select>
                 </div>
                 <div>
-                    <label class="block raliva-label mb-2">Nomor E-wallet</label>
+                    <label class="block raliva-label mb-2">{{ __('Nomor E-wallet') }}</label>
                     <input name="nomor_tujuan" type="text" inputmode="tel" value="{{ old('nomor_tujuan') }}" maxlength="50" class="raliva-input" placeholder="0812xxxxxxxx" disabled />
                 </div>
             </div>
             <div>
                 <div class="flex items-center justify-between mb-2">
-                    <label class="raliva-label">Catatan</label>
+                    <label class="raliva-label">{{ __('Catatan') }}</label>
                     <span data-char-count class="text-[11px] text-on-surface-variant/70">0 / 500</span>
                 </div>
-                <textarea name="catatan" id="catatan-cair" rows="2" maxlength="500" class="raliva-textarea" placeholder="opsional"></textarea>
+                <textarea name="catatan" id="catatan-cair" rows="2" maxlength="500" class="raliva-textarea" placeholder="{{ __('opsional') }}"></textarea>
             </div>
             <div class="flex justify-end gap-3 pt-2">
-                <button type="button" data-modal-close class="py-2.5 px-6 border border-muted-border rounded-lg text-sm font-semibold">Batal</button>
-                <button type="submit" class="py-2.5 px-6 bg-deep-onyx text-on-primary rounded-lg text-sm font-semibold btn-premium">Ajukan</button>
+                <button type="button" data-modal-close class="py-2.5 px-6 border border-muted-border rounded-lg text-sm font-semibold">{{ __('Batal') }}</button>
+                <button type="submit" class="py-2.5 px-6 bg-deep-onyx text-on-primary rounded-lg text-sm font-semibold btn-premium">{{ __('Ajukan') }}</button>
             </div>
         </form>
     </div>
@@ -240,7 +240,7 @@ document.addEventListener('DOMContentLoaded', function(){
       // For tambah buttons, disable if no store
       el.setAttribute('disabled','');
       el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
-      el.title = 'Ajukan toko dulu';
+      el.title = '{{ __('Ajukan toko dulu') }}';
     }
   });
   // More generic: disable all buttons in data-real except those inside pengajuan
@@ -277,7 +277,7 @@ function setJumlahOverState(on) {
 function showPendingCairWarning() {
     failWarning.classList.remove('hidden');
     failWarning.classList.add('flex');
-    failWarningText.textContent = 'Saldo Anda masih dalam proses pencairan (pending) sebesar Rp ' + new Intl.NumberFormat('id-ID').format(LOCKED_CAIR) + '. Anda tidak dapat mengajukan lagi sampai pengajuan selesai.';
+    failWarningText.textContent = '{{ __('Saldo Anda masih dalam proses pencairan (pending) sebesar Rp') }} ' + new Intl.NumberFormat('id-ID').format(LOCKED_CAIR) + '. {{ __('Anda tidak dapat mengajukan lagi sampai pengajuan selesai.') }}';
     jumlahInput.style.borderColor = '#ef4444';
     setJumlahOverState(true);
 }
@@ -294,7 +294,7 @@ function syncCairState() {
     failWarning.classList.toggle('hidden', !over);
     failWarning.classList.toggle('flex', over);
     if (over) {
-        failWarningText.textContent = 'Saldo Anda tidak segitu — maksimal Rp ' + new Intl.NumberFormat('id-ID').format(MAX_CAIR) + '.';
+        failWarningText.textContent = '{{ __('Saldo Anda tidak segitu — maksimal Rp') }} ' + new Intl.NumberFormat('id-ID').format(MAX_CAIR) + '.';
     }
     jumlahInput.style.borderColor = over ? '#ef4444' : '';
     const catatanOver = (catatanCair?.value.length ?? 0) > 500;
