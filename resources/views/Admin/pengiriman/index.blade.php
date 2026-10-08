@@ -168,13 +168,13 @@
             @forelse ($shipments as $shipment)
                 @php
                     $badgeMap = [
-                        \App\Models\Shipment::STATUS_PENDING => ['label' => 'Menunggu Resi', 'class' => \App\Support\StatusStyle::CLASS_ACCENT],
-                    \App\Models\Shipment::STATUS_DIPROSES => ['label' => 'Siap Kirim', 'class' => \App\Support\StatusStyle::CLASS_AMBER],
-                    \App\Models\Shipment::STATUS_DIKIRIM => ['label' => 'Dikirim', 'class' => \App\Support\StatusStyle::CLASS_SKY],
-                    \App\Models\Shipment::STATUS_DITERIMA => ['label' => 'Diterima', 'class' => \App\Support\StatusStyle::CLASS_SUCCESS],
-                        \App\Models\Shipment::STATUS_GAGAL => ['label' => 'Gagal', 'class' => 'bg-error/10 text-error border-error/20'],
+                        \App\Models\Shipment::STATUS_PENDING => ['label' => __('Menunggu Resi'), 'class' => \App\Support\StatusStyle::CLASS_ACCENT],
+                    \App\Models\Shipment::STATUS_DIPROSES => ['label' => __('Siap Kirim'), 'class' => \App\Support\StatusStyle::CLASS_AMBER],
+                    \App\Models\Shipment::STATUS_DIKIRIM => ['label' => __('Dikirim'), 'class' => \App\Support\StatusStyle::CLASS_SKY],
+                    \App\Models\Shipment::STATUS_DITERIMA => ['label' => __('Diterima'), 'class' => \App\Support\StatusStyle::CLASS_SUCCESS],
+                        \App\Models\Shipment::STATUS_GAGAL => ['label' => __('Gagal'), 'class' => 'bg-error/10 text-error border-error/20'],
                     ];
-                    $badge = $badgeMap[$shipment->status] ?? ['label' => ucfirst($shipment->status), 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'];
+                    $badge = $badgeMap[$shipment->status] ?? ['label' => \App\Support\StatusStyle::label($shipment->status), 'class' => 'bg-surface-container-high text-on-surface-variant border-outline-variant'];
                 @endphp
                 <article data-table-row class="bg-surface-container-lowest border border-muted-border rounded-xl p-4 card-premium relative overflow-hidden">
                     <div class="flex items-start justify-between gap-3">
@@ -210,6 +210,9 @@
             @empty
                 <p class="text-on-surface-variant text-sm py-6 text-center">{{ __('Belum ada data pengiriman.') }}</p>
             @endforelse
+            @if ($shipments->hasPages())
+                <div class="mt-6 flex justify-center">{{ $shipments->links() }}</div>
+            @endif
         </div>
     </section>
 </div>
