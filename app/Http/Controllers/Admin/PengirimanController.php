@@ -26,6 +26,7 @@ class PengirimanController extends Controller
             ->whereDoesntHave('shipments')
             ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap', 'items'])
             ->orderByDesc('created_at')
+            ->take(50)
             ->get();
 
         $siapDiambil = Order::query()
@@ -34,6 +35,7 @@ class PengirimanController extends Controller
             ->where('metode_fulfillment', Order::FULFILLMENT_AMBIL)
             ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap', 'checkout.payment', 'items'])
             ->orderByDesc('created_at')
+            ->take(50)
             ->get();
 
         $shipments = Shipment::query()
@@ -41,7 +43,8 @@ class PengirimanController extends Controller
             ->with(['order.store:store_id,nama_toko', 'order.checkout.user:user_id,nama_lengkap', 'courier', 'shippingService'])
             ->orderByDesc('created_at')
             ->orderByDesc('shipment_id')
-            ->get();
+            ->paginate(20)
+            ->withQueryString();
 
         $couriers = Courier::where('status', Courier::STATUS_AKTIF)
             ->where(fn ($q) => $q->whereNull('store_id')->orWhereIn('store_id', $storeIds))
