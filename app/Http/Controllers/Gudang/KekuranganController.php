@@ -43,22 +43,28 @@ class KekuranganController extends Controller
             return back()->with('toast', ['message' => __('Pesanan di luar scope toko Anda.'), 'icon' => 'gpp_maybe']);
         }
 
-        $kurang = (int) $order->kekurangan_gudang;
-        if ($kurang <= 0) {
-            return back()->with('toast', ['message' => __('Pesanan ini sudah tidak memiliki kekurangan.'), 'icon' => 'info']);
-        }
-
         try {
             $gudangSumber = null;
-            DB::transaction(function () use ($order, $kurang, $storeIds, &$gudangSumber) {
+            $kurang = 0;
+            DB::transaction(function () use ($order, $storeIds, &$gudangSumber, &$kurang) {
+                $locked = Order::whereKey($order->order_id)->lockForUpdate()->firstOrFail();
+                if (! in_array($locked->store_id, $storeIds, true)) {
+                    throw new \RuntimeException(__('Pesanan di luar scope toko Anda.'));
+                }
+
+                $kurang = (int) $locked->kekurangan_gudang;
+                if ($kurang <= 0) {
+                    throw new \RuntimeException(__('Pesanan ini sudah tidak memiliki kekurangan.'));
+                }
+
                 // Mode manual: tolak penuh bila ada varian yang kurang.
-                $hasil = ShortfallStockAllocator::allocate($order, $kurang, $storeIds, false);
+                $hasil = ShortfallStockAllocator::allocate($locked, $kurang, $storeIds, false);
                 $gudangSumber = $hasil['gudang'];
 
-                $totalQty = (int) $order->items()->sum('quantity');
-                $order->update([
+                $totalQty = (int) $locked->items()->sum('quantity');
+                $locked->update([
                     'kekurangan_gudang' => 0,
-                    'jumlah_berhasil' => min($totalQty, (int) ($order->jumlah_berhasil ?? 0) + $kurang),
+                    'jumlah_berhasil' => min($totalQty, (int) ($locked->jumlah_berhasil ?? 0) + $kurang),
                 ]);
             });
         } catch (\RuntimeException $e) {
@@ -71,15 +77,15 @@ class KekuranganController extends Controller
             sprintf('Kekurangan %d pcs pesanan %s disiapkan dari stok gudang%s.', $kurang, $order->nomor_order, $gudangSumber ? ' ('.$gudangSumber.')' : ''));
 
         NotificationService::sendToRoleInStores(Role::PRODUKSI, [$order->store_id], Notification::TIPE_SISTEM,
-            'Kekurangan Disiapkan dari Gudang',
-            sprintf('Pesanan %s — %d pcs kekurangan sudah disiapkan Gudang%s. Silakan dipacking ulang.',
+            __('Kekurangan Disiapkan dari Gudang'),
+            sprintf(__('Pesanan %s — %d pcs kekurangan sudah disiapkan Gudang%s. Silakan dipacking ulang.'),
                 $order->nomor_order, $kurang, $gudangSumber ? ' ('.$gudangSumber.')' : ''),
             ActivityLogger::resolveActorId(),
             route('produksi.pemeriksaan-kualitas'));
 
         NotificationService::sendToRoleInStores(Role::ADMIN, [$order->store_id], Notification::TIPE_SISTEM,
-            'Kekurangan Disiapkan dari Gudang',
-            sprintf('Pesanan %s — %d pcs kekurangan sudah disiapkan Gudang%s.', $order->nomor_order, $kurang, $gudangSumber ? ' ('.$gudangSumber.')' : ''),
+            __('Kekurangan Disiapkan dari Gudang'),
+            sprintf(__('Pesanan %s — %d pcs kekurangan sudah disiapkan Gudang%s.'), $order->nomor_order, $kurang, $gudangSumber ? ' ('.$gudangSumber.')' : ''),
             ActivityLogger::resolveActorId(),
             route('admin.pesanan', ['status' => Order::STATUS_MENUNGGU_QC]));
 
