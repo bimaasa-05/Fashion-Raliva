@@ -70,6 +70,11 @@ class OwnerGudangTest extends TestCase
         $gudangUser = User::whereHas('role', fn ($q) => $q->where('nama_role', Role::GUDANG))
             ->where('status', User::STATUS_AKTIF)
             ->firstOrFail();
+        // Alur benar: user harus staff aktif toko ini dulu (mis. via Karyawan).
+        \App\Models\StoreStaff::updateOrCreate(
+            ['store_id' => $storeId, 'user_id' => $gudangUser->user_id],
+            ['tanggal_penugasan' => now(), 'status' => 'aktif']
+        );
         $warehouse = Warehouse::where('store_id', $storeId)->firstOrFail();
 
         $this->actingAs($owner)->post(route('owner.gudang.staff', ['warehouse' => $warehouse->warehouse_id]), [
@@ -80,6 +85,26 @@ class OwnerGudangTest extends TestCase
             'warehouse_id' => $warehouse->warehouse_id,
             'user_id' => $gudangUser->user_id,
             'status' => 'aktif',
+        ]);
+    }
+
+    public function test_owner_cannot_assign_cross_store_staff(): void
+    {
+        [$owner, $storeId] = $this->owner();
+        // User Gudang aktif TANPA penugasan ke toko ini.
+        $gudangUser = User::whereHas('role', fn ($q) => $q->where('nama_role', Role::GUDANG))
+            ->where('status', User::STATUS_AKTIF)
+            ->whereDoesntHave('storeAssignments', fn ($q) => $q->where('store_id', $storeId))
+            ->firstOrFail();
+        $warehouse = Warehouse::where('store_id', $storeId)->firstOrFail();
+
+        $this->actingAs($owner)->post(route('owner.gudang.staff', ['warehouse' => $warehouse->warehouse_id]), [
+            'user_id' => $gudangUser->user_id,
+        ])->assertSessionHas('error');
+
+        $this->assertDatabaseMissing('warehouse_staff', [
+            'warehouse_id' => $warehouse->warehouse_id,
+            'user_id' => $gudangUser->user_id,
         ]);
     }
 
