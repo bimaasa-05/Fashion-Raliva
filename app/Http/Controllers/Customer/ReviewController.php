@@ -20,25 +20,30 @@ class ReviewController extends Controller
     {
         $user = Auth::user();
 
-        $reviews = $user->reviews()
-            ->with(['product.images', 'orderItem.productVariant.product.images', 'store'])
+        $reviewsBase = $user->reviews()
+            ->with(['product.images', 'orderItem.productVariant.product.images', 'store']);
+        $reviewsTotal = (clone $reviewsBase)->count();
+        $reviews = $reviewsBase
             ->orderByDesc('created_at')
-            ->get();
+            ->paginate(12, ['*'], 'ditulis')
+            ->withQueryString();
 
-        $toReviewItems = OrderItem::query()
+        $reviewedProductIds = Review::where('user_id', $user->user_id)->pluck('product_id')->all();
+        $toReviewBase = OrderItem::query()
             ->whereHas('order.checkout', fn ($q) => $q->where('user_id', $user->user_id))
             ->whereHas('order', fn ($q) => $q->where('status', Order::STATUS_SELESAI))
             ->whereDoesntHave('review')
-            ->whereHas('productVariant', function ($q) use ($user) {
-                $reviewed = Review::where('user_id', $user->user_id)->pluck('product_id')->all();
-
-                return $q->when(! empty($reviewed), fn ($qq) => $qq->whereNotIn('product_id', $reviewed));
-            })
+            ->whereHas('productVariant', function ($q) use ($reviewedProductIds) {
+                return $q->when(! empty($reviewedProductIds), fn ($qq) => $qq->whereNotIn('product_id', $reviewedProductIds));
+            });
+        $toReviewTotal = (clone $toReviewBase)->count();
+        $toReviewItems = $toReviewBase
             ->with(['order.store', 'productVariant.product.images'])
             ->latest('order_item_id')
-            ->get();
+            ->paginate(12, ['*'], 'tulis')
+            ->withQueryString();
 
-        return view('customer.reviews.index', compact('reviews', 'toReviewItems'));
+        return view('customer.reviews.index', compact('reviews', 'toReviewItems', 'reviewsTotal', 'toReviewTotal'));
     }
 
     /**
