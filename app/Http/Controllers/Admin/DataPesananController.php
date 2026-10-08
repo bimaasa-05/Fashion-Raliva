@@ -41,17 +41,25 @@ class DataPesananController extends Controller
         ];
 
         $storeIds = AdminContext::assignedStoreIds();
-        $orders = Order::query()
+        $base = Order::query()
             ->whereIn('store_id', $storeIds)
-            ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap,email,nomor_telepon', 'checkout.payment:payment_id,checkout_id,status', 'checkout.payment.proofs', 'checkout.payment.paymentMethod', 'items.productVariant.product', 'shipments', 'bahanList', 'qualityChecks'])
             ->when(
                 array_key_exists($status, $statuses),
                 fn ($query) => $query->where('status', $status)
-            )
+            );
+
+        $totalSemua = (clone $base)->count();
+        $totalMenunggu = (clone $base)->whereIn('status', ['pending_payment', 'dibayar'])->count();
+        $totalProses = (clone $base)->whereIn('status', ['diproses', 'dikirim'])->count();
+        $totalSelesai = (clone $base)->where('status', 'selesai')->count();
+
+        $orders = $base
+            ->with(['store:store_id,nama_toko', 'checkout.user:user_id,nama_lengkap,email,nomor_telepon', 'checkout.payment:payment_id,checkout_id,status', 'checkout.payment.proofs', 'checkout.payment.paymentMethod', 'items.productVariant.product', 'shipments', 'bahanList', 'qualityChecks'])
             ->prioritasStatus()
             ->orderByDesc('updated_at')
             ->orderByDesc('order_id')
-            ->get();
+            ->paginate(20)
+            ->withQueryString();
 
         $variants = \App\Models\ProductVariant::with(['product:product_id,store_id,nama_produk', 'warehouseStocks:warehouse_stock_id,product_variant_id,jumlah_stok'])
             ->whereHas('product', fn ($q) => $q->whereIn('store_id', $storeIds))
@@ -81,6 +89,10 @@ class DataPesananController extends Controller
             'orders' => $orders,
             'statuses' => $statuses,
             'activeStatus' => $status,
+            'totalSemua' => $totalSemua,
+            'totalMenunggu' => $totalMenunggu,
+            'totalProses' => $totalProses,
+            'totalSelesai' => $totalSelesai,
             'variants' => $variants,
             'recentOrders' => $recentOrders,
             'customers' => $customers,
