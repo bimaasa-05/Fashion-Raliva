@@ -53,13 +53,21 @@ class PemeriksaanKualitasController extends Controller
             'jumlah_lulus' => 'required|integer|min:0',
             'catatan' => 'nullable|string|max:500',
         ], [
-            'jumlah_lulus.required' => 'Jumlah lulus QC wajib diisi.',
-            'jumlah_lulus.min' => 'Jumlah lulus minimal 0.',
+            'jumlah_lulus.required' => __('Jumlah lulus QC wajib diisi.'),
+            'jumlah_lulus.min' => __('Jumlah lulus minimal 0.'),
         ]);
 
         $totalQty = (int) $order->items()->sum('quantity');
         if ($data['jumlah_lulus'] > $totalQty) {
             return back()->with('toast', ['message' => __('Jumlah lulus melebihi total pesanan (:ph77679 pcs).', ['ph77679' => $totalQty]), 'icon' => 'gpp_maybe']);
+        }
+
+        // Lulus tak boleh melebihi output produksi yang tercatat; selebihnya
+        // berarti klaim fiktif (unit yang tak pernah diproduksi ikut dihitung).
+        $hasilProduksi = (int) $order->jumlah_berhasil;
+        $batasLulus = $hasilProduksi > 0 ? min($totalQty, $hasilProduksi) : $totalQty;
+        if ($data['jumlah_lulus'] > $batasLulus) {
+            return back()->with('toast', ['message' => __('Jumlah lulus melebihi hasil produksi (:jumlah pcs).', ['jumlah' => $batasLulus]), 'icon' => 'gpp_maybe']);
         }
 
         // Gagal dihitung otomatis; kekurangan (lulus < total) dicatat untuk
