@@ -37,7 +37,7 @@
                 class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none"
                 aria-hidden="true">shopping_bag</span>
             <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">{{ __('Total Pesanan') }}</span>
-            <span class="raliva-figure text-[26px] text-on-surface relative">{{ $orders->count() }}</span>
+            <span class="raliva-figure text-[26px] text-on-surface relative">{{ $totalSemua }}</span>
         </div>
         <div data-reveal
             class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
@@ -46,7 +46,7 @@
                 aria-hidden="true">payments</span>
             <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">{{ __('Menunggu / Baru') }}</span>
             <span
-                class="raliva-figure text-[26px] text-gold-accent relative">{{ $orders->whereIn('status', ['pending_payment', 'dibayar'])->count() }}</span>
+                class="raliva-figure text-[26px] text-gold-accent relative">{{ $totalMenunggu }}</span>
         </div>
         <div data-reveal
             class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
@@ -55,7 +55,7 @@
                 aria-hidden="true">local_shipping</span>
             <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">{{ __('Diproses / Dikirim') }}</span>
             <span
-                class="raliva-figure text-[26px] text-secondary relative">{{ $orders->whereIn('status', ['diproses', 'dikirim'])->count() }}</span>
+                class="raliva-figure text-[26px] text-secondary relative">{{ $totalProses }}</span>
         </div>
         <div data-reveal
             class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-1 relative overflow-hidden card-premium">
@@ -64,7 +64,7 @@
                 aria-hidden="true">task_alt</span>
             <span class="text-on-surface-variant font-label-sm text-[10px] uppercase relative">{{ __('Selesai') }}</span>
             <span
-                class="raliva-figure text-[26px] text-secondary relative">{{ $orders->where('status', 'selesai')->count() }}</span>
+                class="raliva-figure text-[26px] text-secondary relative">{{ $totalSelesai }}</span>
         </div>
     </section>
 
@@ -356,6 +356,9 @@
             @empty
                 <p class="text-on-surface-variant text-sm py-6 text-center">{{ __('Tidak ada pesanan pada filter ini.') }}</p>
             @endforelse
+            @if ($orders->hasPages())
+                <div class="mt-6 flex justify-center">{{ $orders->links() }}</div>
+            @endif
         </div>
     </section>
 
