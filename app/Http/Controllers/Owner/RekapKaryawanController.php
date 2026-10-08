@@ -14,7 +14,7 @@ use Maatwebsite\Excel\Facades\Excel;
 
 class RekapKaryawanController extends Controller
 {
-    public const ROLE_FILTERS = ['owner', 'admin', 'produksi', 'gudang'];
+    public const ROLE_FILTERS = ['semua', 'owner', 'admin', 'produksi', 'gudang'];
 
     public function __construct(
         protected KaryawanReportService $report,
