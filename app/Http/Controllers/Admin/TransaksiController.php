@@ -63,7 +63,7 @@ class TransaksiController extends Controller
         }
 
         $data = $request->validate([
-            'jumlah' => 'required|numeric|min:0',
+            'jumlah' => 'required|numeric|min:1',
             'keterangan' => 'required|string|max:500',
             'kategori' => 'required|string|in:Penjualan,Investor,Modal,Komisi,Lainnya',
         ]);
@@ -110,8 +110,8 @@ class TransaksiController extends Controller
         $data = $request->validate([
             'nama' => 'required|string|max:150',
             'kategori' => 'nullable|string|max:100',
-            'nominal' => 'required|numeric|min:0',
-            'tanggal' => 'required|date',
+            'nominal' => 'required|numeric|min:1',
+            'tanggal' => 'required|date|before_or_equal:today',
         ]);
 
         $data['store_id'] = $storeId;
