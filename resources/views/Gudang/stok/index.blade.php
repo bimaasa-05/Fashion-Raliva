@@ -227,7 +227,10 @@
         </div>
 
         <div class="flex flex-wrap items-center justify-between gap-4 mt-6">
-            <p class="text-xs text-on-surface-variant">Menampilkan {{ $products->count() }} produk • {{ $warehouse->nama_gudang ?? '' }}</p>
+            <p class="text-xs text-on-surface-variant">Menampilkan {{ $products->total() }} produk • {{ $warehouse->nama_gudang ?? '' }}</p>
+            @if ($products->hasPages())
+                {{ $products->links() }}
+            @endif
         </div>
     </section>
 
