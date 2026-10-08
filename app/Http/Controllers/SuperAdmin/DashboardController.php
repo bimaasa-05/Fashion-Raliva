@@ -70,28 +70,62 @@ class DashboardController extends Controller
                 ];
             });
 
-        // Data grafik: pesanan per 6 bulan terakhir (dibagi per bulan) — hanya status pendapatan
-        $chart = Order::query()
-            ->selectRaw('DATE_FORMAT(created_at, "%Y-%m") as bulan, COUNT(*) as jumlah, SUM(grand_total) as omzet')
-            ->whereIn('status', Order::STATUS_PENDAPATAN)
-            ->where('created_at', '>=', now()->subMonths(6)->startOfMonth())
-            ->groupBy('bulan')
-            ->orderBy('bulan')
-            ->get();
-
-        $chartLabels = [];
-        $chartPesanan = [];
-        $chartTransaksi = [];
-        foreach ($chart as $row) {
-            $chartLabels[] = Carbon::createFromFormat('Y-m', $row->bulan)->locale('id')->translatedFormat('M');
-            $chartPesanan[] = (int) $row->jumlah;
-            $chartTransaksi[] = (float) $row->omzet;
-        }
-
-        $chartPesananBars = [];
-        foreach ($chartLabels as $i => $label) {
-            $chartPesananBars[] = ['label' => $label, 'value' => $chartPesanan[$i] ?? 0];
-        }
+        // Tren harian 14 hari (7 hari terakhir vs 7 hari sebelumnya) untuk
+        // sparkline + delta kartu KPI, sekaligus statistik "Hari Ini" di hero.
+        $trend = [
+            'pelanggan' => $this->trend($this->dailyMap(
+                User::whereHas('role', fn ($q) => $q->where('nama_role', \App\Models\Role::CUSTOMER))
+                    ->where('created_at', '>=', now()->subDays(13)->startOfDay())
+                    ->selectRaw('DATE(created_at) as d, COUNT(*) as c')
+                    ->groupBy('d')
+                    ->pluck('c', 'd')
+            )),
+            'toko' => $this->trend($this->dailyMap(
+                Store::where('created_at', '>=', now()->subDays(13)->startOfDay())
+                    ->selectRaw('DATE(created_at) as d, COUNT(*) as c')
+                    ->groupBy('d')
+                    ->pluck('c', 'd')
+            )),
+            'pesanan' => $this->trend($this->dailyMap(
+                Order::where('created_at', '>=', now()->subDays(13)->startOfDay())
+                    ->selectRaw('DATE(created_at) as d, COUNT(*) as c')
+                    ->groupBy('d')
+                    ->pluck('c', 'd')
+            )),
+            'produk' => $this->trend($this->dailyMap(
+                \App\Models\Product::where('created_at', '>=', now()->subDays(13)->startOfDay())
+                    ->selectRaw('DATE(created_at) as d, COUNT(*) as c')
+                    ->groupBy('d')
+                    ->pluck('c', 'd')
+            )),
+            'nilai' => $this->trend($this->dailyMap(
+                Order::whereIn('status', Order::STATUS_PENDAPATAN)
+                    ->where('created_at', '>=', now()->subDays(13)->startOfDay())
+                    ->selectRaw('DATE(created_at) as d, SUM(grand_total) as c')
+                    ->groupBy('d')
+                    ->pluck('c', 'd')
+            )),
+            'pajak' => $this->trend($this->dailyMap(
+                Order::whereIn('status', Order::STATUS_PENDAPATAN)
+                    ->where('created_at', '>=', now()->subDays(13)->startOfDay())
+                    ->selectRaw('DATE(created_at) as d, SUM(total_pajak) as c')
+                    ->groupBy('d')
+                    ->pluck('c', 'd')
+            )),
+            'komisi' => $this->trend($this->dailyMap(
+                Commission::where('created_at', '>=', now()->subDays(13)->startOfDay())
+                    ->selectRaw('DATE(created_at) as d, SUM(jumlah_komisi) as c')
+                    ->groupBy('d')
+                    ->pluck('c', 'd')
+            )),
+            'iklan' => $this->trend($this->dailyMap(
+                AdSlot::whereIn('status', [AdSlot::STATUS_AKTIF, AdSlot::STATUS_TERJADWAL])
+                    ->where('created_at', '>=', now()->subDays(13)->startOfDay())
+                    ->selectRaw('DATE(created_at) as d, SUM(nominal_bid) as c')
+                    ->groupBy('d')
+                    ->pluck('c', 'd')
+            )),
+        ];
 
         // Range data chart real-time (7/30/90 hari) untuk JS
         $rangeData = [
@@ -137,13 +171,6 @@ class DashboardController extends Controller
         }
         $slaPct = $slaTotal > 0 ? (int) round($slaTepat / $slaTotal * 100) : 0;
 
-        // Bulan dengan pesanan tertinggi (6 bulan terakhir)
-        $maxBar = collect($chartPesananBars)->sortByDesc('value')->first();
-        $bulanTertinggi = [
-            'label' => $maxBar['label'] ?? '-',
-            'jumlah' => (int) ($maxBar['value'] ?? 0),
-        ];
-
         return view('SuperAdmin.dashboard', [
             'kpi' => [
                 'pelanggan' => $totalPelanggan,
@@ -160,12 +187,6 @@ class DashboardController extends Controller
                 'pendapatan_iklan' => $pendapatanIklan,
             ],
             'perhatian' => $perhatian,
-            'komposisiToko' => [
-                'aktif' => $tokoAktif,
-                'menunggu' => $perhatian['toko'],
-                'nonaktif' => $tokoNonaktif,
-                'ditolak' => $tokoDitolak,
-            ],
             'komposisiTokoDonut' => [
                 ['value' => (int) $tokoAktif, 'color' => '#8B1E3F', 'label' => 'Aktif'],
                 ['value' => (int) $perhatian['toko'], 'color' => '#c03a5a', 'label' => 'Menunggu'],
@@ -177,10 +198,7 @@ class DashboardController extends Controller
             'topProduk' => $topProduk,
             'topProdukIklan' => $topProdukIklan,
             'aktivitas' => $aktivitas,
-            'chartLabels' => $chartLabels,
-            'chartPesanan' => $chartPesanan,
-            'chartPesananBars' => $chartPesananBars,
-            'chartTransaksi' => $chartTransaksi,
+            'tr' => $trend,
             'rangeData' => $rangeData,
             'targetOmzet' => [
                 'bulanIni' => $omzetBulanIni,
@@ -198,8 +216,39 @@ class DashboardController extends Controller
                 'total' => $slaTotal,
                 'tepat' => $slaTepat,
             ],
-            'bulanTertinggi' => $bulanTertinggi,
         ]);
+    }
+
+    /** Normalisasi hasil GROUP BY DATE menjadi [tanggal => nilai float]. */
+    private function dailyMap($rows): array
+    {
+        return collect($rows)->mapWithKeys(fn ($v, $k) => [(string) $k => (float) $v])->all();
+    }
+
+    /**
+     * Pecah deret 14 hari menjadi 7 hari terakhir (sparkline) vs 7 hari
+     * sebelumnya (delta), plus nilai hari ini/kemarin untuk banner hero.
+     */
+    private function trend(array $map): array
+    {
+        $vals = [];
+        for ($i = 13; $i >= 0; $i--) {
+            $key = now()->subDays($i)->toDateString();
+            $vals[] = (float) ($map[$key] ?? 0);
+        }
+
+        $spark = array_slice($vals, -7);
+        $recent = array_sum($spark);
+        $before = array_sum(array_slice($vals, 0, 7));
+
+        return [
+            'spark' => $spark,
+            'now' => $recent,
+            'prev' => $before,
+            'pct' => $before > 0 ? round((($recent - $before) / $before) * 100, 1) : null,
+            'today' => $vals[13],
+            'yesterday' => $vals[12],
+        ];
     }
 
     private function chartRange(int $days): array
