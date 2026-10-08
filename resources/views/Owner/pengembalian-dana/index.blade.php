@@ -101,6 +101,9 @@
                     </div>
                 @endforeach
             </div>
+            @if ($refunds->hasPages())
+                <div class="mt-6 flex justify-center">{{ $refunds->links() }}</div>
+            @endif
         @endif
     </section>
 
@@ -166,6 +169,9 @@
                     </div>
                 @endforeach
             </div>
+            @if ($disetujui->hasPages())
+                <div class="mt-6 flex justify-center">{{ $disetujui->links() }}</div>
+            @endif
         @endif
     </section>
 </div>
