@@ -378,7 +378,7 @@
             <span class="material-symbols-outlined text-emerald-600 shrink-0">key</span>
             <div>
                 <p class="font-body-sm text-body-sm font-semibold text-emerald-800">{{ __('Akun berhasil dibuat') }}</p>
-                <p class="font-body-sm text-body-sm text-emerald-700 mt-xs">{{ __('Email') }}: <strong>{{ $akunBaru }}</strong> • {{ __('Password') }}: <strong>Raliva123</strong></p>
+                <p class="font-body-sm text-body-sm text-emerald-700 mt-xs">{{ __('Email') }}: <strong>{{ $akunBaru }}</strong> • {{ __('Password') }}: <strong>{{ session('password_baru', 'Raliva123') }}</strong></p>
                 <p class="font-label-sm text-label-sm text-emerald-700/80 mt-xs">{{ __('Segera ganti password untuk keamanan.') }} <a href="{{ route('customer.account.password', ['from' => 'selesai', 'checkout' => $checkout->checkout_id]) }}" class="underline font-semibold">{{ __('Ganti Password') }}</a></p>
             </div>
         </div>
