@@ -75,6 +75,7 @@
             </div>
             <div class="flex items-center gap-2 flex-wrap">
                 <select data-role-filter class="raliva-select">
+                    <option value="semua" @selected($roleFilter === 'semua')>{{ __('Semua') }}</option>
                     <option value="owner" @selected($roleFilter === 'owner')>Owner</option>
                     <option value="admin" @selected($roleFilter === 'admin')>{{ __('Admin Toko') }}</option>
                     <option value="produksi" @selected($roleFilter === 'produksi')>{{ __('Produksi') }}</option>
