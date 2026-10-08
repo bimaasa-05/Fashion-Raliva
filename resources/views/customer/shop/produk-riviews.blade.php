@@ -321,7 +321,7 @@
 </div>
 <div class="hidden md:block w-px bg-outline-variant h-16"></div>
 <div class="space-y-sm flex-1 max-w-md mx-auto md:mx-0 w-full">
-@php $dist = [5=>0,4=>0,3=>0,2=>0,1=>0]; foreach ($reviews as $r) { $d = (int)$r->rating; if (isset($dist[$d])) { $dist[$d]++; } } @endphp
+@php $dist = $distribusi; @endphp
 @for ($rc = 5; $rc >= 1; $rc--)
 @php $cnt = $dist[$rc] ?? 0; $pct = $reviewCount > 0 ? round($cnt / $reviewCount * 100) : 0; @endphp
 <div class="flex items-center gap-sm">
@@ -379,6 +379,9 @@
 <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No reviews for this product yet. Be the first to review.') }}</p>
 </div>
 @endforelse
+@if ($reviews->hasPages())
+<div class="mt-xl flex justify-center">{{ $reviews->links() }}</div>
+@endif
 </div>
 
 </div>
