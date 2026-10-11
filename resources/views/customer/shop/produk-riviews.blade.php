@@ -346,7 +346,7 @@
 @endif
 <div class="min-w-0">
 <p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $u->nama_lengkap ?? __('Anonymous') }}</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $review->created_at?->format('M d, Y') }} @if (true)· {{ __('Verified Purchase') }}@endif</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $review->created_at?->format('M d, Y') }} · {{ __('Verified Purchase') }}</p>
 </div>
 </div>
 <div class="relative shrink-0">
@@ -396,7 +396,8 @@
 <h3 class="font-title-md text-title-md text-on-surface">{{ __('Report this review') }}</h3>
 </div>
 <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">{{ __('Why are you reporting this review?') }}</p>
-<form id="report-form">
+<form id="report-form" method="POST" onsubmit="return false;">
+@csrf
 <label class="flex items-center gap-sm py-sm border-b border-outline-variant cursor-pointer">
 <input class="w-4 h-4 shop-checkbox shrink-0" name="reason" required type="radio" value="spam"/>
 <span class="font-body-sm text-body-sm text-on-surface">{{ __('Spam or promotion') }}</span>
