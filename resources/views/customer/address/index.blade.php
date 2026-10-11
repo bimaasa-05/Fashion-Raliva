@@ -375,7 +375,7 @@
 @else
 <span class="material-symbols-outlined text-on-surface-variant text-[20px]">location_on</span>
 @endif
-<h2 class="font-title-md text-title-md text-on-surface">{{ __($address->label) }}</h2>
+<h2 class="font-title-md text-title-md text-on-surface">{{ $address->label }}</h2>
 @if($address->is_default)
 <span class="inline-flex items-center gap-1 bg-secondary/10 border border-secondary text-secondary font-label-sm text-label-sm font-semibold px-2 py-0.5 rounded-full ml-2 uppercase tracking-wider">
 <span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">check_circle</span>{{ __('Default') }}
