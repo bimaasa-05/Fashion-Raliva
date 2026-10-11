@@ -231,10 +231,11 @@
 <header class="fixed top-0 inset-x-0 lg:left-72 z-50 bg-[var(--chrome-bg)] text-[var(--chrome-text)] flex justify-between items-center px-container-margin h-16 border-b border-[var(--chrome-border)]">
 @php
     $pwdBack = route('customer.account.edit');
-    if (request('from') === 'payment' && request('checkout')) {
-        $pwdBack = route('customer.checkout.payment', ['checkout' => request('checkout')]);
-    } elseif (request('from') === 'selesai' && request('checkout')) {
-        $pwdBack = route('customer.checkout.selesai', ['checkout' => request('checkout')]);
+    $pwdCheckoutId = (int) request('checkout');
+    if (request('from') === 'payment' && $pwdCheckoutId > 0) {
+        $pwdBack = route('customer.checkout.payment', ['checkout' => $pwdCheckoutId]);
+    } elseif (request('from') === 'selesai' && $pwdCheckoutId > 0) {
+        $pwdBack = route('customer.checkout.selesai', ['checkout' => $pwdCheckoutId]);
     }
 @endphp
 <a href="{{ $pwdBack }}" aria-label="{{ __('Back') }}" class="hover:opacity-80 transition-opacity flex">
