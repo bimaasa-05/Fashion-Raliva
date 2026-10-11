@@ -98,7 +98,7 @@
                     'Accept': 'application/json',
                 },
             }).then((res) => {
-                if (!res.ok) throw new Error('{{ __('Gagal menandai dibaca.') }}';
+                if (!res.ok) throw new Error('{{ __('Gagal menandai dibaca.') }}');
                 return res.json();
             }).then((data) => {
                 if (window.updateNotifBadge) window.updateNotifBadge();
@@ -124,7 +124,7 @@
                 'Accept': 'application/json',
             },
         }).then((res) => {
-            if (!res.ok) throw new Error('{{ __('Gagal menandai semua dibaca.') }}';
+            if (!res.ok) throw new Error('{{ __('Gagal menandai semua dibaca.') }}');
             return res.json();
         }).then(() => {
             notifList?.querySelectorAll('.notif-dot').forEach((dot) => dot.remove());

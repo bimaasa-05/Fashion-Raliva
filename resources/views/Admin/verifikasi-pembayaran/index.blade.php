@@ -280,6 +280,9 @@
             @empty
                 <p class="col-span-full text-center text-on-surface-variant font-body-md text-sm py-12">{{ __('Tidak ada pembayaran pada tab ini.') }}</p>
             @endforelse
+            @if ($payments->hasPages())
+                <div class="mt-6 flex justify-center col-span-full">{{ $payments->links() }}</div>
+            @endif
         </div>
     </section>
 </div>

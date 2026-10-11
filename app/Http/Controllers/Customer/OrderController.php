@@ -28,11 +28,12 @@ class OrderController extends Controller
                 'checkout.payment',
             ])
             ->orderByDesc('orders.created_at')
-            ->get();
+            ->paginate(15)
+            ->withQueryString();
 
         // Alasan pembatalan untuk kartu yang dibatalkan (1 query, tanpa migration).
         $cancelReasons = [];
-        $cancelledIds = $orders->where('status', Order::STATUS_DIBATALKAN)->map->order_id->values()->all();
+        $cancelledIds = $orders->getCollection()->where('status', Order::STATUS_DIBATALKAN)->map->order_id->values()->all();
         if ($cancelledIds) {
             $cancelReasons = ActivityLog::where('aksi', 'admin.order.cancel')
                 ->where('target_tipe', Order::class)

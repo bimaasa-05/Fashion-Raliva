@@ -11,6 +11,7 @@ use App\Models\Review;
 use App\Models\Role;
 use App\Models\Store;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class ShopController extends Controller
@@ -46,15 +47,15 @@ class ShopController extends Controller
             $query->whereNotIn('products.product_id', $adIds->all());
         }
 
-        $products = $query->latest()->get();
+        $products = $query->latest()->take(120)->get();
 
-        $popularCounts = DB::table('order_items')
+        $popularCounts = Cache::remember('shop:popular-counts', 600, fn () => DB::table('order_items')
             ->join('product_variants as pv', 'pv.product_variant_id', '=', 'order_items.product_variant_id')
             ->join('orders', 'orders.order_id', '=', 'order_items.order_id')
             ->whereIn('orders.status', Order::STATUS_PENDAPATAN)
             ->groupBy('pv.product_id')
             ->selectRaw('pv.product_id, SUM(order_items.quantity) as popular_count')
-            ->pluck('popular_count', 'product_id');
+            ->pluck('popular_count', 'product_id'));
 
         $ads->each(function ($p) use ($popularCounts) {
             $p->popular_count = (int) ($popularCounts[$p->product_id] ?? 0);
@@ -87,16 +88,16 @@ class ShopController extends Controller
             ])
             ->firstOrFail();
 
-        $reviews = Review::query()
+        $reviewsBase = Review::query()
             ->where('product_id', $product->product_id)
-            ->where('status', Review::STATUS_AKTIF)
+            ->where('status', Review::STATUS_AKTIF);
+        $averageRating = (clone $reviewsBase)->avg('rating');
+        $reviewCount = (clone $reviewsBase)->count();
+        $reviews = $reviewsBase
             ->with('user:user_id,nama_lengkap,foto_profil')
             ->latest()
+            ->take(3)
             ->get();
-
-        $averageRating = $reviews->avg('rating');
-        $reviewCount = $reviews->count();
-        $reviews = $reviews->take(3);
 
         $relatedProducts = Product::query()
             ->where('product_id', '!=', $product->product_id)
@@ -152,17 +153,27 @@ class ShopController extends Controller
             ])
             ->firstOrFail();
 
-        $reviews = Review::query()
+        $reviewsBase = Review::query()
             ->where('product_id', $product->product_id)
-            ->where('status', Review::STATUS_AKTIF)
+            ->where('status', Review::STATUS_AKTIF);
+        $distRaw = (clone $reviewsBase)->selectRaw('FLOOR(rating) as b, COUNT(*) as c')->groupBy('b')->pluck('c', 'b')->all();
+        $distribusi = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0];
+        foreach ($distRaw as $b => $c) {
+            if (isset($distribusi[(int) $b])) {
+                $distribusi[(int) $b] = (int) $c;
+            }
+        }
+
+        $averageRating = $reviewsBase->avg('rating');
+        $reviewCount = array_sum($distribusi);
+
+        $reviews = $reviewsBase
             ->with('user:user_id,nama_lengkap,foto_profil')
             ->latest()
-            ->get();
+            ->paginate(20)
+            ->withQueryString();
 
-        $averageRating = $reviews->avg('rating');
-        $reviewCount = $reviews->count();
-
-        return view('customer.shop.produk-riviews', compact('product', 'reviews', 'averageRating', 'reviewCount'));
+        return view('customer.shop.produk-riviews', compact('product', 'reviews', 'averageRating', 'reviewCount', 'distribusi'));
     }
 
     /**
@@ -180,6 +191,7 @@ class ShopController extends Controller
                 'variants' => fn ($q) => $q->where('status', 'aktif'),
             ])
             ->latest()
+            ->take(120)
             ->get();
 
         $reviews = $store->reviews()->where('status', Review::STATUS_AKTIF)->get();
@@ -202,18 +214,25 @@ class ShopController extends Controller
     {
         $store = $this->activeStore($id);
 
-        $reviews = $store->reviews()
-            ->where('status', Review::STATUS_AKTIF)
+        $reviewsBase = $store->reviews()->where('status', Review::STATUS_AKTIF);
+        $distRaw = (clone $reviewsBase)->selectRaw('FLOOR(rating) as b, COUNT(*) as c')->groupBy('b')->pluck('c', 'b')->all();
+        $distribusi = [5 => 0, 4 => 0, 3 => 0, 2 => 0, 1 => 0];
+        foreach ($distRaw as $b => $c) {
+            if (isset($distribusi[(int) $b])) {
+                $distribusi[(int) $b] = (int) $c;
+            }
+        }
+
+        $averageRating = $reviewsBase->avg('rating');
+        $reviewCount = array_sum($distribusi);
+
+        $reviews = $reviewsBase
             ->with('user:user_id,nama_lengkap,foto_profil')
             ->latest()
-            ->get();
+            ->paginate(20)
+            ->withQueryString();
 
-        $averageRating = $reviews->avg('rating');
-        $reviewCount = $reviews->count();
-
-        ['isFollowing' => $isFollowing, 'followersCount' => $followersCount] = $this->followState($store);
-
-        return view('customer.store.riviews', compact('store', 'reviews', 'averageRating', 'reviewCount', 'isFollowing', 'followersCount'));
+        return view('customer.store.riviews', compact('store', 'reviews', 'averageRating', 'reviewCount', 'isFollowing', 'followersCount', 'distribusi'));
     }
 
     /**
@@ -230,7 +249,7 @@ class ShopController extends Controller
 
         ['isFollowing' => $isFollowing, 'followersCount' => $followersCount] = $this->followState($store);
 
-        return view('customer.store.about', compact('store', 'reviewCount', 'averageRating', 'isFollowing', 'followersCount'));
+        return view('customer.store.about', compact('store', 'reviewCount', 'averageRating', 'isFollowing', 'followersCount', 'storeSocials'));
     }
 
     /**

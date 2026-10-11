@@ -309,6 +309,7 @@ class CheckoutController extends Controller
         $isGuest = ! Auth::check();
         $isNewAccount = false;
         $flashEmail = null;
+        $passwordBaru = null;
 
         if ($isGuest) {
             $existing = User::where('email', $validated['email_pelanggan'])->first();
@@ -338,15 +339,17 @@ class CheckoutController extends Controller
                         ->withInput();
                 }
             } else {
-                // Buat akun baru (password default Raliva123)
+                // Buat akun baru dengan password acak (ditampilkan sekali di halaman selesai).
+                // Raliva123 hanya dipakai sebagai fallback login untuk akun guest lama.
                 $roleId = Role::where('nama_role', Role::CUSTOMER)->value('role_id');
                 if (! $roleId) {
                     $roleId = Role::first()->role_id ?? 1;
                 }
+                $passwordBaru = \Illuminate\Support\Str::random(10);
                 $user = User::create([
                     'nama_lengkap' => $validated['nama_penerima'],
                     'email' => $validated['email_pelanggan'],
-                    'password' => Hash::make('Raliva123'),
+                    'password' => Hash::make($passwordBaru),
                     'role_id' => $roleId,
                     'nomor_telepon' => $validated['nomor_telepon'],
                     'status' => User::STATUS_AKTIF,
@@ -534,7 +537,7 @@ class CheckoutController extends Controller
             ->with('toast', ['message' => __('Pesanan berhasil dibuat. Silakan selesaikan pembayaran.'), 'icon' => 'task_alt']);
 
         if ($isNewAccount && $flashEmail) {
-            $redirect = $redirect->with('akun_baru', $flashEmail);
+            $redirect = $redirect->with('akun_baru', $flashEmail)->with('password_baru', $passwordBaru);
         }
 
         return $redirect;

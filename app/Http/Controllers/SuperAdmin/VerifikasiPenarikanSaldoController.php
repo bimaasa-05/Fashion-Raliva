@@ -15,21 +15,24 @@ class VerifikasiPenarikanSaldoController extends Controller
 {
     public function index(Request $request)
     {
-        $penarikans = CustomerWithdrawal::query()
-            ->with(['user:user_id,nama_lengkap,email', 'bank:bank_id,nama_bank'])
-            ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'disetujui' THEN 1 WHEN 'dibayar' THEN 2 ELSE 3 END")
-            ->orderByDesc('diajukan_pada')
-            ->get();
+        $base = CustomerWithdrawal::query()
+            ->with(['user:user_id,nama_lengkap,email', 'bank:bank_id,nama_bank']);
 
         $stats = [
-            'semua' => $penarikans->count(),
-            'pending' => $penarikans->where('status', CustomerWithdrawal::STATUS_PENDING)->count(),
-            'nominal_menunggu' => (float) $penarikans->where('status', CustomerWithdrawal::STATUS_PENDING)->sum('jumlah_bersih'),
-            'disetujui' => $penarikans->where('status', CustomerWithdrawal::STATUS_DISETUJUI)->count(),
-            'dibayar' => $penarikans->where('status', CustomerWithdrawal::STATUS_DIBAYAR)->count(),
-            'ditolak' => $penarikans->where('status', CustomerWithdrawal::STATUS_DITOLAK)->count(),
+            'semua' => (clone $base)->count(),
+            'pending' => (clone $base)->where('status', CustomerWithdrawal::STATUS_PENDING)->count(),
+            'nominal_menunggu' => (float) (clone $base)->where('status', CustomerWithdrawal::STATUS_PENDING)->sum('jumlah_bersih'),
+            'disetujui' => (clone $base)->where('status', CustomerWithdrawal::STATUS_DISETUJUI)->count(),
+            'dibayar' => (clone $base)->where('status', CustomerWithdrawal::STATUS_DIBAYAR)->count(),
+            'ditolak' => (clone $base)->where('status', CustomerWithdrawal::STATUS_DITOLAK)->count(),
             'fee_terkumpul' => (float) $penarikans->where('status', CustomerWithdrawal::STATUS_DIBAYAR)->sum('fee'),
         ];
+
+        $penarikans = $base
+            ->orderByRaw("CASE status WHEN 'pending' THEN 0 WHEN 'disetujui' THEN 1 WHEN 'dibayar' THEN 2 ELSE 3 END")
+            ->orderByDesc('diajukan_pada')
+            ->paginate(15)
+            ->withQueryString();
 
         return view('SuperAdmin.verifikasi-penarikan-saldo.index', [
             'penarikans' => $penarikans,
@@ -50,10 +53,10 @@ class VerifikasiPenarikanSaldoController extends Controller
             'file_bukti' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
             'deskripsi_bukti' => ['nullable', 'string', 'max:1000'],
         ], [
-            'file_bukti.required' => 'Bukti transfer wajib dilampirkan.',
-            'file_bukti.mimes' => 'Bukti transfer harus berupa JPG, PNG, atau PDF.',
-            'file_bukti.max' => 'Ukuran bukti transfer maksimal 5 MB.',
-            'deskripsi_bukti.max' => 'Deskripsi bukti maksimal 1000 karakter.',
+            'file_bukti.required' => __('Bukti transfer wajib dilampirkan.'),
+            'file_bukti.mimes' => __('Bukti transfer harus berupa JPG, PNG, atau PDF.'),
+            'file_bukti.max' => __('Ukuran bukti transfer maksimal 5 MB.'),
+            'deskripsi_bukti.max' => __('Deskripsi bukti maksimal 1000 karakter.'),
         ]);
 
         $path = $request->file('file_bukti')->store('bukti-penarikan-saldo/'.$penarikan->customer_withdrawal_id, 'public');
@@ -63,14 +66,26 @@ class VerifikasiPenarikanSaldoController extends Controller
 
         try {
             DB::transaction(function () use ($penarikan, $path, $data) {
-                $penarikan->update([
-                    'status' => CustomerWithdrawal::STATUS_DIBAYAR,
+                $locked = CustomerWithdrawal::whereKey($penarikan->customer_withdrawal_id)->lockForUpdate()->firstOrFail();
+                if ($locked->status !== CustomerWithdrawal::STATUS_PENDING) {
+                    throw new \RuntimeException(__('Penarikan ini sudah diproses pihak lain.'));
+                }
+
+                $locked->update([
+                    'status' => CustomerWithdrawal::STATUS_DISETUJUI,
                     'diproses_pada' => now(),
                     'file_bukti' => $path,
                     'deskripsi_bukti' => $data['deskripsi_bukti'] ?? null,
                     'bukti_diupload_pada' => now(),
                 ]);
             });
+        } catch (\RuntimeException $e) {
+            Storage::disk('public')->delete($path);
+
+            return back()->with('toast', [
+                'message' => $e->getMessage(),
+                'icon' => 'gpp_maybe',
+            ]);
         } catch (\Throwable $e) {
             Storage::disk('public')->delete($path);
             throw $e;
@@ -85,22 +100,22 @@ class VerifikasiPenarikanSaldoController extends Controller
             CustomerWithdrawal::class,
             $penarikan->customer_withdrawal_id,
             $lama,
-            ['status' => CustomerWithdrawal::STATUS_DIBAYAR, 'file_bukti' => $path],
-            sprintf('Menyetujui penarikan saldo Rp %s (bersih Rp %s) milik %s dan ditandai dibayar.', number_format((float) $penarikan->jumlah, 0, ',', '.'), number_format((float) $penarikan->jumlah_bersih, 0, ',', '.'), $penarikan->user?->nama_lengkap ?? '-')
+            ['status' => CustomerWithdrawal::STATUS_DISETUJUI, 'file_bukti' => $path],
+            sprintf('Menyetujui penarikan saldo Rp %s (bersih Rp %s) milik %s; menunggu pembayaran.', number_format((float) $penarikan->jumlah, 0, ',', '.'), number_format((float) $penarikan->jumlah_bersih, 0, ',', '.'), $penarikan->user?->nama_lengkap ?? '-')
         );
 
         Notification::create([
             'user_id' => $penarikan->user_id,
             'aktor_id' => ActivityLogger::resolveActorId(),
             'tipe' => Notification::TIPE_WALLET,
-            'judul' => 'Penarikan Dibayar',
-            'pesan' => sprintf('Dana penarikan sebesar Rp %s telah ditransfer ke tujuan Anda.', number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')),
+            'judul' => __('Penarikan Disetujui'),
+            'pesan' => sprintf(__('Dana penarikan sebesar Rp %s telah disetujui. Pembayaran segera ditransfer ke tujuan Anda.'), number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')),
             'url' => route('customer.saldo.tarik.show', $penarikan->customer_withdrawal_id),
         ]);
-        Notification::fireSelf(Notification::TIPE_WALLET, 'Penarikan Saldo Dibayar', sprintf('Penarikan saldo Rp %s disetujui dan ditandai dibayar.', number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')), route('superadmin.verifikasi-penarikan-saldo'));
+        Notification::fireSelf(Notification::TIPE_WALLET, __('Penarikan Saldo Disetujui'), sprintf(__('Penarikan saldo Rp %s disetujui; menunggu pembayaran.'), number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')), route('superadmin.verifikasi-penarikan-saldo'));
 
         return back()->with('toast', [
-            'message' => sprintf('Penarikan Rp %s disetujui dan ditandai sudah dibayar.', number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')),
+            'message' => sprintf(__('Penarikan Rp %s disetujui; menunggu pembayaran.'), number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')),
             'icon' => 'task_alt',
         ]);
     }
@@ -117,8 +132,8 @@ class VerifikasiPenarikanSaldoController extends Controller
         $data = $request->validate([
             'alasan' => 'required|string|min:10|max:1000',
         ], [
-            'alasan.required' => 'Alasan penolakan wajib diisi.',
-            'alasan.min' => 'Alasan penolakan minimal 10 karakter.',
+            'alasan.required' => __('Alasan penolakan wajib diisi.'),
+            'alasan.min' => __('Alasan penolakan minimal 10 karakter.'),
         ]);
 
         $lama = $penarikan->only(['status']);
@@ -150,11 +165,11 @@ class VerifikasiPenarikanSaldoController extends Controller
             'user_id' => $penarikan->user_id,
             'aktor_id' => ActivityLogger::resolveActorId(),
             'tipe' => Notification::TIPE_WALLET,
-            'judul' => 'Penarikan Ditolak',
-            'pesan' => sprintf('Pengajuan penarikan Rp %s ditolak dan saldo dikembalikan. Alasan: %s', number_format((float) $penarikan->jumlah, 0, ',', '.'), $data['alasan']),
+            'judul' => __('Penarikan Ditolak'),
+            'pesan' => sprintf(__('Pengajuan penarikan Rp %s ditolak dan saldo dikembalikan. Alasan: %s'), number_format((float) $penarikan->jumlah, 0, ',', '.'), $data['alasan']),
             'url' => route('customer.saldo.tarik.show', $penarikan->customer_withdrawal_id),
         ]);
-        Notification::fireSelf(Notification::TIPE_WALLET, 'Penarikan Saldo Ditolak', sprintf('Penarikan saldo Rp %s ditolak.', number_format((float) $penarikan->jumlah, 0, ',', '.')), route('superadmin.verifikasi-penarikan-saldo'));
+        Notification::fireSelf(Notification::TIPE_WALLET, __('Penarikan Saldo Ditolak'), sprintf(__('Penarikan saldo Rp %s ditolak.'), number_format((float) $penarikan->jumlah, 0, ',', '.')), route('superadmin.verifikasi-penarikan-saldo'));
 
         return back()->with('toast', [
             'message' => __('Pengajuan penarikan ditolak dan saldo dikembalikan.'),
@@ -173,10 +188,24 @@ class VerifikasiPenarikanSaldoController extends Controller
 
         $lama = $penarikan->only(['status']);
 
-        $penarikan->update([
-            'status' => CustomerWithdrawal::STATUS_DIBAYAR,
-            'diproses_pada' => now(),
-        ]);
+        try {
+            DB::transaction(function () use ($penarikan) {
+                $locked = CustomerWithdrawal::whereKey($penarikan->customer_withdrawal_id)->lockForUpdate()->firstOrFail();
+                if ($locked->status !== CustomerWithdrawal::STATUS_DISETUJUI) {
+                    throw new \RuntimeException(__('Penarikan ini sudah diproses pihak lain.'));
+                }
+
+                $locked->update([
+                    'status' => CustomerWithdrawal::STATUS_DIBAYAR,
+                    'diproses_pada' => now(),
+                ]);
+            });
+        } catch (\RuntimeException $e) {
+            return back()->with('toast', [
+                'message' => $e->getMessage(),
+                'icon' => 'gpp_maybe',
+            ]);
+        }
 
         ActivityLogger::log(
             'customer-withdrawal.paid',
@@ -191,14 +220,14 @@ class VerifikasiPenarikanSaldoController extends Controller
             'user_id' => $penarikan->user_id,
             'aktor_id' => ActivityLogger::resolveActorId(),
             'tipe' => Notification::TIPE_WALLET,
-            'judul' => 'Penarikan Dibayar',
-            'pesan' => sprintf('Dana penarikan sebesar Rp %s telah ditransfer ke tujuan Anda.', number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')),
+            'judul' => __('Penarikan Dibayar'),
+            'pesan' => sprintf(__('Dana penarikan sebesar Rp %s telah ditransfer ke tujuan Anda.'), number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')),
             'url' => route('customer.saldo.tarik.show', $penarikan->customer_withdrawal_id),
         ]);
-        Notification::fireSelf(Notification::TIPE_WALLET, 'Penarikan Saldo Dibayar', sprintf('Penarikan saldo Rp %s ditandai dibayar.', number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')), route('superadmin.verifikasi-penarikan-saldo'));
+        Notification::fireSelf(Notification::TIPE_WALLET, __('Penarikan Saldo Dibayar'), sprintf(__('Penarikan saldo Rp %s ditandai dibayar.'), number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')), route('superadmin.verifikasi-penarikan-saldo'));
 
         return back()->with('toast', [
-            'message' => sprintf('Penarikan Rp %s ditandai sudah dibayar.', number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')),
+            'message' => sprintf(__('Penarikan Rp %s ditandai sudah dibayar.'), number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')),
             'icon' => 'task_alt',
         ]);
     }

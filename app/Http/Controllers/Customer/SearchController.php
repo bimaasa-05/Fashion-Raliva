@@ -8,6 +8,7 @@ use App\Models\Product;
 use App\Models\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
 
 class SearchController extends Controller
 {
@@ -43,18 +44,18 @@ class SearchController extends Controller
 
         $ads = AdSlot::activeProducts(6, $q);
 
-        $popularTags = Product::query()
+        $popularTags = Cache::remember('search:popular-tags', 1800, fn () => Product::query()
             ->where('status', Product::STATUS_AKTIF)
             ->whereHas('store', fn ($s) => $s->where('status', Store::STATUS_AKTIF))
             ->with(['category:category_id,nama_kategori,parent_id', 'category.parent:category_id,nama_kategori'])
-            ->limit(200)
+            ->limit(60)
             ->get()
             ->map(fn ($p) => $p->category?->parent?->nama_kategori ?? $p->category?->nama_kategori)
             ->filter()
             ->unique()
             ->take(6)
             ->values()
-            ->all();
+            ->all());
 
         $wishlistedIds = $this->wishlistedIds();
 

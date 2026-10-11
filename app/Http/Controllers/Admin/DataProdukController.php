@@ -86,6 +86,7 @@ class DataProdukController extends Controller
         // Tahap master: info dasar + HPP + foto + variasi & stok. Bahan produksi diisi Gudang.
         $data = $request->validate([
             'nama_produk' => 'required|string|max:255',
+            'category_id' => 'required|integer|exists:categories,category_id',
             'harga_dasar' => 'required|numeric|min:1|max:999999999999',
             'hpp' => 'required|numeric|min:1|max:999999999999',
             'tipe_produk' => 'required|string|in:regular,preorder,made_to_order',

@@ -77,10 +77,11 @@ class DataTokoController extends Controller
             'logo.max' => 'Ukuran logo maksimal 2 MB.',
         ]);
 
-        // Email ada di tabel users, bukan stores — langsung disimpan.
+        // Email ada di tabel users, bukan stores — langsung disimpan,
+        // tapi status verifikasi direset agar email baru wajib diverifikasi ulang.
         $user = $request->user();
         if ($user && $user->email !== $validated['email']) {
-            $user->update(['email' => $validated['email']]);
+            $user->update(['email' => $validated['email'], 'email_verified_at' => null]);
         }
 
         if (\App\Models\StoreUpdateRequest::where('store_id', $store->store_id)

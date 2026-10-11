@@ -48,6 +48,14 @@ class WishlistController extends Controller
         }
 
         $productId = (int) $validated['product_id'];
+        $product = Product::where('product_id', $productId)
+            ->where('status', Product::STATUS_AKTIF)
+            ->whereHas('store', fn ($q) => $q->where('status', \App\Models\Store::STATUS_AKTIF))
+            ->first();
+        if (! $product) {
+            return response()->json(['status' => 'error', 'message' => __('Produk tidak ditemukan.')], 422);
+        }
+
         $wishlist = $this->getOrCreateWishlist();
 
         $existing = $wishlist->items()

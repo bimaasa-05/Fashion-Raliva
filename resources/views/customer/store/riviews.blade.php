@@ -317,7 +317,7 @@
 </div>
 <div class="hidden md:block w-px bg-outline-variant h-16"></div>
 <div class="space-y-sm flex-1 max-w-md mx-auto md:mx-0 w-full">
-@php $dist = [5=>0,4=>0,3=>0,2=>0,1=>0]; foreach ($reviews as $r) { $d = (int)$r->rating; if (isset($dist[$d])) { $dist[$d]++; } } @endphp
+@php $dist = $distribusi; @endphp
 @for ($rc = 5; $rc >= 1; $rc--)
 @php $cnt = $dist[$rc] ?? 0; $pct = $reviewCount > 0 ? round($cnt / $reviewCount * 100) : 0; @endphp
 <div class="flex items-center gap-sm">
@@ -342,7 +342,7 @@
 @endif
 <div class="min-w-0">
 <p class="font-body-sm text-body-sm font-semibold text-on-surface truncate">{{ $u->nama_lengkap ?? __('Anonymous') }}</p>
-<p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $review->created_at?->format('M d, Y') }} @if (true)· {{ __('Verified Purchase') }}@endif</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $review->created_at?->format('M d, Y') }} · {{ __('Verified Purchase') }}</p>
 </div>
 </div>
 <div class="relative shrink-0">
@@ -372,13 +372,8 @@
 <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __('No reviews for this store yet.') }}</p>
 </div>
 @endforelse
-@if ($reviews->count())
-<!-- Load more reviews -->
-<div class="mt-xl flex justify-center">
-<button class="border border-[var(--chrome-accent)] text-[var(--chrome-accent)] bg-transparent font-label-caps text-label-caps px-xl py-sm hover:bg-surface-container-low transition-colors w-full md:w-auto rounded-lg">
-                    {{ __('VIEW ALL REVIEWS') }}
-                </button>
-</div>
+@if ($reviews->hasPages())
+<div class="mt-xl flex justify-center">{{ $reviews->links() }}</div>
 @endif
 </div>
 </section>
@@ -394,7 +389,8 @@
 <h3 class="font-title-md text-title-md text-on-surface">{{ __('Report this review') }}</h3>
 </div>
 <p class="font-body-sm text-body-sm text-on-surface-variant mb-md">{{ __('Why are you reporting this review?') }}</p>
-<form id="report-form">
+<form id="report-form" method="POST" onsubmit="return false;">
+@csrf
 <label class="flex items-center gap-sm py-sm border-b border-outline-variant cursor-pointer">
 <input class="w-4 h-4 shop-checkbox shrink-0" name="reason" required type="radio" value="spam"/>
 <span class="font-body-sm text-body-sm text-on-surface">{{ __('Spam or promotion') }}</span>

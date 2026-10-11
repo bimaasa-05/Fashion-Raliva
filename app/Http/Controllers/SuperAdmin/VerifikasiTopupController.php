@@ -16,22 +16,25 @@ class VerifikasiTopupController extends Controller
 {
     public function index()
     {
-        $topups = CustomerTopup::query()
-            ->with(['user', 'payment.paymentMethod', 'payment.account', 'payment.proofs'])
-            ->orderByDesc('created_at')
-            ->get();
+        $base = CustomerTopup::query()
+            ->with(['user', 'payment.paymentMethod', 'payment.account', 'payment.proofs']);
 
         $stats = [
-            'semua' => $topups->count(),
-            'menunggu' => $topups->where('status', CustomerTopup::STATUS_MENUNGGU_VERIFIKASI)->count(),
-            'pending' => $topups->where('status', CustomerTopup::STATUS_PENDING)->count(),
-            'nominal_menunggu' => (float) $topups->where('status', CustomerTopup::STATUS_MENUNGGU_VERIFIKASI)->sum('jumlah'),
-            'terverifikasi' => $topups->where('status', CustomerTopup::STATUS_TERVERIFIKASI)->count(),
-            'total_terverifikasi' => (float) $topups->where('status', CustomerTopup::STATUS_TERVERIFIKASI)->sum('jumlah'),
-            'ditolak' => $topups->where('status', CustomerTopup::STATUS_DITOLAK)->count(),
-            'dibatalkan' => $topups->where('status', CustomerTopup::STATUS_DIBATALKAN)->count(),
-            'kadaluarsa' => $topups->where('status', CustomerTopup::STATUS_KADALUARSA)->count(),
+            'semua' => (clone $base)->count(),
+            'menunggu' => (clone $base)->where('status', CustomerTopup::STATUS_MENUNGGU_VERIFIKASI)->count(),
+            'pending' => (clone $base)->where('status', CustomerTopup::STATUS_PENDING)->count(),
+            'nominal_menunggu' => (float) (clone $base)->where('status', CustomerTopup::STATUS_MENUNGGU_VERIFIKASI)->sum('jumlah'),
+            'terverifikasi' => (clone $base)->where('status', CustomerTopup::STATUS_TERVERIFIKASI)->count(),
+            'total_terverifikasi' => (float) (clone $base)->where('status', CustomerTopup::STATUS_TERVERIFIKASI)->sum('jumlah'),
+            'ditolak' => (clone $base)->where('status', CustomerTopup::STATUS_DITOLAK)->count(),
+            'dibatalkan' => (clone $base)->where('status', CustomerTopup::STATUS_DIBATALKAN)->count(),
+            'kadaluarsa' => (clone $base)->where('status', CustomerTopup::STATUS_KADALUARSA)->count(),
         ];
+
+        $topups = $base
+            ->orderByDesc('created_at')
+            ->paginate(15)
+            ->withQueryString();
 
         return view('SuperAdmin.verifikasi-topup.index', compact('topups', 'stats'));
     }
@@ -45,20 +48,32 @@ class VerifikasiTopupController extends Controller
             ]);
         }
 
-        DB::transaction(function () use ($topup) {
-            $payment = $topup->payment()->lockForUpdate()->firstOrFail();
-            $payment->update([
-                'status' => Payment::STATUS_TERVERIFIKASI,
-                'dibayar_pada' => now(),
-            ]);
+        try {
+            DB::transaction(function () use ($topup) {
+                $locked = CustomerTopup::whereKey($topup->customer_topup_id)->lockForUpdate()->firstOrFail();
+                if ($locked->status !== CustomerTopup::STATUS_MENUNGGU_VERIFIKASI) {
+                    throw new \RuntimeException(__('Topup ini sudah diproses pihak lain.'));
+                }
 
-            CustomerWalletService::creditTopup($topup->user, $topup);
+                $payment = $locked->payment()->lockForUpdate()->firstOrFail();
+                $payment->update([
+                    'status' => Payment::STATUS_TERVERIFIKASI,
+                    'dibayar_pada' => now(),
+                ]);
 
-            $topup->update([
-                'status' => CustomerTopup::STATUS_TERVERIFIKASI,
-                'dibayar_pada' => now(),
+                CustomerWalletService::creditTopup($locked->user, $locked);
+
+                $locked->update([
+                    'status' => CustomerTopup::STATUS_TERVERIFIKASI,
+                    'dibayar_pada' => now(),
+                ]);
+            });
+        } catch (\RuntimeException $e) {
+            return back()->with('toast', [
+                'message' => $e->getMessage(),
+                'icon' => 'gpp_maybe',
             ]);
-        });
+        }
 
         ActivityLogger::log(
             'customer.topup.approve',
@@ -72,8 +87,8 @@ class VerifikasiTopupController extends Controller
         NotificationService::fire(
             $topup->user_id,
             Notification::TIPE_WALLET,
-            'Topup Saldo Disetujui',
-            'Saldo Anda bertambah Rp '.number_format((float) $topup->jumlah, 0, ',', '.').'.',
+            __('Topup Saldo Disetujui'),
+            sprintf(__('Saldo Anda bertambah Rp %s.'), number_format((float) $topup->jumlah, 0, ',', '.')),
             null,
             route('customer.saldo')
         );
@@ -86,7 +101,7 @@ class VerifikasiTopupController extends Controller
 
     public function tolak(Request $request, CustomerTopup $topup)
     {
-        if (! in_array($topup->status, [CustomerTopup::STATUS_MENUNGGU_VERIFIKASI, CustomerTopup::STATUS_PENDING, CustomerTopup::STATUS_DITOLAK], true)) {
+        if (! in_array($topup->status, [CustomerTopup::STATUS_MENUNGGU_VERIFIKASI, CustomerTopup::STATUS_PENDING], true)) {
             return back()->with('toast', [
                 'message' => __('Topup ini tidak dapat ditolak.'),
                 'icon' => 'gpp_maybe',
@@ -96,8 +111,8 @@ class VerifikasiTopupController extends Controller
         $validated = $request->validate([
             'alasan' => ['required', 'string', 'min:10'],
         ], [
-            'alasan.required' => 'Alasan penolakan wajib diisi.',
-            'alasan.min' => 'Alasan penolakan minimal 10 karakter.',
+            'alasan.required' => __('Alasan penolakan wajib diisi.'),
+            'alasan.min' => __('Alasan penolakan minimal 10 karakter.'),
         ]);
 
         DB::transaction(function () use ($topup) {
@@ -117,8 +132,8 @@ class VerifikasiTopupController extends Controller
         NotificationService::fire(
             $topup->user_id,
             Notification::TIPE_WALLET,
-            'Topup Saldo Ditolak',
-            'Topup Anda ditolak: '.$validated['alasan'].'. Silakan upload ulang bukti pembayaran.',
+            __('Topup Saldo Ditolak'),
+            sprintf(__('Topup Anda ditolak: %s. Silakan upload ulang bukti pembayaran.'), $validated['alasan']),
             null,
             route('customer.saldo')
         );

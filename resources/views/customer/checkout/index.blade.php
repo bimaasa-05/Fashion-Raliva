@@ -523,7 +523,7 @@
 
 <!-- TopAppBar -->
 <header class="bg-[var(--chrome-bg-soft)] backdrop-blur-md text-[var(--chrome-text)] flex justify-between items-center w-full px-container-margin h-16 sticky top-0 z-40 border-b border-[var(--chrome-border)]">
-    <a href="{{ $backProductId > 0 ? route('customer.shop.produk-detail', $backProductId) : route('customer.chart') }}" aria-label="{{ __('Back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
+    <a href="{{ $backProductId > 0 ? route('customer.shop.produk-detail', $backProductId) : ($isGuest ? route('customer.shop') : route('customer.chart')) }}" aria-label="{{ __('Back') }}" class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
         <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
     </a>
     <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ __('Review') }}</h1>
@@ -624,7 +624,7 @@
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Email') }} <span class="text-error">*</span></span>
                             <input name="email_pelanggan" type="email" value="{{ $prefill['email_pelanggan'] }}" required maxlength="150" class="co-input @error('email_pelanggan') is-error @enderror" placeholder="nama@email.com"/>
                             @error('email_pelanggan')<span class="font-label-sm text-label-sm text-error">{{ $message }}</span>@enderror
-                            @if($isGuest)<span class="font-label-sm text-label-sm text-on-surface-variant/70">{{ __('Dipakai sebagai username akun. Password default: Raliva123') }}</span>@endif
+                            @if($isGuest)<span class="font-label-sm text-label-sm text-on-surface-variant/70">{{ __('Dipakai sebagai username akun. Password acak ditampilkan setelah checkout.') }}</span>@endif
                         </label>
                         <label class="flex flex-col gap-1.5 lg:col-span-2">
                             <span class="font-label-sm text-label-sm text-on-surface-variant">{{ __('Provinsi') }} <span class="text-error">*</span></span>
@@ -762,7 +762,7 @@
                         <span id="co-total">Rp {{ number_format((float)$total, 0, ',', '.') }}</span>
                     </div>
                     @if($isGuest)
-                    <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">{{ __('Akun dan alamat akan dibuat otomatis (password: Raliva123) saat lanjut ke pembayaran.') }}</p>
+                    <p class="font-label-sm text-label-sm text-on-surface-variant/70 mt-sm">{{ __('Akun dan alamat akan dibuat otomatis (password acak ditampilkan setelah checkout) saat lanjut ke pembayaran.') }}</p>
                     @endif
                 </div>
 

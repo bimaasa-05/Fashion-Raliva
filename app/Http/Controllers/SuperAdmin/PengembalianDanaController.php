@@ -9,6 +9,7 @@ use App\Services\RefundCompletionService;
 use App\Support\ActivityLogger;
 use App\Models\PaymentMethod;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class PengembalianDanaController extends Controller
@@ -55,10 +56,10 @@ class PengembalianDanaController extends Controller
             'file_bukti' => [($isSaldoAkun ? 'nullable' : 'required'), 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
             'deskripsi_bukti' => ['nullable', 'string', 'max:1000'],
         ], [
-            'file_bukti.required' => 'Bukti transfer wajib dilampirkan.',
-            'file_bukti.mimes' => 'Bukti transfer harus berupa JPG, PNG, atau PDF.',
-            'file_bukti.max' => 'Ukuran bukti transfer maksimal 5 MB.',
-            'deskripsi_bukti.max' => 'Deskripsi bukti maksimal 1000 karakter.',
+            'file_bukti.required' => __('Bukti transfer wajib dilampirkan.'),
+            'file_bukti.mimes' => __('Bukti transfer harus berupa JPG, PNG, atau PDF.'),
+            'file_bukti.max' => __('Ukuran bukti transfer maksimal 5 MB.'),
+            'deskripsi_bukti.max' => __('Deskripsi bukti maksimal 1000 karakter.'),
         ]);
 
         $path = $request->hasFile('file_bukti')
@@ -68,12 +69,19 @@ class PengembalianDanaController extends Controller
         $lama = $refund->only(['status', 'reviewed_by']);
 
         try {
-            $refund->update([
-                'status' => Refund::STATUS_DISETUJUI,
-                'reviewed_by' => ActivityLogger::resolveActorId(),
-            ]);
+            DB::transaction(function () use ($refund, $path, $data) {
+                $locked = Refund::whereKey($refund->refund_id)->lockForUpdate()->firstOrFail();
+                if ($locked->status !== Refund::STATUS_REQUESTED) {
+                    throw new \RuntimeException(__('Refund ini sudah diproses pihak lain.'));
+                }
 
-            RefundCompletionService::complete($refund, $path, $data['deskripsi_bukti'] ?? null);
+                $locked->update([
+                    'status' => Refund::STATUS_DISETUJUI,
+                    'reviewed_by' => ActivityLogger::resolveActorId(),
+                ]);
+
+                RefundCompletionService::complete($locked, $path, $data['deskripsi_bukti'] ?? null);
+            });
         } catch (\Throwable $e) {
             if (str_contains($e->getMessage(), 'Saldo toko tidak cukup')) {
                 return back()->with('toast', [
@@ -86,6 +94,7 @@ class PengembalianDanaController extends Controller
                 str_contains($e->getMessage(), 'tidak terhubung ke toko')
                 || str_contains($e->getMessage(), 'Wallet toko tidak ditemukan')
                 || str_contains($e->getMessage(), 'sudah berubah')
+                || str_contains($e->getMessage(), 'sudah diproses')
             ) {
                 return back()->with('toast', [
                     'message' => __('Refund tidak dapat diselesaikan: :ph1', ['ph1' => $e->getMessage()]),

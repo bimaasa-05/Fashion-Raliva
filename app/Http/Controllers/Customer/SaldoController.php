@@ -147,10 +147,10 @@ class SaldoController extends Controller
         $validated = $request->validate([
             'nominal' => ['required', 'integer', 'min:'.static::MIN_NOMINAL, 'max:'.static::MAX_NOMINAL],
         ], [
-            'nominal.required' => 'Masukkan nominal topup.',
-            'nominal.integer' => 'Nominal harus berupa angka.',
-            'nominal.min' => 'Nominal minimal Rp '.number_format(static::MIN_NOMINAL, 0, ',', '.').'.',
-            'nominal.max' => 'Nominal maksimal Rp '.number_format(static::MAX_NOMINAL, 0, ',', '.').'.',
+            'nominal.required' => __('Masukkan nominal topup.'),
+            'nominal.integer' => __('Nominal harus berupa angka.'),
+            'nominal.min' => __('Nominal minimal Rp :ph1.', ['ph1' => number_format(static::MIN_NOMINAL, 0, ',', '.')]),
+            'nominal.max' => __('Nominal maksimal Rp :ph1.', ['ph1' => number_format(static::MAX_NOMINAL, 0, ',', '.')]),
         ]);
 
         $user = Auth::user();

@@ -45,6 +45,7 @@ class GudangController extends Controller
 
         $calonPetugas = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', Role::GUDANG))
             ->where('status', 'aktif')
+            ->whereHas('storeAssignments', fn ($q) => $q->where('store_id', $storeId)->where('status', 'aktif'))
             ->orderBy('nama_lengkap')
             ->get(['user_id', 'nama_lengkap', 'email']);
 
@@ -144,8 +145,12 @@ class GudangController extends Controller
             ->whereHas('role', fn ($q) => $q->where('nama_role', Role::GUDANG))
             ->where('status', 'aktif')
             ->first();
-        if (! $user) {
-            return back()->with('error', __('User harus staff Gudang yang aktif.'));
+        $seToko = $user && \App\Models\StoreStaff::where('store_id', $warehouse->store_id)
+            ->where('user_id', $user->user_id)
+            ->where('status', 'aktif')
+            ->exists();
+        if (! $user || ! $seToko) {
+            return back()->with('error', __('User harus staff Gudang aktif toko Anda.'));
         }
 
         \App\Models\WarehouseStaff::updateOrCreate(

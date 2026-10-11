@@ -95,7 +95,7 @@
             </div>
             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
                     <span class="material-symbols-outlined text-[14px]">inventory_2</span>
-                    <span id="result-count">{{ $topups->count() }}</span> {{ __('top up') }}
+                    <span id="result-count">{{ $topups->total() }}</span> {{ __('top up') }}
                 </span>
         </div>
 
@@ -265,6 +265,9 @@ $metodeTujuan = $tp->payment?->paymentMethod?->nama_metode ?? '-';
             @empty
                 <p class="text-center text-on-surface-variant py-12">{{ __('Tidak ada top up tercatat.') }}</p>
             @endforelse
+            @if ($topups->hasPages())
+                <div class="mt-6 flex justify-center">{{ $topups->links() }}</div>
+            @endif
         </div>
     </section>
 </div>

@@ -393,6 +393,9 @@
 </div>
 </div>
 @endforeach
+@if ($orders->hasPages())
+<div class="mt-lg flex justify-center">{{ $orders->links() }}</div>
+@endif
 </div>
 </section>
 @endif

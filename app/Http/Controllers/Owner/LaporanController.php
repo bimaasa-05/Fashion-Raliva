@@ -185,7 +185,7 @@ class LaporanController extends Controller
         $data = $this->reportData($storeId, $period);
         $store = \App\Models\Store::where('store_id', $storeId)->first();
 
-        $periodeLabel = [7 => '1 Minggu', 30 => '30 Hari', 90 => '3 Bulan', 365 => '1 Tahun'][$period] ?? '30 Hari';
+        $periodeLabel = [7 => '1 Minggu', 30 => '30 Hari', 90 => '3 Bulan', 365 => '1 Tahun', 1825 => '5 Tahun'][$period] ?? '30 Hari';
         $fmt = fn ($v) => 'Rp ' . number_format($v, 0, ',', '.');
 
         return view('Owner.laporan.cetak', array_merge($data, [
@@ -208,7 +208,7 @@ class LaporanController extends Controller
         $data = $this->reportData($storeId, $period);
         $store = \App\Models\Store::where('store_id', $storeId)->first();
 
-        $periodeLabel = [7 => '1 Minggu', 30 => '30 Hari', 90 => '3 Bulan', 365 => '1 Tahun'][$period] ?? '30 Hari';
+        $periodeLabel = [7 => '1 Minggu', 30 => '30 Hari', 90 => '3 Bulan', 365 => '1 Tahun', 1825 => '5 Tahun'][$period] ?? '30 Hari';
         $fmt = fn ($v) => 'Rp ' . number_format($v, 0, ',', '.');
 
         $pdf = \Barryvdh\DomPDF\Facade\Pdf::loadView('Owner.laporan.pdf', array_merge($data, [

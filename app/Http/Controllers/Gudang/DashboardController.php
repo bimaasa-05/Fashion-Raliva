@@ -92,14 +92,16 @@ class DashboardController extends Controller
             ->where('tipe_pergerakan', StockMovement::TIPE_KELUAR)
             ->whereDate('created_at', $today)->sum('jumlah');
 
-        // Pergerakan 7 hari terakhir untuk chart.
-        $chart = $this->buildMovementChart($warehouseId, 7);
+        // Pergerakan 7 hari terakhir untuk chart + data 7/30/90 hari:
+        // 1 query agregat harian, sisanya diiris di PHP.
+        $harian = $this->movementHarian($warehouseId, 90);
+        $chart = $this->irisChart($harian, 7);
 
         // Chart data untuk 7/30/90 hari (untuk JS filter rentang)
         $chartRangeData = [
-            '7' => $this->buildMovementChart($warehouseId, 7),
-            '30' => $this->buildMovementChart($warehouseId, 30),
-            '90' => $this->buildMovementChart($warehouseId, 90),
+            '7' => $this->irisChart($harian, 7),
+            '30' => $this->irisChart($harian, 30),
+            '90' => $this->irisChart($harian, 90),
         ];
 
         // Aktivitas terbaru (5 terakhir).
@@ -145,17 +147,22 @@ class DashboardController extends Controller
         $slaPct = $orderRequests->count() > 0 ? (int) round($reqTersedia / $orderRequests->count() * 100) : 100;
 
         // Kategori stok terbesar (top 4 by total unit).
+        $produkPerKategori = Product::where('store_id', $warehouse->store_id)
+            ->selectRaw('category_id, COUNT(*) as c')
+            ->groupBy('category_id')
+            ->pluck('c', 'category_id')
+            ->all();
         $kategoriTerbesar = $stocks->map(function (WarehouseStock $s) {
             return (object) [
                 'nama' => $s->productVariant->product->category->nama_kategori ?? 'Lainnya',
                 'jumlah' => $s->jumlah_stok,
                 'sku' => $s->productVariant->product->category_id ?? 0,
             ];
-        })->groupBy('nama')->map(function ($grp) {
+        })->groupBy('nama')->map(function ($grp) use ($produkPerKategori) {
             return (object) [
                 'nama' => $grp->first()->nama,
                 'jumlah' => $grp->sum('jumlah'),
-                'sku' => Product::where('category_id', $grp->first()->sku)->count(),
+                'sku' => $produkPerKategori[$grp->first()->sku] ?? 0,
             ];
         })->sortByDesc('jumlah')->take(4)->values();
 
@@ -232,7 +239,28 @@ class DashboardController extends Controller
         return 'aman';
     }
 
-    private function buildMovementChart(int $warehouseId, int $days): array
+    /**
+     * Agregat pergerakan harian 1 query: [tgl Y-m-d => ['masuk' => x, 'keluar' => y]].
+     */
+    private function movementHarian(int $warehouseId, int $days): array
+    {
+        $rows = StockMovement::where('warehouse_id', $warehouseId)
+            ->where('created_at', '>=', Carbon::today()->subDays($days - 1)->startOfDay())
+            ->selectRaw('DATE(created_at) as tgl')
+            ->selectRaw('SUM(CASE WHEN tipe_pergerakan IN (?, ?) THEN jumlah ELSE 0 END) as masuk', [StockMovement::TIPE_MASUK, StockMovement::TIPE_MUTASI_MASUK])
+            ->selectRaw('SUM(CASE WHEN tipe_pergerakan IN (?, ?) THEN jumlah ELSE 0 END) as keluar', [StockMovement::TIPE_KELUAR, StockMovement::TIPE_MUTASI_KELUAR])
+            ->groupBy('tgl')
+            ->get();
+
+        $map = [];
+        foreach ($rows as $r) {
+            $map[$r->tgl] = ['masuk' => (int) $r->masuk, 'keluar' => (int) $r->keluar];
+        }
+
+        return $map;
+    }
+
+    private function irisChart(array $harian, int $days): array
     {
         $labels = [];
         $masuk = [];
@@ -242,14 +270,16 @@ class DashboardController extends Controller
         for ($i = $days - 1; $i >= 0; $i--) {
             $date = Carbon::today()->subDays($i);
             $labels[] = $mapHari[(int) $date->format('w')];
-            $masuk[] = (int) StockMovement::where('warehouse_id', $warehouseId)
-                ->whereIn('tipe_pergerakan', [StockMovement::TIPE_MASUK, StockMovement::TIPE_MUTASI_MASUK])
-                ->whereDate('created_at', $date)->sum('jumlah');
-            $keluar[] = (int) StockMovement::where('warehouse_id', $warehouseId)
-                ->whereIn('tipe_pergerakan', [StockMovement::TIPE_KELUAR, StockMovement::TIPE_MUTASI_KELUAR])
-                ->whereDate('created_at', $date)->sum('jumlah');
+            $row = $harian[$date->format('Y-m-d')] ?? ['masuk' => 0, 'keluar' => 0];
+            $masuk[] = $row['masuk'];
+            $keluar[] = $row['keluar'];
         }
 
         return ['labels' => $labels, 'masuk' => $masuk, 'keluar' => $keluar];
+    }
+
+    private function buildMovementChart(int $warehouseId, int $days): array
+    {
+        return $this->irisChart($this->movementHarian($warehouseId, $days), $days);
     }
 }

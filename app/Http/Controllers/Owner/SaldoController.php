@@ -75,37 +75,22 @@ class SaldoController extends Controller
         }
         $jenisList = $wallet->transactions()->select('jenis_transaksi')->distinct()->pluck('jenis_transaksi')->filter()->values()->all();
 
-        $withdrawals = $wallet->withdrawals()
-            ->with('bankAccount.bank')
-            ->orderByDesc('diajukan_pada')
-            ->get();
-
-        $refunds = Refund::whereIn('order_id', function ($q) use ($store) {
-            $q->select('order_id')->from('orders')->where('store_id', $store->store_id);
-        })
-            ->orderByDesc('diajukan_pada')
-            ->get();
-
-        // Ringkasan per periode (7/30/90/365 hari)
+        // Ringkasan per periode (7/30/90/365 hari) — agregat di DB.
         $start = Carbon::now()->subDays($period - 1)->startOfDay();
         $end = Carbon::now()->endOfDay();
-        $monthTx = $wallet->transactions()
-            ->whereBetween('created_at', [$start, $end])
-            ->get();
+        $monthBase = $wallet->transactions()->whereBetween('created_at', [$start, $end]);
 
-        $pemasukan = $monthTx->whereIn('jenis_transaksi', [
+        $pemasukan = (float) (clone $monthBase)->whereIn('jenis_transaksi', [
             WalletTransaction::JENIS_PENJUALAN_MASUK,
             WalletTransaction::JENIS_KOMISI_MASUK,
             WalletTransaction::JENIS_PEMASUKAN,
         ])->sum('jumlah');
 
-        $pengeluaran = $monthTx->whereNotIn('jenis_transaksi', [
+        $pengeluaran = (float) (clone $monthBase)->whereNotIn('jenis_transaksi', [
             WalletTransaction::JENIS_PENJUALAN_MASUK,
             WalletTransaction::JENIS_KOMISI_MASUK,
             WalletTransaction::JENIS_PEMASUKAN,
-        ])->sum(function ($t) {
-            return abs((float) $t->jumlah);
-        });
+        ])->selectRaw('SUM(ABS(jumlah)) as total')->value('total');
 
         $summary = [
             'pemasukan' => $pemasukan,
@@ -120,16 +105,34 @@ class SaldoController extends Controller
         }
         $hariRange = ['7hari' => 7, '30hari' => 30, '90hari' => 90][$grafik];
 
-        $chart = collect(range($hariRange - 1, 0))->map(function ($i) use ($wallet) {
+        // Data tren harian: saldo akhir hari = transaksi terakhir ≤ hari itu.
+        // 2 query (sebelum rentang + dalam rentang), sisanya dihitung di PHP.
+        $rangeStart = Carbon::now()->subDays($hariRange - 1)->startOfDay();
+        $sebelum = (float) $wallet->transactions()
+            ->where('created_at', '<', $rangeStart)
+            ->orderByDesc('created_at')
+            ->value('saldo_sesudah');
+        $perDay = [];
+        foreach (
+            $wallet->transactions()
+                ->where('created_at', '>=', $rangeStart)
+                ->orderBy('created_at')
+                ->get(['created_at', 'saldo_sesudah']) as $t
+        ) {
+            $perDay[$t->created_at->format('Y-m-d')] = (float) $t->saldo_sesudah;
+        }
+
+        $last = $sebelum;
+        $chart = collect(range($hariRange - 1, 0))->map(function ($i) use ($perDay, &$last) {
             $hari = Carbon::now()->subDays($i);
-            $saldoAkhir = (float) $wallet->transactions()
-                ->where('created_at', '<=', $hari->copy()->endOfDay())
-                ->orderByDesc('created_at')
-                ->value('saldo_sesudah');
+            $key = $hari->format('Y-m-d');
+            if (array_key_exists($key, $perDay)) {
+                $last = $perDay[$key];
+            }
 
             return [
                 'label' => $hari->translatedFormat('d M'),
-                'saldo' => $saldoAkhir,
+                'saldo' => $last,
             ];
         });
 
@@ -191,7 +194,7 @@ class SaldoController extends Controller
 
         return view('Owner.keuangan.index', compact(
             'wallet', 'bankAccounts', 'totalDicairkan',
-            'mutations', 'withdrawals', 'refunds', 'summary', 'chart',
+            'mutations', 'summary', 'chart',
             'expenses', 'margin', 'store', 'period',
             'kategoriList', 'jenisList', 'filterKategori', 'filterJenis',
             'katExpList', 'filterKatExp', 'grafik',

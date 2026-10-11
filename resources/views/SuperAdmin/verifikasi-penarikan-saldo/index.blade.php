@@ -98,7 +98,7 @@
             </div>
             <span class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gold-accent/10 border border-gold-accent/30 font-label-sm text-[11px] uppercase tracking-wider text-gold-accent shrink-0 whitespace-nowrap">
                     <span class="material-symbols-outlined text-[14px]">inventory_2</span>
-                    <span id="result-count">{{ $penarikans->count() }}</span> penarikan
+                    <span id="result-count">{{ $penarikans->total() }}</span> penarikan
                 </span>
         </div>
 
@@ -258,6 +258,9 @@
             @empty
                 <p class="text-center text-on-surface-variant py-12">{{ __('Tidak ada penarikan tercatat.') }}</p>
             @endforelse
+            @if ($penarikans->hasPages())
+                <div class="mt-6 flex justify-center">{{ $penarikans->links() }}</div>
+            @endif
         </div>
     </section>
 </div>
@@ -271,7 +274,7 @@
                 <span class="material-symbols-outlined text-gold-accent text-[28px]">task_alt</span>
             </div>
             <h3 class="font-headline-lg-mobile text-headline-lg-mobile text-primary mb-4 text-center">{{ __('Konfirmasi Persetujuan Penarikan') }}</h3>
-            <p class="font-body-md text-body-md text-on-surface-variant mb-5 text-center">{{ __('Penarikan sebesar') }} <span id="approve-nominal" class="font-title-md text-gold-accent">-</span> untuk <span id="approve-customer" class="font-bold text-on-surface">-</span> {{ __('akan disetujui dan ditandai dibayar.') }}</p>
+            <p class="font-body-md text-body-md text-on-surface-variant mb-5 text-center">{{ __('Penarikan sebesar') }} <span id="approve-nominal" class="font-title-md text-gold-accent">-</span> untuk <span id="approve-customer" class="font-bold text-on-surface">-</span> {{ __('akan disetujui. Dana ditahan menunggu pembayaran.') }}</p>
             <div class="mb-6 space-y-3 rounded-xl border border-muted-border bg-surface-container-low p-4">
                 <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Detail Transfer') }}</p>
                 <div class="flex items-start gap-2.5">
@@ -305,7 +308,7 @@
             </div>
             <div class="flex justify-end gap-4">
                 <button type="button" class="inline-flex items-center gap-1.5 border border-outline px-6 py-3 text-primary font-label-sm text-label-sm uppercase tracking-wider rounded-full hover:bg-surface-container transition-colors" onclick="hideDialog('approve-dialog')"><span class="material-symbols-outlined text-[16px] leading-none">close</span>{{ __('Batal') }}</button>
-                <button type="submit" id="approve-submit" disabled class="inline-flex items-center gap-1.5 bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:bg-deep-onyx"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>Setujui &amp; Bayar</button>
+                <button type="submit" id="approve-submit" disabled class="inline-flex items-center gap-1.5 bg-deep-onyx text-on-primary px-6 py-3 font-label-sm text-label-sm uppercase tracking-wider rounded-full border border-deep-onyx shadow-sm hover:shadow-md hover:-translate-y-px hover:bg-black transition-all duration-200 btn-premium disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-none disabled:hover:bg-deep-onyx"><span class="material-symbols-outlined text-[16px] leading-none">task_alt</span>{{ __('Setujui') }}</button>
             </div>
         </div>
     </form>

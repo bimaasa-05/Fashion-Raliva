@@ -31,6 +31,12 @@ class CustomerWalletService
             $wallet = static::walletFor($user);
             $wallet = CustomerWallet::whereKey($wallet->customer_wallet_id)->lockForUpdate()->first();
 
+            if (CustomerWalletTransaction::where('customer_topup_id', $topup->customer_topup_id)
+                ->where('jenis_transaksi', CustomerWalletTransaction::JENIS_TOPUP)
+                ->exists()) {
+                throw new \RuntimeException(__('Topup ini sudah dikreditkan ke saldo.'));
+            }
+
             $sebelum = (float) $wallet->saldo_tersedia;
             $wallet->increment('saldo_tersedia', $topup->jumlah);
 

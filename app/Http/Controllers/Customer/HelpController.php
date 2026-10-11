@@ -11,13 +11,12 @@ class HelpController extends Controller
 {
     public function index()
     {
-        $categories = HelpCategory::aktif()->terurut()->get();
+        $categories = HelpCategory::aktif()->terurut()->with(['faqs' => fn ($q) => $q->aktif()->terurut()])->get();
 
         $faqGroups = collect();
         foreach ($categories as $category) {
-            $faqs = $category->faqs()->aktif()->terurut()->get();
-            if ($faqs->isNotEmpty()) {
-                $faqGroups->push(['category' => $category, 'faqs' => $faqs]);
+            if ($category->faqs->isNotEmpty()) {
+                $faqGroups->push(['category' => $category, 'faqs' => $category->faqs]);
             }
         }
 
