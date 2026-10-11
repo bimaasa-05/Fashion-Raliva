@@ -68,9 +68,13 @@
             $dinit = strtoupper(mb_substr($di,0,2)) ?: '?';
         @endphp
         <a href="{{ route('customer.account') }}" class="flex items-center gap-sm group">
-            <span class="w-12 h-12 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-sm shrink-0 border border-gold-accent/30">
-                {{ $dinit }}
-            </span>
+            @if(auth()->user()->foto_profil_url)
+                <img src="{{ auth()->user()->foto_profil_url }}" alt="{{ auth()->user()->nama_lengkap ?? 'Customer' }}" class="w-12 h-12 rounded-full object-cover shrink-0 border border-gold-accent/30" />
+            @else
+                <span class="w-12 h-12 rounded-full bg-gold-accent text-white flex items-center justify-center font-bold text-sm shrink-0 border border-gold-accent/30">
+                    {{ $dinit }}
+                </span>
+            @endif
             <span class="flex flex-col min-w-0">
                 <span class="font-title-md text-title-md truncate text-[var(--chrome-text)]">{{ auth()->user()->nama_lengkap ?? 'Customer' }}</span>
                 <span class="font-label-sm text-label-sm text-[var(--chrome-text-dim)] truncate">{{ auth()->user()->email ?? '' }}</span>
