@@ -8,6 +8,7 @@ use App\Support\ActivityLogger;
 use App\Support\AdminContext;
 use App\Support\WarnaPalet;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class DataProdukController extends Controller
@@ -22,7 +23,24 @@ class DataProdukController extends Controller
             ->when($q, fn ($query) => $query->where('nama_produk', 'like', "%{$q}%"))
             ->orderByDesc('created_at')
             ->orderByDesc('product_id')
-            ->paginate(12);
+            ->paginate(12)
+            ->withQueryString();
+
+        // Terjual per produk (paritas kolom Terjual di tabel Owner).
+        $ids = $products->pluck('product_id')->all();
+        $sold = $ids !== []
+            ? \App\Models\OrderItem::query()
+                ->select('product_variants.product_id', DB::raw('SUM(order_items.quantity) as total'))
+                ->join('product_variants', 'product_variants.product_variant_id', '=', 'order_items.product_variant_id')
+                ->whereIn('product_variants.product_id', $ids)
+                ->groupBy('product_variants.product_id')
+                ->pluck('total', 'product_variants.product_id')
+            : collect();
+        $products->getCollection()->transform(function ($p) use ($sold) {
+            $p->terjual = (int) ($sold->get($p->product_id) ?? 0);
+
+            return $p;
+        });
 
         $categories = \App\Models\Category::where('status', 'aktif')->orderBy('nama_kategori')->get();
 
