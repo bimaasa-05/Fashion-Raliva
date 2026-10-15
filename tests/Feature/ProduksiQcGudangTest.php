@@ -15,6 +15,13 @@ class ProduksiQcGudangTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Assertion memakai string Indonesia; kunci locale agar deterministik meski .env memakai en.
+        app()->setLocale('id');
+    }
+
     public function test_selesai_produksi_computes_gagal_automatically(): void
     {
         [$produksi, $storeId] = $this->produksi();
