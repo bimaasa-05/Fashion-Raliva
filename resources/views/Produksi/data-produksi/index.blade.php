@@ -49,9 +49,9 @@
 
     {{-- Tabel --}}
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
-        <div class="flex flex-row items-center gap-3 mb-6">
-            <div class="flex items-center gap-3 flex-1 min-w-0">
-                <div class="relative flex-1 min-w-0">
+        <div class="flex flex-row items-center gap-3 mb-6 overflow-x-auto">
+            <div class="flex items-center gap-3 shrink-0 ms-auto">
+                <div class="relative w-48 sm:w-64 shrink-0">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                     <input type="text" placeholder="{{ __('Cari nomor pesanan...') }}" data-table-search class="raliva-search" />
                 </div>
