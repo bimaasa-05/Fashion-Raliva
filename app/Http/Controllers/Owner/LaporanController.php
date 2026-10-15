@@ -153,19 +153,19 @@ class LaporanController extends Controller
 
         // top products
         $top = OrderItem::query()
-            ->select('product_variants.product_id', DB::raw('SUM(order_items.quantity) as terjual'))
+            ->select('products.nama_produk as nama', DB::raw('SUM(order_items.quantity) as terjual'))
             ->join('product_variants', 'product_variants.product_variant_id', '=', 'order_items.product_variant_id')
+            ->join('products', 'products.product_id', '=', 'product_variants.product_id')
             ->join('orders', 'orders.order_id', '=', 'order_items.order_id')
             ->where('orders.store_id', $storeId)
             ->where('orders.status', 'selesai')
-            ->groupBy('product_variants.product_id')
+            ->groupBy('product_variants.product_id', 'products.nama_produk')
             ->orderByDesc('terjual')
             ->limit(5)
-            ->with('productVariant.product')
             ->get()
             ->map(function ($oi) {
                 return [
-                    'nama' => $oi->productVariant?->product?->nama_produk ?? '-',
+                    'nama' => $oi->nama ?? '-',
                     'terjual' => (int) $oi->terjual,
                 ];
             })->all();
