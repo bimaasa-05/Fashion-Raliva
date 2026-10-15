@@ -129,7 +129,7 @@
                                class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors {{ $activeStatus === $key ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">{{ $label }}</a>
                         @endforeach
                     </div>
-                    <div class="relative w-48 sm:w-64 shrink-0 ms-auto">
+                    <div class="relative w-36 sm:w-64 shrink-0 ms-auto">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                         <input type="text" placeholder="{{ __('Cari judul permintaan...') }}" data-table-search class="raliva-search" />
                     </div>
