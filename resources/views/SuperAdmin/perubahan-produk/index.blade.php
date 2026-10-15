@@ -39,8 +39,22 @@
                     <p class="text-xs text-on-surface-variant mt-1">Diajukan oleh {{ $item->requester?->nama_lengkap ?? '-' }} • Produk #{{ $item->product_id }}</p>
                 </div>
                 <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border {{ $item->status === 'pending' ? 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' : ($item->status === 'disetujui' ? 'bg-success/10 text-success border-success/20' : 'bg-error/10 text-error border-error/20') }}">{{ $tabs[$item->status] ?? $item->status }}</span>
+                @if (($item->tipe ?? 'ubah') === 'hapus')
+                    <span class="inline-flex items-center px-2 py-1 rounded-full text-[10px] font-bold uppercase border bg-error/10 text-error border-error/20">{{ __('Penghapusan') }}</span>
+                @endif
             </div>
 
+            @if (($item->tipe ?? 'ubah') === 'hapus')
+                <div class="mt-4 rounded-lg border border-error/25 bg-error/5 px-4 py-3 space-y-1.5">
+                    <p class="text-xs font-bold uppercase tracking-widest text-error">{{ __('Admin mengajukan penghapusan produk ini') }}</p>
+                    <p class="text-sm text-on-surface"><span class="font-semibold">{{ $item->before_snapshot['product']['nama_produk'] ?? $item->product?->nama_produk ?? '-' }}</span>
+                        • {{ $item->before_snapshot['product']['kategori'] ?? '-' }}
+                        • Rp {{ number_format((float) ($item->before_snapshot['product']['harga_dasar'] ?? 0), 0, ',', '.') }}
+                        • {{ count($item->before_snapshot['variants'] ?? []) }} varian
+                        • {{ count($item->before_snapshot['images'] ?? []) }} foto</p>
+                    <p class="text-sm text-on-surface-variant italic">“{{ $item->after_payload['alasan'] ?? '-' }}”</p>
+                </div>
+            @else
             <details class="mt-4 border border-muted-border rounded-lg bg-surface-container-low" open>
                 <summary class="cursor-pointer px-4 py-3 text-xs font-bold uppercase tracking-widest text-on-surface">{{ __('Perbandingan data utama') }}</summary>
                 <div class="overflow-x-auto border-t border-muted-border">
@@ -126,13 +140,19 @@
                     @endif
                 </div>
             </details>
+            @endif
 
             @if ($item->status === 'pending')
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 mt-4">
                     <form method="POST" action="{{ route('superadmin.perubahan-produk.setujui', [$item->product_id, $item->product_update_request_id]) }}" class="flex items-center justify-between gap-3 border border-success/25 bg-success/5 rounded-lg px-4 py-3">
                         @csrf
-                        <p class="text-xs text-on-surface">{{ __('Setujui dan berlakukan semua perubahan di atas.') }}</p>
-                        <button type="submit" class="px-4 py-2 bg-deep-onyx text-on-primary text-xs font-bold uppercase tracking-widest rounded btn-premium">{{ __('Setujui') }}</button>
+                        @if (($item->tipe ?? 'ubah') === 'hapus')
+                            <p class="text-xs text-on-surface">{{ __('Setujui dan hapus produk ini secara permanen.') }}</p>
+                            <button type="submit" class="px-4 py-2 bg-error/10 border border-error/40 text-error text-xs font-bold uppercase tracking-widest rounded hover:bg-error/20">{{ __('Setujui Hapus') }}</button>
+                        @else
+                            <p class="text-xs text-on-surface">{{ __('Setujui dan berlakukan semua perubahan di atas.') }}</p>
+                            <button type="submit" class="px-4 py-2 bg-deep-onyx text-on-primary text-xs font-bold uppercase tracking-widest rounded btn-premium">{{ __('Setujui') }}</button>
+                        @endif
                     </form>
                     <form method="POST" action="{{ route('superadmin.perubahan-produk.tolak', [$item->product_id, $item->product_update_request_id]) }}" class="border border-error/25 bg-error/5 rounded-lg px-4 py-3 space-y-2">
                         @csrf
