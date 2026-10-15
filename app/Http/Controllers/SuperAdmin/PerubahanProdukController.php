@@ -111,8 +111,7 @@ class PerubahanProdukController extends Controller
 
         $fotoPaths = \App\Models\ProductImage::where('product_id', $lockedProduct->product_id)->pluck('file_gambar')->all();
 
-        $lockedRequest->update([
-            'status' => ProductUpdateRequest::STATUS_DISETUJUI,
+        $lockedRequest->update([            'status' => ProductUpdateRequest::STATUS_DISETUJUI,
             'review_note' => null,
             'reviewed_by' => ActivityLogger::resolveActorId(),
         ]);
@@ -130,6 +129,10 @@ class PerubahanProdukController extends Controller
         );
 
         $lockedProduct->images()->delete();
+        // Riwayat stok varian (restrictOnDelete) ikut dihapus — produk beserta
+        // variannya dihapus permanen sehingga baris audit ini kehilangan induknya.
+        \App\Models\StockMovement::whereIn('product_variant_id', $variantIds)->delete();
+        \App\Models\StockTransferItem::whereIn('product_variant_id', $variantIds)->delete();
         $lockedProduct->variants()->delete();
         $lockedProduct->delete();
 
