@@ -56,17 +56,127 @@
             </div>
         </div>
 
-        <div class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 mb-6 overflow-x-auto max-w-full">
-            <button type="button" data-adm-tab="semua" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">{{ __('Semua') }}</button>
-            <button type="button" data-adm-tab="pending" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">{{ __('Menunggu') }}</button>
-            <button type="button" data-adm-tab="disetujui" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">{{ __('Disetujui') }}</button>
-            <button type="button" data-adm-tab="ditolak" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">{{ __('Ditolak') }}</button>
+        <div class="flex flex-col lg:flex-row lg:items-center gap-3 mb-6">
+            <div class="inline-flex bg-surface-container-lowest border border-muted-border rounded-lg p-1 gap-1 overflow-x-auto max-w-full">
+                <button type="button" data-adm-tab="semua" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors bg-deep-onyx text-on-primary whitespace-nowrap">{{ __('Semua') }}</button>
+                <button type="button" data-adm-tab="pending" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">{{ __('Menunggu') }}</button>
+                <button type="button" data-adm-tab="disetujui" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">{{ __('Disetujui') }}</button>
+                <button type="button" data-adm-tab="ditolak" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">{{ __('Ditolak') }}</button>
+            </div>
+            <div class="flex flex-wrap items-center gap-3 lg:ml-auto">
+                <select id="filter-kategori" class="raliva-select lg:w-44">
+                    <option value="">{{ __('Semua Kategori') }}</option>
+                    @foreach ($categories as $cat)
+                        <option value="{{ $cat->nama_kategori }}">{{ $cat->nama_kategori }}</option>
+                    @endforeach
+                </select>
+            </div>
         </div>
 
         @if ($products->isEmpty())
             <p class="text-on-surface-variant text-sm py-10 text-center">{{ __('Tidak ada produk ditemukan.') }}</p>
         @else
-        <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-gutter">
+        {{-- Desktop: tabel ala Owner --}}
+        <div class="hidden md:block">
+        <div class="overflow-x-auto">
+            <table class="premium-table w-full min-w-[900px] font-body-md text-sm">
+                <thead>
+                    <tr class="border-b border-muted-border text-left">
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Produk') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Kategori') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Harga') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">{{ __('Stok') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant">{{ __('Terjual') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-center">{{ __('Status') }}</th>
+                        <th class="py-3 px-4 text-xs font-medium text-on-surface-variant text-right">{{ __('Aksi') }}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @forelse ($products as $p)
+                        @php
+                            $skuA = $p->variants->first()?->sku ?? '-';
+                            $statusA = $p->status;
+                            $pengajuanTerkunci = in_array($p->product_id, $pendingUpdateIds ?? [], true);
+                            $normFotoA = function ($raw) {
+                                if (filter_var($raw, FILTER_VALIDATE_URL)) return $raw;
+                                $raw = ltrim($raw, '/');
+                                if (str_starts_with($raw, 'assets/')) return asset($raw);
+                                return asset('storage/' . $raw);
+                            };
+                            $fotosA = $p->images->map(fn ($img) => $normFotoA($img->file_gambar))->values()->all();
+                            $thumbA = $fotosA[0] ?? null;
+                            $totalStokA = $p->variants->sum(fn ($v) => (int) $v->warehouseStocks->sum('jumlah_stok'));
+                            $editFotosJson = json_encode($p->images->map(fn ($img) => ['id' => $img->product_image_id, 'url' => $normFotoA($img->file_gambar)])->values()->all());
+                            $editVarianJson = json_encode($p->variants->map(fn ($v) => ['id' => $v->product_variant_id, 'ukuran' => $v->ukuran, 'warna' => $v->warna, 'hex' => (\App\Support\WarnaPalet::resolve($v->warna_hex, $v->warna) ?? ''), 'stok' => (int) $v->warehouseStocks->sum('jumlah_stok')])->values()->all());
+                            $resepRows = $p->materialRequirements->map(fn ($row) => [
+                                'nama' => $row->nama_bahan,
+                                'satuan' => $row->satuan,
+                                'jumlah' => (float) $row->jumlah_per_unit,
+                                'biaya' => 'Rp '.number_format((float) $row->biaya_per_unit, 0, ',', '.'),
+                                'total' => 'Rp '.number_format((float) $row->jumlah_per_unit * (float) $row->biaya_per_unit, 0, ',', '.'),
+                            ])->values()->all();
+                            $hppA = (float) ($p->modal_produksi ?? 0);
+                            $marginA = (float) $p->harga_dasar - $hppA;
+                            $marginPersenA = (float) $p->harga_dasar > 0 ? ($marginA / (float) $p->harga_dasar) * 100 : 0;
+                            $resepRingkasan = $resepRows !== []
+                                ? count($resepRows).' bahan • HPP Rp '.number_format($hppA, 0, ',', '.').' • Margin Rp '.number_format($marginA, 0, ',', '.').' ('.number_format($marginPersenA, 2, ',', '.').'%)'
+                                : 'Belum ada bahan produksi.';
+                            $operasionalRows = $p->operationalCosts->map(fn ($row) => [
+                                'nama' => $row->nama_biaya,
+                                'nominal' => 'Rp '.number_format((float) $row->nominal, 0, ',', '.'),
+                            ])->values()->all();
+                        @endphp
+                        <tr data-adm-row data-status="{{ $statusA === 'aktif' ? 'disetujui' : $statusA }}" data-kategori="{{ $p->category?->nama_kategori ?? '-' }}" data-produk-id="{{ $p->product_id }}" data-produk-nama="{{ $p->nama_produk }}" data-produk-sku="{{ $skuA }}" data-produk-created="{{ $p->created_at?->translatedFormat('d M Y') }}" data-produk-harga="Rp {{ number_format((float) $p->harga_dasar, 0, ',', '.') }}" data-produk-kategori="{{ $p->category?->nama_kategori ?? '-' }}" data-produk-tipe="{{ ucfirst($p->tipe_produk ?? 'regular') }}" data-produk-varian="{{ $p->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}" data-produk-deskripsi="{{ $p->deskripsi }}" data-produk-status="{{ $statusA }}" data-produk-alasan="{{ $statusA === 'ditolak' ? ($p->alasan_penolakan ?? '') : '' }}" data-produk-images='@json($fotosA)' data-resep-ringkasan="{{ $resepRingkasan }}" data-resep-rows='@json($resepRows)' data-operasional-rows='@json($operasionalRows)' class="border-b border-muted-border last:border-0">
+                            <td class="py-3.5 px-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-11 h-14 rounded-md bg-surface-container-low border border-outline-variant flex items-center justify-center shrink-0 overflow-hidden">
+                                        @if ($thumbA)
+                                            <img src="{{ $thumbA }}" alt="{{ $p->nama_produk }}" loading="lazy" class="w-full h-full object-cover" />
+                                        @else
+                                            <span class="material-symbols-outlined text-[22px] text-on-surface-variant">inventory_2</span>
+                                        @endif
+                                    </div>
+                                    <div class="min-w-0">
+                                        <p class="font-bold text-on-surface truncate">{{ $p->nama_produk }}</p>
+                                        <p class="text-xs text-on-surface-variant mt-0.5">{{ $skuA }} &#8226; {{ $p->store?->nama_toko ?? '-' }}</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-3.5 px-4 text-on-surface-variant">{{ $p->category?->nama_kategori ?? '-' }}</td>
+                            <td class="py-3.5 px-4 font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format((float) $p->harga_dasar, 0, ',', '.') }}</td>
+                            <td class="py-3.5 px-4 text-center text-on-surface">{{ $p->variants->count() }} <span class="text-xs text-on-surface-variant">{{ __('varian') }}</span><span class="block text-xs text-on-surface-variant">{{ $totalStokA }} pcs</span></td>
+                            <td class="py-3.5 px-4">
+                                <p class="text-on-surface">{{ $p->terjual ?? 0 }} {{ __('pcs') }}</p>
+                                <p class="text-xs text-on-surface-variant">{{ $p->variants->map(fn ($v) => trim(($v->ukuran ?? '').' '.($v->warna ?? '')))->filter()->implode(', ') ?: '-' }}</p>
+                            </td>
+                            <td class="py-3.5 px-4 text-center">
+                                @if ($statusA === 'aktif')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-success/10 text-success text-[9px] font-bold uppercase border border-success/20">{{ __('Disetujui') }}</span>
+                                @elseif ($statusA === 'ditolak')
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-error/10 text-error text-[9px] font-bold uppercase border border-error/20">{{ __('Ditolak') }}</span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30">{{ __('Menunggu') }}</span>
+                                @endif
+                                @if ($pengajuanTerkunci)
+                                    <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[9px] font-bold uppercase border border-gold-accent/30 whitespace-nowrap mt-1">{{ __('Pengajuan Pending') }}</span>
+                                @endif
+                            </td>
+                            <td class="py-3.5 px-4">
+                                <div class="flex items-center justify-end gap-1.5">
+                                    <button type="button" data-produk-detail class="inline-flex items-center gap-1 px-2.5 py-1 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">visibility</span>{{ __('Detail') }}</button>
+                                    <button type="button" data-produk-edit @disabled($pengajuanTerkunci) title="{{ $pengajuanTerkunci ? __('Menunggu keputusan Super Admin') : __('Ajukan perubahan produk') }}" data-action="{{ route('admin.produk.update', $p) }}" data-nama="{{ $p->nama_produk }}" data-kategori="{{ $p->category_id }}" data-kategori-nama="{{ $p->category?->nama_kategori ?? '' }}" data-harga="{{ $p->harga_dasar }}" data-hpp="{{ $p->modal_produksi ?? '' }}" data-tipe="{{ $p->tipe_produk }}" data-deskripsi="{{ $p->deskripsi }}" data-fotos="{{ $editFotosJson }}" data-varian="{{ $editVarianJson }}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gold-accent/10 border border-gold-accent/30 rounded-lg text-xs font-semibold text-gold-accent hover:bg-gold-accent/20 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"><span class="material-symbols-outlined text-[14px]">edit</span>{{ __('Edit') }}</button>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr><td colspan="7" class="py-6 text-center text-on-surface-variant">{{ __('Belum ada produk.') }}</td></tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        </div>
+        {{-- Mobile: kartu --}}
+        <div class="md:hidden space-y-3">
             @forelse ($products as $p)
                 @php
                     $skuA = $p->variants->first()?->sku ?? '-';
@@ -99,7 +209,7 @@
                         'nominal' => 'Rp '.number_format((float) $row->nominal, 0, ',', '.'),
                     ])->values()->all();
                 @endphp
-                <article data-reveal data-adm-row data-status="{{ $statusA === 'aktif' ? 'disetujui' : $statusA }}" data-produk-id="{{ $p->product_id }}" data-produk-nama="{{ $p->nama_produk }}" data-produk-sku="{{ $skuA }}" data-produk-created="{{ $p->created_at?->translatedFormat('d M Y') }}" data-produk-harga="Rp {{ number_format((float) $p->harga_dasar, 0, ',', '.') }}" data-produk-kategori="{{ $p->category?->nama_kategori ?? '-' }}" data-produk-tipe="{{ ucfirst($p->tipe_produk ?? 'regular') }}" data-produk-varian="{{ $p->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}" data-produk-deskripsi="{{ $p->deskripsi }}" data-produk-status="{{ $statusA }}" data-produk-alasan="{{ $statusA === 'ditolak' ? ($p->alasan_penolakan ?? '') : '' }}" data-produk-images='@json($fotosA)' data-resep-ringkasan="{{ $resepRingkasan }}" data-resep-rows='@json($resepRows)' data-operasional-rows='@json($operasionalRows)' class="group bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium flex flex-col">
+                <article data-reveal data-adm-row data-status="{{ $statusA === 'aktif' ? 'disetujui' : $statusA }}" data-kategori="{{ $p->category?->nama_kategori ?? '-' }}" data-produk-id="{{ $p->product_id }}" data-produk-nama="{{ $p->nama_produk }}" data-produk-sku="{{ $skuA }}" data-produk-created="{{ $p->created_at?->translatedFormat('d M Y') }}" data-produk-harga="Rp {{ number_format((float) $p->harga_dasar, 0, ',', '.') }}" data-produk-kategori="{{ $p->category?->nama_kategori ?? '-' }}" data-produk-tipe="{{ ucfirst($p->tipe_produk ?? 'regular') }}" data-produk-varian="{{ $p->variants->map(fn ($v) => trim(($v->warna ?? '') . ' ' . ($v->ukuran ?? '')))->filter()->implode(', ') }}" data-produk-deskripsi="{{ $p->deskripsi }}" data-produk-status="{{ $statusA }}" data-produk-alasan="{{ $statusA === 'ditolak' ? ($p->alasan_penolakan ?? '') : '' }}" data-produk-images='@json($fotosA)' data-resep-ringkasan="{{ $resepRingkasan }}" data-resep-rows='@json($resepRows)' data-operasional-rows='@json($operasionalRows)' class="group bg-surface-container-lowest border border-muted-border rounded-lg overflow-hidden card-premium flex flex-col">
                     <div class="relative aspect-[3/4] bg-surface-container-low overflow-hidden max-h-48" data-produk-gallery>
                         @if (count($fotosA))
                             <div class="block w-full h-full" data-produk-main>
@@ -660,7 +770,7 @@
 
         document.querySelectorAll('[data-produk-detail]').forEach((btn) => {
             btn.addEventListener('click', () => {
-                const card = btn.closest('article');
+                const card = btn.closest('[data-adm-row]');
                 if (!card) return;
                 const d = card.dataset;
                 document.getElementById('detail-nama').textContent = d.produkNama || '-';
@@ -728,17 +838,28 @@
                     t.classList.toggle('text-on-surface-variant', !active);
                     t.classList.toggle('hover:text-on-surface', !active);
                 });
-                const target = tab.getAttribute('data-adm-tab');
-                let visible = 0;
-                document.querySelectorAll('[data-adm-row]').forEach((row) => {
-                    const show = target === 'semua' || row.getAttribute('data-status') === target;
-                    row.classList.toggle('hidden', !show);
-                    if (show) visible++;
-                });
-                document.querySelector('[data-empty-state]')?.classList.toggle('hidden', visible > 0);
-                document.querySelector('[data-empty-state]')?.classList.toggle('flex', visible === 0);
+                applyAdmFilters();
             });
         });
+
+        function applyAdmFilters() {
+            const activeTab = document.querySelector('[data-adm-tab].bg-deep-onyx')?.getAttribute('data-adm-tab') || 'semua';
+            const kat = document.getElementById('filter-kategori')?.value || '';
+            let visible = 0;
+            document.querySelectorAll('[data-adm-row]').forEach((row) => {
+                const okStatus = activeTab === 'semua' || row.getAttribute('data-status') === activeTab;
+                const okKat = !kat || (row.getAttribute('data-kategori') || '-') === kat;
+                const show = okStatus && okKat;
+                row.classList.toggle('hidden', !show);
+                if (show) visible++;
+            });
+            // Baris tabel + kartu mobile digandakan per produk; bagi 2 agar empty-state akurat.
+            const uniq = Math.ceil(visible / 2);
+            document.querySelector('[data-empty-state]')?.classList.toggle('hidden', uniq > 0);
+            document.querySelector('[data-empty-state]')?.classList.toggle('flex', uniq === 0);
+        }
+
+        document.getElementById('filter-kategori')?.addEventListener('change', applyAdmFilters);
 
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const cardTimers = new Map();
