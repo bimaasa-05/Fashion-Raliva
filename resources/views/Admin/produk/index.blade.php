@@ -43,13 +43,15 @@
     </section>
 
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
+        @php $katAktif = $categories->firstWhere('category_id', (int) request('kategori')); @endphp
+        <form method="GET" id="form-filter-produk">
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
             <h2 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Katalog Produk Toko') }}</h2>
             <div class="flex items-center gap-3">
-                <form method="GET" class="relative w-full md:w-56">
+                <div class="relative w-full md:w-56">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                     <input type="text" name="q" value="{{ request('q') }}" placeholder="{{ __('Cari produk...') }}" class="raliva-search" />
-                </form>
+                </div>
                 <button type="button" data-modal-open="{{ ($slotHabis ?? false) ? 'modal-slot-habis' : 'modal-form-produk' }}" class="flex items-center justify-center gap-2 px-4 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium shrink-0">
                     <span class="material-symbols-outlined text-[18px]">add</span> Tambah
                 </button>
@@ -64,14 +66,28 @@
                 <button type="button" data-adm-tab="ditolak" class="adm-tab px-4 py-2 rounded-md text-xs font-medium transition-colors text-on-surface-variant hover:text-on-surface whitespace-nowrap">{{ __('Ditolak') }}</button>
             </div>
             <div class="flex flex-wrap items-center gap-3 lg:ml-auto">
-                <select id="filter-kategori" class="raliva-select lg:w-44">
-                    <option value="">{{ __('Semua Kategori') }}</option>
-                    @foreach ($categories as $cat)
-                        <option value="{{ $cat->nama_kategori }}">{{ $cat->nama_kategori }}</option>
-                    @endforeach
-                </select>
+                {{-- Filter kategori searchable (skala aman untuk ratusan kategori): ketik untuk menyaring, klik untuk pakai. --}}
+                <div class="relative lg:w-56" id="box-filter-kategori">
+                    <input type="hidden" name="kategori" id="filter-kategori-hidden" value="{{ request('kategori') }}" />
+                    <button type="button" id="filter-kategori-btn" aria-haspopup="listbox" aria-expanded="false" class="raliva-select w-full flex items-center justify-between gap-2 text-left">
+                        <span id="filter-kategori-label" class="truncate">{{ $katAktif?->nama_kategori ?? __('Semua Kategori') }}</span>
+                        <span class="material-symbols-outlined text-[18px] shrink-0">expand_more</span>
+                    </button>
+                    <div id="filter-kategori-menu" class="hidden absolute z-30 mt-1 w-full bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl overflow-hidden">
+                        <div class="p-2 border-b border-muted-border">
+                            <input type="text" id="filter-kategori-search" placeholder="{{ __('Cari kategori...') }}" autocomplete="off" class="raliva-input text-sm" />
+                        </div>
+                        <ul id="filter-kategori-list" role="listbox" class="max-h-56 overflow-y-auto py-1">
+                            <li><button type="button" data-kat-id="" data-kat-nama="{{ __('Semua Kategori') }}" class="w-full text-left px-4 py-2 text-sm text-on-surface hover:bg-surface-container-low transition-colors">{{ __('Semua Kategori') }}</button></li>
+                            @foreach ($categories as $cat)
+                                <li><button type="button" data-kat-id="{{ $cat->category_id }}" data-kat-nama="{{ $cat->nama_kategori }}" class="w-full text-left px-4 py-2 text-sm text-on-surface hover:bg-surface-container-low transition-colors">{{ $cat->nama_kategori }}</button></li>
+                            @endforeach
+                        </ul>
+                    </div>
+                </div>
             </div>
         </div>
+        </form>
 
         @if ($products->isEmpty())
             <p class="text-on-surface-variant text-sm py-10 text-center">{{ __('Tidak ada produk ditemukan.') }}</p>
@@ -844,12 +860,9 @@
 
         function applyAdmFilters() {
             const activeTab = document.querySelector('[data-adm-tab].bg-deep-onyx')?.getAttribute('data-adm-tab') || 'semua';
-            const kat = document.getElementById('filter-kategori')?.value || '';
             let visible = 0;
             document.querySelectorAll('[data-adm-row]').forEach((row) => {
-                const okStatus = activeTab === 'semua' || row.getAttribute('data-status') === activeTab;
-                const okKat = !kat || (row.getAttribute('data-kategori') || '-') === kat;
-                const show = okStatus && okKat;
+                const show = activeTab === 'semua' || row.getAttribute('data-status') === activeTab;
                 row.classList.toggle('hidden', !show);
                 if (show) visible++;
             });
@@ -859,7 +872,44 @@
             document.querySelector('[data-empty-state]')?.classList.toggle('flex', uniq === 0);
         }
 
-        document.getElementById('filter-kategori')?.addEventListener('change', applyAdmFilters);
+        // Filter kategori searchable: ketik untuk menyaring opsi, klik opsi untuk submit server (?kategori=).
+        (function () {
+            const box = document.getElementById('box-filter-kategori');
+            if (!box) return;
+            const btn = document.getElementById('filter-kategori-btn');
+            const menu = document.getElementById('filter-kategori-menu');
+            const search = document.getElementById('filter-kategori-search');
+            const list = document.getElementById('filter-kategori-list');
+            const hidden = document.getElementById('filter-kategori-hidden');
+            const label = document.getElementById('filter-kategori-label');
+            const form = document.getElementById('form-filter-produk');
+            const close = () => { menu.classList.add('hidden'); btn.setAttribute('aria-expanded', 'false'); };
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const open = menu.classList.toggle('hidden');
+                btn.setAttribute('aria-expanded', String(!open));
+                if (!open) { search.value = ''; filterList(''); requestAnimationFrame(() => search.focus()); }
+            });
+            document.addEventListener('click', (e) => { if (!box.contains(e.target)) close(); });
+            document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+            const filterList = (key) => {
+                const keyNorm = key.trim().toLowerCase();
+                list.querySelectorAll('li').forEach((li) => {
+                    const opt = li.querySelector('[data-kat-nama]');
+                    const show = !keyNorm || (opt?.getAttribute('data-kat-nama') || '').toLowerCase().includes(keyNorm);
+                    li.classList.toggle('hidden', !show);
+                });
+            };
+            search.addEventListener('input', () => filterList(search.value));
+            search.addEventListener('keydown', (e) => { e.stopPropagation(); });
+            list.querySelectorAll('[data-kat-id]').forEach((opt) => {
+                opt.addEventListener('click', () => {
+                    hidden.value = opt.getAttribute('data-kat-id') || '';
+                    label.textContent = opt.getAttribute('data-kat-nama') || '';
+                    form?.submit();
+                });
+            });
+        })();
 
         const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         const cardTimers = new Map();
