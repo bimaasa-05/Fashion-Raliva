@@ -66,7 +66,7 @@
             </div>
             <form method="GET" action="{{ route('produksi.riwayat-produksi') }}" class="flex items-center gap-2 shrink-0 ms-auto">
                 <input type="hidden" name="status" value="{{ $status }}" />
-                <div class="relative w-48 sm:w-64 shrink-0">
+                <div class="relative w-36 sm:w-64 shrink-0">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                     <input type="text" name="cari" value="{{ $cari }}" placeholder="{{ __('Cari nomor pesanan / nama pelanggan...') }}" class="raliva-search !pl-10" />
                 </div>
