@@ -43,7 +43,7 @@
             .medal-silver { background: linear-gradient(135deg, #F9FAFB 0%, #D1D5DB 30%, #9CA3AF 50%, #E5E7EB 75%, #6B7280 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
             .medal-bronze { background: linear-gradient(135deg, #FFE8C2 0%, #E39A5B 30%, #B25E2A 50%, #F0B978 75%, #7C3F16 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
             .medal-container { position: relative; display: inline-flex; align-items: center; justify-content: center; animation: crownFloat 3s ease-in-out infinite; }
-            .crown-container { position: relative; display: inline-flex; align-items: center; justify-content: center; animation: crownFloat 3s ease-in-out infinite, crownGlowPulse 2s ease-in-out infinite; }
+            .crown-container { position: relative; display: inline-flex; align-items: center; justify-content: center; animation: crownFloat 3s ease-in-out infinite, crownGlowPulse 2s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6)); }
             .crown-container::before { content: ''; position: absolute; top: -10%; bottom: -10%; left: -80%; width: 45%; background: rgba(255, 255, 255, 0.55); transform: skewX(-24deg); pointer-events: none; z-index: 10; animation: crownShimmer 2.4s linear infinite; }
             .crown-sparkle { position: absolute; top: 8px; right: 2px; width: 12px; height: 12px; background: #FFF; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); animation: sparkleTwinkle 1.8s ease-in-out infinite; pointer-events: none; }
             @keyframes crownFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
