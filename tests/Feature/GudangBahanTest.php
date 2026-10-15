@@ -20,6 +20,13 @@ class GudangBahanTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Assertion memakai string Indonesia; kunci locale agar deterministik meski .env memakai en.
+        app()->setLocale('id');
+    }
+
     public function test_bahan_page_lists_newest_first(): void
     {
         [$gudang, $lama] = $this->productWithGudang('Produk Bahan Lama');
