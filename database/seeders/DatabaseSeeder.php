@@ -32,6 +32,7 @@ class DatabaseSeeder extends Seeder
             WarehouseStaffPermissionSeeder::class,
             HelpCenterSeeder::class,
             LegalDocumentSeeder::class,
+            BarangKeluarSeeder::class,
         ]);
     }
 }
