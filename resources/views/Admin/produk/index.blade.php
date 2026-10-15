@@ -181,6 +181,7 @@
                                 <div class="flex items-center justify-end gap-1.5">
                                     <button type="button" data-produk-detail class="inline-flex items-center gap-1 px-2.5 py-1 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">visibility</span>{{ __('Detail') }}</button>
                                     <button type="button" data-produk-edit @disabled($pengajuanTerkunci) title="{{ $pengajuanTerkunci ? __('Menunggu keputusan Super Admin') : __('Ajukan perubahan produk') }}" data-action="{{ route('admin.produk.update', $p) }}" data-nama="{{ $p->nama_produk }}" data-kategori="{{ $p->category_id }}" data-kategori-nama="{{ $p->category?->nama_kategori ?? '' }}" data-harga="{{ $p->harga_dasar }}" data-hpp="{{ $p->modal_produksi ?? '' }}" data-tipe="{{ $p->tipe_produk }}" data-deskripsi="{{ $p->deskripsi }}" data-fotos="{{ $editFotosJson }}" data-varian="{{ $editVarianJson }}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gold-accent/10 border border-gold-accent/30 rounded-lg text-xs font-semibold text-gold-accent hover:bg-gold-accent/20 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"><span class="material-symbols-outlined text-[14px]">edit</span>{{ __('Edit') }}</button>
+                                    <button type="button" data-produk-hapus @disabled($pengajuanTerkunci) title="{{ $pengajuanTerkunci ? __('Menunggu keputusan Super Admin') : __('Ajukan penghapusan produk') }}" data-action="{{ route('admin.produk.destroy', $p) }}" data-nama="{{ $p->nama_produk }}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-error/10 border border-error/20 rounded-lg text-xs font-semibold text-error hover:bg-error/20 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"><span class="material-symbols-outlined text-[14px]">delete</span>{{ __('Hapus') }}</button>
                                 </div>
                             </td>
                         </tr>
@@ -265,6 +266,7 @@
                             <div class="flex items-center gap-1.5">
                                 <button type="button" data-produk-detail class="inline-flex items-center gap-1 px-2.5 py-1 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors whitespace-nowrap"><span class="material-symbols-outlined text-[14px]">visibility</span>{{ __('Detail') }}</button>
                                 <button type="button" data-produk-edit @disabled($pengajuanTerkunci) title="{{ $pengajuanTerkunci ? __('Menunggu keputusan Super Admin') : __('Ajukan perubahan produk') }}" data-action="{{ route('admin.produk.update', $p) }}" data-nama="{{ $p->nama_produk }}" data-kategori="{{ $p->category_id }}" data-kategori-nama="{{ $p->category?->nama_kategori ?? '' }}" data-harga="{{ $p->harga_dasar }}" data-hpp="{{ $p->modal_produksi ?? '' }}" data-tipe="{{ $p->tipe_produk }}" data-deskripsi="{{ $p->deskripsi }}" data-fotos="{{ $editFotosJson }}" data-varian="{{ $editVarianJson }}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-gold-accent/10 border border-gold-accent/30 rounded-lg text-xs font-semibold text-gold-accent hover:bg-gold-accent/20 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"><span class="material-symbols-outlined text-[14px]">edit</span>{{ __('Edit') }}</button>
+                                <button type="button" data-produk-hapus @disabled($pengajuanTerkunci) title="{{ $pengajuanTerkunci ? __('Menunggu keputusan Super Admin') : __('Ajukan penghapusan produk') }}" data-action="{{ route('admin.produk.destroy', $p) }}" data-nama="{{ $p->nama_produk }}" class="inline-flex items-center gap-1 px-2.5 py-1 bg-error/10 border border-error/20 rounded-lg text-xs font-semibold text-error hover:bg-error/20 transition-colors whitespace-nowrap disabled:opacity-50 disabled:cursor-not-allowed"><span class="material-symbols-outlined text-[14px]">delete</span>{{ __('Hapus') }}</button>
                             </div>
                         </div>
                     </div>
@@ -456,6 +458,32 @@
                 <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">{{ __('Batal') }}</button>
                 <button type="submit" class="flex-1 py-2.5 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest rounded transition-colors btn-premium">{{ __('Ajukan Perubahan') }}</button>
             </div>
+        </div>
+    </form>
+</div>
+
+{{-- Modal Ajukan Hapus (shared): alasan wajib, berlaku setelah disetujui Super Admin. --}}
+<div id="modal-ajukan-hapus" data-modal class="fixed inset-0 z-[70] hidden items-center justify-center p-4">
+    <div class="absolute inset-0 bg-black/50" data-modal-close></div>
+    <form id="form-ajukan-hapus" method="POST" action="" class="relative mx-auto w-full max-w-sm bg-surface-container-lowest border border-muted-border rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+        @csrf
+        @method('DELETE')
+        <div class="sticky top-0 bg-surface-container-lowest z-10 flex items-center justify-between px-6 py-5 border-b border-muted-border">
+            <h3 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Ajukan Hapus') }}</h3>
+            <button type="button" data-modal-close class="text-on-surface-variant hover:text-on-surface">
+                <span class="material-symbols-outlined text-[20px]">close</span>
+            </button>
+        </div>
+        <div class="p-6 space-y-4">
+            <p class="text-sm text-on-surface">{{ __('Ajukan penghapusan') }} <span id="hapus-nama" class="font-bold">-</span>? {{ __('Berlaku setelah disetujui Super Admin.') }}</p>
+            <div>
+                <label class="block raliva-label mb-2" for="hapus-alasan">{{ __('Alasan penghapusan') }} <span class="text-error">*</span></label>
+                <textarea id="hapus-alasan" name="alasan" rows="3" required minlength="10" maxlength="1000" placeholder="{{ __('Minimal 10 karakter') }}" class="raliva-textarea w-full"></textarea>
+            </div>
+        </div>
+        <div class="sticky bottom-0 bg-surface-container-lowest border-t border-muted-border px-6 py-4 flex gap-3">
+            <button type="button" data-modal-close class="flex-1 py-2.5 border border-muted-border text-on-surface font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-surface-container-low transition-colors">{{ __('Batal') }}</button>
+            <button type="submit" class="flex-1 py-2.5 bg-error/10 border border-error/40 text-error font-label-sm text-label-sm uppercase tracking-widest rounded hover:bg-error/20 transition-colors">{{ __('Ajukan Hapus') }}</button>
         </div>
     </form>
 </div>
@@ -676,6 +704,18 @@
                 editSyncUkuranHidden();
                 editRenderVarian();
                 openModal(editModal);
+            });
+        });
+
+        document.querySelectorAll('[data-produk-hapus]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const hapusModal = document.getElementById('modal-ajukan-hapus');
+                const form = document.getElementById('form-ajukan-hapus');
+                if (!form || !hapusModal) return;
+                form.action = btn.getAttribute('data-action') || '';
+                document.getElementById('hapus-nama').textContent = btn.getAttribute('data-nama') || '-';
+                form.querySelector('[name="alasan"]').value = '';
+                openModal(hapusModal);
             });
         });
 
