@@ -243,10 +243,11 @@
         try {
             if (window.Chart) {
                 const c = themeColors();
+                const topLabels = @json(array_column($top, 'nama'));
                 new Chart(document.getElementById('top-products-chart').getContext('2d'), {
                     type: 'bar',
                     data: {
-                        labels: @json(array_column($top, 'nama')),
+                        labels: topLabels,
                         datasets: [{ label: '{{ __('Terjual (pcs)') }}', data: @json(array_column($top, 'terjual')), backgroundColor: ['#8B1E3F', 'rgba(139,30,63,.75)', 'rgba(139,30,63,.55)', 'rgba(139,30,63,.4)', 'rgba(139,30,63,.25)'], borderRadius: 4 }]
                     },
                     options: {
@@ -256,10 +257,10 @@
                         animation: { duration: 800, easing: 'easeOutQuart', delay: (ctx) => ctx.dataIndex * 90 },
                         plugins: {
                             legend: { display: false },
-                            tooltip: { backgroundColor: c.tooltipBg, titleColor: c.tooltipText, bodyColor: c.tooltipText, padding: 12, cornerRadius: 0, callbacks: { label: (ctx) => ' ' + ctx.raw + ' ' + '{{ __('pcs terjual') }}' } }
+                            tooltip: { backgroundColor: c.tooltipBg, titleColor: c.tooltipText, bodyColor: c.tooltipText, padding: 12, cornerRadius: 0, callbacks: { title: (items) => items.length ? String(topLabels[items[0].dataIndex] ?? '') : '', label: (ctx) => ' ' + ctx.raw + ' ' + '{{ __('pcs terjual') }}' } }
                         },
                         scales: {
-                            x: { grid: { display: false }, ticks: { color: c.tick, font: { family: 'Manrope', size: 11 }, maxRotation: 30, minRotation: 0, autoSkip: true, maxTicksLimit: 6 } },
+                            x: { grid: { display: false }, ticks: { color: c.tick, font: { family: 'Manrope', size: 11 }, maxRotation: 30, minRotation: 0, autoSkip: true, maxTicksLimit: 6, callback: (v, i) => { const l = String(topLabels[i] ?? ''); return l.length > 14 ? l.slice(0, 13) + '…' : l; } } },
                             y: { beginAtZero: true, grid: { color: c.grid }, ticks: { color: c.tick, font: { family: 'Manrope', size: 11 }, precision: 0 } }
                         }
                     }
