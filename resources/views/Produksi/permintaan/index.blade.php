@@ -114,8 +114,8 @@
                         <p class="font-label-sm text-[11px] text-on-surface-variant mt-0.5">{{ __('Daftar permintaan yang pernah diajukan beserta statusnya.') }}</p>
                     </div>
                 </div>
-                <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-                    <div class="inline-flex bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1 flex-wrap">
+                <div class="flex flex-row items-center justify-between gap-3">
+                    <div class="inline-flex bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1 flex-nowrap overflow-x-auto max-w-full shrink-0">
                         @php
                             $tabOptions = [
                                 'semua' => __('Semua'),
@@ -129,7 +129,7 @@
                                class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors {{ $activeStatus === $key ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">{{ $label }}</a>
                         @endforeach
                     </div>
-                    <div class="relative w-full lg:w-72">
+                    <div class="relative flex-1 min-w-0">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                         <input type="text" placeholder="{{ __('Cari judul permintaan...') }}" data-table-search class="raliva-search" />
                     </div>
