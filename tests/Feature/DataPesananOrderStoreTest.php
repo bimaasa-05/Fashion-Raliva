@@ -18,6 +18,13 @@ class DataPesananOrderStoreTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Assertion memakai string Indonesia; kunci locale agar deterministik meski .env memakai en.
+        app()->setLocale('id');
+    }
+
     private array $fixture = [];
 
     private function setupAdminStoreVariant(): void
