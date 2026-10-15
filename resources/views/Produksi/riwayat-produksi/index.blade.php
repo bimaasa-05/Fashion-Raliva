@@ -49,8 +49,8 @@
 
     {{-- Filter + Cari --}}
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-            <div class="inline-flex bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1 flex-wrap">
+        <div class="flex flex-row items-center justify-between gap-3 mb-6">
+            <div class="inline-flex bg-surface-container-low border border-muted-border rounded-lg p-1 gap-1 flex-nowrap overflow-x-auto max-w-full shrink-0">
                 @php
                     $statusOptions = [
                         'semua' => __('Semua'),
@@ -64,9 +64,9 @@
                        class="px-3 py-1.5 rounded-md text-xs font-medium transition-colors {{ $status === $key ? 'bg-deep-onyx text-on-primary' : 'text-on-surface-variant hover:text-on-surface' }}">{{ $label }}</a>
                 @endforeach
             </div>
-            <form method="GET" action="{{ route('produksi.riwayat-produksi') }}" class="flex items-center gap-3 w-full lg:w-auto">
+            <form method="GET" action="{{ route('produksi.riwayat-produksi') }}" class="flex items-center gap-2 flex-1 min-w-0 justify-end">
                 <input type="hidden" name="status" value="{{ $status }}" />
-                <div class="relative flex-1 min-w-[200px]">
+                <div class="relative flex-1 min-w-0">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                     <input type="text" name="cari" value="{{ $cari }}" placeholder="{{ __('Cari nomor pesanan / nama pelanggan...') }}" class="raliva-search !pl-10" />
                 </div>
