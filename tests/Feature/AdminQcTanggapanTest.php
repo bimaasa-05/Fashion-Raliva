@@ -15,6 +15,13 @@ class AdminQcTanggapanTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Assertion memakai string Indonesia; kunci locale agar deterministik meski .env memakai en.
+        app()->setLocale('id');
+    }
+
     public function test_pesanan_page_shows_qc_gagal_badge_and_tanggapi_action(): void
     {
         [$admin, $storeId] = $this->admin();
