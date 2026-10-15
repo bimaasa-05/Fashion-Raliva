@@ -92,11 +92,11 @@
         <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
             <div class="flex flex-row items-center gap-3 mb-6 overflow-x-auto">
                 <div class="flex items-center gap-3 shrink-0 ms-auto">
-                    <div class="relative w-48 sm:w-64 shrink-0">
+                    <div class="relative w-36 sm:w-64 shrink-0">
                         <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                         <input type="text" placeholder="{{ __('Cari bahan...') }}" data-table-search class="raliva-search" />
                     </div>
-                    <select data-table-filter="kategori-bahan" class="raliva-select w-auto shrink-0">
+                    <select data-table-filter="kategori-bahan" class="raliva-select shrink-0" style="width:auto">
                         <option value="">{{ __('Semua Kategori') }}</option>
                         <option value="kain">{{ __('Kain') }}</option>
                         <option value="aksesoris">{{ __('Aksesoris') }}</option>
