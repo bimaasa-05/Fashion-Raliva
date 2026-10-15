@@ -20,6 +20,8 @@ class DataProdukController extends Controller
         $scopeIds = AdminContext::assignedStoreIds();
         $products = Product::with(['category', 'store', 'variants.warehouseStocks', 'materialRequirements.material', 'operationalCosts', 'images' => fn ($qq) => $qq->orderBy('urutan')])
             ->whereIn('store_id', $scopeIds)
+            // Filter kategori server-side (skala aman untuk ratusan kategori + paginasi benar).
+            ->when($request->input('kategori'), fn ($query, $kat) => $query->where('category_id', (int) $kat))
             ->when($q, fn ($query) => $query->where('nama_produk', 'like', "%{$q}%"))
             ->orderByDesc('created_at')
             ->orderByDesc('product_id')
