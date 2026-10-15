@@ -104,6 +104,22 @@ class ProduksiQcGudangTest extends TestCase
         );
     }
 
+    public function test_data_produksi_tolerates_missing_schedule_dates(): void
+    {
+        [$produksi, $storeId] = $this->produksi();
+        // Pesanan offline buatan admin tanpa jadwal + sudah selesai produksi:
+        // halaman tidak boleh 500 (lte(null) pada tgl_berakhir_produksi).
+        $order = $this->orderSiapProduksi($storeId, 1);
+        $order->update([
+            'status' => Order::STATUS_MENUNGGU_QC,
+            'tgl_mulai_produksi' => null,
+            'tgl_berakhir_produksi' => null,
+            'produksi_selesai_pada' => now(),
+        ]);
+
+        $this->actingAsFresh($produksi)->get(route('produksi.data-produksi'))->assertOk();
+    }
+
     public function test_qc_gagal_keeps_status_and_notifies_store_admin_only(): void
     {
         [$produksi, $storeId] = $this->produksi();
