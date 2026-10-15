@@ -109,7 +109,7 @@
                             $accepted = (bool) $o->produksi_dimulai_pada;
                             $rejectedNote = $o->produksi_catatan_tolak;
                             $selesaiP = $o->produksi_selesai_pada;
-                            $selesaiTepat = (bool) ($selesaiP && $selesaiP->lte($o->tgl_berakhir_produksi));
+                            $selesaiTepat = (bool) ($selesaiP && $o->tgl_berakhir_produksi && $selesaiP->lte($o->tgl_berakhir_produksi));
                         @endphp
                         <tr data-table-row data-status-produksi="{{ $o->status }}" class="border-b border-muted-border last:border-0 align-top">
                             <td class="py-3.5 px-4">
@@ -243,7 +243,7 @@
                     $accepted = (bool) $o->produksi_dimulai_pada;
                     $rejectedNote = $o->produksi_catatan_tolak;
                     $selesaiP = $o->produksi_selesai_pada;
-                    $selesaiTepat = (bool) ($selesaiP && $selesaiP->lte($o->tgl_berakhir_produksi));
+                    $selesaiTepat = (bool) ($selesaiP && $o->tgl_berakhir_produksi && $selesaiP->lte($o->tgl_berakhir_produksi));
                 @endphp
                 <article data-table-row data-status-produksi="{{ $o->status }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
                     <div class="flex items-start justify-between gap-2">
