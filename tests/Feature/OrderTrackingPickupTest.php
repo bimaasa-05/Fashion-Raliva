@@ -15,6 +15,13 @@ class OrderTrackingPickupTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Assertion file ini memakai string Inggris; kunci locale agar deterministik.
+        app()->setLocale('en');
+    }
+
     public function test_pickup_order_shows_takeaway_branch_without_courier(): void
     {
         [$admin, $storeId, $customer] = $this->actors();
