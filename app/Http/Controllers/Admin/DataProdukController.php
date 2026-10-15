@@ -439,4 +439,109 @@ class DataProdukController extends Controller
 
         return back()->with('success',__('Perubahan produk diajukan. Berlaku setelah disetujui Super Admin.'));
     }
+
+    /**
+     * Ajukan penghapusan produk ke Super Admin (tidak langsung menghapus,
+     * cermin alur pengajuan perubahan).
+     */
+    public function destroy(Request $request, Product $product): \Illuminate\Http\RedirectResponse
+    {
+        $assignedStores = AdminContext::assignedStoreIds();
+        if (! in_array($product->store_id, $assignedStores, true)) {
+            return back()->with('error',__('Anda tidak memiliki akses untuk menghapus produk toko ini.'));
+        }
+
+        if (\App\Models\ProductUpdateRequest::where('product_id', $product->product_id)
+            ->where('status', \App\Models\ProductUpdateRequest::STATUS_PENDING)
+            ->exists()
+        ) {
+            return back()->with('error',__('Produk ini sudah mempunyai pengajuan yang menunggu keputusan Super Admin.'));
+        }
+
+        // Cermin Owner: produk berriwayat tidak bisa dihapus.
+        $variantIds = $product->variants()->pluck('product_variant_id')->all();
+        $hasOrders = ! empty($variantIds) && \App\Models\OrderItem::whereIn('product_variant_id', $variantIds)->exists();
+        $hasReviews = \App\Models\Review::where('product_id', $product->product_id)->exists();
+        $hasAds = \App\Models\AdSlot::where('product_id', $product->product_id)->exists();
+        if ($hasOrders || $hasReviews || $hasAds) {
+            return back()->with('error',__('Produk tidak dapat dihapus karena memiliki riwayat (pesanan/ulasan/slot iklan). Nonaktifkan saja bila perlu.'));
+        }
+
+        $data = $request->validate([
+            'alasan' => 'required|string|min:10|max:1000',
+        ], [
+            'alasan.required' => 'Alasan penghapusan wajib diisi.',
+            'alasan.min' => 'Alasan penghapusan minimal 10 karakter.',
+        ]);
+
+        $product->load(['category', 'images' => fn ($query) => $query->orderBy('urutan'), 'variants.warehouseStocks']);
+        $existingImages = \App\Models\ProductImage::where('product_id', $product->product_id)
+            ->orderBy('urutan')
+            ->get();
+        $before = [
+            'product' => array_merge(
+                $product->only(['nama_produk', 'harga_dasar', 'modal_produksi', 'category_id', 'tipe_produk', 'deskripsi', 'status']),
+                ['kategori' => $product->category?->nama_kategori]
+            ),
+            'images' => $existingImages->map(fn ($image) => $image->only(['product_image_id', 'file_gambar', 'urutan']))->all(),
+            'variants' => $product->variants->map(fn ($variant) => [
+                'product_variant_id' => $variant->product_variant_id,
+                'ukuran' => $variant->ukuran,
+                'warna' => $variant->warna,
+                'warna_hex' => $variant->warna_hex,
+                'harga' => $variant->harga,
+                'stok' => (int) $variant->warehouseStocks->sum('jumlah_stok'),
+                'stok_minimum' => (int) ($variant->warehouseStocks->min('stok_minimum') ?? 0),
+            ])->all(),
+        ];
+
+        $permintaan = \App\Models\ProductUpdateRequest::create([
+            'product_id' => $product->product_id,
+            'store_id' => $product->store_id,
+            'requested_by' => ActivityLogger::resolveActorId(),
+            'status' => \App\Models\ProductUpdateRequest::STATUS_PENDING,
+            'tipe' => \App\Models\ProductUpdateRequest::TIPE_HAPUS,
+            'before_snapshot' => $before,
+            'after_payload' => ['aksi' => 'hapus', 'alasan' => $data['alasan']],
+        ]);
+
+        ActivityLogger::log(
+            'produk.hapus.propose',
+            Product::class,
+            $product->product_id,
+            ['status' => 'aktif'],
+            ['status' => 'pengajuan_hapus_pending', 'product_update_request_id' => $permintaan->product_update_request_id],
+            sprintf('Admin mengajukan penghapusan produk "%s" untuk keputusan Super Admin.', $product->nama_produk)
+        );
+
+        $sa = \App\Models\User::whereHas('role', fn ($q) => $q->where('nama_role', 'Super Admin'))->first();
+        if ($sa) {
+            \App\Models\Notification::create([
+                'user_id' => $sa->user_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => \App\Models\Notification::TIPE_SISTEM,
+                'judul' => 'Pengajuan Penghapusan Produk',
+                'pesan' => sprintf('Penghapusan produk "%s" menunggu keputusan Super Admin.', $product->nama_produk),
+                'url' => route('superadmin.perubahan-produk'),
+            ]);
+        }
+        if ($product->store?->owner_id) {
+            \App\Models\Notification::create([
+                'user_id' => $product->store->owner_id,
+                'aktor_id' => ActivityLogger::resolveActorId(),
+                'tipe' => \App\Models\Notification::TIPE_SISTEM,
+                'judul' => 'Penghapusan Produk Diajukan',
+                'pesan' => sprintf('Admin mengajukan penghapusan produk "%s". Berlaku setelah disetujui Super Admin.', $product->nama_produk),
+                'url' => route('owner.produk'),
+            ]);
+        }
+        \App\Models\Notification::fireSelf(
+            \App\Models\Notification::TIPE_SISTEM,
+            'Penghapusan Produk Diajukan',
+            sprintf('Penghapusan produk "%s" menunggu keputusan Super Admin.', $product->nama_produk),
+            route('admin.produk')
+        );
+
+        return back()->with('success',__('Penghapusan produk diajukan. Berlaku setelah disetujui Super Admin.'));
+    }
 }
