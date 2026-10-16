@@ -346,7 +346,7 @@
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-clip">
 @if (! $selected)
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium text-center">
 <div class="atl-eyebrow mb-sm justify-center">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Order Tracking') }}</span>
@@ -419,7 +419,7 @@
 @endphp
 @if ($orders->count() > 1)
 <div class="pt-lg sticky top-16 z-30 bg-surface">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="ot-product-list px-sm py-xs flex gap-sm overflow-x-auto hide-scrollbar" style="max-height:none">
 @foreach ($orders as $o)
 <a href="{{ route('customer.order-tracking', ['order' => $o->order_id]) }}" class="shrink-0 inline-flex items-center gap-2 px-4 py-2 rounded-full border transition-all duration-200 {{ $o->order_id === $selected->order_id ? 'bg-secondary text-white border-secondary' : 'border-outline-variant text-on-surface-variant hover:border-secondary hover:text-secondary' }}">
@@ -432,7 +432,7 @@
 @endif
 <!-- Order Header (Super-Admin style premium card, aksen Burgundy) -->
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="atl-eyebrow mb-sm">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Order Tracking') }}</span>
@@ -481,7 +481,7 @@
 @endphp
 @if ($payInfo)
 <section class="pb-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
     <div class="flex items-center justify-between gap-3 mb-md">
         <p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary flex items-center gap-2">
@@ -550,7 +550,7 @@
 </section>
 @endif
 <!-- Visual Tracking Timeline -->
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 @if ($isRefund)
 <div class="text-center py-1">
@@ -763,7 +763,7 @@ $alreadyRated = ! empty($item->review) || ($rateProductId !== null && in_array($
 </div>
 <!-- Order Items List -->
 <section class="py-lg md:py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="mb-md md:mb-lg">
 <div class="atl-eyebrow mb-1">
@@ -808,7 +808,7 @@ $ukuran = $v?->ukuran;
 </div>
 </section>
 <!-- Order Summary (Tonal Background) -->
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="flex items-center gap-sm mb-md">
 <div class="w-8 h-8 rounded-full bg-secondary/10 border border-secondary/15 flex items-center justify-center">
@@ -850,7 +850,7 @@ $ukuran = $v?->ukuran;
 </div>  
 <!-- Need Help Action -->
 <section class="py-lg md:py-xl text-center reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="rounded-xl p-md md:p-lg card-premium">
 <div class="atl-eyebrow mb-sm justify-center">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Need Help?') }}</span>
