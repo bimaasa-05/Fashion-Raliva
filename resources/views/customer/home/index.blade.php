@@ -356,7 +356,7 @@
 </section>
 <!-- Categories -->
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium flex overflow-x-auto hide-scrollbar gap-sm md:items-center md:justify-center md:gap-md">
 <button type="button" data-cat="All" id="home-cat-all" class="home-cat-pill shrink-0 w-auto whitespace-nowrap text-center px-2.5 py-[4px] border border-secondary text-secondary text-[11px] rounded-full bg-secondary/5">{{ __('Semua') }}</button>
 @foreach ($homeCats as $homeCat)
@@ -367,7 +367,7 @@
 </section>
 @if (count($adProducts))
 <!-- Sponsored Ads -->
-<div class="mx-auto max-w-[1400px] px-container-margin mb-xl">
+<div class="px-container-margin mb-xl">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="flex items-center justify-between mb-xs">
 <div class="atl-eyebrow">
@@ -414,7 +414,7 @@
 </div>
 @endif
 <!-- New Arrivals -->
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="atl-eyebrow mb-xs">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('New Arrivals') }}</span>
@@ -467,7 +467,7 @@
 
 <!-- Featured Stores -->
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="atl-eyebrow mb-xs">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Featured Stores') }}</span>
@@ -498,7 +498,7 @@
 </section>
 <!-- Newsletter -->
 
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium flex flex-col items-center text-center">
 <div class="atl-eyebrow mb-xs justify-center">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Newsletter') }}</span>
@@ -514,7 +514,7 @@
 
 </main>
 <!-- Footer -->
-<footer class="mx-auto max-w-[1400px] py-xl md:pb-xl pb-32 reveal-up" style="background-color: var(--surface-ivory);">
+<footer class="py-xl md:pb-xl pb-32 reveal-up" style="background-color: var(--surface-ivory);">
 <div class="px-container-margin md:px-[64px]">
 <div class="grid grid-cols-1 md:grid-cols-12 gap-xl mb-xl">
 <div class="md:col-span-6">
