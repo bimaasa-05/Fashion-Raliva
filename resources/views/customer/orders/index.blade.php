@@ -271,7 +271,7 @@
 </header>
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-clip">
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="atl-eyebrow mb-sm">
 <span class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Pesanan') }}</span>
 </div>
@@ -282,7 +282,7 @@
 
 @if ($orders->isEmpty())
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium text-center">
 <span class="material-symbols-outlined text-[40px] text-outline-variant block mx-auto mb-sm">receipt_long</span>
 <h3 class="premium-heading font-title-md text-title-md text-on-surface mb-xs">{{ __('Belum ada pesanan') }}</h3>
@@ -294,7 +294,7 @@
 </section>
 @else
 <section class="pb-lg reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin space-y-md">
+<div class="px-container-margin space-y-md">
 @foreach ($orders as $order)
 @php
     $statusLabel = __(\App\Http\Controllers\Customer\OrderTrackingController::STATUS_LABELS[$order->status] ?? ucfirst(str_replace('_', ' ', $order->status)));
