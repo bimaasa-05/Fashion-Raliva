@@ -479,7 +479,7 @@
     </div>
 </div>
 <!-- Shop Content Container -->
-<div class="mx-auto max-w-[1400px] px-container-margin shop-content-wrap">
+<div class="px-container-margin shop-content-wrap">
 <div id="shop-content-box" class="shop-content-container bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium{{ ($products->count() + $ads->count()) ? '' : ' is-empty' }}">
 <!-- Shop Header -->
 <div class="flex items-center justify-between gap-md mb-md flex-wrap shop-content-header">
