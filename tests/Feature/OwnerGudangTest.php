@@ -91,11 +91,16 @@ class OwnerGudangTest extends TestCase
     public function test_owner_cannot_assign_cross_store_staff(): void
     {
         [$owner, $storeId] = $this->owner();
-        // User Gudang aktif TANPA penugasan ke toko ini.
-        $gudangUser = User::whereHas('role', fn ($q) => $q->where('nama_role', Role::GUDANG))
-            ->where('status', User::STATUS_AKTIF)
-            ->whereDoesntHave('storeAssignments', fn ($q) => $q->where('store_id', $storeId))
-            ->firstOrFail();
+        // User Gudang baru tanpa penugasan ke toko mana pun (self-contained,
+        // tidak bergantung data dev yang bisa berubah).
+        $gudangRole = Role::where('nama_role', Role::GUDANG)->firstOrFail();
+        $gudangUser = User::create([
+            'nama_lengkap' => 'Gudang Cross Store Uji',
+            'email' => 'gudang.cross.' . Str::lower(Str::random(8)) . '@raliva.test',
+            'password' => 'password',
+            'role_id' => $gudangRole->role_id,
+            'status' => User::STATUS_AKTIF,
+        ]);
         $warehouse = Warehouse::where('store_id', $storeId)->firstOrFail();
 
         $this->actingAs($owner)->post(route('owner.gudang.staff', ['warehouse' => $warehouse->warehouse_id]), [
