@@ -3,7 +3,8 @@
 <html lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>{{ $product->nama_produk }} - RALIVA</title>
+<title>{{ $product->nama_produk }} - {{ brand() }}</title>
+<link rel="icon" href="{{ brand_favicon_url() }}" />
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&amp;display=swap" rel="stylesheet"/>
@@ -405,7 +406,7 @@
         <a aria-label="{{ __('Go back') }}" href="{{ route('customer.shop') }}" data-go-back class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
             <span class="material-symbols-outlined text-[24px]">arrow_back</span>
             </a>
-        <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">RALIVA</h1>
+        <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ brand() }}</h1>
         <div class="w-10"></div> <!-- Spacer for centering -->
         <div class="flex gap-xs">
             @php $isWl = in_array($product->product_id, $wishlistedIds, true); @endphp
@@ -688,7 +689,7 @@
 </button>
                                 </div>
                             <div class="space-y-1">
-                                <p class="font-label-sm text-label-sm text-on-surface-variant">{{ $rp->store?->nama_toko ?? __('RALIVA') }}</p>
+                                <p class="font-label-sm text-label-sm text-on-surface-variant">{{ $rp->store?->nama_toko ?? brand() }}</p>
                                 <p class="font-body-sm text-body-sm text-on-surface font-medium truncate">{{ $rp->nama_produk }}</p>
                                 <p class="font-body-sm text-body-sm text-on-surface">Rp {{ number_format($rpMin, 0, ',', '.') }}</p>
                             </div>
