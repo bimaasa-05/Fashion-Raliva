@@ -28,3 +28,32 @@ if (! function_exists('brand')) {
         return $cached = $nama !== '' ? $nama : (string) config('app.name', 'Raliva');
     }
 }
+
+if (! function_exists('brand_favicon_url')) {
+    /**
+     * URL favicon platform. Sumber: Setting "favicon_platform" yang di-upload
+     * Super Admin di Pengaturan Sistem (Fase 6). Selama belum ada unggahan,
+     * fallback ke /favicon.ico bawaan public.
+     */
+    function brand_favicon_url(): string
+    {
+        try {
+            $file = trim((string) Setting::get('favicon_platform'));
+        } catch (\Throwable) {
+            $file = '';
+        }
+
+        if ($file !== '') {
+            $url = photo_url($file);
+            $path = public_path('storage/'.$file);
+
+            if (is_file($path)) {
+                $url .= (str_contains($url, '?') ? '&' : '?').'v='.filemtime($path);
+            }
+
+            return $url;
+        }
+
+        return asset('favicon.ico');
+    }
+}
