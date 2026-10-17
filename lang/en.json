@@ -2767,6 +2767,7 @@
     "Tidak ada logo platform untuk dihapus.": "There is no platform logo to remove.",
     "Ikon kecil di tab browser.": "Small icon in the browser tab.",
     "Format ICO/PNG, maks 512 KB.": "ICO/PNG format, max 512 KB.",
+    "Format ICO/PNG, maks 512 KB. Selama favicon kosong, ikon tab memakai logo platform atau ikon bawaan.": "ICO/PNG format, max 512 KB. While no favicon is uploaded, the tab icon uses the platform logo or the default icon.",
     "Nama Platform": "Platform Name",
     "Email Dukungan": "Support Email",
     "Setujui Refund?": "Approve Refund?",
