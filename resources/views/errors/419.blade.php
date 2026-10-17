@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>{{ __('Sesi Berakhir') }} — Raliva</title>
+<title>{{ __('Sesi Berakhir') }} — {{ brand() }}</title>
 <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Segoe UI', system-ui, sans-serif; background: #fbf9f9; color: #1b1c1c;
