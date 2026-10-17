@@ -467,7 +467,7 @@
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Nama Pemilik') }}</label>
-                    <input type="text" name="nama_pemilik" id="bank-pemilik" required maxlength="150" class="raliva-input" placeholder="RALIVA Fashion" />
+                    <input type="text" name="nama_pemilik" id="bank-pemilik" required maxlength="150" class="raliva-input" placeholder="{{ brand() }} Fashion" />
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Status') }}</label>
@@ -535,7 +535,7 @@
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Nama Pemilik') }}</label>
-                    <input type="text" name="nama_pemilik" id="ewallet-pemilik" maxlength="150" class="raliva-input" value="RALIVA Fashion" />
+                    <input type="text" name="nama_pemilik" id="ewallet-pemilik" maxlength="150" class="raliva-input" value="{{ brand() }} Fashion" />
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Deskripsi') }}</label>
@@ -601,7 +601,7 @@
                 <input type="hidden" name="account_id" id="qris-id" />
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Nama') }}</label>
-                    <input type="text" name="nama" id="qris-nama" required maxlength="100" class="raliva-input" value="QRIS RALIVA" />
+                    <input type="text" name="nama" id="qris-nama" required maxlength="100" class="raliva-input" value="QRIS {{ brand() }}" />
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Kode') }}</label>
@@ -609,7 +609,7 @@
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Nama Pemilik') }}</label>
-                    <input type="text" name="nama_pemilik" id="qris-pemilik" maxlength="150" class="raliva-input" value="RALIVA Fashion" />
+                    <input type="text" name="nama_pemilik" id="qris-pemilik" maxlength="150" class="raliva-input" value="{{ brand() }} Fashion" />
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider mb-2">{{ __('Deskripsi') }}</label>
@@ -783,7 +783,7 @@
         document.getElementById('ewallet-nama').value = '';
         document.getElementById('ewallet-kode').value = '';
         document.getElementById('ewallet-rekening').value = '';
-        document.getElementById('ewallet-pemilik').value = 'RALIVA Fashion';
+        document.getElementById('ewallet-pemilik').value = @js(brand() . ' Fashion');
         document.getElementById('ewallet-deskripsi').value = '';
         document.getElementById('ewallet-status').value = 'aktif';
         syncEwalletStatus();
@@ -806,7 +806,7 @@
                 document.getElementById('ewallet-nama').value = d.nama;
                 document.getElementById('ewallet-kode').value = d.kode;
                 document.getElementById('ewallet-rekening').value = d.nomor_rekening || '';
-                document.getElementById('ewallet-pemilik').value = d.nama_pemilik || 'RALIVA Fashion';
+                document.getElementById('ewallet-pemilik').value = d.nama_pemilik || @js(brand() . ' Fashion');
                 document.getElementById('ewallet-deskripsi').value = d.deskripsi || '';
                 document.getElementById('ewallet-status').value = d.status;
                 syncEwalletStatus();
@@ -841,7 +841,7 @@
                 document.getElementById('qris-id').value = id;
                 document.getElementById('qris-nama').value = d.nama;
                 document.getElementById('qris-kode').value = d.kode;
-                document.getElementById('qris-pemilik').value = d.nama_pemilik || 'RALIVA Fashion';
+                document.getElementById('qris-pemilik').value = d.nama_pemilik || @js(brand() . ' Fashion');
                 document.getElementById('qris-deskripsi').value = d.deskripsi || '';
                 document.getElementById('qris-status').value = d.status;
                 syncQrisStatus();
