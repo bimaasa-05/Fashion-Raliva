@@ -330,6 +330,19 @@
     .ot-product-list::-webkit-scrollbar-thumb { background: var(--border-soft); border-radius: 9999px; }
     html.theme-dark .ot-product-list { background-color: #262524; border-color: var(--border-soft); }  /* slightly lighter than main dark surface */
     @media (max-width: 768px) { .ot-product-list { max-height: 55vh; padding: 0.5rem; } }
+
+    /* ============ RATING MODAL: product list (internal scroll only) ============ */
+    .ot-rate-list {
+        max-height: 264px;                         /* ±3 baris; lebih dari itu scroll */
+        overflow-y: auto;
+        padding-right: 0.25rem;
+        scrollbar-width: thin;
+        scrollbar-color: var(--border-soft) transparent;
+    }
+    .ot-rate-list::-webkit-scrollbar { width: 6px; }
+    .ot-rate-list::-webkit-scrollbar-track { background: transparent; }
+    .ot-rate-list::-webkit-scrollbar-thumb { background: var(--border-soft); border-radius: 9999px; }
+    @media (min-width: 768px) { .ot-rate-list { max-height: 312px; } }
     .countdown-badge { font-variant-numeric: tabular-nums; }
 </style>
   </head>
@@ -674,28 +687,134 @@ if (is_array($tl) && array_key_exists('done', $tl)) {
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ $detail[1] }}</p>
 </div>
 @if ($selected->status === \App\Models\Order::STATUS_SELESAI && $selected->items->isNotEmpty())
-<div class="mt-lg flex flex-col gap-sm">
-@php $multiRatingItems = $selected->items->count() > 1; @endphp
-@foreach ($selected->items as $item)
 @php
-$rateProductId = $item->productVariant?->product_id;
-$alreadyRated = ! empty($item->review) || ($rateProductId !== null && in_array($rateProductId, ($reviewedProductIds ?? collect())->all(), true));
+$otRateRows = $selected->items->map(function ($item) use ($reviewedProductIds) {
+    $productId = $item->productVariant?->product_id;
+    if ($productId === null) {
+        return null;
+    }
+    return [
+        'item' => $item,
+        'product_id' => $productId,
+        'rated' => ! empty($item->review) || in_array($productId, ($reviewedProductIds ?? collect())->all(), true),
+    ];
+})->filter()->values();
+$otHasUnrated = $otRateRows->contains(fn ($row) => ! $row['rated']);
 @endphp
-@if ($rateProductId !== null)
-@if ($alreadyRated)
-<a href="{{ route('customer.shop.produk-riviews', $rateProductId) }}" class="w-full min-w-0 inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest border border-secondary/40 text-secondary hover:bg-secondary/5 transition-colors">
+@if ($otRateRows->count() === 1)
+@php $otSingle = $otRateRows->first(); @endphp
+@if ($otSingle['rated'])
+<a href="{{ route('customer.shop.produk-riviews', $otSingle['product_id']) }}" class="w-full min-w-0 inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest border border-secondary/40 text-secondary hover:bg-secondary/5 transition-colors">
 <span class="material-symbols-outlined text-[18px]" style="font-variation-settings: 'FILL' 1;">star</span>
-<span class="truncate">{{ __('Lihat rating') }}@if ($multiRatingItems) <span class="opacity-70">• {{ $item->nama_produk_snapshot }}</span>@endif</span>
+<span class="truncate">{{ __('Lihat rating') }}</span>
 </a>
 @else
-<a href="{{ route('customer.reviews.create', ['order_item' => $item->order_item_id]) }}" class="btn-gold w-full min-w-0 inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest">
+<a href="{{ route('customer.reviews.create', ['order_item' => $otSingle['item']->order_item_id]) }}" class="btn-gold w-full min-w-0 inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest">
 <span class="material-symbols-outlined text-[18px]">rate_review</span>
-<span class="truncate">{{ __('Beri rating') }}@if ($multiRatingItems) <span class="opacity-70">• {{ $item->nama_produk_snapshot }}</span>@endif</span>
+<span class="truncate">{{ __('Beri rating') }}</span>
 </a>
 @endif
+@elseif ($otRateRows->count() > 1)
+<div class="mt-lg">
+<button type="button" data-ot-rate-open class="{{ $otHasUnrated ? 'btn-gold' : 'border border-secondary/40 text-secondary hover:bg-secondary/5' }} w-full min-w-0 inline-flex items-center justify-center gap-2 font-label-caps text-label-caps px-lg py-3 rounded-full uppercase tracking-widest transition-colors">
+<span class="material-symbols-outlined text-[18px]" @unless ($otHasUnrated) style="font-variation-settings: 'FILL' 1;" @endunless>{{ $otHasUnrated ? 'rate_review' : 'star' }}</span>
+<span class="truncate">{{ $otHasUnrated ? __('Beri rating') : __('Lihat rating') }}</span>
+</button>
+</div>
+<!-- Rating Modal -->
+<div id="ot-rate-modal" class="hidden fixed inset-0 z-[100] bg-black/50 backdrop-blur-[2px] flex items-center justify-center p-md">
+<div id="ot-rate-modal-card" role="dialog" aria-modal="true" aria-labelledby="ot-rate-modal-title" class="w-full max-w-md md:max-w-lg bg-surface-container-lowest border border-[var(--border-soft)] rounded-2xl card-premium overflow-hidden transition-all duration-200 scale-95 opacity-0 max-h-[85vh] flex flex-col">
+<div class="flex items-center justify-between gap-sm p-md md:p-lg border-b border-outline-variant/40">
+<h3 id="ot-rate-modal-title" class="font-title-md text-title-md text-on-surface min-w-0">{{ __('Pilih produk untuk dinilai') }}</h3>
+<button type="button" data-ot-rate-close aria-label="{{ __('Tutup') }}" class="shrink-0 w-9 h-9 rounded-full border border-outline-variant inline-flex items-center justify-center text-on-surface-variant hover:border-secondary hover:text-secondary transition-colors">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<div class="p-md md:p-lg pt-sm md:pt-sm min-h-0 flex-1">
+<div class="ot-rate-list">
+@foreach ($otRateRows as $row)
+@php
+$otItem = $row['item'];
+$otVariant = $otItem->productVariant;
+$otImg = $otVariant?->product?->images->first()?->file_gambar ?? '';
+$otImgUrl = $otImg ? photo_url($otImg) : 'https://picsum.photos/seed/order-'.$otItem->order_item_id.'/900/1200';
+@endphp
+<div class="flex gap-sm md:gap-md">
+<div class="w-16 h-20 md:w-20 md:h-24 bg-surface-container-lowest rounded-lg overflow-hidden flex-shrink-0 border border-outline-variant/30">
+<img class="w-full h-full object-cover" loading="lazy" src="{{ $otImgUrl }}" alt="{{ $otItem->nama_produk_snapshot }}"/>
+</div>
+<div class="flex flex-col justify-between flex-grow min-w-0 py-0.5">
+<div class="min-w-0">
+<h4 class="font-body-sm md:font-title-md text-body-sm md:text-title-md font-semibold text-on-surface truncate" title="{{ $otItem->nama_produk_snapshot }}">{{ $otItem->nama_produk_snapshot }}</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 flex flex-wrap items-center gap-x-2 gap-y-1">
+@if ($otVariant?->warna || $otVariant?->ukuran)
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-low border border-outline-variant text-xs">{{ $otVariant?->warna ?: __('Default') }}@if ($otVariant?->ukuran) • {{ $otVariant?->ukuran }}@endif</span>
+@endif
+<span>{{ __('Qty:') }} {{ $otItem->quantity }}</span>
+</p>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-x-sm gap-y-1 mt-1">
+<p class="font-body-sm md:font-title-md text-body-sm md:text-title-md font-semibold text-on-surface">Rp {{ number_format($otItem->harga_snapshot, 0, ',', '.') }}</p>
+<div class="flex items-center gap-sm shrink-0">
+@if ($row['rated'])
+<span class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary/5 border border-secondary/20 text-secondary font-label-sm text-label-sm uppercase tracking-widest">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">star</span>{{ __('Sudah dinilai') }}
+</span>
+<a href="{{ route('customer.shop.produk-riviews', $row['product_id']) }}" class="inline-flex items-center justify-center font-label-caps text-label-caps px-4 py-2 rounded-full uppercase tracking-widest border border-secondary/40 text-secondary hover:bg-secondary/5 transition-colors whitespace-nowrap">
+{{ __('Lihat rating') }}
+</a>
+@else
+<a href="{{ route('customer.reviews.create', ['order_item' => $otItem->order_item_id]) }}" class="btn-gold inline-flex items-center justify-center gap-1 font-label-caps text-label-caps px-4 py-2 rounded-full uppercase tracking-widest whitespace-nowrap">
+<span class="material-symbols-outlined text-[16px]">rate_review</span>{{ __('Beri rating') }}
+</a>
+@endif
+</div>
+</div>
+</div>
+</div>
+@if (! $loop->last)
+<div class="h-px bg-outline-variant/40 mx-1 my-1"></div>
 @endif
 @endforeach
 </div>
+</div>
+</div>
+</div>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    var modal = document.getElementById('ot-rate-modal');
+    if (!modal) return;
+    var card = document.getElementById('ot-rate-modal-card');
+    var openBtn = document.querySelector('[data-ot-rate-open]');
+    var closeBtn = modal.querySelector('[data-ot-rate-close]');
+    var openRateModal = function () {
+        modal.classList.remove('hidden');
+        if (card) {
+            void card.offsetWidth;
+            card.classList.remove('scale-95', 'opacity-0');
+        }
+        document.body.classList.add('overflow-hidden');
+        if (closeBtn) closeBtn.focus();
+    };
+    var closeRateModal = function () {
+        if (card) card.classList.add('scale-95', 'opacity-0');
+        document.body.classList.remove('overflow-hidden');
+        setTimeout(function () {
+            modal.classList.add('hidden');
+        }, 150);
+        if (openBtn) openBtn.focus();
+    };
+    if (openBtn) openBtn.addEventListener('click', openRateModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeRateModal);
+    modal.addEventListener('click', function (e) {
+        if (e.target === modal) closeRateModal();
+    });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) closeRateModal();
+    });
+});
+</script>
+@endif
 @endif
 @if (in_array($selected->status, [\App\Models\Order::STATUS_DIKIRIM, \App\Models\Order::STATUS_SELESAI]))
 <div class="mt-lg flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-sm">
