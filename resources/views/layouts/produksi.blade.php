@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
     <meta name="user-id" content="{{ Auth::id() }}" />
-    <title>RALIVA - @yield('title', __('Staf Produksi'))</title>
+    <title>{{ brand() }} - @yield('title', __('Staf Produksi'))</title>
     @include('partials.theme-head')
     @include('partials.brand-status')
     <style>
@@ -160,7 +160,7 @@
         <button id="sidebar-toggle" class="text-on-surface hover:opacity-80 transition-opacity">
             <span class="material-symbols-outlined">menu</span>
         </button>
-        <span class="font-display-lg text-headline-md tracking-widest text-on-surface">RALIVA</span>
+        <span class="font-display-lg text-headline-md tracking-widest text-on-surface uppercase">{{ brand() }}</span>
         <div class="flex items-center gap-2">
             <button type="button" class="theme-toggle text-on-surface hover:opacity-80 transition-opacity" aria-label="{{ __('Ganti tema') }}">
                 <span class="material-symbols-outlined" data-theme-icon>light_mode</span>
@@ -176,7 +176,7 @@
         <div class="sidebar-head flex items-center justify-between gap-3 pt-1 pb-3">
             <div class="flex-1 flex items-center justify-center gap-3 min-w-0">
                 <div data-sidebar-text>
-                    <span class="font-display-lg text-title-md text-on-sidebar tracking-widest block leading-tight">RALIVA</span>
+                    <span class="font-display-lg text-title-md text-on-sidebar tracking-widest block leading-tight uppercase">{{ brand() }}</span>
                     @php $sbStore = \App\Support\SidebarContext::currentStore(); @endphp
                     @if ($sbStore?->kategori)
                         <span class="flex items-center gap-1.5 leading-tight max-w-[10rem] text-on-sidebar/60 font-body-md text-[11px] normal-case tracking-normal">
