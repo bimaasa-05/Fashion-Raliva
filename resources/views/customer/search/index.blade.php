@@ -3,7 +3,8 @@
 <html class="light" lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - {{ __('Search') }}</title>
+<title>{{ brand() }} - {{ __('Search') }}</title>
+<link rel="icon" href="{{ brand_favicon_url() }}" />
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -229,7 +230,7 @@
 <a href="{{ route('customer.shop') }}" data-go-back aria-label="{{ __('Back') }}" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase">{{ brand() }}</h1>
 <div class="flex items-center gap-sm">
 <a href="{{ route('customer.chart', ['from' => 'search']) }}" aria-label="{{ __('Cart') }}" class="relative hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
@@ -297,7 +298,7 @@
 <span class="absolute top-2 left-2 bg-secondary text-on-secondary text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">{{ __('Iklan') }}</span>
 </div>
 <div class="flex items-center justify-between gap-1 min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $a->store?->nama_toko ?? __('RALIVA') }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $a->store?->nama_toko ?? brand() }}</span>
 @if ($sDefaultVariant)
 <button type="button" data-cart-add data-variant-id="{{ $sDefaultVariant->product_variant_id }}" aria-label="{{ __('Add to cart') }}" class="text-on-surface hover:text-secondary transition-colors flex items-center shrink-0">
 <span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
@@ -330,7 +331,7 @@
 <img alt="{{ $p->nama_produk }}" class="object-cover w-full h-full " src="{{ $sImgUrl }}"/>
 </div>
 <div class="flex items-center justify-between gap-1 min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $p->store?->nama_toko ?? __('RALIVA') }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $p->store?->nama_toko ?? brand() }}</span>
 @if ($sDefaultVariant)
 <button type="button" data-cart-add data-variant-id="{{ $sDefaultVariant->product_variant_id }}" aria-label="{{ __('Add to cart') }}" class="text-on-surface hover:text-secondary transition-colors flex items-center shrink-0">
 <span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
