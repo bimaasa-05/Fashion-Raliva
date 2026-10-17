@@ -4,7 +4,7 @@
 
 @section('header-title', __('Pengaturan Sistem'))
 @section('header-badge', __('Kelola'))
-@section('header-subtitle', __('Konfigurasi aturan global platform Raliva, terpisah dari pengaturan toko.'))
+@section('header-subtitle', __('Konfigurasi aturan global platform :brand, terpisah dari pengaturan toko.', ['brand' => brand()]))
 
 @section('content')
 @include('partials.flash-toast')
@@ -49,7 +49,7 @@
                 </div>
                 <div class="min-w-0">
                     <div class="flex items-center gap-3 flex-wrap">
-                        <h2 class="font-headline-md text-headline-md text-white tracking-wide">{{ __('Kelola Platform Raliva') }}</h2>
+                        <h2 class="font-headline-md text-headline-md text-white tracking-wide">{{ __('Kelola Platform :brand', ['brand' => brand()]) }}</h2>
                         <span class="banner-badge {{ $maintenanceOn ? 'is-on' : 'is-off' }}"><span class="dot"></span>{{ $maintenanceOn ? 'Mode Pemeliharaan Aktif' : 'Semua Sistem Aktif' }}</span>
                     </div>
                     <p class="banner-desc mt-2 max-w-2xl">{{ __('Konfigurasi aturan global platform — tarif, ambang pencairan, moderasi, batas transaksi, hingga dokumen legal. Terpisah dari pengaturan tiap toko.') }}</p>
@@ -125,13 +125,13 @@
             @csrf @method('PUT')
             <div>
                 <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">payments</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">{{ __('Keuangan') }}</h2></div>
-                <p class="font-body-md text-sm text-on-surface-variant mt-2">{{ __('Sumber pendapatan Raliva dan ambang pencairan dana Owner.') }}</p>
+                <p class="font-body-md text-sm text-on-surface-variant mt-2">{{ __('Sumber pendapatan :brand dan ambang pencairan dana Owner.', ['brand' => brand()]) }}</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="komisi_persen_default">{{ __('Komisi Default (%)') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="komisi_persen_default" name="komisi_persen_default" type="number" min="0" max="100" step="0.5" value="{{ $settings['komisi_persen_default'] }}" required />
-                    <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Sumber pendapatan Raliva dari setiap transaksi berhasil.') }}</p>
+                    <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Sumber pendapatan :brand dari setiap transaksi berhasil.', ['brand' => brand()]) }}</p>
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="biaya_layanan">{{ __('Biaya Layanan Default (Rp)') }}</label>
@@ -223,7 +223,7 @@
             <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="syaratKetentuan">Syarat &amp; Ketentuan</label>
             <textarea name="syarat_ketentuan" id="syaratKetentuan" rows="8" required minlength="10"
                 class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md leading-relaxed focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors"
-                placeholder="{{ __('Tuliskan syarat dan ketentuan penggunaan platform Raliva...') }}">{{ old('syarat_ketentuan', $syaratKetentuan) }}</textarea>
+                placeholder="{{ __('Tuliskan syarat dan ketentuan penggunaan platform :brand...', ['brand' => brand()]) }}">{{ old('syarat_ketentuan', $syaratKetentuan) }}</textarea>
             @error('syarat_ketentuan')<p class="font-body-md text-xs text-error mt-2">{{ $message }}</p>@enderror
         </div>
 
@@ -231,7 +231,7 @@
             <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="kebijakanPrivasi">{{ __('Kebijakan Privasi') }}</label>
             <textarea name="kebijakan_privasi" id="kebijakanPrivasi" rows="8" required minlength="10"
                 class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md leading-relaxed focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors"
-                placeholder="{{ __('Tuliskan kebijakan privasi platform Raliva...') }}">{{ old('kebijakan_privasi', $kebijakanPrivasi) }}</textarea>
+                placeholder="{{ __('Tuliskan kebijakan privasi platform :brand...', ['brand' => brand()]) }}">{{ old('kebijakan_privasi', $kebijakanPrivasi) }}</textarea>
             @error('kebijakan_privasi')<p class="font-body-md text-xs text-error mt-2">{{ $message }}</p>@enderror
         </div>
 
