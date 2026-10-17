@@ -32,6 +32,7 @@
         },
         "files": [
             "app/Support/NotificationHelper.php",
+            "app/Support/brand.php",
             "app/Support/photo_url.php"
         ]
     },
