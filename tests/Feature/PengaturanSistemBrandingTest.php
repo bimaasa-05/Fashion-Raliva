@@ -93,4 +93,53 @@ class PengaturanSistemBrandingTest extends TestCase
         $this->assertStringNotContainsString('<img', $html);
         $this->assertStringContainsString(e(brand()), $html);
     }
+
+    public function test_superadmin_dapat_menghapus_logo_platform(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('branding/logo-hapus.png', 'x');
+        Setting::set(Setting::LOGO_PLATFORM, 'branding/logo-hapus.png');
+
+        $response = $this->actingAs($this->superAdmin())->delete(route('superadmin.pengaturan-sistem.logo.destroy'));
+
+        $response->assertRedirect();
+        $response->assertSessionHas('toast');
+
+        $this->assertSame('', (string) Setting::get(Setting::LOGO_PLATFORM));
+        $this->assertSame('', brand_logo_url());
+        $this->assertFalse(Storage::disk('public')->exists('branding/logo-hapus.png'));
+
+        // Wordmark kembali ke teks saja, siap terpusat lagi seperti sebelum ada logo.
+        $html = view('partials.brand-content')->render();
+        $this->assertStringNotContainsString('<img', $html);
+        $this->assertStringContainsString(e(brand()), $html);
+
+        Storage::disk('public')->deleteDirectory('branding');
+    }
+
+    public function test_hapus_logo_saat_belum_ada_logo_tetap_aman(): void
+    {
+        Storage::fake('public');
+        Setting::query()->where('kunci', Setting::LOGO_PLATFORM)->delete();
+
+        $response = $this->actingAs($this->superAdmin())->delete(route('superadmin.pengaturan-sistem.logo.destroy'));
+
+        $response->assertRedirect();
+        $response->assertSessionHas('toast');
+    }
+
+    public function test_tombol_dan_form_hapus_logo_tampil_di_halaman_pengaturan(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('branding/logo-uji.png', 'x');
+        Setting::set(Setting::LOGO_PLATFORM, 'branding/logo-uji.png');
+
+        $response = $this->actingAs($this->superAdmin())->get(route('superadmin.pengaturan-sistem'));
+
+        $response->assertOk();
+        $response->assertSee('modal-logo-hapus', false);
+        $response->assertSee(route('superadmin.pengaturan-sistem.logo.destroy'), false);
+
+        Storage::disk('public')->deleteDirectory('branding');
+    }
 }
