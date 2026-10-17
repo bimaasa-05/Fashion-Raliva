@@ -31,9 +31,10 @@ if (! function_exists('brand')) {
 
 if (! function_exists('brand_favicon_url')) {
     /**
-     * URL favicon platform. Sumber: Setting "favicon_platform" yang di-upload
-     * Super Admin di Pengaturan Sistem (Fase 6). Selama belum ada unggahan,
-     * fallback ke /favicon.ico bawaan public.
+     * URL favicon platform. Prioritas: Setting "favicon_platform" (unggahan
+     * Super Admin), lalu logo platform agar ikon tab otomatis mengikuti logo,
+     * terakhir ikon bawaan public/images/logo.svg. File public/favicon.ico
+     * lama tidak dipakai karena isinya kosong (0 byte).
      */
     function brand_favicon_url(): string
     {
@@ -43,18 +44,20 @@ if (! function_exists('brand_favicon_url')) {
             $file = '';
         }
 
-        if ($file !== '') {
-            $url = photo_url($file);
-            $path = public_path('storage/'.$file);
+        if ($file === '') {
+            $logo = brand_logo_url();
 
-            if (is_file($path)) {
-                $url .= (str_contains($url, '?') ? '&' : '?').'v='.filemtime($path);
-            }
-
-            return $url;
+            return $logo !== '' ? $logo : asset('images/logo.svg');
         }
 
-        return asset('favicon.ico');
+        $url = photo_url($file);
+        $path = public_path('storage/'.$file);
+
+        if (is_file($path)) {
+            $url .= (str_contains($url, '?') ? '&' : '?').'v='.filemtime($path);
+        }
+
+        return $url;
     }
 }
 
