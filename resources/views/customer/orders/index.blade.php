@@ -4,7 +4,8 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta name="color-scheme" content="light dark"/>
-<title>RALIVA - {{ __('Pesanan Saya') }}</title>
+<title>{{ brand() }} - {{ __('Pesanan Saya') }}</title>
+<link rel="icon" href="{{ brand_favicon_url() }}" />
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -266,7 +267,7 @@
 <button aria-label="{{ __('Menu') }}" class="hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase">{{ brand() }}</h1>
 <div class="w-10"></div>
 </header>
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-clip">
@@ -305,7 +306,7 @@
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="flex flex-wrap justify-between items-center gap-sm mb-sm">
 <div class="flex flex-wrap items-center gap-x-md gap-y-1">
-<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary/5 text-secondary border border-secondary/20 font-label-sm text-label-sm uppercase tracking-widest">{{ $order->store?->nama_toko ?? 'RALIVA' }}</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary/5 text-secondary border border-secondary/20 font-label-sm text-label-sm uppercase tracking-widest">{{ $order->store?->nama_toko ?? brand() }}</span>
 <span class="font-title-md text-title-md font-semibold text-on-surface">#{{ $order->nomor_order }}</span>
 <span class="font-label-sm text-label-sm text-on-surface-variant">{{ $order->created_at->format('M j, Y') }} • {{ $itemsCount }} {{ __('items') }}</span>
 </div>
