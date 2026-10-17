@@ -309,7 +309,7 @@
             </div>
             <div>
                 <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">{{ __('Deskripsi / No. Referensi (opsional)') }}</label>
-                <input type="text" name="deskripsi_bukti" maxlength="1000" placeholder="{{ __('Contoh: Transfer BCA dari rekening platform Raliva') }}"
+                <input type="text" name="deskripsi_bukti" maxlength="1000" placeholder="{{ __('Contoh: Transfer BCA dari rekening platform :brand', ['brand' => brand()]) }}"
                     class="w-full border border-muted-border bg-surface-container-low p-3 font-body-md text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" />
             </div>
         </div>
@@ -362,7 +362,7 @@
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant mb-2 uppercase">{{ __('Deskripsi / No. Referensi (opsional)') }}</label>
-                    <input type="text" name="deskripsi_bukti" id="approve-deskripsi" maxlength="1000" placeholder="{{ __('Contoh: Transfer BCA dari rekening platform Raliva') }}"
+                    <input type="text" name="deskripsi_bukti" id="approve-deskripsi" maxlength="1000" placeholder="{{ __('Contoh: Transfer BCA dari rekening platform :brand', ['brand' => brand()]) }}"
                         class="w-full border border-muted-border bg-surface-container-low p-3 font-body-md text-primary focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary" />
                 </div>
             </div>
