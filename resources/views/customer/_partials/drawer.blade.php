@@ -97,7 +97,7 @@
 {{-- Head — brand + tombol perkecil (desktop) / tutup (mobile) --}}
 <div class="sidebar-head flex items-center justify-between gap-2 px-md pt-md pb-sm border-b border-[var(--chrome-border)] shrink-0">
 <div class="flex-1 min-w-0" data-sidebar-text>
-<h2 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase>@include('partials.brand-content', ['logoClass' => 'h-7'])</h2>
+<h2 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase">@include('partials.brand-content', ['logoClass' => 'h-7'])</h2>
 <p class="font-label-sm text-label-sm text-[var(--chrome-text-dim)] tracking-wide mt-1">{{ __('The Art of Everyday Dressing') }}</p>
 </div>
 <div class="flex items-center gap-xs shrink-0">
