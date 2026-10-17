@@ -322,7 +322,7 @@
 <div class="absolute inset-0 bg-black/50"></div>
 <div class="relative z-10 flex flex-col items-center justify-center text-center h-full w-full p-lg lg:items-start lg:justify-between lg:text-left lg:p-xl">
 <div>
-<span class="font-display-lg text-headline-lg tracking-widest text-white uppercase>@include('partials.brand-content', ['logoClass' => 'h-8'])</span>
+<span class="font-display-lg text-headline-lg tracking-widest text-white uppercase">@include('partials.brand-content', ['logoClass' => 'h-8'])</span>
 <p class="font-label-sm text-label-sm text-white/80 tracking-wide mt-1 lg:hidden">{{ __('The Art of Everyday Dressing') }}</p>
 <div class="w-10 h-px bg-secondary-fixed-dim mt-sm lg:hidden"></div>
 </div>
