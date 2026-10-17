@@ -4,7 +4,7 @@
 
 @section('header-title', __('Data Toko'))
 @section('header-badge', __('Terverifikasi'))
-@section('header-subtitle', __('Kelola identitas resmi toko Anda di Raliva.'))
+@section('header-subtitle', __('Kelola identitas resmi toko Anda di :brand.', ['brand' => brand()]))
 
 @section('content')
 <div data-skeleton class="space-y-section-gap">
