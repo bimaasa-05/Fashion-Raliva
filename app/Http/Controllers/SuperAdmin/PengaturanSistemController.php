@@ -10,6 +10,7 @@ use App\Models\Setting;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 class PengaturanSistemController extends Controller
 {
@@ -94,6 +95,8 @@ class PengaturanSistemController extends Controller
             'maks_pengajuan_pencairan' => 'sometimes|nullable|numeric|min:1',
             'batas_waktu_refund' => 'sometimes|nullable|numeric|min:1',
             'konfirmasi_selesai_hari' => 'sometimes|nullable|numeric|min:1',
+            'logo_platform' => 'sometimes|nullable|file|mimes:jpeg,jpg,png,webp|max:2048',
+            'favicon_platform' => 'sometimes|nullable|file|mimes:ico,png|max:512',
         ]);
 
         $map = [
@@ -113,7 +116,7 @@ class PengaturanSistemController extends Controller
 
         $lama = [];
         $baru = [];
-        DB::transaction(function () use ($map, $data, &$lama, &$baru) {
+        DB::transaction(function () use ($map, $data, $request, &$lama, &$baru) {
             foreach ($map as $field => $key) {
                 if (! array_key_exists($field, $data)) {
                     continue;
@@ -126,6 +129,23 @@ class PengaturanSistemController extends Controller
                 $lama[$field] = Setting::get($key);
                 Setting::set($key, $value);
                 $baru[$field] = $value;
+            }
+
+            foreach (['logo_platform' => Setting::LOGO_PLATFORM, 'favicon_platform' => Setting::FAVICON_PLATFORM] as $field => $key) {
+                if (! $request->hasFile($field)) {
+                    continue;
+                }
+
+                $old = Setting::get($key);
+                $path = $request->file($field)->store('branding', 'public');
+
+                $lama[$field] = $old;
+                Setting::set($key, $path);
+                $baru[$field] = $path;
+
+                if ($old !== null && $old !== '' && $old !== $path) {
+                    Storage::disk('public')->delete($old);
+                }
             }
 
             if (empty($baru)) {
