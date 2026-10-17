@@ -3,7 +3,8 @@
 <html lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - {{ __('Create Account') }}</title>
+<title>{{ brand() }} - {{ __('Create Account') }}</title>
+<link rel="icon" href="{{ brand_favicon_url() }}" />
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -333,13 +334,13 @@
 <body class="bg-surface text-on-surface antialiased font-body-lg min-h-screen flex flex-col lg:flex-row">
 <!-- Editorial Panel -->
 <aside class="relative overflow-hidden shrink-0 h-44 lg:h-auto lg:w-[44%] flex">
-<img alt="RALIVA Editorial 1" src="{{ asset('assets/picture/register-pictures/editorial-1.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"/>
-<img alt="RALIVA Editorial 2" src="{{ asset('assets/picture/register-pictures/editorial-2.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000"/>
-<img alt="RALIVA Editorial 3" src="{{ asset('assets/picture/register-pictures/editorial-3.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000"/>
+<img alt="{{ brand() }} Editorial 1" src="{{ asset('assets/picture/register-pictures/editorial-1.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"/>
+<img alt="{{ brand() }} Editorial 2" src="{{ asset('assets/picture/register-pictures/editorial-2.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000"/>
+<img alt="{{ brand() }} Editorial 3" src="{{ asset('assets/picture/register-pictures/editorial-3.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000"/>
 <div class="absolute inset-0 bg-black/50"></div>
 <div class="relative z-10 flex flex-col items-center justify-center text-center h-full w-full p-lg lg:items-start lg:justify-between lg:text-left lg:p-xl">
 <div>
-<span class="font-display-lg text-headline-lg tracking-widest text-white">RALIVA</span>
+<span class="font-display-lg text-headline-lg tracking-widest text-white uppercase">{{ brand() }}</span>
 <p class="font-label-sm text-label-sm text-white/80 tracking-wide mt-1 lg:hidden">{{ __('The Art of Everyday Dressing') }}</p>
 <div class="w-10 h-px bg-secondary-fixed-dim mt-sm lg:hidden"></div>
 </div>
@@ -386,7 +387,7 @@
 <!-- Heading -->
 <div class="mb-sm">
 <div class="flex items-center justify-between gap-sm mb-xs">
-<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __('Raliva Account') }}</p>
+<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary">{{ __(':brand Account', ['brand' => brand()]) }}</p>
 <!-- Account Type -->
 <div id="role-switch" class="flex shrink-0 items-center gap-0.5 rounded-full border border-secondary p-0.5 frame-gold" data-initial-role="{{ old('role', 'owner') }}">
     <button type="button" id="pill-customer" data-role="customer" class="role-pill cursor-pointer rounded-full px-3 py-0.5 font-label-caps text-[11px] uppercase tracking-wider text-on-surface transition-all{{ old('role', 'owner') === 'customer' ? ' active' : '' }}">{{ __('Pelanggan') }}</button>
@@ -556,7 +557,7 @@
 <div class="hidden text-center py-xl relative z-10 border-2 border-secondary rounded-lg p-lg lg:p-xl frame-gold" id="register-success">
 <span class="material-symbols-outlined text-secondary text-[64px]">check_circle</span>
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-md mb-sm">{{ __('Account Created') }}</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-xs mx-auto">{{ __('Your RALIVA account has been created successfully. Please sign in to continue.') }}</p>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-xs mx-auto">{{ __('Your :brand account has been created successfully. Please sign in to continue.', ['brand' => brand()]) }}</p>
 <a class="w-full h-14 btn-gold rounded-xl font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center inline-flex" href="{{ route('login') }}" id="success-login-link">
             {{ __('CONTINUE TO LOGIN') }}
         </a>
@@ -799,8 +800,8 @@
                 });
                 if (subtitle) {
                     subtitle.textContent = role === 'owner'
-                        ? '{{ __("Daftar sebagai pemilik brand untuk memulai bisnis fashion Anda bersama RALIVA.") }}'
-                        : '{{ __("Daftar sebagai pelanggan untuk mulai menjelajahi koleksi RALIVA.") }}';
+                        ? '{{ __("Daftar sebagai pemilik brand untuk memulai bisnis fashion Anda bersama :brand.", ["brand" => brand()]) }}'
+                        : '{{ __("Daftar sebagai pelanggan untuk mulai menjelajahi koleksi :brand.", ["brand" => brand()]) }}';
                 }
             }
 
