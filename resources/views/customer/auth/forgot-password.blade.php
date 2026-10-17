@@ -3,7 +3,8 @@
 <html lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - {{ __('Forgot Password') }}</title>
+<title>{{ brand() }} - {{ __('Forgot Password') }}</title>
+<link rel="icon" href="{{ brand_favicon_url() }}" />
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -315,13 +316,13 @@
 <body class="bg-surface text-on-surface antialiased font-body-lg min-h-screen flex flex-col lg:flex-row">
 <!-- Editorial Panel -->
 <aside class="relative overflow-hidden shrink-0 h-44 lg:h-auto lg:w-[44%] flex">
-<img alt="RALIVA Editorial 1" src="{{ asset('assets/picture/forgot-password-pictures/1.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"/>
-<img alt="RALIVA Editorial 2" src="{{ asset('assets/picture/forgot-password-pictures/2.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000"/>
-<img alt="RALIVA Editorial 3" src="{{ asset('assets/picture/forgot-password-pictures/3.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000"/>
+<img alt="{{ brand() }} Editorial 1" src="{{ asset('assets/picture/forgot-password-pictures/1.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000"/>
+<img alt="{{ brand() }} Editorial 2" src="{{ asset('assets/picture/forgot-password-pictures/2.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000"/>
+<img alt="{{ brand() }} Editorial 3" src="{{ asset('assets/picture/forgot-password-pictures/3.jfif') }}" class="atl-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000"/>
 <div class="absolute inset-0 bg-black/50"></div>
 <div class="relative z-10 flex flex-col items-center justify-center text-center h-full w-full p-lg lg:items-start lg:justify-between lg:text-left lg:p-xl">
 <div>
-<span class="font-display-lg text-headline-lg tracking-widest text-white">RALIVA</span>
+<span class="font-display-lg text-headline-lg tracking-widest text-white uppercase">{{ brand() }}</span>
 <p class="font-label-sm text-label-sm text-white/80 tracking-wide mt-1 lg:hidden">{{ __('The Art of Everyday Dressing') }}</p>
 <div class="w-10 h-px bg-secondary-fixed-dim mt-sm lg:hidden"></div>
 </div>
@@ -380,7 +381,7 @@
 @else
 <div id="forgot-section">
 <div class="mb-md">
-<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">{{ __('Raliva Account') }}</p>
+<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">{{ __(':brand Account', ['brand' => brand()]) }}</p>
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Forgot Password') }}</h2>
 <p class="font-body-lg text-body-lg text-on-surface-variant">{{ __("Enter your email address and we'll help you reset your password.") }}</p>
 </div>
