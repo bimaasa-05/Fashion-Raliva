@@ -3,7 +3,8 @@
 <html class="light" lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
-<title>RALIVA - {{ __('My Reviews') }}</title>
+<title>{{ brand() }} - {{ __('My Reviews') }}</title>
+<link rel="icon" href="{{ brand_favicon_url() }}" />
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -312,7 +313,7 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 <img alt="{{ $prod?->nama_produk }}" class="w-full h-full object-cover " src="{{ $imgUrl }}"/>
 </a>
 <div class="flex-grow min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $rv->store?->nama_toko ?? 'RALIVA' }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $rv->store?->nama_toko ?? brand() }}</span>
 <h3 class="font-title-sm text-title-md text-on-surface font-semibold truncate">{{ $prod?->nama_produk }}</h3>
 <div class="flex items-center gap-xs mt-xs flex-wrap">
 <div class="flex text-secondary">
@@ -372,7 +373,7 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 <img alt="{{ $prod?->nama_produk }}" class="w-full h-full object-cover " src="{{ $imgUrl }}"/>
 </a>
 <div class="flex-grow min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $item->order?->store?->nama_toko ?? 'RALIVA' }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $item->order?->store?->nama_toko ?? brand() }}</span>
 <h3 class="font-title-sm text-title-md text-on-surface font-semibold break-words line-clamp-2">{{ $item->nama_produk_snapshot }}</h3>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Delivered') }} {{ $item->order?->created_at->format('M j, Y') }}</p>
 </div>
