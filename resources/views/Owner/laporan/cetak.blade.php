@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ __('Laporan Toko') }} {{ $store?->nama_toko ?? '' }} - Raliva</title>
+    <title>{{ __('Laporan Toko') }} {{ $store?->nama_toko ?? '' }} - {{ brand() }}</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'Segoe UI', Arial, sans-serif; font-size: 11px; color: #1B1C1C; background: #F3F1EC; }
@@ -100,7 +100,7 @@
         <div class="head">
             <div class="head-row">
                 <div class="head-left">
-                    <div class="brand">Raliva</div>
+                    <div class="brand">{{ brand() }}</div>
                     <h1>{{ __('Laporan Toko') }}</h1>
                     <div class="store">{{ $store?->nama_toko ?? __('Toko Saya') }}</div>
                 </div>
@@ -183,7 +183,7 @@
         </div>
 
         <div class="footer">
-            {{ __('Dokumen ini dihasilkan otomatis oleh sistem Raliva') }} &mdash; {{ $store?->nama_toko ?? '' }} &mdash; {{ now()->translatedFormat('d M Y') }}
+            {{ __('Dokumen ini dihasilkan otomatis oleh sistem :brand', ['brand' => brand()]) }} &mdash; {{ $store?->nama_toko ?? '' }} &mdash; {{ now()->translatedFormat('d M Y') }}
         </div>
     </div>
 </body>
