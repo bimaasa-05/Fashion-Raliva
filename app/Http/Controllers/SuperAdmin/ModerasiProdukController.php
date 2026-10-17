@@ -133,7 +133,7 @@ class ModerasiProdukController extends Controller
                     'aktor_id' => ActivityLogger::resolveActorId(),
                     'tipe' => Notification::TIPE_SISTEM,
                     'judul' => 'Produk Disetujui',
-                    'pesan' => sprintf('Produk "%s" telah disetujui moderasi dan kini dapat tampil di Raliva.', $locked->nama_produk),
+                    'pesan' => __('Produk ":produk" telah disetujui moderasi dan kini dapat tampil di :brand.', ['produk' => $locked->nama_produk, 'brand' => brand()]),
                     'url' => route('owner.produk'),
                 ]);
 
