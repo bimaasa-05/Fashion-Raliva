@@ -82,7 +82,7 @@
 
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter items-start">
         {{--=== Umum ===--}}
-        <form id="kartu-umum" data-scroll-section="umum" method="POST" action="{{ route('superadmin.pengaturan-sistem.update') }}" class="snap-anchor bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 space-y-gutter card-premium" data-save-form>
+        <form id="kartu-umum" data-scroll-section="umum" method="POST" enctype="multipart/form-data" action="{{ route('superadmin.pengaturan-sistem.update') }}" class="snap-anchor bg-surface-container-lowest border border-muted-border rounded-xl border-t-4 border-t-gold-accent/70 p-6 space-y-gutter card-premium" data-save-form>
             @csrf @method('PUT')
             <div>
                 <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">tune</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">{{ __('Umum') }}</h2></div>
@@ -101,6 +101,29 @@
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="whatsapp_support">{{ __('WhatsApp Dukungan') }}</label>
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="whatsapp_support" name="whatsapp_support" type="text" maxlength="20" inputmode="tel" value="{{ $settings['whatsapp_support'] }}" placeholder="6281234567890" />
                     <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Format internasional tanpa tanda +. Ditampilkan sebagai tombol hubungi saat toko ditangguhkan.') }}</p>
+                </div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="logo_platform">{{ __('Logo Platform') }}</label>
+                    @if (brand_logo_url() !== '')
+                        <div class="mb-3 p-3 border border-muted-border rounded-lg bg-surface-container-low flex items-center justify-center">
+                            <img alt="{{ brand() }}" class="max-h-16 w-auto" src="{{ brand_logo_url() }}" />
+                        </div>
+                    @endif
+                    <input accept=".jpg,.jpeg,.png,.webp" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md file:mr-3 file:px-3 file:py-1.5 file:rounded-md file:border-0 file:bg-deep-onyx file:text-on-primary file:text-xs file:uppercase file:tracking-wider focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="logo_platform" name="logo_platform" type="file" />
+                    @error('logo_platform')<p class="font-body-md text-xs text-error mt-2">{{ $message }}</p>@enderror
+                    <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Tampil menggantikan teks nama platform di seluruh halaman. Format JPG/PNG/WebP, maks 2 MB.') }}</p>
+                </div>
+                <div>
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="favicon_platform">{{ __('Favicon') }}</label>
+                    <div class="mb-3 p-3 border border-muted-border rounded-lg bg-surface-container-low flex items-center gap-3">
+                        <img alt="Favicon" class="h-8 w-8 rounded" src="{{ brand_favicon_url() }}" />
+                        <span class="font-body-md text-xs text-on-surface-variant">{{ __('Ikon kecil di tab browser.') }}</span>
+                    </div>
+                    <input accept=".ico,.png" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md file:mr-3 file:px-3 file:py-1.5 file:rounded-md file:border-0 file:bg-deep-onyx file:text-on-primary file:text-xs file:uppercase file:tracking-wider focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="favicon_platform" name="favicon_platform" type="file" />
+                    @error('favicon_platform')<p class="font-body-md text-xs text-error mt-2">{{ $message }}</p>@enderror
+                    <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Format ICO/PNG, maks 512 KB.') }}</p>
                 </div>
             </div>
             <div class="flex items-center justify-between gap-4 p-4 border border-muted-border rounded-lg hover:bg-surface-container-low transition-colors">
