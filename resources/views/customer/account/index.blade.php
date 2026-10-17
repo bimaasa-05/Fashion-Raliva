@@ -235,7 +235,7 @@
 <button aria-label="{{ __('Menu') }}" class="hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase>@include('partials.brand-content', ['logoClass' => 'h-7'])</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase">@include('partials.brand-content', ['logoClass' => 'h-7'])</h1>
 <div class="w-10" aria-hidden="true"></div>
 </header>
 <!-- Main Content Canvas -->
