@@ -246,7 +246,7 @@
 </header>
 <!-- Main Content -->
 <main class="pt-24 pb-40">
-    <div class="mx-auto max-w-[1400px] px-container-margin">
+    <div class="px-container-margin">
 
         {{-- ONE card: bg-surface-container-lowest (same as account/edit, address/edit, reviews/edit) --}}
         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up">

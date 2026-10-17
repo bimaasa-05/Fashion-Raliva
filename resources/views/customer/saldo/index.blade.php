@@ -137,7 +137,7 @@
     </header>
 
     <main class="pt-6 pb-10 w-full overflow-x-hidden">
-        <div class="mx-auto max-w-[1400px] px-container-margin space-y-lg">
+        <div class="px-container-margin space-y-lg">
 
             @if (session('toast'))
                 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-md flex items-center gap-sm">

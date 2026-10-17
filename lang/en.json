@@ -3899,5 +3899,7 @@
     "Akun dan alamat akan dibuat otomatis (password acak ditampilkan setelah checkout) saat lanjut ke pembayaran.": "Account and address will be created automatically (random password shown after checkout) when continuing to payment.",
     "Anda belum memiliki toko untuk menambah karyawan.": "You do not have a store yet to add employees.",
     "Dipakai sebagai username akun. Password acak ditampilkan setelah checkout.": "Used as the account username. Random password shown after checkout.",
-    "User harus staff Gudang aktif toko Anda.": "User must be an active Warehouse staff member of your store."
+    "User harus staff Gudang aktif toko Anda.": "User must be an active Warehouse staff member of your store.",
+    "Pilih produk untuk dinilai": "Choose a product to rate",
+    "Sudah dinilai": "Rated"
 }

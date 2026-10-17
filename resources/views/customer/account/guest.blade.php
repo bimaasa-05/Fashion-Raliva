@@ -37,7 +37,7 @@
 <div class="w-10" aria-hidden="true"></div>
 </header>
 <main class="flex-grow pt-10 pb-8 lg:pb-12 w-full overflow-x-hidden">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium reveal-up text-center overflow-hidden relative">
 <div class="absolute inset-0 opacity-[0.04]" style="background: radial-gradient(600px 220px at 50% -40px, #8B1E3F 0%, transparent 70%);"></div>
 <div class="relative">
