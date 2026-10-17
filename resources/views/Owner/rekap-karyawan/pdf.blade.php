@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>{{ __('Rekap Karyawan') }} {{ $storeName }} - Raliva</title>
+    <title>{{ __('Rekap Karyawan') }} {{ $storeName }} - {{ brand() }}</title>
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; }
         body { font-family: 'DejaVu Sans', sans-serif; font-size: 11px; color: #1B1C1C; }
@@ -46,7 +46,7 @@
         <div class="head">
             <div class="head-row">
                 <div class="head-left">
-                    <div class="brand">Raliva</div>
+                    <div class="brand">{{ brand() }}</div>
                     <h1>{{ __('Rekap Karyawan') }}</h1>
                     <div class="store">{{ $storeName }}</div>
                 </div>
@@ -181,7 +181,7 @@
             @else
                 {{ __('Transfer diatribusikan ke peminta. Akurasi = opname tanpa selisih / total opname.') }}
             @endif
-            {{ __('Dokumen ini dihasilkan otomatis oleh sistem Raliva') }} &mdash; {{ $storeName }} &mdash; {{ now()->translatedFormat('d M Y') }}
+            {{ __('Dokumen ini dihasilkan otomatis oleh sistem :brand', ['brand' => brand()]) }} &mdash; {{ $storeName }} &mdash; {{ now()->translatedFormat('d M Y') }}
         </div>
     </div>
 </body>
