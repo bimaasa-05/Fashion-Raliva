@@ -107,13 +107,14 @@
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="logo_platform">{{ __('Logo Platform') }}</label>
                     @if (brand_logo_url() !== '')
-                        <div class="mb-3 p-3 border border-muted-border rounded-lg bg-surface-container-low flex items-center justify-center">
+                        <div class="mb-3 p-3 border border-muted-border rounded-lg bg-surface-container-low flex items-center justify-between gap-3">
                             <img alt="{{ brand() }}" class="max-h-16 w-auto" src="{{ brand_logo_url() }}" />
+                            <button type="button" onclick="openHelpModal('modal-logo-hapus')" class="shrink-0 px-3 py-1.5 border border-error/30 rounded-lg text-[11px] font-bold uppercase text-error hover:bg-error/10">{{ __('Hapus Logo') }}</button>
                         </div>
                     @endif
                     <input accept=".jpg,.jpeg,.png,.webp" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md file:mr-3 file:px-3 file:py-1.5 file:rounded-md file:border-0 file:bg-deep-onyx file:text-on-primary file:text-xs file:uppercase file:tracking-wider focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="logo_platform" name="logo_platform" type="file" />
                     @error('logo_platform')<p class="font-body-md text-xs text-error mt-2">{{ $message }}</p>@enderror
-                    <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Tampil menggantikan teks nama platform di seluruh halaman. Format JPG/PNG/WebP, maks 2 MB.') }}</p>
+                    <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Tampil di sisi kiri teks nama platform di seluruh halaman. Format JPG/PNG/WebP, maks 2 MB.') }}</p>
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="favicon_platform">{{ __('Favicon') }}</label>
@@ -734,6 +735,29 @@
             <div class="flex items-center justify-end gap-3">
                 <button type="button" data-modal-close class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
                 <button type="submit" form="form-help-faq-hapus" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>{{ __('Hapus') }}</button>
+            </div>
+        @endslot
+    </form>
+@endcomponent
+
+<!-- Modal Hapus Logo Platform -->
+@component('SuperAdmin.partials.premium-modal', [
+    'id' => 'modal-logo-hapus',
+    'dataModal' => true,
+    'icon' => 'delete_forever',
+    'title' => __('Hapus Logo Platform'),
+    'subtitle' => __('Tindakan ini tidak bisa dibatalkan.'),
+])
+    <form id="form-logo-hapus" method="POST" action="{{ route('superadmin.pengaturan-sistem.logo.destroy') }}" class="space-y-4">
+        @csrf @method('DELETE')
+        <div class="p-4 border border-error/25 rounded-xl bg-error/5">
+            <p class="font-body-md text-sm text-on-surface">{{ __('Hapus logo platform yang sedang dipakai?') }}</p>
+        </div>
+        <p class="font-body-md text-xs text-on-surface-variant inline-flex items-start gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent mt-[1px]">info</span>{{ __('Setelah dihapus, nama platform kembali tampil sebagai teks di tengah tanpa logo.') }}</p>
+        @slot('footer')
+            <div class="flex items-center justify-end gap-3">
+                <button type="button" data-modal-close class="btn-modal btn-modal-ghost">{{ __('Batal') }}</button>
+                <button type="submit" form="form-logo-hapus" class="btn-modal btn-modal-danger"><span class="material-symbols-outlined text-[18px]">delete</span>{{ __('Hapus') }}</button>
             </div>
         @endslot
     </form>
