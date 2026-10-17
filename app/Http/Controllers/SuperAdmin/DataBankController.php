@@ -240,7 +240,7 @@ class DataBankController extends Controller
             'nama' => $validated['nama'],
             'kode' => $validated['kode'],
             'nomor_rekening' => $validated['nomor_rekening'] ?? null,
-            'nama_pemilik' => $validated['nama_pemilik'] ?? brand(),
+            'nama_pemilik' => $validated['nama_pemilik'] ?? brand() . ' Fashion',
             'deskripsi' => $validated['deskripsi'] ?? null,
             'urutan' => PlatformBankAccount::where('jenis', $validated['jenis'])->max('urutan') + 1,
             'status' => $validated['status'],
@@ -276,7 +276,7 @@ class DataBankController extends Controller
             'nama' => $validated['nama'],
             'kode' => $validated['kode'],
             'nomor_rekening' => $validated['nomor_rekening'] ?? null,
-            'nama_pemilik' => $validated['nama_pemilik'] ?? brand(),
+            'nama_pemilik' => $validated['nama_pemilik'] ?? brand() . ' Fashion',
             'deskripsi' => $validated['deskripsi'] ?? null,
             'status' => $validated['status'],
         ];
