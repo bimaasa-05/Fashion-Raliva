@@ -13,6 +13,12 @@ class OwnerGudangTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        app()->setLocale('id');
+    }
+
     public function test_owner_can_create_update_and_toggle_warehouse(): void
     {
         [$owner, $storeId] = $this->owner();
