@@ -1,4 +1,5 @@
 <meta name="csrf-token" content="{{ csrf_token() }}" />
+<link rel="icon" href="{{ brand_favicon_url() }}" />
 <script>
     (function () {
         if (localStorage.getItem('theme') === 'dark') {
