@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>{{ __('Laporan Toko') }} {{ $store?->nama_toko ?? '' }} - Raliva</title>
+    <title>{{ __('Laporan Toko') }} {{ $store?->nama_toko ?? '' }} - {{ brand() }}</title>
     <style>
         @page { size: A4; margin: 16mm 14mm; }
         body { font-family: 'DejaVu Sans', sans-serif; font-size: 11px; color: #1B1C1C; }
@@ -40,7 +40,7 @@
     <table class="head" style="border-collapse:collapse;">
         <tr>
             <td style="border:none;padding:0;">
-                <div class="brand">Raliva</div>
+                <div class="brand">{{ brand() }}</div>
                 <h1>{{ __('Laporan Toko') }}</h1>
                 <div class="store">{{ $store?->nama_toko ?? __('Toko Saya') }}</div>
             </td>
@@ -119,7 +119,7 @@
     </table>
 
     <div class="footer">
-        {{ __('Dokumen ini dihasilkan otomatis oleh sistem Raliva') }} &mdash; {{ $store?->nama_toko ?? '' }} &mdash; {{ now()->translatedFormat('d M Y') }}
+        {{ __('Dokumen ini dihasilkan otomatis oleh sistem :brand', ['brand' => brand()]) }} &mdash; {{ $store?->nama_toko ?? '' }} &mdash; {{ now()->translatedFormat('d M Y') }}
     </div>
 </body>
 </html>
