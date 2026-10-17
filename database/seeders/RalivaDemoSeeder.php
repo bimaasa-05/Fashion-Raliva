@@ -209,7 +209,7 @@ class RalivaDemoSeeder extends Seeder
         //  7. GUDANG + STAF GUDANG
         // ════════════════════════════════════════════════════════════════
         $wh1 = Warehouse::updateOrCreate(
-            ['nama_gudang' => 'Gudang Utama Bandung', 'store_id' => $store->store_id],
+            ['nama_gudang' => 'Gudang Cabang Bandung', 'store_id' => $store->store_id],
             [
                 'alamat' => 'Jl. Soekarno Hatta No. 12, Bandung',
                 'nomor_telepon' => '081234000001',
@@ -217,7 +217,7 @@ class RalivaDemoSeeder extends Seeder
             ]
         );
         $wh2 = Warehouse::updateOrCreate(
-            ['nama_gudang' => 'Gudang Cabang Jakarta', 'store_id' => $store->store_id],
+            ['nama_gudang' => 'Gudang Utama Jakarta', 'store_id' => $store->store_id],
             [
                 'alamat' => 'Jl. Sudirman No. 45, Jakarta',
                 'nomor_telepon' => '081234000002',
@@ -396,7 +396,7 @@ class RalivaDemoSeeder extends Seeder
                 'jumlah' => 10,
                 'sumber_tipe' => StockMovement::SUMBER_STOCK_TRANSFER,
                 'sumber_id' => $transfer->stock_transfer_id,
-                'alasan' => 'Pemindahan ke Gudang Cabang Jakarta',
+                'alasan' => 'Pemindahan ke Gudang Utama Jakarta',
                 'dibuat_oleh' => $firstGudangId,
                 'created_at' => now()->subDays(3),
             ];
@@ -407,7 +407,7 @@ class RalivaDemoSeeder extends Seeder
                 'jumlah' => 10,
                 'sumber_tipe' => StockMovement::SUMBER_STOCK_TRANSFER,
                 'sumber_id' => $transfer->stock_transfer_id,
-                'alasan' => 'Penerimaan dari Gudang Utama Bandung',
+                'alasan' => 'Penerimaan dari Gudang Cabang Bandung',
                 'dibuat_oleh' => $firstGudangId,
                 'created_at' => now()->subDays(2),
             ];
@@ -954,7 +954,7 @@ class RalivaDemoSeeder extends Seeder
                     'user_id' => $user->user_id,
                     'tipe' => Notification::TIPE_SISTEM,
                     'judul' => 'Stok Menipis',
-                    'pesan' => 'Stok <strong>Silk Scarf</strong> tinggal 5 unit di Gudang Utama Bandung.',
+                    'pesan' => 'Stok <strong>Silk Scarf</strong> tinggal 5 unit di Gudang Cabang Bandung.',
                     'dibaca_pada' => null,
                     'created_at' => now()->subMinutes(10),
                     'updated_at' => now()->subMinutes(10),
