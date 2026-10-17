@@ -4,7 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>RALIVA - {{ __('Checkout') }} — {{ __('Bayar') }}</title>
+    <title>{{ brand() }} - {{ __('Checkout') }} — {{ __('Bayar') }}</title>
+    <link rel="icon" href="{{ brand_favicon_url() }}" />
     <script>
         if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');
     </script>
