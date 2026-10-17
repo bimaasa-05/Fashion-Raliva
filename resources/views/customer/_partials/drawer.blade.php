@@ -97,7 +97,7 @@
 {{-- Head — brand + tombol perkecil (desktop) / tutup (mobile) --}}
 <div class="sidebar-head flex items-center justify-between gap-2 px-md pt-md pb-sm border-b border-[var(--chrome-border)] shrink-0">
 <div class="flex-1 min-w-0" data-sidebar-text>
-<h2 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h2>
+<h2 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase">{{ brand() }}</h2>
 <p class="font-label-sm text-label-sm text-[var(--chrome-text-dim)] tracking-wide mt-1">{{ __('The Art of Everyday Dressing') }}</p>
 </div>
 <div class="flex items-center gap-xs shrink-0">
@@ -142,7 +142,7 @@
             </span>
             <span class="min-w-0 flex-1" data-sidebar-text>
                 <span class="block text-[13px] font-bold text-[var(--chrome-text)] leading-tight">{{ __('Masuk / Daftar') }}</span>
-                <span class="block text-[11px] text-[var(--chrome-text-dim)] truncate mt-0.5">{{ __('Akun RALIVA Anda') }}</span>
+                <span class="block text-[11px] text-[var(--chrome-text-dim)] truncate mt-0.5">{{ __('Akun :brand Anda', ['brand' => brand()]) }}</span>
             </span>
             <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-faint)] group-hover:text-[var(--chrome-accent)] transition-colors" data-sidebar-text>chevron_right</span>
         </a>
@@ -205,7 +205,7 @@
 <span class="tt-knob absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"></span>
 </span>
 </button>
-<p data-sidebar-text class="font-label-sm text-label-sm text-[var(--chrome-text-faint)] px-3 mt-2">© 2026 RALIVA. {{ __('All rights reserved.') }}</p>
+<p data-sidebar-text class="font-label-sm text-label-sm text-[var(--chrome-text-faint)] px-3 mt-2">© 2026 {{ brand() }}. {{ __('All rights reserved.') }}</p>
 </div>
 </aside>
 <script>
