@@ -3,7 +3,8 @@
 <html lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - {{ __('Shop') }}</title>
+<title>{{ brand() }} - {{ __('Shop') }}</title>
+<link rel="icon" href="{{ brand_favicon_url() }}" />
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&amp;family=Playfair+Display:wght@500;600&amp;display=swap" rel="stylesheet"/>
@@ -388,7 +389,7 @@
 <button aria-label="{{ __('Menu') }}" class="hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase">{{ brand() }}</h1>
 <div class="flex items-center gap-sm">
 <a aria-label="{{ __('Cart') }}" href="{{ auth()->check() ? route('customer.chart', ['from' => 'shop']) : route('customer.account', ['notice' => 'login']) }}" class="hover:opacity-80 transition-opacity relative flex items-center justify-center">
 <span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
@@ -513,7 +514,7 @@
 </div>
 <div class="flex flex-col gap-1">
     <div class="flex items-center justify-between gap-1 min-w-0">
-        <span class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $p->store?->nama_toko ?? __('RALIVA') }}</span>
+        <span class="font-label-sm text-label-sm text-on-surface-variant truncate">{{ $p->store?->nama_toko ?? brand() }}</span>
 @if ($defaultVariant)
         <button type="button" data-cart-add data-variant-id="{{ $defaultVariant->product_variant_id }}" aria-label="{{ __('Add to cart') }}" class="text-on-surface hover:text-secondary transition-colors flex items-center shrink-0">
             <span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
