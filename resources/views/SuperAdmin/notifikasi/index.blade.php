@@ -3,7 +3,7 @@
 @section('title', __('Notifikasi'))
 @section('header-title', __('Notifikasi'))
 @section('header-badge', __('Pantau'))
-@section('header-subtitle', __('Semua notifikasi dari seluruh aktivitas platform Raliva.'))
+@section('header-subtitle', __('Semua notifikasi dari seluruh aktivitas platform :brand.', ['brand' => brand()]))
 
 @push('styles')
 <style>
