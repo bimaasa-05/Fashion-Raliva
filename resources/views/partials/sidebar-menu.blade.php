@@ -35,7 +35,7 @@
         [
             'label' => 'Keuangan',
             'items' => [
-                ['route' => 'superadmin.komisi-global', 'icon' => 'currency_exchange', 'text' => 'Komisi Raliva'],
+                ['route' => 'superadmin.komisi-global', 'icon' => 'currency_exchange', 'text' => 'Komisi :brand'],
                 ['route' => 'superadmin.pajak-biaya', 'icon' => 'request_quote', 'text' => 'Pajak & Biaya Layanan'],
                 ['route' => 'superadmin.saldo-toko', 'icon' => 'account_balance_wallet', 'text' => 'Saldo Toko'],
             ],
@@ -106,8 +106,8 @@
                         <span class="material-symbols-outlined text-[20px] @if(request()->routeIs($item['route'])) fill text-gold-accent @else text-on-sidebar/60 @endif transition-colors">
                             {{ $item['icon'] }}
                         </span>
-                        <span class="sidebar-tip">{{ __($item['text']) }}</span>
-                        <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate">{{ __($item['text']) }}</span>
+                        <span class="sidebar-tip">{{ str_replace(':brand', brand(), __($item['text'])) }}</span>
+                        <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate">{{ str_replace(':brand', brand(), __($item['text'])) }}</span>
                         @if (! empty($item['badge']) && (($sidebarBadges[$item['badge']] ?? 0) > 0))
                             <span data-sidebar-badge="{{ $item['badge'] }}" class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-gold-accent text-white text-[10px] font-bold shrink-0">{{ min(99, $sidebarBadges[$item['badge']]) }}</span>
                         @elseif (! empty($item['badge']))
