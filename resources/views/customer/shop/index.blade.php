@@ -389,7 +389,7 @@
 <button aria-label="{{ __('Menu') }}" class="hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase>@include('partials.brand-content', ['logoClass' => 'h-7'])</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase">@include('partials.brand-content', ['logoClass' => 'h-7'])</h1>
 <div class="flex items-center gap-sm">
 <a aria-label="{{ __('Cart') }}" href="{{ auth()->check() ? route('customer.chart', ['from' => 'shop']) : route('customer.account', ['notice' => 'login']) }}" class="hover:opacity-80 transition-opacity relative flex items-center justify-center">
 <span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
