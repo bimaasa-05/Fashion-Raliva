@@ -331,7 +331,7 @@
 <button id="wl-hamburger" aria-label="{{ __('Menu') }}" class="wl-header-item hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
-<h1 id="wl-title" class="wl-header-item font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase">{{ brand() }}</h1>
+<h1 id="wl-title" class="wl-header-item font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase>@include('partials.brand-content', ['logoClass' => 'h-7'])</h1>
 <div class="flex items-center gap-sm">
 <a href="{{ route('customer.chart', ['from' => 'account']) }}" aria-label="{{ __('Cart') }}" class="wl-header-item relative hover:opacity-80 transition-opacity flex items-center justify-center">
 <span class="material-symbols-outlined text-[22px]" data-icon="shopping_cart">shopping_cart</span>
