@@ -173,7 +173,7 @@ class ManajemenTokoController extends Controller
                 'aktor_id' => ActivityLogger::resolveActorId(),
                 'tipe' => Notification::TIPE_SISTEM,
                 'judul' => 'Toko Disetujui',
-                'pesan' => sprintf('Selamat! Toko "%s" telah disetujui dan kini aktif di Raliva.', $toko->nama_toko),
+                'pesan' => __('Selamat! Toko ":toko" telah disetujui dan kini aktif di :brand.', ['toko' => $toko->nama_toko, 'brand' => brand()]),
                 'url' => route('owner.data-toko'),
             ]);
         });
@@ -278,8 +278,8 @@ class ManajemenTokoController extends Controller
             'tipe' => Notification::TIPE_SISTEM,
             'judul' => 'Toko Ditangguhkan',
             'pesan' => $deadline
-                ? sprintf('Toko "%s" ditangguhkan hingga %s. Hubungi dukungan Raliva untuk informasi lebih lanjut.', $toko->nama_toko, $toko->ditangguhkan_sampai->translatedFormat('d F Y'))
-                : sprintf('Toko "%s" ditangguhkan oleh platform tanpa batas waktu. Hubungi dukungan Raliva untuk informasi lebih lanjut.', $toko->nama_toko),
+                ? __('Toko ":toko" ditangguhkan hingga :sampai. Hubungi dukungan :brand untuk informasi lebih lanjut.', ['toko' => $toko->nama_toko, 'sampai' => $toko->ditangguhkan_sampai->translatedFormat('d F Y'), 'brand' => brand()])
+                : __('Toko ":toko" ditangguhkan oleh platform tanpa batas waktu. Hubungi dukungan :brand untuk informasi lebih lanjut.', ['toko' => $toko->nama_toko, 'brand' => brand()]),
             'url' => route('owner.data-toko'),
         ]);
 
