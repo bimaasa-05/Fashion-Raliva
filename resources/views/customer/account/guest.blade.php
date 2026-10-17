@@ -2,7 +2,8 @@
 <html lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - {{ __('Akun') }}</title>
+<title>{{ brand() }} - {{ __('Akun') }}</title>
+<link rel="icon" href="{{ brand_favicon_url() }}" />
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -33,7 +34,7 @@
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0 lg:pl-72">
 <header class="flex justify-between items-center w-full px-container-margin h-16 bg-[var(--chrome-bg)] text-[var(--chrome-text)] border-b border-[var(--chrome-border)] sticky top-0 z-40">
 <button aria-label="{{ __('Menu') }}" class="hover:opacity-80 lg:hidden flex items-center justify-center" onclick="openDrawer()" type="button"><span class="material-symbols-outlined">menu</span></button>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase">{{ brand() }}</h1>
 <div class="w-10" aria-hidden="true"></div>
 </header>
 <main class="flex-grow pt-10 pb-8 lg:pb-12 w-full overflow-x-hidden">
@@ -44,8 +45,8 @@
 <div class="w-20 h-20 rounded-full bg-secondary/10 border border-secondary/15 flex items-center justify-center mx-auto mb-md">
 <span class="material-symbols-outlined text-[38px] text-secondary">person</span>
 </div>
-<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-secondary justify-center mb-xs">{{ __('AKUN RALIVA') }}</p>
-<h2 class="font-headline-md text-headline-md text-on-surface">{{ __('Akun Raliva Anda') }}</h2>
+<p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-secondary justify-center mb-xs">{{ __('AKUN :brand', ['brand' => brand()]) }}</p>
+<h2 class="font-headline-md text-headline-md text-on-surface">{{ __('Akun :brand Anda', ['brand' => brand()]) }}</h2>
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-sm max-w-xl mx-auto">{{ __('Masuk untuk mengakses pesanan, alamat, wishlist, ulasan, notifikasi, dan pengaturan akun Anda. Belum punya akun? Daftar sekarang.') }}</p>
 <div class="flex flex-col sm:flex-row gap-sm justify-center mt-lg max-w-md mx-auto">
 <a href="{{ route('login', ['redirect' => route('customer.account')]) }}" class="btn-gold flex-1 inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
