@@ -5,7 +5,7 @@
 @section('header-title', __('Manajemen Pengguna'))
 @section('header-badge', __('Kelola'))
 
-@section('header-subtitle', __('Kelola seluruh pengguna terdaftar di platform Raliva.'))
+@section('header-subtitle', __('Kelola seluruh pengguna terdaftar di platform :brand.', ['brand' => brand()]))
 
 @push('styles')
 <style>
