@@ -9,7 +9,7 @@
 @section('header-title', __('Selamat datang, Super Admin'))
 @section('header-badge', __('Kelola & Lihat'))
 
-@section('header-subtitle', __('Ringkasan kondisi seluruh platform Raliva.'))
+@section('header-subtitle', __('Ringkasan kondisi seluruh platform :brand.', ['brand' => brand()]))
 
 @section('content')
 @php
@@ -45,7 +45,7 @@
                     <span class="banner-badge"><span class="dot"></span>Live</span>
                 </div>
                 <p class="banner-desc mt-1.5">{{ $tanggalPanjang }}</p>
-                <p class="banner-desc opacity-70 mt-0.5">Ringkasan langsung seluruh platform Raliva.</p>
+                <p class="banner-desc opacity-70 mt-0.5">Ringkasan langsung seluruh platform {{ brand() }}.</p>
             </div>
         </div>
 
@@ -90,7 +90,7 @@
             ['label' => 'Total Pesanan', 'value' => $kpi['pesanan'], 'trend' => 'pesanan', 'note' => number_format($kpi['pesanan_proses'], 0, ',', '.').' proses · '.number_format($kpi['pesanan_batal'], 0, ',', '.').' batal/refund', 'icon' => 'shopping_bag'],
             ['label' => 'Total Produk', 'value' => $kpi['produk'], 'trend' => 'produk', 'note' => 'real-time', 'icon' => 'checkroom'],
             ['label' => 'Nilai Transaksi', 'value' => $kpi['nilai_transaksi'], 'trend' => 'nilai', 'note' => 'akumulasi', 'icon' => 'payments', 'rp' => true, 'featured' => true],
-            ['label' => 'Komisi Raliva', 'value' => $kpi['komisi'], 'trend' => 'komisi', 'note' => 'akumulasi', 'icon' => 'percent', 'rp' => true, 'featured' => true, 'gold' => true],
+            ['label' => 'Komisi ' . brand(), 'value' => $kpi['komisi'], 'trend' => 'komisi', 'note' => 'akumulasi', 'icon' => 'percent', 'rp' => true, 'featured' => true, 'gold' => true],
             ['label' => 'Pendapatan Iklan', 'value' => $kpi['pendapatan_iklan'], 'trend' => 'iklan', 'note' => number_format($kpi['iklan_aktif'], 0, ',', '.').' slot aktif/terjadwal', 'icon' => 'campaign', 'rp' => true, 'featured' => true, 'gold' => true, 'link' => 'superadmin.peringkat-iklan'],
             ['label' => 'Pajak Terkumpul', 'value' => $kpi['pajak'], 'trend' => 'pajak', 'note' => 'akumulasi', 'icon' => 'account_balance', 'rp' => true],
         ];
