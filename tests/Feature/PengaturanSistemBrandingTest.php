@@ -70,4 +70,27 @@ class PengaturanSistemBrandingTest extends TestCase
 
         $response->assertSessionHasErrors('favicon_platform');
     }
+
+    public function test_wordmark_tampilkan_logo_di_kiri_teks_nama(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('branding/logo-uji.png', 'x');
+        Setting::set(Setting::LOGO_PLATFORM, 'branding/logo-uji.png');
+
+        $html = view('partials.brand-content', ['logoClass' => 'h-7'])->render();
+
+        $this->assertStringContainsString('<img', $html);
+        $this->assertStringContainsString(e(brand()), $html);
+    }
+
+    public function test_wordmark_tanpa_logo_hanya_teks_nama(): void
+    {
+        Storage::fake('public');
+        Setting::query()->where('kunci', 'logo_platform')->delete();
+
+        $html = view('partials.brand-content', ['logoClass' => 'h-7'])->render();
+
+        $this->assertStringNotContainsString('<img', $html);
+        $this->assertStringContainsString(e(brand()), $html);
+    }
 }
