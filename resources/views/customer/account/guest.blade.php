@@ -34,7 +34,7 @@
 <body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col pb-[72px] md:pb-0 lg:pl-72">
 <header class="flex justify-between items-center w-full px-container-margin h-16 bg-[var(--chrome-bg)] text-[var(--chrome-text)] border-b border-[var(--chrome-border)] sticky top-0 z-40">
 <button aria-label="{{ __('Menu') }}" class="hover:opacity-80 lg:hidden flex items-center justify-center" onclick="openDrawer()" type="button"><span class="material-symbols-outlined">menu</span></button>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase">{{ brand() }}</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase>@include('partials.brand-content', ['logoClass' => 'h-7'])</h1>
 <div class="w-10" aria-hidden="true"></div>
 </header>
 <main class="flex-grow pt-10 pb-8 lg:pb-12 w-full overflow-x-hidden">
