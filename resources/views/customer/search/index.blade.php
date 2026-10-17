@@ -230,7 +230,7 @@
 <a href="{{ route('customer.shop') }}" data-go-back aria-label="{{ __('Back') }}" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="arrow_back">arrow_back</span>
 </a>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase">{{ brand() }}</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase>@include('partials.brand-content', ['logoClass' => 'h-7'])</h1>
 <div class="flex items-center gap-sm">
 <a href="{{ route('customer.chart', ['from' => 'search']) }}" aria-label="{{ __('Cart') }}" class="relative hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="shopping_cart">shopping_cart</span>
