@@ -3,7 +3,8 @@
 <html lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - {{ __('Reset Password') }}</title>
+<title>{{ brand() }} - {{ __('Reset Password') }}</title>
+<link rel="icon" href="{{ brand_favicon_url() }}" />
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -209,7 +210,7 @@
 <div id="reset-section">
 <!-- Logo -->
 <div class="text-center mb-xl">
-<h1 class="font-display-lg text-headline-lg tracking-widest text-on-surface">RALIVA</h1>
+<h1 class="font-display-lg text-headline-lg tracking-widest text-on-surface uppercase">{{ brand() }}</h1>
 <p class="font-label-sm text-label-sm text-on-surface-variant tracking-wide mt-1">{{ __('The Art of Everyday Dressing') }}</p>
 </div>
 <!-- Heading -->
