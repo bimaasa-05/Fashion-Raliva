@@ -45,7 +45,7 @@
         </div>
 
         <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hero-glow">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Komisi Raliva') }}</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Komisi :brand', ['brand' => brand()]) }}</span>
             <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold leading-tight">Rp <span data-count="{{ $komisiRaliva }}" data-count-decimals="0">{{ number_format($komisiRaliva, 0, ',', '.') }}</span></span>
             <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>{{ __('Total komisi terkumpul') }}</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
