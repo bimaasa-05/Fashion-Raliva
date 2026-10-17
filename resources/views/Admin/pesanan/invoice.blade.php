@@ -43,7 +43,7 @@
     </div>
     <div class="kop">
         <div>
-            <h1>RALIVA</h1>
+            <h1>{{ brand() }}</h1>
             <p class="toko">{{ $pesanan->store?->nama_toko ?? 'Toko' }}</p>
             <p style="font-size:12px;color:#555;">{{ $pesanan->store?->alamat ?? '' }}</p>
         </div>
@@ -91,7 +91,7 @@
         <div><span>{{ __('Ongkir') }}</span><span>Rp {{ number_format((float) ($pesanan->total_ongkir ?? 0), 0, ',', '.') }}</span></div>
         <div class="grand"><span>{{ __('Total') }}</span><span>Rp {{ number_format((float) ($pesanan->grand_total ?? 0), 0, ',', '.') }}</span></div>
     </div>
-    <p class="note">{{ __('Invoice ini dicetak dari sistem Raliva Fashion pada') }} {{ now()->translatedFormat('d M Y H:i') }}.</p>
+    <p class="note">{{ __('Invoice ini dicetak dari sistem :brand pada', ['brand' => brand()]) }} {{ now()->translatedFormat('d M Y H:i') }}.</p>
     <div class="sign">
         <div><p>{{ __('Pelanggan') }}</p><br><br><p>( ........................ )</p></div>
         <div><p>{{ $pesanan->store?->nama_toko ?? 'Toko' }}</p><br><br><p>( ........................ )</p></div>
