@@ -11,6 +11,12 @@ class ModerasiBahanTabTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        app()->setLocale('id');
+    }
+
     public function test_moderasi_detail_has_produk_and_bahan_tabs(): void
     {
         $superAdmin = User::whereHas('role', fn ($q) => $q->where('nama_role', Role::SUPER_ADMIN))
