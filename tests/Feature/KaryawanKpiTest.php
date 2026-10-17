@@ -16,6 +16,13 @@ class KaryawanKpiTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Assertion memakai string Indonesia; kunci locale agar deterministik meski .env memakai en.
+        app()->setLocale('id');
+    }
+
     public function test_role_key_uses_role_names_not_ids(): void
     {
         $this->assertSame('owner', RekapKaryawanController::roleKey(999, Role::OWNER));
