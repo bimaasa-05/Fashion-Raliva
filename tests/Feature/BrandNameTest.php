@@ -36,4 +36,18 @@ class BrandNameTest extends TestCase
 
         $this->assertSame('Cadangan', brand());
     }
+
+    public function test_favicon_uses_favicon_platform_setting(): void
+    {
+        Setting::set('favicon_platform', 'branding/uji-favicon.png');
+
+        $this->assertSame(photo_url('branding/uji-favicon.png'), brand_favicon_url());
+    }
+
+    public function test_favicon_falls_back_to_default_icon_when_setting_missing(): void
+    {
+        Setting::query()->where('kunci', 'favicon_platform')->delete();
+
+        $this->assertSame(asset('favicon.ico'), brand_favicon_url());
+    }
 }
