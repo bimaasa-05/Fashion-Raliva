@@ -350,6 +350,7 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/notifikasi/tandai-dibaca', [NotifikasiController::class, 'markRead'])->name('notifikasi.tandai-dibaca');
     Route::get('/pengaturan-sistem', [PengaturanSistemController::class, 'index'])->name('pengaturan-sistem');
     Route::put('/pengaturan-sistem', [PengaturanSistemController::class, 'updateSettings'])->name('pengaturan-sistem.update');
+    Route::delete('/pengaturan-sistem/logo', [PengaturanSistemController::class, 'destroyLogo'])->name('pengaturan-sistem.logo.destroy');
     Route::post('/pengaturan-sistem/legal', [PengaturanSistemController::class, 'updateLegal'])->name('pengaturan-sistem.legal');
     Route::put('/pengaturan-sistem/help', [PengaturanSistemController::class, 'updateHelp'])->name('pengaturan-sistem.help');
     Route::post('/pengaturan-sistem/help/kategori', [PengaturanSistemController::class, 'storeHelpCategory'])->name('pengaturan-sistem.help.kategori.store');
