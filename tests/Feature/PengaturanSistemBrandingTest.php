@@ -142,4 +142,42 @@ class PengaturanSistemBrandingTest extends TestCase
 
         Storage::disk('public')->deleteDirectory('branding');
     }
+
+    public function test_favicon_mengikuti_logo_saat_favicon_kosong(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('branding/logo-uji.png', 'x');
+        Setting::set(Setting::LOGO_PLATFORM, 'branding/logo-uji.png');
+        Setting::query()->where('kunci', Setting::FAVICON_PLATFORM)->delete();
+
+        $this->assertSame(brand_logo_url(), brand_favicon_url());
+        $this->assertStringContainsString('branding/logo-uji.png', brand_favicon_url());
+
+        Storage::disk('public')->deleteDirectory('branding');
+    }
+
+    public function test_favicon_unggahan_tetap_diprioritaskan_di_atas_logo(): void
+    {
+        Storage::fake('public');
+        Storage::disk('public')->put('branding/logo-uji.png', 'x');
+        Storage::disk('public')->put('branding/favicon-uji.png', 'x');
+        Setting::set(Setting::LOGO_PLATFORM, 'branding/logo-uji.png');
+        Setting::set(Setting::FAVICON_PLATFORM, 'branding/favicon-uji.png');
+
+        $favicon = brand_favicon_url();
+
+        $this->assertStringContainsString('branding/favicon-uji.png', $favicon);
+        $this->assertStringNotContainsString('branding/logo-uji.png', $favicon);
+
+        Storage::disk('public')->deleteDirectory('branding');
+    }
+
+    public function test_favicon_fallback_ke_ikon_bawaan_saat_logo_dan_favicon_kosong(): void
+    {
+        Storage::fake('public');
+        Setting::query()->where('kunci', Setting::FAVICON_PLATFORM)->delete();
+        Setting::query()->where('kunci', Setting::LOGO_PLATFORM)->delete();
+
+        $this->assertSame(asset('images/logo.svg'), brand_favicon_url());
+    }
 }
