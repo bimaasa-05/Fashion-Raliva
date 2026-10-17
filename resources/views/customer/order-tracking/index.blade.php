@@ -4,7 +4,8 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta name="color-scheme" content="light dark"/>
-<title>RALIVA - {{ __('Order Tracking') }}</title>
+<title>{{ brand() }} - {{ __('Order Tracking') }}</title>
+<link rel="icon" href="{{ brand_favicon_url() }}" />
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -339,7 +340,7 @@
 <button aria-label="{{ __('Menu') }}" class="hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase">{{ brand() }}</h1>
 <div class="w-10"></div>
 </header>
 <!-- Main Content Canvas -->
@@ -406,8 +407,8 @@
             ? [__('Siap diambil'), __('Pesanan Anda sudah siap. Silakan ambil di toko sesuai info pengambilan di bawah.')]
             : [__('Sedang dalam perjalanan'), __('Pesanan sudah dikirim dan sedang dalam perjalanan menuju alamat Anda. Klik Konfirmasi Pesanan Diterima setelah paket sampai.')],
         'selesai' => $isPickup
-            ? [__('Selesai diambil'), __('Pesanan telah diambil dan selesai. Terima kasih sudah berbelanja di RALIVA.')]
-            : [__('Pesanan diterima'), __('Pesanan telah sampai dan dikonfirmasi. Terima kasih sudah berbelanja di RALIVA.')],
+            ? [__('Selesai diambil'), __('Pesanan telah diambil dan selesai. Terima kasih sudah berbelanja di :brand.', ['brand' => brand()])]
+            : [__('Pesanan diterima'), __('Pesanan telah sampai dan dikonfirmasi. Terima kasih sudah berbelanja di :brand.', ['brand' => brand()])],
         'dibatalkan' => [__('Pesanan dibatalkan'), __('Pesanan ini telah dibatalkan. Hubungi layanan pelanggan jika ada pertanyaan.')],
         'refund' => match ($refundStatus) {
             \App\Models\Refund::STATUS_SELESAI => [__('Refund selesai'), __('Pengembalian dana untuk pesanan ini telah diselesaikan oleh toko.')],
@@ -787,7 +788,7 @@ $ukuran = $v?->ukuran;
 </div>
 <div class="flex flex-col justify-between py-1 flex-grow min-w-0">
 <div class="min-w-0">
-<div class="inline-flex items-center self-start px-2 py-0.5 mb-1 rounded-full bg-secondary/5 text-secondary border border-secondary/20 font-label-sm text-label-sm uppercase tracking-widest">{{ $selected->store?->nama_toko ?? 'RALIVA' }}</div>
+<div class="inline-flex items-center self-start px-2 py-0.5 mb-1 rounded-full bg-secondary/5 text-secondary border border-secondary/20 font-label-sm text-label-sm uppercase tracking-widest">{{ $selected->store?->nama_toko ?? brand() }}</div>
 <h3 class="font-body-sm md:font-title-md text-body-sm md:text-title-md font-semibold text-on-surface truncate">{{ $item->nama_produk_snapshot }}</h3>
 @if ($warna || $ukuran)
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-1 flex flex-wrap gap-2"><span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-surface-container-low border border-outline-variant text-xs">{{ $warna ?: __('Default') }}@if ($ukuran) • {{ $ukuran }}@endif</span></p>
