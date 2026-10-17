@@ -273,7 +273,7 @@
         <div class="p-6 space-y-4">
             <div>
                 <label class="block raliva-label mb-2">{{ __('Nama Gudang') }} *</label>
-                <input name="nama_gudang" type="text" required maxlength="150" placeholder="{{ __('cth. Gudang Utama Bandung') }}" class="raliva-input" />
+                <input name="nama_gudang" type="text" required maxlength="150" placeholder="{{ __('cth. Gudang Utama Jakarta') }}" class="raliva-input" />
             </div>
             <div>
                 <label class="block raliva-label mb-2">{{ __('Alamat') }}</label>
