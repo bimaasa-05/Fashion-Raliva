@@ -30,7 +30,7 @@
     <meta charset="utf-8" />
     <meta name="user-id" content="{{ Auth::id() }}" />
     <meta content="width=device-width, initial-scale=1.0" name="viewport" />
-    <title>RALIVA - @yield('title', __('Super Admin'))</title>
+    <title>{{ brand() }} - @yield('title', __('Super Admin'))</title>
     @include('partials.theme-head')
     <style>
         /* SuperAdmin RALIVA burgundy override — scoped only to this layout (hanya Super Admin) */
@@ -229,7 +229,7 @@
         <button id="sidebar-toggle" class="text-on-surface hover:opacity-80 transition-opacity">
             <span class="material-symbols-outlined">menu</span>
         </button>
-        <span class="font-display-lg text-headline-md tracking-widest text-on-surface">RALIVA</span>
+        <span class="font-display-lg text-headline-md tracking-widest text-on-surface uppercase">{{ brand() }}</span>
         <div class="flex items-center gap-2">
             @include('partials.notification-panel', ['items' => $saNotifItems, 'lihatSemuaRoute' => 'superadmin.notifikasi', 'unread' => $saNotifUnread, 'markReadRoute' => 'superadmin.notifikasi.tandai-dibaca'])
             @include('partials.profile-menu', ['compact' => true])
@@ -241,7 +241,7 @@
         <div class="sidebar-head flex items-center justify-between gap-3 pt-1 pb-3">
             <div class="flex-1 flex items-center justify-center gap-3 min-w-0">
                 <div data-sidebar-text>
-                    <span class="font-display-lg text-title-md text-on-sidebar tracking-widest block leading-tight">RALIVA</span>
+                    <span class="font-display-lg text-title-md text-on-sidebar tracking-widest block leading-tight uppercase">{{ brand() }}</span>
                 </div>
             </div>
             <button type="button" id="sidebar-collapse" aria-expanded="true" aria-label="{{ __('Perkecil menu sidebar') }}" class="sidebar-collapse-btn hidden md:inline-flex w-8 h-8 rounded-lg border border-transparent hover:border-gold-accent/40 hover:bg-gold-accent/10 text-gold-accent/70 hover:text-gold-accent items-center justify-center transition-colors shrink-0">
