@@ -142,7 +142,7 @@
         <button id="sidebar-toggle" class="text-on-surface hover:opacity-80 transition-opacity">
             <span class="material-symbols-outlined">menu</span>
         </button>
-        <span class="font-display-lg text-headline-md tracking-widest text-on-surface uppercase">{{ brand() }}</span>
+        <span class="font-display-lg text-headline-md tracking-widest text-on-surface uppercase">@include('partials.brand-content', ['logoClass' => 'h-7'])</span>
         <div class="flex items-center gap-2">
             @include('partials.notification-panel', ['lihatSemuaRoute' => 'owner.notifikasi'])
             @php $ownerHeaderUser = Auth::user(); @endphp
@@ -155,7 +155,7 @@
         <div class="sidebar-head flex items-center justify-between gap-3 pt-1 pb-3">
             <div class="flex-1 flex items-center justify-center gap-3 min-w-0">
                 <div data-sidebar-text>
-                    <span class="font-display-lg text-title-md text-on-sidebar tracking-widest block leading-tight uppercase">{{ brand() }}</span>
+                    <span class="font-display-lg text-title-md text-on-sidebar tracking-widest block leading-tight uppercase">@include('partials.brand-content', ['logoClass' => 'h-6'])</span>
                     @php $sbStore = \App\Support\SidebarContext::currentStore(); @endphp
                     @if ($sbStore?->kategori)
                         <span class="flex items-center gap-1.5 leading-tight max-w-[10rem] text-on-sidebar/60 font-body-md text-[11px] normal-case tracking-normal">
