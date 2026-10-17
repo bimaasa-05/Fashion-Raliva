@@ -4,7 +4,8 @@
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <meta name="color-scheme" content="light dark"/>
-<title>RALIVA - {{ __('The Art of Everyday Dressing') }}</title>
+<title>{{ brand() }} - {{ __('The Art of Everyday Dressing') }}</title>
+<link rel="icon" href="{{ brand_favicon_url() }}" />
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -325,7 +326,7 @@
 <button class="hover:opacity-80 transition-opacity lg:hidden" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase">{{ brand() }}</h1>
 <div class="flex items-center gap-sm">
 <a href="{{ route('customer.search') }}" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="search">search</span>
@@ -341,9 +342,9 @@
 <!-- Hero Section (editorial crossfade, RALIVA Home pictures) -->
 <section class="relative w-full h-[78vh] min-h-[480px] max-h-[860px] overflow-hidden">
 <div class="hero-photos absolute inset-0">
-<img alt="RALIVA Home Editorial 1" src="{{ asset('assets/picture/home-pictures/1.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000" data-hero-slide/>
-<img alt="RALIVA Home Editorial 2" src="{{ asset('assets/picture/home-pictures/2.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" data-hero-slide/>
-<img alt="RALIVA Home Editorial 3" src="{{ asset('assets/picture/home-pictures/3.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" data-hero-slide/>
+<img alt="{{ brand() }} Home Editorial 1" src="{{ asset('assets/picture/home-pictures/1.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover transition-opacity duration-1000" data-hero-slide/>
+<img alt="{{ brand() }} Home Editorial 2" src="{{ asset('assets/picture/home-pictures/2.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" data-hero-slide/>
+<img alt="{{ brand() }} Home Editorial 3" src="{{ asset('assets/picture/home-pictures/3.jfif') }}" class="hero-slide absolute inset-0 w-full h-full object-cover opacity-0 transition-opacity duration-1000" data-hero-slide/>
 </div>
 <div class="absolute inset-0 bg-black/15"></div>
 <div class="absolute inset-0" style="background: radial-gradient(120% 90% at 50% 100%, rgba(0,0,0,.42) 0%, rgba(0,0,0,0) 55%);"></div>
@@ -393,7 +394,7 @@
 <span class="absolute top-2 left-2 bg-secondary text-on-secondary text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">{{ __('Iklan') }}</span>
 </div>
 <div class="flex items-center justify-between gap-1 min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider truncate">{{ $a->store?->nama_toko ?? __('RALIVA') }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider truncate">{{ $a->store?->nama_toko ?? brand() }}</span>
 @if ($aDefaultVariant)
 <button type="button" data-cart-add data-variant-id="{{ $aDefaultVariant->product_variant_id }}" aria-label="{{ __('Add to cart') }}" class="text-on-surface hover:text-secondary transition-colors flex items-center shrink-0">
 <span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
@@ -436,7 +437,7 @@
 <img loading="lazy" decoding="async" class="object-cover w-full h-full " alt="{{ $p->nama_produk }}" src="{{ $homeImg }}"/>
 </div>
 <div class="flex items-center justify-between gap-1 min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $p->store?->nama_toko ?? __('RALIVA') }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $p->store?->nama_toko ?? brand() }}</span>
 @if ($homeDefaultVariant)
 <button type="button" data-cart-add data-variant-id="{{ $homeDefaultVariant->product_variant_id }}" aria-label="{{ __('Add to cart') }}" class="text-on-surface hover:text-secondary transition-colors flex items-center shrink-0">
 <span class="material-symbols-outlined text-[16px]" data-icon="add_shopping_cart">add_shopping_cart</span>
@@ -484,7 +485,7 @@
 <img loading="lazy" decoding="async" class="object-cover w-full h-full " alt="{{ $s->nama_toko }}" src="{{ $storeImgUrl }}"/>
 </div>
 <h4 class="font-title-md text-title-md text-on-surface group-hover:text-secondary transition-colors">{{ $s->nama_toko }}</h4>
-<p class="font-body-sm text-body-sm text-on-surface-variant">{{ \Illuminate\Support\Str::limit($s->deskripsi ?? __('Boutique RALIVA'), 60) }}</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">{{ \Illuminate\Support\Str::limit($s->deskripsi ?? __('Boutique :brand', ['brand' => brand()]), 60) }}</p>
 </a>
 @empty
 <div class="w-full flex flex-col items-center justify-center text-center gap-sm py-lg">
@@ -518,7 +519,7 @@
 <div class="px-container-margin md:px-[64px]">
 <div class="grid grid-cols-1 md:grid-cols-12 gap-xl mb-xl">
 <div class="md:col-span-6">
-<h4 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] mb-md">RALIVA</h4>
+<h4 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] mb-md uppercase">{{ brand() }}</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs">{{ __('Curated fashion for the modern minimalist. Discover the art of everyday dressing.') }}</p>
 </div>
 <div class="md:col-span-3 flex flex-col gap-sm">
@@ -536,7 +537,7 @@
 </div>
 </div>
 <div class="border-t border-outline-variant pt-md flex flex-col md:flex-row justify-between items-center gap-sm">
-<span class="font-body-sm text-body-sm text-on-surface-variant">© {{ date('Y') }} RALIVA. {{ __('All rights reserved.') }}</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant">© {{ date('Y') }} {{ brand() }}. {{ __('All rights reserved.') }}</span>
 <div class="flex gap-md">
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Privacy Policy') }}</a>
 <a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#">{{ __('Terms of Service') }}</a>
