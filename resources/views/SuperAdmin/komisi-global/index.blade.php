@@ -1,8 +1,8 @@
 @extends('layouts.superadmin')
 
-@section('title', __('Komisi Raliva'))
+@section('title', __('Komisi :brand', ['brand' => brand()]))
 
-@section('header-title', __('Komisi Raliva'))
+@section('header-title', __('Komisi :brand', ['brand' => brand()]))
 @section('header-badge', __('Kelola'))
 
 @section('header-subtitle', __('Atur persentase komisi platform yang berlaku untuk semua transaksi berhasil.'))
