@@ -326,7 +326,7 @@
 <button class="hover:opacity-80 transition-opacity lg:hidden" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
-<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase>@include('partials.brand-content', ['logoClass' => 'h-7'])</h1>
+<h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase">@include('partials.brand-content', ['logoClass' => 'h-7'])</h1>
 <div class="flex items-center gap-sm">
 <a href="{{ route('customer.search') }}" class="hover:opacity-80 transition-opacity flex">
 <span class="material-symbols-outlined" data-icon="search">search</span>
@@ -519,7 +519,7 @@
 <div class="px-container-margin md:px-[64px]">
 <div class="grid grid-cols-1 md:grid-cols-12 gap-xl mb-xl">
 <div class="md:col-span-6">
-<h4 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] mb-md uppercase>@include('partials.brand-content', ['logoClass' => 'h-8'])</h4>
+<h4 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] mb-md uppercase">@include('partials.brand-content', ['logoClass' => 'h-8'])</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs">{{ __('Curated fashion for the modern minimalist. Discover the art of everyday dressing.') }}</p>
 </div>
 <div class="md:col-span-3 flex flex-col gap-sm">
