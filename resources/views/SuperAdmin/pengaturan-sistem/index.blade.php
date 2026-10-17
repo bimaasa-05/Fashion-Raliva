@@ -124,7 +124,7 @@
                     </div>
                     <input accept=".ico,.png" class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md file:mr-3 file:px-3 file:py-1.5 file:rounded-md file:border-0 file:bg-deep-onyx file:text-on-primary file:text-xs file:uppercase file:tracking-wider focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="favicon_platform" name="favicon_platform" type="file" />
                     @error('favicon_platform')<p class="font-body-md text-xs text-error mt-2">{{ $message }}</p>@enderror
-                    <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Format ICO/PNG, maks 512 KB.') }}</p>
+                    <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Format ICO/PNG, maks 512 KB. Selama favicon kosong, ikon tab memakai logo platform atau ikon bawaan.') }}</p>
                 </div>
             </div>
             <div class="flex items-center justify-between gap-4 p-4 border border-muted-border rounded-lg hover:bg-surface-container-low transition-colors">
