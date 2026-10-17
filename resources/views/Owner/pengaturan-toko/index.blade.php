@@ -26,7 +26,7 @@
         </div>
     @endif
     <form data-reveal-group>
-        <p class="text-xs text-on-surface-variant mb-4 flex items-start gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">lock</span> {{ __('Halaman ini read-only. Pengaturan operasional hanya dapat diubah melalui SuperAdmin / tim Raliva.') }}</p>
+        <p class="text-xs text-on-surface-variant mb-4 flex items-start gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5">lock</span> {{ __('Halaman ini read-only. Pengaturan operasional hanya dapat diubah melalui SuperAdmin / tim :brand.', ['brand' => brand()]) }}</p>
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-section-gap">
             {{-- Operasional --}}
             <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium">
@@ -93,7 +93,7 @@
                     <li>
                         <label for="kurir-default" class="block raliva-label mb-2">{{ __('Kurir Utama Toko') }}</label>
                         <select id="kurir-default" class="raliva-select">
-                            <option selected>{{ __('Kurir Platform Raliva Express') }}</option>
+                            <option selected>{{ __('Kurir Platform :brand Express', ['brand' => brand()]) }}</option>
                             <option>{{ __('JNE Reguler') }}</option>
                             <option>{{ __('SiCepat YES') }}</option>
                             <option>{{ __('Kurir Toko Sendiri') }}</option>
