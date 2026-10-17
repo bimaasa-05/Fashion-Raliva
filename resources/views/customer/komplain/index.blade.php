@@ -3,7 +3,8 @@ f<!DOCTYPE html>
 <html class="light" lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/>
-<title>RALIVA - {{ __('My Complaints') }}</title>
+<title>{{ brand() }} - {{ __('My Complaints') }}</title>
+<link rel="icon" href="{{ brand_favicon_url() }}" />
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <meta name="csrf-token" content="{{ csrf_token() }}"/>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
@@ -296,7 +297,7 @@ f<!DOCTYPE html>
             <div class="flex flex-wrap items-center gap-x-3 gap-y-1 mt-2 text-xs text-on-surface-variant">
                 <span class="capitalize">{{ $c->kategori }}</span>
                 <span>•</span>
-                <span>{{ $c->store?->nama_toko ?? 'RALIVA' }}</span>
+                <span>{{ $c->store?->nama_toko ?? brand() }}</span>
                 <span>•</span>
                 <span>{{ optional($c->dibuat_pada)->translatedFormat('d M Y, H:i') }}</span>
             </div>
