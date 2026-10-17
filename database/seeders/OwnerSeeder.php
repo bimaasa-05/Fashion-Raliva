@@ -115,7 +115,7 @@ class OwnerSeeder extends Seeder
 
         // ---- GUDANG ----
         $warehouse = Warehouse::updateOrCreate(
-            ['nama_gudang' => 'Gudang Utama Bandung', 'store_id' => $store->store_id],
+            ['nama_gudang' => 'Gudang Cabang Bandung', 'store_id' => $store->store_id],
             [
                 'alamat' => 'Jl. Asia Afrika No. 20, Bandung',
                 'nomor_telepon' => '0225551234',
