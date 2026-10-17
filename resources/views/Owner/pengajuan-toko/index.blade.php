@@ -108,7 +108,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
                     <label for="pt-nama" class="block raliva-label mb-2">{{ __('Nama Toko') }} <span class="text-error">*</span></label>
-                    <input id="pt-nama" name="nama_toko" type="text" value="{{ old('nama_toko') }}" required autocomplete="organization" placeholder="Contoh: Raliva Store Bandung" class="raliva-input" />
+                    <input id="pt-nama" name="nama_toko" type="text" value="{{ old('nama_toko') }}" required autocomplete="organization" placeholder="{{ __('Contoh: :brand Store Bandung', ['brand' => brand()]) }}" class="raliva-input" />
                     @error('nama_toko') <p class="text-error text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
                 <div>
