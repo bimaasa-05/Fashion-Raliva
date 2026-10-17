@@ -3,7 +3,8 @@
 <html class="light" lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - {{ __('Wishlist') }}</title>
+<title>{{ brand() }} - {{ __('Wishlist') }}</title>
+<link rel="icon" href="{{ brand_favicon_url() }}" />
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -330,7 +331,7 @@
 <button id="wl-hamburger" aria-label="{{ __('Menu') }}" class="wl-header-item hover:opacity-80 transition-opacity lg:hidden flex items-center justify-center" onclick="openDrawer()" type="button">
 <span class="material-symbols-outlined" data-icon="menu">menu</span>
 </button>
-<h1 id="wl-title" class="wl-header-item font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)]">RALIVA</h1>
+<h1 id="wl-title" class="wl-header-item font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase">{{ brand() }}</h1>
 <div class="flex items-center gap-sm">
 <button id="wl-search-toggle" aria-label="{{ __('Search wishlist') }}" class="wl-header-item hover:opacity-80 transition-opacity flex items-center justify-center relative" onclick="toggleWishlistSearch()" type="button">
 <span class="material-symbols-outlined text-[22px]" data-icon="search">search</span>
@@ -376,7 +377,7 @@
     $p = $item->product;
     $img = $p?->images->first()?->file_gambar ?? '';
     $minPrice = $p?->variants->min('harga') ?? $p?->harga_dasar ?? 0;
-    $brand = $p?->store?->nama_toko ?? __('RALIVA');
+    $brand = $p?->store?->nama_toko ?? brand();
 @endphp
 <div class="flex flex-col group" data-wishlist-item data-product-id="{{ $p?->product_id }}">
 <a href="{{ $p ? route('customer.shop.produk-detail', $p->product_id) : '#' }}" class="flex flex-col group cursor-pointer">
