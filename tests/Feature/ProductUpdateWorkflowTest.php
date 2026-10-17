@@ -18,6 +18,14 @@ class ProductUpdateWorkflowTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Assertion file ini memakai string Indonesia; kunci locale agar
+        // deterministik meski .env lokal memakai en.
+        app()->setLocale('id');
+    }
+
     public function test_admin_update_creates_pending_request_without_changing_product(): void
     {
         Storage::fake('public');

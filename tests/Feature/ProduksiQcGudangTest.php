@@ -15,6 +15,13 @@ class ProduksiQcGudangTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Assertion memakai string Indonesia; kunci locale agar deterministik meski .env memakai en.
+        app()->setLocale('id');
+    }
+
     public function test_selesai_produksi_computes_gagal_automatically(): void
     {
         [$produksi, $storeId] = $this->produksi();
@@ -95,6 +102,22 @@ class ProduksiQcGudangTest extends TestCase
                 ->where('judul', 'like', 'Kekurangan Produksi%')
                 ->exists()
         );
+    }
+
+    public function test_data_produksi_tolerates_missing_schedule_dates(): void
+    {
+        [$produksi, $storeId] = $this->produksi();
+        // Pesanan offline buatan admin tanpa jadwal + sudah selesai produksi:
+        // halaman tidak boleh 500 (lte(null) pada tgl_berakhir_produksi).
+        $order = $this->orderSiapProduksi($storeId, 1);
+        $order->update([
+            'status' => Order::STATUS_MENUNGGU_QC,
+            'tgl_mulai_produksi' => null,
+            'tgl_berakhir_produksi' => null,
+            'produksi_selesai_pada' => now(),
+        ]);
+
+        $this->actingAsFresh($produksi)->get(route('produksi.data-produksi'))->assertOk();
     }
 
     public function test_qc_gagal_keeps_status_and_notifies_store_admin_only(): void

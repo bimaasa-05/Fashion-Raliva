@@ -147,6 +147,9 @@ class OrderTrackingController extends Controller
         // Produk yang sudah pernah dinilai user — menentukan tombol "Beri rating" / "Lihat rating" per item.
         $reviewedProductIds = Review::where('user_id', Auth::id())->pluck('product_id');
 
+        // Daftar pesanan user untuk pill navigasi antar pesanan.
+        $orders = (clone $base)->orderByDesc('orders.created_at')->get();
+
         return view('customer.order-tracking.index', [
             'orders' => $orders,
             'selected' => $selected,

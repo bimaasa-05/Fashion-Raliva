@@ -18,6 +18,13 @@ class QcTabRincianGudangTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Assertion memakai string Indonesia; kunci locale agar deterministik meski .env memakai en.
+        app()->setLocale('id');
+    }
+
     public function test_qc_page_defaults_to_menunggu_tab(): void
     {
         [$produksi, $storeId] = $this->userWithRole(Role::PRODUKSI);

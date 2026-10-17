@@ -15,11 +15,16 @@ class ProductUpdateRequest extends Model
 
     public const STATUS_DITOLAK = 'ditolak';
 
+    public const TIPE_UBAH = 'ubah';
+
+    public const TIPE_HAPUS = 'hapus';
+
     protected $fillable = [
         'product_id',
         'store_id',
         'requested_by',
         'status',
+        'tipe',
         'before_snapshot',
         'after_payload',
         'remove_image_ids',

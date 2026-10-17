@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AdSlot;
 use App\Models\Category;
 use App\Models\Notification;
+use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\ProductUpdateRequest;
+use App\Models\Review;
 use App\Models\Role;
 use App\Models\StoreStaff;
 use App\Support\ActivityLogger;
@@ -66,6 +69,10 @@ class PerubahanProdukController extends Controller
                 return back()->with('toast', ['message' => __('Pengajuan sudah diputuskan atau produk tidak ditemukan.'), 'icon' => 'gpp_bad']);
             }
 
+            if (($lockedRequest->tipe ?? ProductUpdateRequest::TIPE_UBAH) === ProductUpdateRequest::TIPE_HAPUS) {
+                return $this->approveHapus($lockedRequest, $lockedProduct);
+            }
+
             ProductUpdateApplier::apply($lockedProduct, $lockedRequest->after_payload ?? []);
             $lockedRequest->update([
                 'status' => ProductUpdateRequest::STATUS_DISETUJUI,
@@ -85,6 +92,59 @@ class PerubahanProdukController extends Controller
 
             return back()->with('toast', ['message' => __('Pengajuan perubahan disetujui dan sudah berlaku.'), 'icon' => 'task_alt']);
         });
+    }
+
+    /**
+     * Setujui penghapusan: produk dihapus (cermin Owner::destroy), baris
+     * pengajuan dipertahankan sebagai arsip via FK nullOnDelete.
+     */
+    private function approveHapus(ProductUpdateRequest $lockedRequest, Product $lockedProduct)
+    {
+        // Guard riwayat ulang — bisa muncul setelah pengajuan dibuat.
+        $variantIds = $lockedProduct->variants()->pluck('product_variant_id')->all();
+        $hasRiwayat = (! empty($variantIds) && OrderItem::whereIn('product_variant_id', $variantIds)->exists())
+            || Review::where('product_id', $lockedProduct->product_id)->exists()
+            || AdSlot::where('product_id', $lockedProduct->product_id)->exists();
+        if ($hasRiwayat) {
+            return back()->with('toast', ['message' => __('Produk kini memiliki riwayat (pesanan/ulasan/slot iklan) sehingga tidak dapat dihapus.'), 'icon' => 'gpp_bad']);
+        }
+
+        $fotoPaths = \App\Models\ProductImage::where('product_id', $lockedProduct->product_id)->pluck('file_gambar')->all();
+
+        $lockedRequest->update([
+            'status' => ProductUpdateRequest::STATUS_DISETUJUI,
+            'review_note' => null,
+            'reviewed_by' => ActivityLogger::resolveActorId(),
+        ]);
+
+        // Notifikasi dikirim sebelum produk dihapus agar nama + owner masih terbaca.
+        $this->notifyDecision($lockedRequest, true, null, 'penghapusan');
+
+        ActivityLogger::log(
+            'product.hapus.approve',
+            Product::class,
+            $lockedProduct->product_id,
+            ['status' => 'pengajuan_hapus_pending'],
+            ['status' => 'produk_dihapus'],
+            sprintf('Menyetujui penghapusan produk "%s".', $lockedProduct->nama_produk)
+        );
+
+        $lockedProduct->images()->delete();
+        // Riwayat stok varian (restrictOnDelete) ikut dihapus — produk beserta
+        // variannya dihapus permanen sehingga baris audit ini kehilangan induknya.
+        \App\Models\StockMovement::whereIn('product_variant_id', $variantIds)->delete();
+        \App\Models\StockTransferItem::whereIn('product_variant_id', $variantIds)->delete();
+        $lockedProduct->variants()->delete();
+        $lockedProduct->delete();
+
+        foreach ($fotoPaths as $path) {
+            try {
+                Storage::disk('public')->delete($path);
+            } catch (\Throwable $e) {
+            }
+        }
+
+        return back()->with('toast', ['message' => __('Pengajuan penghapusan disetujui; produk telah dihapus.'), 'icon' => 'task_alt']);
     }
 
     public function reject(Request $request, Product $produk, ProductUpdateRequest $permintaan)
@@ -117,23 +177,37 @@ class PerubahanProdukController extends Controller
             Storage::disk('public')->deleteDirectory(dirname($staged[0]));
         }
 
+        $aksi = (($permintaan->tipe ?? ProductUpdateRequest::TIPE_UBAH) === ProductUpdateRequest::TIPE_HAPUS) ? 'penghapusan' : 'perubahan';
+
         ActivityLogger::log(
             'product.update.reject',
             Product::class,
             $produk->product_id,
             ['status' => 'pengajuan_pending'],
             ['status' => 'pengajuan_ditolak', 'alasan' => $data['alasan']],
-            sprintf('Menolak pengajuan perubahan produk "%s": %s', $produk->nama_produk, $data['alasan'])
+            sprintf('Menolak pengajuan %s produk "%s": %s', $aksi, $produk->nama_produk, $data['alasan'])
         );
-        $this->notifyDecision($permintaan, false, $data['alasan']);
+        $this->notifyDecision($permintaan, false, $data['alasan'], $aksi);
 
-        return back()->with('toast', ['message' => __('Pengajuan perubahan ditolak.'), 'icon' => 'block']);
+        return back()->with('toast', ['message' => $aksi === 'penghapusan' ? __('Pengajuan penghapusan ditolak.') : __('Pengajuan perubahan ditolak.'), 'icon' => 'block']);
     }
 
     private function compare(ProductUpdateRequest $permintaan): array
     {
         $before = $permintaan->before_snapshot ?? [];
         $after = $permintaan->after_payload ?? [];
+
+        // Pengajuan hapus tidak punya perbandingan field; view menampilkan ringkasan hapus.
+        if (($permintaan->tipe ?? ProductUpdateRequest::TIPE_UBAH) === ProductUpdateRequest::TIPE_HAPUS) {
+            return [
+                'fields' => [],
+                'beforeImages' => collect($before['images'] ?? [])->pluck('file_gambar')->all(),
+                'afterImages' => [],
+                'removed' => [],
+                'beforeVariants' => [],
+                'afterVariants' => [],
+            ];
+        }
         $beforeProduct = $before['product'] ?? [];
         $categoryAfter = isset($after['category_id']) && $after['category_id']
             ? Category::where('category_id', $after['category_id'])->value('nama_kategori')
@@ -218,8 +292,10 @@ class PerubahanProdukController extends Controller
         return 'Rp '.number_format((float) $value, 0, ',', '.');
     }
 
-    private function notifyDecision(ProductUpdateRequest $permintaan, bool $approved, ?string $reason): void
+    private function notifyDecision(ProductUpdateRequest $permintaan, bool $approved, ?string $reason, string $aksi = 'perubahan'): void
     {
+        $kata = $aksi === 'penghapusan' ? 'penghapusan' : 'perubahan';
+        $Kata = $aksi === 'penghapusan' ? 'Penghapusan' : 'Perubahan';
         $productName = $permintaan->product?->nama_produk ?? 'Produk';
         $actor = ActivityLogger::resolveActorId();
         $adminIds = StoreStaff::where('store_id', $permintaan->store_id)
@@ -239,8 +315,8 @@ class PerubahanProdukController extends Controller
                 'tipe' => Notification::TIPE_SISTEM,
                 'judul' => $approved ? 'Pengajuan Produk Disetujui' : 'Pengajuan Produk Ditolak',
                 'pesan' => $approved
-                    ? sprintf('Pengajuan perubahan "%s" disetujui dan sudah berlaku.', $productName)
-                    : sprintf('Pengajuan perubahan "%s" ditolak. Alasan: %s', $productName, $reason),
+                    ? sprintf('Pengajuan %s "%s" disetujui dan sudah berlaku.', $kata, $productName)
+                    : sprintf('Pengajuan %s "%s" ditolak. Alasan: %s', $kata, $productName, $reason),
                 'url' => route('admin.produk'),
             ]);
         }
@@ -250,18 +326,18 @@ class PerubahanProdukController extends Controller
                 'user_id' => $permintaan->product->store->owner_id,
                 'aktor_id' => $actor,
                 'tipe' => Notification::TIPE_SISTEM,
-                'judul' => $approved ? 'Perubahan Produk Disetujui' : 'Perubahan Produk Ditolak',
+                'judul' => $approved ? $Kata . ' Produk Disetujui' : $Kata . ' Produk Ditolak',
                 'pesan' => $approved
-                    ? sprintf('Perubahan produk "%s" disetujui dan sudah berlaku.', $productName)
-                    : sprintf('Perubahan produk "%s" ditolak. Alasan: %s', $productName, $reason),
+                    ? sprintf('%s produk "%s" disetujui dan sudah berlaku.', $Kata, $productName)
+                    : sprintf('%s produk "%s" ditolak. Alasan: %s', $Kata, $productName, $reason),
                 'url' => route('owner.produk'),
             ]);
         }
 
         Notification::fireSelf(
             Notification::TIPE_SISTEM,
-            $approved ? 'Perubahan Produk Disetujui' : 'Perubahan Produk Ditolak',
-            sprintf('Pengajuan perubahan "%s" %s.', $productName, $approved ? 'disetujui' : 'ditolak'),
+            $approved ? $Kata . ' Produk Disetujui' : $Kata . ' Produk Ditolak',
+            sprintf('Pengajuan %s "%s" %s.', $kata, $productName, $approved ? 'disetujui' : 'ditolak'),
             route('superadmin.perubahan-produk')
         );
     }

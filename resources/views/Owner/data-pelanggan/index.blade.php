@@ -40,14 +40,17 @@
         <style>
             .podium { position: relative; border:2px solid rgba(0,0,0,0.12); box-shadow: 0 8px 24px rgba(0,0,0,0.12); display:flex; align-items:center; justify-content:center; }
             .crown-gold { background: linear-gradient(135deg, #FFF5C0 0%, #FBBF24 25%, #D97706 50%, #FEF08A 75%, #B45309 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
-            .crown-container { position: relative; display: inline-flex; align-items: center; justify-content: center; animation: crownFloat 3s ease-in-out infinite, crownGlowPulse 2s ease-in-out infinite; }
+            .medal-silver { background: linear-gradient(135deg, #F9FAFB 0%, #D1D5DB 30%, #9CA3AF 50%, #E5E7EB 75%, #6B7280 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+            .medal-bronze { background: linear-gradient(135deg, #FFE8C2 0%, #E39A5B 30%, #B25E2A 50%, #F0B978 75%, #7C3F16 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+            .medal-container { position: relative; display: inline-flex; align-items: center; justify-content: center; animation: crownFloat 3s ease-in-out infinite; }
+            .crown-container { position: relative; display: inline-flex; align-items: center; justify-content: center; animation: crownFloat 3s ease-in-out infinite, crownGlowPulse 2s ease-in-out infinite; filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6)); }
             .crown-container::before { content: ''; position: absolute; top: -10%; bottom: -10%; left: -80%; width: 45%; background: rgba(255, 255, 255, 0.55); transform: skewX(-24deg); pointer-events: none; z-index: 10; animation: crownShimmer 2.4s linear infinite; }
             .crown-sparkle { position: absolute; top: 8px; right: 2px; width: 12px; height: 12px; background: #FFF; clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%); animation: sparkleTwinkle 1.8s ease-in-out infinite; pointer-events: none; }
             @keyframes crownFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
             @keyframes crownGlowPulse { 0%, 100% { filter: drop-shadow(0 0 8px rgba(251, 191, 36, 0.6)); } 50% { filter: drop-shadow(0 0 20px rgba(253, 224, 71, 0.95)); } }
             @keyframes crownShimmer { 0% { left: -80%; } 65% { left: 180%; } 100% { left: 180%; } }
             @keyframes sparkleTwinkle { 0%, 100% { transform: scale(0) rotate(0deg); opacity: 0; } 50% { transform: scale(1.3) rotate(90deg); opacity: 1; } }
-            @media (prefers-reduced-motion: reduce) { .crown-container, .crown-container::before, .crown-sparkle { animation: none; } }
+            @media (prefers-reduced-motion: reduce) { .crown-container, .crown-container::before, .crown-sparkle, .medal-container { animation: none; } }
         </style>
         
         <div class="flex items-end justify-center gap-3 md:gap-6 pt-6 pb-4">
@@ -62,6 +65,10 @@
                 <div class="flex-1 max-w-[150px] flex flex-col items-center {{ $isTop ? 'order-2' : ($isSecond ? 'order-1' : 'order-3') }}">
                     @if ($isTop)
                         <span class="crown-container mb-1"><span class="crown-gold material-symbols-outlined text-[28px] md:text-[34px]">crown</span><span class="crown-sparkle"></span></span>
+                    @elseif ($isSecond)
+                        <span class="medal-container mb-1"><span class="medal-silver material-symbols-outlined text-[24px] md:text-[28px]">military_tech</span></span>
+                    @else
+                        <span class="medal-container mb-1"><span class="medal-bronze material-symbols-outlined text-[24px] md:text-[28px]">military_tech</span></span>
                     @endif
                     <div class="w-10 h-10 md:w-14 md:h-14 rounded-full {{ $isTop ? 'bg-gold-accent text-white ring-4 ring-gold-accent/20' : 'bg-surface-container-high border border-outline-variant text-on-surface' }} flex items-center justify-center font-bold text-xs md:text-sm shadow-md">{{ $c->initials }}</div>
                     <p class="font-bold text-[11px] md:text-sm mt-2 truncate max-w-[90px] md:max-w-[110px] text-center">{{ $c->name }}</p>

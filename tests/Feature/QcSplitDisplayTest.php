@@ -20,6 +20,13 @@ class QcSplitDisplayTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Assertion memakai string Indonesia; kunci locale agar deterministik meski .env memakai en.
+        app()->setLocale('id');
+    }
+
     public function test_qc_store_snapshots_production_and_records_qc_split(): void
     {
         [$produksi, $storeId] = $this->produksi();

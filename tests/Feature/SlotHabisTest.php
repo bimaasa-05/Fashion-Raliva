@@ -18,6 +18,14 @@ class SlotHabisTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Assertion file ini memakai string Indonesia; kunci locale agar
+        // deterministik meski .env lokal memakai en.
+        app()->setLocale('id');
+    }
+
     public function test_full_quota_redirects_to_produk_with_slot_modal(): void
     {
         [$admin, $storeId] = $this->admin();

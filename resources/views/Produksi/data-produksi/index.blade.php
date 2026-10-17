@@ -49,13 +49,13 @@
 
     {{-- Tabel --}}
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-6 card-premium" data-table-scope>
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 mb-6">
-            <div class="flex items-center gap-3 flex-wrap w-full lg:w-auto">
-                <div class="relative flex-1 min-w-[220px]">
+        <div class="flex flex-row items-center gap-3 mb-6 overflow-x-auto">
+            <div class="flex items-center gap-3 shrink-0 ms-auto">
+                <div class="relative w-36 sm:w-64 shrink-0">
                     <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[20px] text-on-surface-variant pointer-events-none">search</span>
                     <input type="text" placeholder="{{ __('Cari nomor pesanan...') }}" data-table-search class="raliva-search" />
                 </div>
-                <select data-table-filter="status-produksi" class="raliva-select">
+                <select data-table-filter="status-produksi" class="raliva-select shrink-0" style="width:auto">
                     <option value="">{{ __('Semua Status') }}</option>
                     <option value="menunggu_produksi">{{ __('Menunggu Produksi') }}</option>
                     <option value="diproses">{{ __('Diproses') }}</option>
@@ -63,7 +63,7 @@
                     <option value="siap_kirim">{{ __('Siap Kirim') }}</option>
                 </select>
                 @if ($perluBackfill ?? false)
-                    <form method="POST" action="{{ route('produksi.data-produksi.backfill-bahan') }}" onsubmit="return confirm('{{ __('Salin bahan Gudang ke semua pesanan yang belum ada bahannya?') }}');">
+                    <form method="POST" action="{{ route('produksi.data-produksi.backfill-bahan') }}" onsubmit="return confirm('{{ __('Salin bahan Gudang ke semua pesanan yang belum ada bahannya?') }}');" class="shrink-0">
                         @csrf
                         <button type="submit" class="px-4 py-2.5 rounded-lg bg-gold-accent/10 border border-gold-accent/40 text-gold-accent text-xs font-bold uppercase hover:bg-gold-accent/20 transition-colors whitespace-nowrap">{{ __('Lengkapi Bahan') }}</button>
                     </form>
@@ -109,7 +109,7 @@
                             $accepted = (bool) $o->produksi_dimulai_pada;
                             $rejectedNote = $o->produksi_catatan_tolak;
                             $selesaiP = $o->produksi_selesai_pada;
-                            $selesaiTepat = (bool) ($selesaiP && $selesaiP->lte($o->tgl_berakhir_produksi));
+                            $selesaiTepat = (bool) ($selesaiP && $o->tgl_berakhir_produksi && $selesaiP->lte($o->tgl_berakhir_produksi));
                         @endphp
                         <tr data-table-row data-status-produksi="{{ $o->status }}" class="border-b border-muted-border last:border-0 align-top">
                             <td class="py-3.5 px-4">
@@ -243,7 +243,7 @@
                     $accepted = (bool) $o->produksi_dimulai_pada;
                     $rejectedNote = $o->produksi_catatan_tolak;
                     $selesaiP = $o->produksi_selesai_pada;
-                    $selesaiTepat = (bool) ($selesaiP && $selesaiP->lte($o->tgl_berakhir_produksi));
+                    $selesaiTepat = (bool) ($selesaiP && $o->tgl_berakhir_produksi && $selesaiP->lte($o->tgl_berakhir_produksi));
                 @endphp
                 <article data-table-row data-status-produksi="{{ $o->status }}" class="bg-surface-container-lowest border border-muted-border rounded-xl p-4">
                     <div class="flex items-start justify-between gap-2">
