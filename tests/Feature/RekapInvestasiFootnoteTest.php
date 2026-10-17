@@ -12,6 +12,13 @@ class RekapInvestasiFootnoteTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+        // Assertion memakai string Indonesia; kunci locale agar deterministik meski .env memakai en.
+        app()->setLocale('id');
+    }
+
     public function test_owner_rekap_explains_investasi_source(): void
     {
         $ownerRole = Role::where('nama_role', 'Owner')->firstOrFail();
