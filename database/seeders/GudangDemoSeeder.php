@@ -52,11 +52,11 @@ class GudangDemoSeeder extends Seeder
         // Dua gudang dalam satu toko untuk demo fitur "Ganti Gudang".
         $wh1 = Warehouse::firstOrCreate(
             ['warehouse_id' => 1],
-            ['store_id' => $store->store_id, 'nama_gudang' => 'Gudang Utama Bandung', 'alamat' => 'Jl. Soekarno Hatta No. 12, Bandung', 'nomor_telepon' => '081234000001', 'status' => 'aktif']
+            ['store_id' => $store->store_id, 'nama_gudang' => 'Gudang Cabang Bandung', 'alamat' => 'Jl. Soekarno Hatta No. 12, Bandung', 'nomor_telepon' => '081234000001', 'status' => 'aktif']
         );
         $wh2 = Warehouse::firstOrCreate(
             ['warehouse_id' => 2],
-            ['store_id' => $store->store_id, 'nama_gudang' => 'Gudang Cabang Jakarta', 'alamat' => 'Jl. Sudirman No. 45, Jakarta', 'nomor_telepon' => '081234000002', 'status' => 'aktif']
+            ['store_id' => $store->store_id, 'nama_gudang' => 'Gudang Utama Jakarta', 'alamat' => 'Jl. Sudirman No. 45, Jakarta', 'nomor_telepon' => '081234000002', 'status' => 'aktif']
         );
 
         // Tugaskan seluruh user Gudang ke kedua gudang (status aktif).
@@ -288,7 +288,7 @@ class GudangDemoSeeder extends Seeder
             'jumlah' => 10,
             'sumber_tipe' => StockMovement::SUMBER_STOCK_TRANSFER,
             'sumber_id' => $transfer->stock_transfer_id,
-            'alasan' => 'Pemindahan ke Gudang Cabang Jakarta',
+            'alasan' => 'Pemindahan ke Gudang Utama Jakarta',
             'dibuat_oleh' => $actorId,
             'created_at' => now()->subDays(3),
         ];
@@ -299,7 +299,7 @@ class GudangDemoSeeder extends Seeder
             'jumlah' => 10,
             'sumber_tipe' => StockMovement::SUMBER_STOCK_TRANSFER,
             'sumber_id' => $transfer->stock_transfer_id,
-            'alasan' => 'Penerimaan dari Gudang Utama Bandung',
+            'alasan' => 'Penerimaan dari Gudang Cabang Bandung',
             'dibuat_oleh' => $actorId,
             'created_at' => now()->subDays(2),
         ];
@@ -375,7 +375,7 @@ class GudangDemoSeeder extends Seeder
                     'user_id' => $user->user_id,
                     'tipe' => Notification::TIPE_SISTEM,
                     'judul' => 'Stok Menipis',
-                    'pesan' => 'Stok <strong>Silk Scarf</strong> tinggal 5 unit di Gudang Utama Bandung.',
+                    'pesan' => 'Stok <strong>Silk Scarf</strong> tinggal 5 unit di Gudang Cabang Bandung.',
                     'dibaca_pada' => null,
                     'created_at' => now()->subMinutes(10),
                     'updated_at' => now()->subMinutes(10),
