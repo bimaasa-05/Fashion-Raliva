@@ -53,7 +53,7 @@
                             {{ $summary['total_toko'] }} {{ __('Toko') }}
                         </span>
                     </div>
-                    <p class="font-body-md text-body-md text-on-surface-variant max-w-lg">{{ __('Lihat dan kelola penugasan staff dari seluruh toko di platform Raliva. Tugaskan user ke toko yang membutuhkan.') }}</p>
+                    <p class="font-body-md text-body-md text-on-surface-variant max-w-lg">{{ __('Lihat dan kelola penugasan staff dari seluruh toko di platform :brand. Tugaskan user ke toko yang membutuhkan.', ['brand' => brand()]) }}</p>
                 </div>
             </div>
         </div>
