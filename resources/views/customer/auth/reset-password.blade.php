@@ -210,7 +210,7 @@
 <div id="reset-section">
 <!-- Logo -->
 <div class="text-center mb-xl">
-<h1 class="font-display-lg text-headline-lg tracking-widest text-on-surface uppercase>@include('partials.brand-content', ['logoClass' => 'h-7'])</h1>
+<h1 class="font-display-lg text-headline-lg tracking-widest text-on-surface uppercase">@include('partials.brand-content', ['logoClass' => 'h-7'])</h1>
 <p class="font-label-sm text-label-sm text-on-surface-variant tracking-wide mt-1">{{ __('The Art of Everyday Dressing') }}</p>
 </div>
 <!-- Heading -->
