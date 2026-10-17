@@ -3,7 +3,8 @@
 <html class="light" lang="{{ app()->getLocale() }}"><head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-<title>RALIVA - {{ __('Edit Review') }}</title>
+<title>{{ brand() }} - {{ __('Edit Review') }}</title>
+<link rel="icon" href="{{ brand_favicon_url() }}" />
 <script>if (localStorage.getItem('raliva-theme') === 'dark') document.documentElement.classList.add('theme-dark');</script>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com" rel="preconnect"/>
@@ -258,7 +259,7 @@ $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 <img alt="{{ $prod?->nama_produk }}" class="w-full h-full object-cover rounded-xl" src="{{ $imgUrl }}"/>
 </a>
 <div class="min-w-0">
-<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $review->store?->nama_toko ?? 'RALIVA' }}</span>
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $review->store?->nama_toko ?? brand() }}</span>
 <h2 class="font-title-md text-title-md text-on-surface truncate">{{ $prod?->nama_produk }}</h2>
 <p class="font-label-sm text-label-sm text-on-surface-variant mt-xs">{{ __('Purchased') }} {{ $review->created_at->format('M j, Y') }}</p>
 </div>
