@@ -50,4 +50,18 @@ class BrandNameTest extends TestCase
 
         $this->assertSame(asset('favicon.ico'), brand_favicon_url());
     }
+
+    public function test_logo_url_empty_when_setting_missing(): void
+    {
+        Setting::query()->where('kunci', 'logo_platform')->delete();
+
+        $this->assertSame('', brand_logo_url());
+    }
+
+    public function test_logo_url_uses_logo_platform_setting(): void
+    {
+        Setting::set('logo_platform', 'branding/uji-logo.png');
+
+        $this->assertSame(photo_url('branding/uji-logo.png'), brand_logo_url());
+    }
 }
