@@ -35,12 +35,12 @@
                         </span>
                         <span class="material-symbols-outlined text-gold-accent fill text-[24px]" aria-hidden="true">currency_exchange</span>
                     </div>
-                    <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">{{ __('Komisi Raliva') }}</span>
+                    <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">{{ __('Komisi :brand', ['brand' => brand()]) }}</span>
                     <div class="flex items-baseline gap-2">
                         <span class="font-display-lg text-5xl md:text-6xl tracking-tight text-gradient-gold">{{ number_format($komisi, 0, ',', '.') }}</span>
                         <span class="font-display-lg text-3xl md:text-4xl text-gold-accent/70 self-end mb-1">%</span>
                     </div>
-                    <p class="font-body-md text-sm text-on-surface-variant">{{ __('Potongan dari setiap transaksi toko yang menjadi pendapatan bersih Raliva. Dikelola di halaman Komisi Global.') }}</p>
+                    <p class="font-body-md text-sm text-on-surface-variant">{{ __('Potongan dari setiap transaksi toko yang menjadi pendapatan bersih :brand. Dikelola di halaman Komisi Global.', ['brand' => brand()]) }}</p>
                     <a href="{{ route('superadmin.komisi-global') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium self-start mt-1">
                         <span class="material-symbols-outlined text-[18px]">open_in_new</span> {{ __('Kelola Komisi') }}
                     </a>
@@ -53,7 +53,7 @@
                 <div class="relative flex flex-col gap-4">
                     <div class="flex items-center justify-between">
                         <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/25 border border-secondary/30 font-label-sm text-[10px] uppercase tracking-widest text-secondary">
-                            <span class="material-symbols-outlined text-[14px]">account_balance</span> {{ __('Hak Negara — Bukan Pendapatan Raliva') }}
+                            <span class="material-symbols-outlined text-[14px]">account_balance</span> {{ __('Hak Negara — Bukan Pendapatan :brand', ['brand' => brand()]) }}
                         </span>
                         <span class="material-symbols-outlined text-secondary fill text-[24px]" aria-hidden="true">receipt_long</span>
                     </div>
@@ -62,7 +62,7 @@
                         <span class="font-display-lg text-5xl md:text-6xl tracking-tight text-on-surface">{{ number_format($pajak, 0, ',', '.') }}</span>
                         <span class="font-display-lg text-3xl md:text-4xl text-secondary self-end mb-1">%</span>
                     </div>
-                    <p class="font-body-md text-sm text-on-surface-variant">{{ __('PPN sesuai tarif yang berlaku, dipungut atas nama pemerintah lalu disetor — tidak masuk kas Raliva maupun toko.') }}</p>
+                    <p class="font-body-md text-sm text-on-surface-variant">{{ __('PPN sesuai tarif yang berlaku, dipungut atas nama pemerintah lalu disetor — tidak masuk kas :brand maupun toko.', ['brand' => brand()]) }}</p>
                     <button type="button" data-modal-open="modal-edit-biaya" class="inline-flex items-center justify-center gap-2 px-6 py-3 border border-secondary text-secondary font-label-sm text-[11px] uppercase tracking-widest rounded hover:bg-secondary/10 transition-colors self-start mt-1">
                         <span class="material-symbols-outlined text-[18px]">edit</span> {{ __('Ubah Pajak') }}
                     </button>
@@ -113,9 +113,9 @@
                 </p>
                 <ul class="divide-y divide-muted-border relative">
                     <li class="flex items-center justify-between py-3"><span class="font-body-md text-sm text-on-surface">{{ __('Nilai transaksi (subtotal)') }}</span><span class="font-title-md text-title-md text-on-surface">Rp 100.000</span></li>
-                    <li class="flex items-center justify-between py-3"><span class="font-body-md text-sm text-gold-accent inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">percent</span>Komisi Raliva {{ $komisi }}% <em class="not-italic text-on-surface-variant text-xs">{{ __('(pendapatan platform)') }}</em></span><span class="font-title-md text-title-md text-gold-accent">Rp {{ number_format(100000 * $komisi / 100, 0, ',', '.') }}</span></li>
+                    <li class="flex items-center justify-between py-3"><span class="font-body-md text-sm text-gold-accent inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">percent</span>Komisi {{ brand() }} {{ $komisi }}% <em class="not-italic text-on-surface-variant text-xs">{{ __('(pendapatan platform)') }}</em></span><span class="font-title-md text-title-md text-gold-accent">Rp {{ number_format(100000 * $komisi / 100, 0, ',', '.') }}</span></li>
                     <li class="flex items-center justify-between py-3"><span class="font-body-md text-sm text-on-surface-variant">{{ __('Penerima bersih (toko)') }}</span><span class="font-title-md text-title-md text-on-surface">Rp {{ number_format(100000 - (100000 * $komisi / 100), 0, ',', '.') }}</span></li>
-                    <li class="flex items-center justify-between pt-3 border-t border-muted-border"><span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">{{ __('Catatan') }}</span><span class="text-right text-xs text-on-surface-variant max-w-[55%]">{{ __('Pajak disetor ke negara; komisi masuk kas Raliva.') }}</span></li>
+                    <li class="flex items-center justify-between pt-3 border-t border-muted-border"><span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">{{ __('Catatan') }}</span><span class="text-right text-xs text-on-surface-variant max-w-[55%]">{{ __('Pajak disetor ke negara; komisi masuk kas :brand.', ['brand' => brand()]) }}</span></li>
                 </ul>
             </div>
         </div>
@@ -217,7 +217,7 @@
     <div class="p-6 space-y-4">
         <div class="text-center">
             <h3 class="font-display-lg text-headline-lg-mobile md:text-headline-lg">{{ __('Konfirmasi Perubahan') }}</h3>
-            <p class="font-body-md text-body-md text-on-surface-variant mt-2">{{ __('Anda akan mengubah tarif') }} <strong class="text-deep-onyx">{{ __('Pajak Penjualan (PPN)') }}</strong>{{ __('. Pajak dipungut atas nama pemerintah dan wajib disetor — bukan pendapatan Raliva.') }}</p>
+            <p class="font-body-md text-body-md text-on-surface-variant mt-2">{{ __('Anda akan mengubah tarif') }} <strong class="text-deep-onyx">{{ __('Pajak Penjualan (PPN)') }}</strong>{{ __('. Pajak dipungut atas nama pemerintah dan wajib disetor — bukan pendapatan :brand.', ['brand' => brand()]) }}</p>
         </div>
     </div>
     @slot('footer')
