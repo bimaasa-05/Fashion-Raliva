@@ -19,7 +19,7 @@ class OwnerLaporanRingkasanSheet implements FromCollection, WithHeadings, WithMa
         protected int $storeId,
         protected int $period,
     ) {
-        $this->judulSheet = 'LAPORAN TOKO RALIVA';
+        $this->judulSheet = 'LAPORAN TOKO '.mb_strtoupper(brand());
         $this->subtitleSheet = __('Ringkasan Keuangan & Penjualan — Periode :ph1', ['ph1' => $this->labelPeriode()]);
         $this->barisHeaderSheet = 3;
         $this->lebarKolomSheet = [6, 34, 28];
