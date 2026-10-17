@@ -44,6 +44,10 @@ class Setting extends Model
 
     public const HELP_WHATSAPP_HOURS = 'help_whatsapp_hours';
 
+    public const LOGO_PLATFORM = 'logo_platform';
+
+    public const FAVICON_PLATFORM = 'favicon_platform';
+
     protected $fillable = [
         'kunci',
         'nilai',
