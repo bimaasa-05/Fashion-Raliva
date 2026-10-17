@@ -28,7 +28,7 @@
             </a>
         @else
             <span class="inline-flex items-center gap-1.5 shrink-0 rounded-full border border-error/30 bg-error/10 px-3 py-1.5 text-xs font-bold text-error">
-                <span class="material-symbols-outlined text-[16px]">mail</span>{{ __('Hubungi dukungan Raliva') }}
+                <span class="material-symbols-outlined text-[16px]">mail</span>{{ __('Hubungi dukungan :brand', ['brand' => brand()]) }}
             </span>
         @endif
     </div>
