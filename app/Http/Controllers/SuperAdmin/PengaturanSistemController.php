@@ -174,6 +174,38 @@ class PengaturanSistemController extends Controller
         ]);
     }
 
+    public function destroyLogo()
+    {
+        $lama = Setting::get(Setting::LOGO_PLATFORM);
+
+        if ($lama === null || $lama === '') {
+            return back()->with('toast', ['message' => __('Tidak ada logo platform untuk dihapus.'), 'icon' => 'info']);
+        }
+
+        DB::transaction(function () {
+            Setting::where('kunci', Setting::LOGO_PLATFORM)->lockForUpdate()->get();
+            Setting::set(Setting::LOGO_PLATFORM, null);
+        });
+
+        Storage::disk('public')->delete($lama);
+
+        ActivityLogger::log(
+            'setting.system.logo.hapus',
+            Setting::class,
+            null,
+            ['logo_platform' => $lama],
+            ['logo_platform' => null],
+            'Menghapus logo platform.'
+        );
+
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'Logo Platform Dihapus', 'Logo platform berhasil dihapus. Nama platform kembali tampil sebagai teks tanpa logo.', route('superadmin.pengaturan-sistem'));
+
+        return back()->with('toast', [
+            'message' => __('Logo platform berhasil dihapus.'),
+            'icon' => 'task_alt',
+        ]);
+    }
+
     public function updateLegal(Request $request)
     {
         $data = $request->validate([
