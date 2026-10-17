@@ -406,7 +406,7 @@
         <a aria-label="{{ __('Go back') }}" href="{{ route('customer.shop') }}" data-go-back class="p-2 -ml-2 hover:opacity-70 transition-all duration-200 flex">
             <span class="material-symbols-outlined text-[24px]">arrow_back</span>
             </a>
-        <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center">{{ brand() }}</h1>
+        <h1 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] uppercase truncate max-w-[200px] text-center>@include('partials.brand-content', ['logoClass' => 'h-7'])</h1>
         <div class="w-10"></div> <!-- Spacer for centering -->
         <div class="flex gap-xs">
             @php $isWl = in_array($product->product_id, $wishlistedIds, true); @endphp
