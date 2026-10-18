@@ -20,12 +20,12 @@ class AdminLaporanRingkasanSheet implements FromCollection, WithHeadings, WithMa
         protected AdminLaporanService $laporan,
     ) {
         $this->judulSheet = 'LAPORAN OPERASIONAL '.mb_strtoupper(brand());
-        $this->subtitleSheet = __('Ringkasan Operasional — :ph1', ['ph1' => $this->laporan->labelPeriode()]);
+        $this->subtitleSheet = $this->laporan->labelTokoPeriode();
         $this->barisHeaderSheet = 3;
         $this->lebarKolomSheet = [6, 34, 28];
         $this->kolomUangSheet = [3];
-        // Baris non-uang: 5 = Pesanan Berpendapatan, 10 = Toko, 11 = Periode.
-        $this->barisNonUangSheet = [5, 10, 11];
+        // Baris non-uang: 5 = Pesanan Berpendapatan.
+        $this->barisNonUangSheet = [5];
     }
 
     public function collection(): Collection
@@ -39,8 +39,6 @@ class AdminLaporanRingkasanSheet implements FromCollection, WithHeadings, WithMa
             ['no' => 4, 'label' => __('Pengeluaran Toko'), 'value' => $ringkasan['expense']],
             ['no' => 5, 'label' => __('Total Pengeluaran'), 'value' => $ringkasan['pengeluaran']],
             ['no' => 6, 'label' => __('Total Bersih'), 'value' => $ringkasan['bersih']],
-            ['no' => 7, 'label' => __('Toko'), 'value' => $this->laporan->labelToko()],
-            ['no' => 8, 'label' => __('Periode'), 'value' => $this->laporan->labelPeriode()],
         ]);
     }
 
