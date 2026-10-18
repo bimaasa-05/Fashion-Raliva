@@ -30,6 +30,7 @@ class LaporanController extends Controller
 
         return view('Admin.laporan.index', [
             'tanpaToko' => ! $laporan->punyaToko(),
+            'labelToko' => $laporan->labelToko(),
             'dari' => $laporan->dari(),
             'sampai' => $laporan->sampai(),
             'presetAktif' => $laporan->presetAktif(),
