@@ -20,7 +20,7 @@ class AdminLaporanPesananSheet implements FromCollection, WithHeadings, WithMapp
         protected AdminLaporanService $laporan,
     ) {
         $this->judulSheet = 'PESANAN SELESAI';
-        $this->subtitleSheet = __('Pesanan yang sudah menjadi pendapatan — :ph1', ['ph1' => $this->laporan->labelPeriode()]);
+        $this->subtitleSheet = $this->laporan->labelTokoPeriode();
         $this->barisHeaderSheet = 3;
         $this->lebarKolomSheet = [6, 24, 14, 28, 20, 18];
         $this->kolomUangSheet = [6];
