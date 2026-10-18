@@ -8,6 +8,7 @@ use App\Models\StoreStaff;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 use Tests\TestCase;
 
 class AdminLaporanExportTest extends TestCase
@@ -79,6 +80,12 @@ class AdminLaporanExportTest extends TestCase
         // Generasi nyata (tanpa fake): memastikan seluruh sheet tereksekusi tanpa error.
         $res->assertOk();
         $res->assertDownload('laporan-operasional-'.$dari.'-'.$sampai.'.xlsx');
+
+        // Subjudul (A2) tiap sheet memuat identitas toko + periode, seperti header PDF.
+        $spreadsheet = IOFactory::load($res->baseResponse->getFile()->getPathname());
+        foreach ($spreadsheet->getAllSheets() as $sheet) {
+            $this->assertStringContainsString('Toko Export', (string) $sheet->getCell('A2')->getValue(), 'Subjudul sheet '.$sheet->getTitle());
+        }
     }
 
     public function test_cetak_dan_pdf_laporan_admin(): void
@@ -88,6 +95,7 @@ class AdminLaporanExportTest extends TestCase
         $cetak = $this->actingAs($admin)->get(route('admin.laporan.cetak'));
         $cetak->assertOk();
         $cetak->assertSee('Laporan Operasional', false);
+        $cetak->assertSee('Toko Export', false);
         $cetak->assertSee('Rincian Harian', false);
 
         $pdf = $this->actingAs($admin)->get(route('admin.laporan.export-pdf'));
