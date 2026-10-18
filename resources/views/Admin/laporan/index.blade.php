@@ -31,7 +31,13 @@
         <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div>
                 <h2 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Kinerja Operasional') }}</h2>
-                <p class="text-xs text-on-surface-variant mt-1">{{ $dari->translatedFormat('d M Y') }} &mdash; {{ $sampai->translatedFormat('d M Y') }}</p>
+                <p class="text-xs text-on-surface-variant mt-1">
+                    @if(!$noStore && filled($labelToko ?? null))
+                        <span class="font-medium text-on-surface">{{ $labelToko }}</span>
+                        <span class="opacity-50">&bull;</span>
+                    @endif
+                    {{ $dari->translatedFormat('d M Y') }} &mdash; {{ $sampai->translatedFormat('d M Y') }}
+                </p>
             </div>
             <div class="flex items-center gap-2 shrink-0">
                 <a href="{{ route('admin.laporan.export-excel', ['dari' => $dari->toDateString(), 'sampai' => $sampai->toDateString()]) }}"
