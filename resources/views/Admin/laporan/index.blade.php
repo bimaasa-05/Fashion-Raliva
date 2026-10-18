@@ -28,39 +28,43 @@
     <div data-lap-type="operasional" class="space-y-section-gap">
     {{-- Toolbar: rentang tanggal + export --}}
     <section class="bg-surface-container-lowest border border-muted-border rounded-lg p-5 card-premium">
-        <div class="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
+        <div class="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3">
             <div>
                 <h2 class="font-title-md text-title-md text-on-surface premium-heading">{{ __('Kinerja Operasional') }}</h2>
                 <p class="text-xs text-on-surface-variant mt-1">{{ $dari->translatedFormat('d M Y') }} &mdash; {{ $sampai->translatedFormat('d M Y') }}</p>
             </div>
-            <div class="flex flex-col lg:flex-row lg:items-center gap-3">
-                <div class="flex items-center gap-1.5">
-                    @foreach([7 => __('7 Hari'), 30 => __('30 Hari'), 90 => __('90 Hari')] as $hari => $label)
-                        <a href="{{ route('admin.laporan', ['dari' => now()->subDays($hari - 1)->toDateString(), 'sampai' => now()->toDateString()]) }}"
-                           class="px-3 py-1.5 rounded-md text-xs font-medium border transition-colors whitespace-nowrap {{ ($presetAktif ?? null) === $hari ? 'bg-deep-onyx text-on-primary border-deep-onyx' : 'border-muted-border text-on-surface-variant hover:border-gold-accent' }}">{{ $label }}</a>
-                    @endforeach
-                </div>
-
-                <div class="flex flex-wrap items-center gap-2">
-                    <form method="GET" class="flex items-center gap-2 flex-wrap">
-                        <input type="date" name="dari" value="{{ $dari->toDateString() }}" max="{{ date('Y-m-d') }}" class="raliva-input text-xs py-2 w-auto" aria-label="{{ __('Dari tanggal') }}" title="{{ __('Dari tanggal') }}" />
-                        <span class="text-on-surface-variant text-xs">{{ __('s/d') }}</span>
-                        <input type="date" name="sampai" value="{{ $sampai->toDateString() }}" max="{{ date('Y-m-d') }}" class="raliva-input text-xs py-2 w-auto" aria-label="{{ __('Sampai tanggal') }}" title="{{ __('Sampai tanggal') }}" />
-                        <button type="submit" class="px-4 py-2 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium">{{ __('Terapkan') }}</button>
-                    </form>
-
-                    <a href="{{ route('admin.laporan.export-excel', ['dari' => $dari->toDateString(), 'sampai' => $sampai->toDateString()]) }}"
-                       @if($noStore) aria-disabled="true" tabindex="-1" title="{{ __('Belum ada toko untuk diekspor.') }}" @endif
-                       class="flex items-center justify-center gap-2 px-4 py-2 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors shrink-0 {{ $noStore ? 'opacity-60 pointer-events-none' : '' }}">
-                        <span class="material-symbols-outlined text-[16px]">{{ $noStore ? 'lock' : 'download' }}</span>{{ __('Excel') }}
-                    </a>
-                    <a href="{{ route('admin.laporan.cetak', ['dari' => $dari->toDateString(), 'sampai' => $sampai->toDateString()]) }}" target="_blank"
-                       @if($noStore) aria-disabled="true" tabindex="-1" title="{{ __('Belum ada toko untuk diekspor.') }}" @endif
-                       class="flex items-center justify-center gap-2 px-4 py-2 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium shrink-0 {{ $noStore ? 'opacity-60 pointer-events-none' : '' }}">
-                        <span class="material-symbols-outlined text-[16px]">{{ $noStore ? 'lock' : 'picture_as_pdf' }}</span>PDF
-                    </a>
-                </div>
+            <div class="flex items-center gap-2 shrink-0">
+                <a href="{{ route('admin.laporan.export-excel', ['dari' => $dari->toDateString(), 'sampai' => $sampai->toDateString()]) }}"
+                   @if($noStore) aria-disabled="true" tabindex="-1" title="{{ __('Belum ada toko untuk diekspor.') }}" @endif
+                   class="flex flex-1 sm:flex-none items-center justify-center gap-2 px-4 py-2 border border-muted-border rounded-lg text-xs font-semibold text-on-surface hover:border-gold-accent transition-colors {{ $noStore ? 'opacity-60 pointer-events-none' : '' }}">
+                    <span class="material-symbols-outlined text-[16px]">{{ $noStore ? 'lock' : 'download' }}</span>{{ __('Excel') }}
+                </a>
+                <a href="{{ route('admin.laporan.cetak', ['dari' => $dari->toDateString(), 'sampai' => $sampai->toDateString()]) }}" target="_blank"
+                   @if($noStore) aria-disabled="true" tabindex="-1" title="{{ __('Belum ada toko untuk diekspor.') }}" @endif
+                   class="flex flex-1 sm:flex-none items-center justify-center gap-2 px-4 py-2 bg-deep-onyx text-on-primary rounded-lg text-xs font-semibold btn-premium {{ $noStore ? 'opacity-60 pointer-events-none' : '' }}">
+                    <span class="material-symbols-outlined text-[16px]">{{ $noStore ? 'lock' : 'picture_as_pdf' }}</span>PDF
+                </a>
             </div>
+        </div>
+
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-3 mt-4 pt-4 border-t border-muted-border">
+            <div class="flex items-center gap-1.5">
+                @foreach([7 => __('7 Hari'), 30 => __('30 Hari'), 90 => __('90 Hari')] as $hari => $label)
+                    <a href="{{ route('admin.laporan', ['dari' => now()->subDays($hari - 1)->toDateString(), 'sampai' => now()->toDateString()]) }}"
+                       class="px-3 py-1.5 rounded-md text-xs font-medium border transition-colors whitespace-nowrap {{ ($presetAktif ?? null) === $hari ? 'bg-deep-onyx text-on-primary border-deep-onyx' : 'border-muted-border text-on-surface-variant hover:border-gold-accent' }}">{{ $label }}</a>
+                @endforeach
+            </div>
+
+            <form method="GET" class="flex flex-wrap items-center gap-2">
+                <div class="w-full sm:w-40">
+                    <input type="date" name="dari" value="{{ $dari->toDateString() }}" max="{{ date('Y-m-d') }}" class="raliva-input text-xs py-2" aria-label="{{ __('Dari tanggal') }}" title="{{ __('Dari tanggal') }}" />
+                </div>
+                <span class="text-on-surface-variant text-xs">{{ __('s/d') }}</span>
+                <div class="w-full sm:w-40">
+                    <input type="date" name="sampai" value="{{ $sampai->toDateString() }}" max="{{ date('Y-m-d') }}" class="raliva-input text-xs py-2" aria-label="{{ __('Sampai tanggal') }}" title="{{ __('Sampai tanggal') }}" />
+                </div>
+                <button type="submit" class="flex-1 sm:flex-none px-4 py-2 bg-deep-onyx text-on-primary text-xs font-semibold rounded btn-premium">{{ __('Terapkan') }}</button>
+            </form>
         </div>
     </section>
 
@@ -139,7 +143,10 @@
                 </div>
                 <p class="text-on-surface-variant font-body-md text-xs mb-4">{{ __('Metode yang paling sering dipakai customer pada periode ini adalah') }} <span class="font-semibold text-on-surface">{{ $metodeTerbanyak->nama_metode }}</span>. {{ __('Visualisasi distribusi seluruh metode ada di bawah.') }}</p>
             @else
-                <p class="text-on-surface-variant text-sm py-4">{{ __('Belum ada pembayaran terverifikasi pada periode ini.') }}</p>
+                <div class="flex-1 flex flex-col items-center justify-center text-center gap-2 text-on-surface-variant min-h-[220px]">
+                    <span class="material-symbols-outlined text-[32px] opacity-50">donut_small</span>
+                    <p class="text-sm">{{ __('Belum ada pembayaran terverifikasi pada periode ini.') }}</p>
+                </div>
             @endif
             @if (count($distribusiMetode ?? []))
                 <div data-donut='@json($distribusiMetode)' data-donut-label="Transaksi" class="flex-1 flex items-center justify-center min-h-[220px]"></div>
