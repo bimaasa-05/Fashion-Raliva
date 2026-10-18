@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exports\AdminLaporanExport;
 use App\Http\Controllers\Controller;
-use App\Models\Order;
-use App\Models\Refund;
-use App\Models\StoreExpense;
+use App\Services\AdminLaporanService;
 use App\Services\KaryawanReportService;
-use App\Support\AdminContext;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LaporanController extends Controller
 {
@@ -19,106 +19,73 @@ class LaporanController extends Controller
 
     public function index(Request $request)
     {
-        $storeIds = AdminContext::assignedStoreIds();
-        $storeId = $storeIds[0] ?? null;
-        $tanpaToko = $storeId === null;
-
-        // pendapatan = order berstatus pendapatan (dibayar→selesai; TIDAK termasuk refund/dibatalkan),
-        // selaras dengan konstanta Order::STATUS_PENDAPATAN & omzet dashboard operasional.
-        $pendapatan = $storeId ? (float) Order::whereIn('store_id', $storeIds)->whereIn('status', Order::STATUS_PENDAPATAN)->sum('grand_total') : 0;
-        $pesananDiproses = $storeId ? Order::whereIn('store_id', $storeIds)->whereIn('status', Order::STATUS_PENDAPATAN)->count() : 0;
-
-        // pengeluaran = refund disetujui/selesai + store expense
-        $refund = $storeId ? (float) Refund::join('orders', 'orders.order_id', '=', 'refunds.order_id')
-            ->whereIn('orders.store_id', $storeIds)->whereIn('refunds.status', ['disetujui', 'selesai'])->sum('refunds.jumlah') : 0;
-        $expense = $storeId ? (float) StoreExpense::whereIn('store_id', $storeIds)->sum('nominal') : 0;
-        $totalPengeluaran = $refund + $expense;
-        $totalBersih = $pendapatan - $totalPengeluaran;
+        $laporan = AdminLaporanService::fromRequest($request);
+        $storeIds = $laporan->storeIds();
+        $ringkasan = $laporan->ringkasan();
 
         // per admin ("Penjualanku") — pendapatan = order yg payment-nya diverifikasi admin ini
         $saya = $storeIds && auth()->check() && auth()->id()
             ? $this->karyawanReport->rekapKaryawan((int) auth()->id(), $storeIds)
             : ['pesanan' => 0, 'pendapatan' => 0.0, 'refund' => 0.0, 'expense' => 0.0, 'pengeluaran' => 0.0, 'bersih' => 0.0];
 
-        // status counts for admin
-        $pesananBaru = $storeId ? Order::whereIn('store_id', $storeIds)->whereIn('status', ['pending_payment','dibayar'])->count() : 0;
-        $menungguVerifikasi = $storeId ? \App\Models\Payment::whereHas('checkout.orders', fn($q)=>$q->whereIn('store_id',$storeIds))->where('status','menunggu_verifikasi')->count() : 0;
+        return view('Admin.laporan.index', [
+            'tanpaToko' => ! $laporan->punyaToko(),
+            'dari' => $laporan->dari(),
+            'sampai' => $laporan->sampai(),
+            'presetAktif' => $laporan->presetAktif(),
+            'pendapatan' => $ringkasan['pendapatan'],
+            'pesananDiproses' => $ringkasan['pesanan'],
+            'totalPengeluaran' => $ringkasan['pengeluaran'],
+            'totalBersih' => $ringkasan['bersih'],
+            'perMetode' => $laporan->perMetode(),
+            'metodeTerbanyak' => $laporan->metodeTerbanyak(),
+            'distribusiMetode' => $laporan->distribusiMetode(),
+            'omzetBars' => $laporan->omzetBars(),
+            'ringkasanHarian' => $laporan->ringkasanHarian(),
+            'pesananSelesai' => $laporan->pesananSelesai(10),
+            'saya' => $saya,
+        ]);
+    }
 
-        // per metode pembayaran breakdown (hanya payment terverifikasi di store scope)
-        $perMetode = collect();
-        if ($storeIds) {
-            $perMetode = \App\Models\Payment::query()
-                ->where('status', \App\Models\Payment::STATUS_TERVERIFIKASI)
-                ->whereHas('checkout.orders', fn ($q) => $q->whereIn('store_id', $storeIds))
-                ->with('paymentMethod')
-                ->get()
-                ->groupBy('payment_method_id')
-                ->map(function ($group) {
-                    $metode = $group->first()->paymentMethod;
+    public function exportExcel(Request $request)
+    {
+        $laporan = AdminLaporanService::fromRequest($request);
 
-                    return (object) [
-                        'nama_metode' => $metode?->nama_metode ?? '-',
-                        'jumlah_transaksi' => $group->count(),
-                        'total' => (float) $group->sum('jumlah'),
-                    ];
-                })
-                ->sortByDesc('total')
-                ->values();
+        if (! $laporan->punyaToko()) {
+            return back()->with('toast', ['message' => __('Belum ada toko untuk diekspor.'), 'icon' => 'storefront']);
         }
 
-        // Omzet trend bars — filter dari/sampai (default 30 hari)
-        $dari = $request->date('dari')?->startOfDay() ?? now()->subDays(29)->startOfDay();
-        $sampai = $request->date('sampai')?->endOfDay() ?? now()->endOfDay();
-        if ($sampai->lt($dari)) [$dari, $sampai] = [$sampai->copy()->startOfDay(), $dari->copy()->endOfDay()];
-        if ($dari->diffInDays($sampai) > 93) $dari = $sampai->copy()->subDays(92)->startOfDay();
+        $fileName = 'laporan-operasional-'.$laporan->dari()->format('Y-m-d').'-'.$laporan->sampai()->format('Y-m-d').'.xlsx';
 
-        $omzetBars = [];
-        if ($storeIds) {
-            $validStatuses = Order::STATUS_PENDAPATAN;
-            $dailyRows = Order::query()
-                ->whereIn('store_id', $storeIds)
-                ->whereIn('status', $validStatuses)
-                ->whereBetween('created_at', [$dari, $sampai])
-                ->groupBy('tanggal')
-                ->selectRaw('DATE(created_at) as tanggal, SUM(grand_total) as total')
-                ->pluck('total', 'tanggal');
+        return Excel::download(new AdminLaporanExport($laporan), $fileName);
+    }
 
-            $jumlahHari = $dari->diffInDays($sampai);
-            foreach (range($jumlahHari, 0) as $i) {
-                $hari = $sampai->copy()->subDays($i);
-                $kunci = $hari->toDateString();
-                $nilai = (float) ($dailyRows[$kunci] ?? 0);
-                $omzetBars[] = ['label' => $hari->format('d/m'), 'value' => round($nilai / 1000000, 2)];
-            }
-        }
+    public function cetak(Request $request)
+    {
+        return view('Admin.laporan.cetak', $this->dataCetak(AdminLaporanService::fromRequest($request)));
+    }
 
-        // Donut chart per metode pembayaran
-        $palette = ['#C9A24D', '#E9CE8A', '#795905', '#4ade80', '#3b82f6', '#a855f7'];
-        $distribusiMetode = $perMetode->map(function ($m, $idx) use ($palette) {
-            return [
-                'value' => (int) $m->jumlah_transaksi,
-                'color' => $palette[$idx % count($palette)],
-                'label' => $m->nama_metode,
-            ];
-        })->values()->all();
+    public function exportPdf(Request $request)
+    {
+        $laporan = AdminLaporanService::fromRequest($request);
 
-        // Metode pembayaran terbanyak (berdasar jumlah transaksi — selaras dengan donut).
-        $metodeTerbanyak = $perMetode->sortByDesc('jumlah_transaksi')->first();
+        $pdf = Pdf::loadView('Admin.laporan.pdf', $this->dataCetak($laporan))->setPaper('a4', 'portrait');
 
-        // Tabel pesanan selesai: hanya status selesai (income pasti), ikut filter tanggal,
-        // 10 terbaru + relasi customer & metode bayar.
-        $pesananSelesai = collect();
-        if ($storeIds) {
-            $pesananSelesai = Order::query()
-                ->whereIn('store_id', $storeIds)
-                ->where('status', Order::STATUS_SELESAI)
-                ->whereBetween('created_at', [$dari, $sampai])
-                ->with(['checkout.user:user_id,nama_lengkap', 'checkout.payment.paymentMethod'])
-                ->orderByDesc('created_at')
-                ->limit(10)
-                ->get();
-        }
+        return $pdf->download('laporan-operasional-'.$laporan->dari()->format('Y-m-d').'-'.$laporan->sampai()->format('Y-m-d').'.pdf');
+    }
 
-        return view('Admin.laporan.index', compact('pendapatan', 'pesananDiproses', 'totalPengeluaran', 'totalBersih', 'perMetode', 'pesananBaru', 'menungguVerifikasi', 'saya', 'omzetBars', 'distribusiMetode', 'dari', 'sampai', 'tanpaToko', 'metodeTerbanyak', 'pesananSelesai'));
+    /**
+     * @return array<string, mixed>
+     */
+    protected function dataCetak(AdminLaporanService $laporan): array
+    {
+        return [
+            'laporan' => $laporan,
+            'ringkasan' => $laporan->ringkasan(),
+            'harian' => $laporan->harian(),
+            'perMetode' => $laporan->perMetode(),
+            'pesananSelesai' => $laporan->pesananSelesaiSemua(),
+            'fmt' => fn ($nilai) => 'Rp '.number_format((float) $nilai, 0, ',', '.'),
+        ];
     }
 }
