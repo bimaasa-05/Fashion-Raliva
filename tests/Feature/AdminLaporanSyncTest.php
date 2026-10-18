@@ -101,6 +101,8 @@ class AdminLaporanSyncTest extends TestCase
         // Hanya order selesai yang dihitung; order refund dikecualikan.
         $res->assertSee('Rp 50.000', false);
         $res->assertDontSee('belum ditugaskan ke toko aktif', false);
+        // Toolbar menampilkan identitas toko yang menjadi cakupan laporan.
+        $res->assertSee('Toko Lapor', false);
         // Layout baru: highlight metode + tabel pesanan selesai.
         $res->assertSee('Metode Pembayaran Terbanyak', false);
         $res->assertSee('Pesanan Selesai', false);
