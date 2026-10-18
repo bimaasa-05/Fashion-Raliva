@@ -8,7 +8,6 @@ use App\Models\StoreStaff;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
-use Maatwebsite\Excel\Facades\Excel;
 use Tests\TestCase;
 
 class AdminLaporanExportTest extends TestCase
@@ -67,7 +66,6 @@ class AdminLaporanExportTest extends TestCase
 
     public function test_export_excel_laporan_admin(): void
     {
-        Excel::fake();
         [$admin] = $this->adminDenganToko();
 
         $dari = now()->subDays(6)->toDateString();
@@ -78,8 +76,9 @@ class AdminLaporanExportTest extends TestCase
             'sampai' => $sampai,
         ]));
 
+        // Generasi nyata (tanpa fake): memastikan seluruh sheet tereksekusi tanpa error.
         $res->assertOk();
-        Excel::assertDownloaded('laporan-operasional-'.$dari.'-'.$sampai.'.xlsx');
+        $res->assertDownload('laporan-operasional-'.$dari.'-'.$sampai.'.xlsx');
     }
 
     public function test_cetak_dan_pdf_laporan_admin(): void
