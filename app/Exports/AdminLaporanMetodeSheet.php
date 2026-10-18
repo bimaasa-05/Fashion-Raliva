@@ -24,7 +24,7 @@ class AdminLaporanMetodeSheet implements FromCollection, WithHeadings, WithMappi
         protected AdminLaporanService $laporan,
     ) {
         $this->judulSheet = 'METODE PEMBAYARAN';
-        $this->subtitleSheet = __('Rekap pembayaran terverifikasi per metode — :ph1', ['ph1' => $this->laporan->labelPeriode()]);
+        $this->subtitleSheet = $this->laporan->labelTokoPeriode();
         $this->barisHeaderSheet = 3;
         $this->lebarKolomSheet = [6, 32, 16, 24];
         $this->kolomUangSheet = [4];
