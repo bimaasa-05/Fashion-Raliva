@@ -105,6 +105,14 @@ class AdminLaporanService
     }
 
     /**
+     * Keterangan identitas dokumen export: nama toko + periode terpilih.
+     */
+    public function labelTokoPeriode(): string
+    {
+        return $this->labelToko().' — '.$this->labelPeriode();
+    }
+
+    /**
      * Preset rentang yang sedang aktif (7/30/90), null bila rentang kustom.
      */
     public function presetAktif(): ?int
