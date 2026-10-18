@@ -242,7 +242,7 @@
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
 <!-- Search Bar Section -->
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <form action="{{ route('customer.search') }}" method="GET" onsubmit="return false" class="w-full">
 <div class="relative w-full">
@@ -254,7 +254,7 @@
 </div>
 </section>
 <!-- Popular Searches -->
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Popular Searches') }}</h3>
 <div class="mt-md flex flex-wrap gap-sm">
@@ -268,7 +268,7 @@
 </div>
 <!-- Trending Now -->
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div id="search-results">
 <div class="flex justify-between items-center mb-xs">

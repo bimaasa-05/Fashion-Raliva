@@ -542,7 +542,7 @@
 
 <!-- Main Content -->
 <main class="pt-6 pb-[72px] w-full overflow-x-clip">
-    <div class="mx-auto max-w-[1400px] px-container-margin">
+    <div class="px-container-margin">
 
         {{-- Stepper --}}
         <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center reveal-up">

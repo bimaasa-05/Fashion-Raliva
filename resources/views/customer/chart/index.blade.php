@@ -274,7 +274,7 @@
 </header>
 <!-- Main Content Canvas -->
 <main class="flex-1 overflow-y-auto pb-36 lg:pb-28 w-full">
-<div class="lg:max-w-screen-xl lg:mx-auto lg:px-md">
+<div>
 
 <!-- Empty state -->
 <div id="cart-empty" class="{{ $items->count() ? 'hidden' : '' }} flex flex-col items-center justify-center text-center gap-md py-2xl px-container-margin min-h-[calc(100dvh-4rem)]">

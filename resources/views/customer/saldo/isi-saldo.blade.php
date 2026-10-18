@@ -108,7 +108,7 @@
     </header>
 
     <main class="pt-6 pb-10 w-full overflow-x-hidden">
-        <div class="mx-auto max-w-[900px] px-container-margin space-y-lg">
+        <div class="px-container-margin space-y-lg">
 
             <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center">
                 <div class="co-stepper">

@@ -342,7 +342,7 @@
 <!-- Main Content -->
 <main class="flex-grow pt-16 pb-8 lg:pb-12 w-full overflow-x-hidden">
 <!-- Toko yang Diikuti — grid dalam 1 premium card (aksen Burgundy) -->
-<div class="mx-auto max-w-[1400px] px-container-margin pt-xl reveal-up">
+<div class="px-container-margin pt-xl reveal-up">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="flex items-center justify-between gap-md">
 <div>

@@ -942,7 +942,7 @@ html.theme-dark .ew-detail-line strong { color: #e6e4e1; }
     </header>
 
     <main class="pt-6 pb-10 w-full overflow-x-hidden">
-        <div class="mx-auto max-w-[1400px] px-container-margin">
+        <div class="px-container-margin">
 
             <div
                 class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-sm mb-md flex justify-center reveal-up">

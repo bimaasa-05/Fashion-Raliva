@@ -279,7 +279,7 @@
 <!-- Main Content -->
 <main class="pt-16 pb-[120px] w-full">
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin space-y-md md:space-y-lg">
+<div class="px-container-margin space-y-md md:space-y-lg">
 <!-- Product Context Card (Dipisah dengan div sendiri) -->
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium">
 <div class="flex items-center gap-md">

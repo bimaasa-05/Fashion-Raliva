@@ -242,7 +242,7 @@
 <main class="flex-grow pt-10 pb-8 lg:pb-12 w-full overflow-x-hidden">
 <!-- Profile Header -->
 @auth
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium flex flex-col items-center md:flex-row md:items-start gap-md">
 <div class="w-24 h-24 rounded-full overflow-hidden border border-outline-variant flex-shrink-0 bg-surface-container-high flex items-center justify-center">
 @if(Auth::user()->foto_profil_url)
@@ -264,7 +264,7 @@
 </div>
 @else
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium flex flex-col items-center md:flex-row md:items-start gap-md">
 <div class="w-24 h-24 rounded-full border border-outline-variant flex-shrink-0 bg-surface-container-high flex items-center justify-center">
 <span class="material-symbols-outlined text-[44px] text-on-surface-variant">person</span>
@@ -286,7 +286,7 @@
 @endif
 <!-- Menu List -->
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <nav class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium flex flex-col">
 <a class="flex items-center justify-between py-sm border-b border-outline-variant hover:bg-surface-container-low transition-colors group" href="{{ route('customer.orders') }}">
 <div class="flex items-center gap-sm">

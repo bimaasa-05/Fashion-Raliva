@@ -265,7 +265,7 @@
 <!-- Main Content -->
 <main class="pt-16 pb-[120px] w-full">
 <section class="py-xl reveal-up">
-<div class="mx-auto max-w-[1400px] px-container-margin">
+<div class="px-container-margin">
 <!-- Store Header Section - centered -->
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl md:rounded-2xl p-md md:p-lg card-premium text-center">
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-[var(--chrome-accent)] mb-xs mx-auto max-w-xs">{{ __('STORE') }}</p>

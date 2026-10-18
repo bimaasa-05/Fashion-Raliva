@@ -420,7 +420,7 @@
             </div>
         </header>
     <main class="pt-16 lg:pt-16">
-        <div class="mx-auto max-w-[1400px] px-container-margin">
+        <div class="px-container-margin">
             <div class="lg:flex lg:items-start lg:gap-xl">
                 <!-- Product Gallery (left) -->
                 <section class="relative w-full aspect-[3/4] md:aspect-[4/5] lg:w-[42%] lg:shrink-0 lg:aspect-auto lg:h-[calc(100vh-8rem)] lg:sticky lg:top-24 lg:self-start bg-surface-variant overflow-hidden">
