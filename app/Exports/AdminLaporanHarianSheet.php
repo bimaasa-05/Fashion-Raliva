@@ -20,7 +20,7 @@ class AdminLaporanHarianSheet implements FromCollection, WithHeadings, WithMappi
         protected AdminLaporanService $laporan,
     ) {
         $this->judulSheet = 'RINCIAN HARIAN';
-        $this->subtitleSheet = __('Rekap pendapatan, refund, dan pengeluaran per hari — :ph1', ['ph1' => $this->laporan->labelPeriode()]);
+        $this->subtitleSheet = $this->laporan->labelTokoPeriode();
         $this->barisHeaderSheet = 3;
         $this->lebarKolomSheet = [20, 12, 18, 18, 18, 18];
         $this->kolomUangSheet = [3, 4, 5, 6];
