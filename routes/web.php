@@ -458,6 +458,9 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:Admin', 'store
     Route::put('/profil/password', [AdminProfilController::class, 'updatePassword'])->name('profil.password');
     Route::get('/notifikasi', [App\Http\Controllers\Admin\NotifikasiController::class, 'index'])->name('notifikasi');
     Route::get('/laporan', [AdminLaporanController::class, 'index'])->name('laporan');
+    Route::get('/laporan/export-excel', [AdminLaporanController::class, 'exportExcel'])->name('laporan.export-excel');
+    Route::get('/laporan/cetak', [AdminLaporanController::class, 'cetak'])->name('laporan.cetak');
+    Route::get('/laporan/export-pdf', [AdminLaporanController::class, 'exportPdf'])->name('laporan.export-pdf');
     Route::get('/riwayat-aktivitas', [AdminRiwayatAktivitasController::class, 'index'])->name('riwayat-aktivitas');
     // Permintaan Operasional
     Route::get('/permintaan-operasional', [AdminPermintaanOperasionalController::class, 'index'])->name('permintaan-operasional');
