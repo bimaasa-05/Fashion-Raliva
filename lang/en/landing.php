@@ -23,7 +23,7 @@ return [
         'buyer' => 'I am a buyer',
         'login' => 'Log in',
         'dashboard' => 'Dashboard',
-        'register_owner' => 'Become an Owner',
+        'register_owner' => 'Join as Owner',
         'menu' => 'Menu',
         'switch_theme' => 'Switch theme',
     ],
