@@ -372,18 +372,16 @@
                 </div>
             </div>
 
-            <div class="reveal relative mt-6 overflow-hidden rounded-[2rem] bg-[#1b1c1c] px-6 py-12 text-white sm:px-12 sm:py-16">
-                <div class="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-[#8B1E3F]/40 blur-3xl"></div>
-                <div class="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-[#8B1E3F]/20 blur-3xl"></div>
-                <div class="relative grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+            <div class="reveal mt-6 rounded-[2rem] border border-muted-border bg-surface-container-lowest px-6 py-10 sm:px-10 sm:py-12">
+                <div class="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
                     <div>
-                        <span class="eyebrow !text-[#e9c9d0]">{{ __('landing.home.cta_eyebrow') }}</span>
-                        <h2 class="mt-4 max-w-2xl font-display text-4xl leading-[1.02] tracking-[-0.02em] sm:text-5xl">{{ __('landing.home.cta_title') }}</h2>
-                        <p class="mt-4 max-w-xl text-sm leading-7 text-white/65">{{ __('landing.home.cta_text') }}</p>
+                        <span class="eyebrow">{{ __('landing.home.cta_eyebrow') }}</span>
+                        <h2 class="mt-4 max-w-2xl font-display text-3xl leading-[1.05] tracking-[-0.02em] sm:text-4xl">{{ __('landing.home.cta_title') }}</h2>
+                        <p class="mt-3 max-w-xl text-sm leading-7 text-on-surface-variant">{{ __('landing.home.cta_text') }}</p>
                     </div>
                     <div class="flex flex-col gap-3 sm:flex-row lg:flex-col">
-                        <a href="{{ route('register') }}" class="btn-light">{{ __('landing.common.register_owner') }}</a>
-                        <a href="#kontak" class="btn-outline-light">{{ __('landing.common.contact_support') }}</a>
+                        <a href="{{ route('register') }}" class="btn-primary">{{ __('landing.common.register_owner') }}</a>
+                        <a href="#kontak" class="btn-secondary">{{ __('landing.common.contact_support') }}</a>
                     </div>
                 </div>
             </div>
