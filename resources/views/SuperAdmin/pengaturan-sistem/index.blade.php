@@ -102,6 +102,11 @@
                     <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="whatsapp_support" name="whatsapp_support" type="text" maxlength="20" inputmode="tel" value="{{ $settings['whatsapp_support'] }}" placeholder="6281234567890" />
                     <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Format internasional tanpa tanda +. Ditampilkan sebagai tombol hubungi saat toko ditangguhkan.') }}</p>
                 </div>
+                <div class="md:col-span-2">
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="instagram_support">{{ __('Instagram Dukungan') }}</label>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="instagram_support" name="instagram_support" type="text" maxlength="100" value="{{ $settings['instagram_support'] }}" placeholder="@nexprint atau https://instagram.com/nexprint" />
+                    <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Username atau URL Instagram. Ditampilkan di footer landing saat terisi.') }}</p>
+                </div>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
