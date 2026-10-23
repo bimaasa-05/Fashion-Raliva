@@ -638,7 +638,7 @@
     ])
         <div class="p-6">
             <h3 class="font-title-md text-title-md text-on-surface mb-2 text-center">{{ __('Hapus Pengguna') }}</h3>
-            <p class="text-on-surface-variant text-sm text-center mb-6">{{ __('Pengguna') }} <span id="hapus-nama" class="font-bold text-on-surface">-</span> {{ __('akan dihapus permanen dari sistem.') }}</p>
+            <p class="text-on-surface-variant text-sm text-center mb-6">{{ __('Pengguna') }} <span id="hapus-nama" class="font-bold text-on-surface">-</span> {{ __('akan dihapus dari sistem. Riwayat transaksi dan aktivitasnya tetap tersimpan.') }}</p>
     </div>
     @slot('footer')
         <div class="flex space-x-3">
