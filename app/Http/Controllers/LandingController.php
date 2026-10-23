@@ -14,18 +14,8 @@ class LandingController extends Controller
         return view('landing.index', $this->sharedData());
     }
 
-    public function brand(): View
-    {
-        return view('landing.brand', $this->sharedData());
-    }
-
-    public function openStore(): View
-    {
-        return view('landing.open-store', $this->sharedData());
-    }
-
     /**
-     * Data kontak dan CTA yang dipakai ketiga halaman landing.
+     * Data kontak dan CTA yang dipakai halaman landing Owner.
      *
      * @return array<string, mixed>
      */
