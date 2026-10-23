@@ -1,5 +1,5 @@
-@php($footerLogo = brand_logo_url())
 @php
+    $footerLogo = brand_logo_url();
     $instagramLabel = $instagramSupport ?? '';
     if (str_starts_with($instagramLabel, 'http')) {
         $instagramLabel = trim(parse_url($instagramLabel, PHP_URL_PATH) ?? '', '/');
