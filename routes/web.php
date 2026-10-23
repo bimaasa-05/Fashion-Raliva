@@ -27,6 +27,7 @@ use App\Http\Controllers\Customer\CartController;
 use App\Http\Controllers\Customer\CheckoutController;
 use App\Http\Controllers\Customer\HelpController;
 use App\Http\Controllers\Customer\HomeController;
+use App\Http\Controllers\LandingController;
 use App\Http\Controllers\Customer\NotificationController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Customer\OrderTrackingController;
@@ -126,9 +127,9 @@ use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return redirect()->route('customer.home');
-});
+Route::get('/', [LandingController::class, 'index'])->name('landing');
+Route::get('/untuk-brand', [LandingController::class, 'brand'])->name('landing.brand');
+Route::get('/buka-toko', [LandingController::class, 'openStore'])->name('landing.open-store');
 
 /* ===== Unified Authentication (semua role) ===== */
 Route::get('/login', [LoginController::class, 'create'])->name('login');
