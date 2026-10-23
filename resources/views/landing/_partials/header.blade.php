@@ -1,4 +1,6 @@
-@php($logo = brand_logo_url())
+@php
+    $logo = brand_logo_url();
+@endphp
 
 <header id="site-header" class="site-header fixed inset-x-0 top-0 z-50">
     <div class="mx-auto max-w-8xl px-5 sm:px-8">
