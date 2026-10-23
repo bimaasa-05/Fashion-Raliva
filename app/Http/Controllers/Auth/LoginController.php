@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Http\Middleware\EnsureRole;
+use App\Models\Role;
+use App\Models\Store;
 use App\Models\User;
 use App\Support\SessionArea;
 use Illuminate\Http\RedirectResponse;
@@ -73,6 +75,16 @@ class LoginController extends Controller
             if (Str::startsWith($intended, $base)
                 && (strlen($intended) === strlen($base) || $intended[strlen($base)] === '/')) {
                 return redirect($intended);
+            }
+        }
+
+        if ($user->role?->nama_role === Role::OWNER) {
+            $hasOperationalStore = $user->ownedStores()
+                ->whereIn('status', [Store::STATUS_AKTIF, Store::STATUS_NONAKTIF])
+                ->exists();
+
+            if (! $hasOperationalStore) {
+                return redirect()->route('owner.pengajuan-toko');
             }
         }
 
