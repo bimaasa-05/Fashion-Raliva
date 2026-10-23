@@ -184,6 +184,13 @@ class ManajemenPenggunaController extends Controller
 
     public function destroy(User $user)
     {
+        if ((int) $user->user_id === (int) auth()->id()) {
+            return back()->with('toast', [
+                'message' => __('Anda tidak dapat menghapus akun sendiri.'),
+                'icon' => 'gpp_maybe',
+            ]);
+        }
+
         if ((int) $user->user_id === 1) {
             return back()->with('toast', [
                 'message' => __('Tidak dapat menghapus akun Super Admin utama.'),
