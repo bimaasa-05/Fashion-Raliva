@@ -15,7 +15,7 @@ class ExampleTest extends TestCase
         $response = $this->get('/');
 
         $response->assertOk()
-            ->assertSee(route('landing.brand'), false)
-            ->assertSee(route('landing.open-store'), false);
+            ->assertSee('id="buka-toko"', false)
+            ->assertSee(route('customer.home'), false);
     }
 }
