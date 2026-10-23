@@ -128,8 +128,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingController::class, 'index'])->name('landing');
-Route::get('/untuk-brand', [LandingController::class, 'brand'])->name('landing.brand');
-Route::get('/buka-toko', [LandingController::class, 'openStore'])->name('landing.open-store');
+Route::permanentRedirect('/untuk-brand', '/#tentang')->name('landing.brand');
+Route::permanentRedirect('/buka-toko', '/#buka-toko')->name('landing.open-store');
 
 /* ===== Unified Authentication (semua role) ===== */
 Route::get('/login', [LoginController::class, 'create'])->name('login');
