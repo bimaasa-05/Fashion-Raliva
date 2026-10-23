@@ -212,7 +212,7 @@
         }
 
         .mobile-menu.is-open {
-            max-height: 34rem;
+            max-height: 44rem;
             border-top-color: rgb(var(--c-border));
         }
 
