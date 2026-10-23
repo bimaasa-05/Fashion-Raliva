@@ -400,8 +400,8 @@
 
         .floating-card {
             position: absolute;
-            right: -1.2rem;
-            bottom: 2.1rem;
+            right: 1rem;
+            bottom: -1.4rem;
             display: flex;
             align-items: center;
             gap: 0.7rem;
