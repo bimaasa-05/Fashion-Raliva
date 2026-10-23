@@ -22,7 +22,7 @@
                     "surface-variant": "rgb(var(--c-sc-highest) / <alpha-value>)",
                     "tertiary-fixed": "rgb(var(--c-sc-highest) / <alpha-value>)",
                     "secondary-container": "#fdd177",
-                    "gold-accent": "#8B1E3F",
+                    "gold-accent": "rgb(var(--c-accent) / <alpha-value>)",
                     "on-error": "rgb(var(--c-on-error) / <alpha-value>)",
                     "background": "rgb(var(--c-background) / <alpha-value>)",
                     "on-tertiary-container": "rgb(var(--c-on-muted) / <alpha-value>)",
@@ -147,6 +147,7 @@
         --c-sidebar-border: 233 232 231;
         --c-sidebar-hover: 239 237 237;
         --c-scrim: 0 0 0;
+        --c-accent: 139 30 63;
     }
 
     .dark {
@@ -185,6 +186,20 @@
         --c-on-sidebar: 255 255 255;
         --c-sidebar-border: 46 46 46;
         --c-sidebar-hover: 41 41 41;
+        --c-accent: 255 90 90;
+    }
+
+    /* Nominal & aksen teks: merah cerah di dark mode (semua role).
+       Selector .dark menang specificity atas override hardcode di layout. */
+    .dark .text-gold-accent {
+        color: rgb(var(--c-accent)) !important;
+    }
+
+    .dark .text-gradient-gold {
+        background: linear-gradient(115deg, #b91c1c 0%, #ff5a5a 35%, #ffc1c1 55%, #ff5a5a 80%, #b91c1c 100%) !important;
+        -webkit-background-clip: text !important;
+        background-clip: text !important;
+        color: transparent !important;
     }
 
     body { background-color: rgb(var(--c-background)); }
