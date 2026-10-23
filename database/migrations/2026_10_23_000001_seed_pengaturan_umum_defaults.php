@@ -10,9 +10,10 @@ return new class extends Migration
         $now = now();
 
         $defaults = [
-            'nama_platform' => 'Raliva',
-            'email_support' => 'support@raliva.com',
+            'nama_platform' => 'NexPrint',
+            'email_support' => 'support@nexprint.com',
             'whatsapp_support' => '',
+            'instagram_support' => '',
             'mode_maintenance' => '0',
         ];
 
