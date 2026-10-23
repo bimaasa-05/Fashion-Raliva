@@ -1,7 +1,7 @@
 # Landing Page Owner NexPrint
 
 Tanggal: 2026-10-23
-Status: sedang dieksekusi.
+Status: selesai dieksekusi; verifikasi otomatis lulus, cek visual browser pending.
 Lokasi final repo: `Docs/plan/landing-page-owner-nexprint.md`.
 
 ## Tujuan
@@ -122,3 +122,18 @@ satu baris berbahasa Indonesia. Tidak ada push.
 - `git diff --check`
 - Cek manual: landing light/dark, mobile, switch bahasa, tautan CTA, dan
   kontak support.
+
+## Hasil verifikasi
+
+- `LandingPageTest`: 6 lulus, 27 assertion.
+- `OwnerLoginRedirectTest`: 5 lulus, 13 assertion.
+- `ExampleTest`: 2 lulus, 4 assertion.
+- `PengaturanSistemBrandingTest`: 11 lulus, 32 assertion.
+- `LocaleSwitcherTest`: 4 lulus, 17 assertion.
+- `php artisan migrate` berhasil menjalankan migrasi sinkron email support.
+- Smoke test HTTP: `/`, `/untuk-brand`, `/buka-toko`, dan `/customer`
+  mengembalikan status 200.
+- Data dev: `nama_platform=NexPrint`, `email_support=support@nexprint.com`,
+  `instagram_support` kosong sampai diisi SuperAdmin.
+- `php artisan view:cache` berhasil; `view:clear` dijalankan setelah verifikasi.
+- Cek visual browser untuk light/dark dan mobile masih pending.
