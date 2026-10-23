@@ -202,6 +202,13 @@
         color: transparent !important;
     }
 
+    /* Toast flash: jangan pakai inverse-surface di dark (hasilnya putih). */
+    .dark #raliva-toast {
+        background-color: rgb(var(--c-sc-highest)) !important;
+        color: rgb(var(--c-on-surface)) !important;
+        border: 1px solid rgb(var(--c-outline-variant));
+    }
+
     body { background-color: rgb(var(--c-background)); }
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
