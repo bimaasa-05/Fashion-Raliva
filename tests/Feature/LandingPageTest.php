@@ -18,29 +18,33 @@ class LandingPageTest extends TestCase
         Setting::set(Setting::NAMA_PLATFORM, 'NexPrint');
     }
 
-    public function test_landing_utama_dapat_diakses_guest(): void
+    public function test_landing_satu_halaman_dapat_diakses_guest(): void
     {
         $response = $this->get(route('landing'));
 
         $response->assertOk()
             ->assertSee('NexPrint')
-            ->assertSee(route('landing.brand'), false)
-            ->assertSee(route('landing.open-store'), false)
+            ->assertSee('Bangun brand fashion', false)
+            ->assertSee('id="beranda"', false)
+            ->assertSee('id="tentang"', false)
+            ->assertSee('id="fitur"', false)
+            ->assertSee('id="buka-toko"', false)
+            ->assertSee('id="faq"', false)
+            ->assertSee('id="kontak"', false)
             ->assertSee(route('customer.home'), false)
-            ->assertSee('Bangun brand fashion', false);
+            ->assertSee(route('register'), false)
+            ->assertSee('Belanja');
     }
 
-    public function test_halaman_untuk_brand_dan_buka_toko_dapat_diakses_guest(): void
+    public function test_url_lama_diarahkan_ke_anchor_landing(): void
     {
-        $this->get(route('landing.brand'))
-            ->assertOk()
-            ->assertSee('Untuk brand fashion')
-            ->assertSee(route('landing.open-store'), false);
+        $brand = $this->get('/untuk-brand');
+        $brand->assertStatus(301);
+        $this->assertSame(url('/').'/#tentang', $brand->headers->get('Location'));
 
-        $this->get(route('landing.open-store'))
-            ->assertOk()
-            ->assertSee(route('register'), false)
-            ->assertSee('Pertanyaan yang sering diajukan');
+        $openStore = $this->get('/buka-toko');
+        $openStore->assertStatus(301);
+        $this->assertSame(url('/').'/#buka-toko', $openStore->headers->get('Location'));
     }
 
     public function test_kontak_support_muncul_saat_setting_terisi(): void
@@ -68,16 +72,18 @@ class LandingPageTest extends TestCase
         $response->assertOk()
             ->assertDontSee('mailto:', false)
             ->assertDontSee('wa.me', false)
-            ->assertDontSee('instagram.com', false);
+            ->assertDontSee('instagram.com', false)
+            ->assertSee('Kanal kontak belum diatur');
     }
 
-    public function test_halaman_buka_toko_menampilkan_cta_dan_komisi_platform(): void
+    public function test_landing_menampilkan_cta_daftar_dan_komisi_platform(): void
     {
         Setting::set(Setting::KOMISI_PERSEN_DEFAULT, '5');
 
-        $this->get(route('landing.open-store'))
+        $this->get(route('landing'))
             ->assertOk()
             ->assertSee(route('register'), false)
+            ->assertSee('Daftar Owner')
             ->assertSee('5%', false)
             ->assertSee('KTP wajib');
     }
@@ -89,6 +95,7 @@ class LandingPageTest extends TestCase
         $this->get(route('landing'))
             ->assertOk()
             ->assertSee('Build your fashion brand', false)
-            ->assertSee('Open a Store', false);
+            ->assertSee('Open a Store', false)
+            ->assertSee('Shop');
     }
 }
