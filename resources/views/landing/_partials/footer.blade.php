@@ -5,13 +5,21 @@
         $instagramLabel = trim(parse_url($instagramLabel, PHP_URL_PATH) ?? '', '/');
     }
     $instagramLabel = '@'.ltrim($instagramLabel, '@');
+    $platformLinks = [
+        ['href' => route('landing').'#beranda', 'label' => __('landing.nav.home')],
+        ['href' => route('landing').'#tentang', 'label' => __('landing.nav.about')],
+        ['href' => route('landing').'#fitur', 'label' => __('landing.nav.features')],
+        ['href' => route('landing').'#buka-toko', 'label' => __('landing.nav.open_store')],
+        ['href' => route('landing').'#faq', 'label' => __('landing.nav.faq')],
+        ['href' => route('landing').'#kontak', 'label' => __('landing.nav.contact')],
+    ];
 @endphp
 
 <footer class="site-footer">
     <div class="mx-auto max-w-8xl px-5 py-14 sm:px-8 sm:py-16">
         <div class="grid gap-10 lg:grid-cols-12 lg:gap-8">
             <div class="lg:col-span-5">
-                <a href="{{ route('landing') }}" class="inline-flex items-center gap-3" aria-label="{{ brand() }}">
+                <a href="{{ route('landing') }}#beranda" class="inline-flex items-center gap-3" aria-label="{{ brand() }}">
                     @if ($footerLogo !== '')
                         <img alt="{{ brand() }}" class="h-8 w-auto max-w-[11rem] object-contain brightness-0 invert" src="{{ $footerLogo }}" />
                     @else
@@ -19,23 +27,31 @@
                     @endif
                 </a>
                 <p class="mt-5 max-w-sm text-sm leading-7 text-[rgb(var(--c-footer-muted))]">{{ __('landing.footer.tagline') }}</p>
-                <a href="{{ route('landing.open-store') }}" class="btn-light mt-6 !px-4 !py-2.5 !text-[10px]">{{ __('landing.footer.open_store') }}</a>
+                <div class="mt-6 flex flex-wrap gap-3">
+                    <a href="{{ route('register') }}" class="btn-light !px-4 !py-2.5 !text-[10px]">{{ __('landing.nav.register_owner') }}</a>
+                    <a href="{{ route('customer.home') }}" class="inline-flex items-center gap-2 rounded-full border border-white/25 px-4 py-2.5 text-[10px] font-extrabold uppercase tracking-[0.11em] text-white transition-colors hover:border-white/70">
+                        <span class="material-symbols-outlined text-[15px]">shopping_bag</span>
+                        {{ __('landing.footer.shop') }}
+                    </a>
+                </div>
             </div>
 
             <div class="lg:col-span-2">
                 <h2 class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-white">{{ __('landing.footer.platform') }}</h2>
                 <div class="mt-4 grid gap-3 text-sm">
-                    <a href="{{ route('landing.brand') }}">{{ __('landing.footer.for_brand') }}</a>
-                    <a href="{{ route('landing.open-store') }}">{{ __('landing.footer.open_store') }}</a>
-                    <a href="{{ route('landing.brand') }}#fitur">{{ __('landing.footer.features') }}</a>
-                    <a href="{{ route('landing.open-store') }}#faq">{{ __('landing.footer.faq') }}</a>
+                    @foreach ($platformLinks as $link)
+                        <a href="{{ $link['href'] }}">{{ $link['label'] }}</a>
+                    @endforeach
                 </div>
             </div>
 
             <div class="lg:col-span-2">
                 <h2 class="text-[10px] font-extrabold uppercase tracking-[0.18em] text-white">{{ __('landing.footer.buyers') }}</h2>
                 <div class="mt-4 grid gap-3 text-sm">
-                    <a href="{{ route('customer.home') }}">{{ __('landing.footer.shop_home') }}</a>
+                    <a href="{{ route('customer.home') }}" class="inline-flex items-center gap-1.5 font-bold text-white">
+                        {{ __('landing.footer.shop') }}
+                        <span class="material-symbols-outlined text-[14px]">arrow_outward</span>
+                    </a>
                     <a href="{{ route('customer.shop') }}">{{ __('landing.footer.catalog') }}</a>
                     <a href="{{ route('customer.help') }}">{{ __('landing.footer.help') }}</a>
                 </div>
