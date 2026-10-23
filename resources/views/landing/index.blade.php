@@ -56,6 +56,12 @@
             __('landing.brand.audience_4'),
         ];
 
+        $instagramLabel = $instagramSupport;
+        if (str_starts_with($instagramLabel, 'http')) {
+            $instagramLabel = trim(parse_url($instagramLabel, PHP_URL_PATH) ?? '', '/');
+        }
+        $instagramLabel = $instagramLabel !== '' ? '@'.ltrim($instagramLabel, '@') : '';
+
         $faqs = [
             ['q' => __('landing.open_store.faq_1_q'), 'a' => __('landing.open_store.faq_1_a')],
             ['q' => __('landing.open_store.faq_2_q'), 'a' => __('landing.open_store.faq_2_a', ['percent' => $commissionPercent])],
@@ -468,7 +474,7 @@
                                 </span>
                                 <span class="min-w-0 flex-1">
                                     <span class="block text-[9px] font-bold uppercase tracking-[0.14em] text-on-surface-variant">{{ __('landing.footer.instagram') }}</span>
-                                    <span class="mt-0.5 block break-all text-sm font-semibold">{{ $instagramSupport }}</span>
+                                    <span class="mt-0.5 block break-all text-sm font-semibold">{{ $instagramLabel }}</span>
                                 </span>
                                 <span class="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_outward</span>
                             </a>
