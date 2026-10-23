@@ -232,6 +232,7 @@
         <span class="font-display-lg text-headline-md tracking-widest text-on-surface uppercase">@include('partials.brand-content', ['logoClass' => 'h-7'])</span>
         <div class="flex items-center gap-2">
             @include('partials.notification-panel', ['items' => $saNotifItems, 'lihatSemuaRoute' => 'superadmin.notifikasi', 'unread' => $saNotifUnread, 'markReadRoute' => 'superadmin.notifikasi.tandai-dibaca'])
+            @include('partials.locale-switcher', ['compact' => true])
             @include('partials.profile-menu', ['compact' => true])
         </div>
     </header>
@@ -308,6 +309,7 @@
             </div>
             <div class="flex items-center gap-6">
             @include('partials.notification-panel', ['items' => $saNotifItems, 'lihatSemuaRoute' => 'superadmin.notifikasi', 'unread' => $saNotifUnread, 'markReadRoute' => 'superadmin.notifikasi.tandai-dibaca'])
+                @include('partials.locale-switcher')
                 @include('partials.profile-menu')
             </div>
         </header>
