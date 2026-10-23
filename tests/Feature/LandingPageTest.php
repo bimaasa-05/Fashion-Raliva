@@ -40,11 +40,11 @@ class LandingPageTest extends TestCase
     {
         $brand = $this->get('/untuk-brand');
         $brand->assertStatus(301);
-        $this->assertSame(url('/').'/#tentang', $brand->headers->get('Location'));
+        $this->assertSame('/#tentang', $brand->headers->get('Location'));
 
         $openStore = $this->get('/buka-toko');
         $openStore->assertStatus(301);
-        $this->assertSame(url('/').'/#buka-toko', $openStore->headers->get('Location'));
+        $this->assertSame('/#buka-toko', $openStore->headers->get('Location'));
     }
 
     public function test_kontak_support_muncul_saat_setting_terisi(): void
