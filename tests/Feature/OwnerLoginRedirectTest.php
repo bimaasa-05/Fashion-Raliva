@@ -71,7 +71,10 @@ class OwnerLoginRedirectTest extends TestCase
 
     private function makeOwner(): User
     {
-        return User::factory()->create([
+        return User::create([
+            'nama_lengkap' => 'Owner Uji',
+            'email' => 'owner-'.uniqid().'@nexprint.test',
+            'email_verified_at' => now(),
             'role_id' => Role::query()->where('nama_role', Role::OWNER)->value('role_id'),
             'password' => 'Owner2026!',
             'status' => User::STATUS_AKTIF,
@@ -83,6 +86,7 @@ class OwnerLoginRedirectTest extends TestCase
         return Store::create([
             'owner_id' => $owner->user_id,
             'nama_toko' => 'Toko Uji '.uniqid(),
+            'alamat' => 'Jl. Uji No. 1',
             'status' => $status,
         ]);
     }
