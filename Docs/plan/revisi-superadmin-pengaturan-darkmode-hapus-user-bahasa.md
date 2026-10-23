@@ -93,21 +93,22 @@ Commit:
 
 ## Paket 4 — Login shadow
 
-- [ ] `resources/views/customer/auth/login.blade.php`: `.frame-gold` light
+- [x] `resources/views/customer/auth/login.blade.php`: `.frame-gold` light
       `inset glow + 0 4px 12px -10px rgba(0,0,0,.05)`; dark tetap
       `0 12px 24px -8px rgba(0,0,0,.18)`.
 
-Commit: `fix: kurangi shadow kartu login di light mode`
+Commit: `fix: kurangi shadow kartu login di light mode` (`1a7892ee`)
 
 ## Paket 5 — Pemilih bahasa di topbar
 
-- [ ] Partial baru `resources/views/partials/locale-switcher.blade.php`
-      (tombol `ID | EN`, form POST `customer.locale.switch`, tanpa JS berat).
-- [ ] Pasang di topbar 5 layout (mobile + desktop):
+- [x] Partial baru `resources/views/partials/locale-switcher.blade.php`
+      (desktop `ID | EN`; mobile satu tombol `ID`/`EN`; form POST
+      `customer.locale.switch`, tanpa JS berat).
+- [x] Pasang di topbar 5 layout (mobile + desktop):
       `superadmin`, `owner`, `admin`, `produksi`, `gudang`.
-- [ ] Tes `tests/Feature/LocaleSwitcherTest.php`: POST locale → session berubah;
-      halaman topbar memuat switcher.
-- [ ] Tambah label di `lang/en.json` bila diperlukan.
+- [x] Tes `tests/Feature/LocaleSwitcherTest.php`: POST locale → session berubah;
+      validasi locale; topbar SuperAdmin memuat switcher; 5 layout memuat partial.
+- [x] Tambah label `lang/en.json` (`Pilih bahasa`, `Ganti ke Bahasa Indonesia`).
 
 Commit:
 - `feat: partial pemilih bahasa`
@@ -136,8 +137,8 @@ Commit:
 | 2026-10-23 | `8563354c` | Paket 1 — seed GENERAL | ✅ |
 | 2026-10-23 | `264fec88` | Paket 2 — dark mode | ✅ |
 | 2026-10-23 | `0644bbf5`–`f1b2ffd0` | Paket 3 — soft delete | ✅ |
-| 2026-10-23 | - | Paket 4 — login shadow | ⏳ |
-| 2026-10-23 | - | Paket 5 — pemilih bahasa | ⏳ |
+| 2026-10-23 | `1a7892ee` | Paket 4 — login shadow | ✅ |
+| 2026-10-23 | `6fa58b77`–`81cf7918` | Paket 5 — pemilih bahasa | ✅ |
 | 2026-10-23 | - | Paket 6 — verifikasi | ⏳ |
 
 ## Catatan risiko
