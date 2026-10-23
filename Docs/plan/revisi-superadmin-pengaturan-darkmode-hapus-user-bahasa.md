@@ -1,7 +1,7 @@
 # Revisi SuperAdmin — Pengaturan Umum, Dark Mode, Hapus User, Bahasa
 
 Tanggal keputusan: 2026-10-23.
-Status dokumen: disepakati; eksekusi belum dimulai.
+Status dokumen: sedang dieksekusi.
 Lokasi final di repo: `Docs/plan/revisi-superadmin-pengaturan-darkmode-hapus-user-bahasa.md`.
 
 ## Latar belakang
@@ -50,33 +50,35 @@ Lokasi final di repo: `Docs/plan/revisi-superadmin-pengaturan-darkmode-hapus-use
 
 ## Paket 1 — Migrasi seed GENERAL
 
-- [ ] Migrasi `database/migrations/2026_10_23_000001_seed_pengaturan_umum_defaults.php`.
+- [x] Migrasi `database/migrations/2026_10_23_000001_seed_pengaturan_umum_defaults.php`.
   - `insertOrIgnore` key: `nama_platform`, `email_support`, `whatsapp_support`, `mode_maintenance`.
   - `down()` no-op (jangan hapus setting yang mungkin sudah diedit admin).
-- [ ] Verifikasi: `php artisan migrate`, cek baris `settings`, buka halaman SuperAdmin.
+- [x] Verifikasi: `php artisan migrate`, cek baris `settings`, buka halaman SuperAdmin.
 
-Commit: `feat: seed default pengaturan umum superadmin`
+Commit: `feat: seed default pengaturan umum superadmin` (`8563354c`)
 
 ## Paket 2 — Dark mode nominal
 
-- [ ] `resources/views/partials/theme-head.blade.php`:
+- [x] `resources/views/partials/theme-head.blade.php`:
   - `"gold-accent": "rgb(var(--c-accent) / <alpha-value>)"`.
   - `:root { --c-accent: 139 30 63; }` dan `.dark { --c-accent: 255 90 90; }`.
   - `.dark .text-gradient-gold { ... !important; }` gradient merah cerah.
+  - Tambahan hasil audit: `.dark .text-gold-accent` karena nominal di Owner/
+    Admin/Produksi/Gudang memakai class ini dan di-hardcode maroon di tiap layout.
 - [ ] Verifikasi visual light/dark di SuperAdmin, Owner, Admin, Produksi, Gudang.
 
-Commit: `feat: aksen dan nominal merah cerah di dark mode`
+Commit: `feat: aksen dan nominal merah cerah di dark mode` (`264fec88`)
 
 ## Paket 3 — Soft delete user
 
-- [ ] Migrasi `2026_10_23_000002_add_soft_deletes_to_users_table.php` (`softDeletes`).
-- [ ] `app/Models/User.php`: gunakan `SoftDeletes`.
-- [ ] `SuperAdmin\ManajemenPenggunaController@destroy`: guard tidak bisa hapus akun sendiri.
-- [ ] `Customer\SettingsController@deleteAccount`: soft delete + logout
+- [x] Migrasi `2026_10_23_000002_add_soft_deletes_to_users_table.php` (`softDeletes`).
+- [x] `app/Models/User.php`: gunakan `SoftDeletes`.
+- [x] `SuperAdmin\ManajemenPenggunaController@destroy`: guard tidak bisa hapus akun sendiri.
+- [x] `Customer\SettingsController@deleteAccount`: soft delete + logout
       (hapus cascade manual tidak diperlukan).
-- [ ] `SuperAdmin/manajemen-pengguna/index.blade.php`: copy modal
+- [x] `SuperAdmin/manajemen-pengguna/index.blade.php`: copy modal
       "dihapus dari sistem; riwayat transaksi tetap tersimpan".
-- [ ] Tes baru `tests/Feature/ManajemenPenggunaDeleteTest.php`:
+- [x] Tes baru `tests/Feature/ManajemenPenggunaDeleteTest.php` (4 tes, 18 assertions):
   - Owner punya toko → hapus sukses, toko tetap ada.
   - Admin yang pernah verifikasi pembayaran → hapus sukses, payment tetap ada.
   - Customer punya checkout → self-delete sukses, checkout tetap ada.
@@ -130,10 +132,10 @@ Commit:
 
 | Tanggal | Commit | Paket | Status |
 |---|---|---|---|
-| 2026-10-23 | - | Dokumen rencana dibuat | ✅ |
-| 2026-10-23 | - | Paket 1 — seed GENERAL | ⏳ |
-| 2026-10-23 | - | Paket 2 — dark mode | ⏳ |
-| 2026-10-23 | - | Paket 3 — soft delete | ⏳ |
+| 2026-10-23 | `da4a5a13` | Dokumen rencana dibuat | ✅ |
+| 2026-10-23 | `8563354c` | Paket 1 — seed GENERAL | ✅ |
+| 2026-10-23 | `264fec88` | Paket 2 — dark mode | ✅ |
+| 2026-10-23 | `0644bbf5`–`f1b2ffd0` | Paket 3 — soft delete | ✅ |
 | 2026-10-23 | - | Paket 4 — login shadow | ⏳ |
 | 2026-10-23 | - | Paket 5 — pemilih bahasa | ⏳ |
 | 2026-10-23 | - | Paket 6 — verifikasi | ⏳ |
