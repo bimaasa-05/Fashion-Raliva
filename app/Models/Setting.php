@@ -28,6 +28,8 @@ class Setting extends Model
 
     public const WHATSAPP_SUPPORT = 'whatsapp_support';
 
+    public const INSTAGRAM_SUPPORT = 'instagram_support';
+
     public const MODERASI_OTOMATIS = 'moderasi_otomatis';
 
     public const MODE_MAINTENANCE = 'mode_maintenance';
