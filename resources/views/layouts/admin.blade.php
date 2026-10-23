@@ -158,6 +158,7 @@
         <div class="flex items-center gap-2">
             @include('partials.notification-panel', ['lihatSemuaRoute' => 'admin.notifikasi'])
             @php $adminHeaderUserM = Auth::user(); @endphp
+            @include('partials.locale-switcher', ['compact' => true])
             @include('partials.profile-menu', ['compact' => true, 'name' => $adminHeaderUserM?->nama_lengkap ?? 'Admin Toko', 'role' => $adminHeaderUserM?->role?->nama_role ?? 'Admin Toko', 'profilRoute' => 'admin.profil', 'showPengaturan' => false])
         </div>
     </header>
@@ -244,6 +245,7 @@
             <div class="flex items-center gap-6">
                 @include('partials.notification-panel', ['lihatSemuaRoute' => 'admin.notifikasi'])
                 @php $adminHeaderUserD = Auth::user(); @endphp
+                @include('partials.locale-switcher')
                 @include('partials.profile-menu', ['name' => $adminHeaderUserD?->nama_lengkap ?? 'Admin Toko', 'role' => $adminHeaderUserD?->role?->nama_role ?? 'Admin Toko', 'profilRoute' => 'admin.profil', 'showPengaturan' => false])
             </div>
         </header>
