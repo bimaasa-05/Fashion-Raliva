@@ -146,6 +146,7 @@
         <div class="flex items-center gap-2">
             @include('partials.notification-panel', ['lihatSemuaRoute' => 'owner.notifikasi'])
             @php $ownerHeaderUser = Auth::user(); @endphp
+            @include('partials.locale-switcher', ['compact' => true])
             @include('partials.profile-menu', ['compact' => true, 'name' => $ownerHeaderUser?->nama_lengkap ?? 'Owner', 'role' => $ownerHeaderUser?->role?->nama_role ?? 'Owner', 'profilRoute' => 'owner.profil', 'pengaturanRoute' => 'owner.pengaturan-toko'])
         </div>
     </header>
@@ -232,6 +233,7 @@
             <div class="flex items-center gap-6">
                 @include('partials.notification-panel', ['lihatSemuaRoute' => 'owner.notifikasi'])
                 @php $ownerDesktopUser = Auth::user(); @endphp
+                @include('partials.locale-switcher')
                 @include('partials.profile-menu', ['name' => $ownerDesktopUser?->nama_lengkap ?? 'Owner', 'role' => $ownerDesktopUser?->role?->nama_role ?? 'Owner', 'profilRoute' => 'owner.profil', 'pengaturanRoute' => 'owner.pengaturan-toko'])
             </div>
         </header>
