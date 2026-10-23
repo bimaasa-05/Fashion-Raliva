@@ -141,7 +141,7 @@ satu baris berbahasa Indonesia. Tidak ada push.
 ## Konsolidasi v2 — satu halaman Owner
 
 Tanggal: 2026-10-24
-Status: disetujui; implementasi dimulai.
+Status: selesai dieksekusi; verifikasi otomatis dan visual lulus.
 
 ### Keputusan
 
@@ -185,3 +185,23 @@ Status: disetujui; implementasi dimulai.
 - `git diff --check`.
 - Cek manual light/dark dan mobile.
 - Setiap file di-commit terpisah dengan `git commit --no-verify`; tidak push.
+
+### Hasil verifikasi v2
+
+- `LandingPageTest`: 6 lulus, 34 assertion.
+- `ExampleTest` fitur: 1 lulus; `ExampleTest` unit: 1 lulus.
+- `OwnerLoginRedirectTest`, `LocaleSwitcherTest`, dan
+  `PengaturanSistemBrandingTest`: 22 lulus, 66 assertion.
+- Redirect 301 terverifikasi: `/untuk-brand` → `/#tentang` dan
+  `/buka-toko` → `/#buka-toko`.
+- `php artisan view:cache` dan `php artisan view:clear` berhasil.
+- `git diff --check` bersih.
+- Cek visual headless Chrome:
+  - Desktop 1440px dan mobile 390px.
+  - Light mode dan dark mode.
+  - Menu mobile terbuka dengan baik.
+  - Tidak ada horizontal overflow (`scrollWidth == clientWidth`) di kedua
+    ukuran.
+  - Floating card dashboard tidak lagi terpotong.
+- Di database dev hanya email support yang terisi, sehingga section kontak
+  hanya menampilkan email; WhatsApp dan Instagram tetap kondisional.
