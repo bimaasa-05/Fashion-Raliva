@@ -14,6 +14,8 @@ class ExampleTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertRedirect(route('customer.home'));
+        $response->assertOk()
+            ->assertSee(route('landing.brand'), false)
+            ->assertSee(route('landing.open-store'), false);
     }
 }
