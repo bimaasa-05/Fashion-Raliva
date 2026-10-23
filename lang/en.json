@@ -3234,6 +3234,8 @@
     "Tidak ada perubahan — tarif komisi sudah :ph1%.": "No changes — the commission rate is already :ph1%.",
     "Tidak ada perubahan — tarif pajak sudah :ph1%.": "No changes — the tax rate is already :ph1%.",
     "Tidak ada pesanan yang perlu dilengkapi bahannya.": "No orders need their materials completed.",
+    "Anda tidak dapat menghapus akun sendiri.": "You cannot delete your own account.",
+    "akan dihapus dari sistem. Riwayat transaksi dan aktivitasnya tetap tersimpan.": "will be removed from the system. Transaction and activity history will be retained.",
     "Tidak dapat menghapus akun Super Admin utama.": "Cannot delete the primary Super Admin account.",
     "Tidak dapat menonaktifkan akun Super Admin utama.": "Cannot deactivate the primary Super Admin account.",
     "Tidak diizinkan.": "Not permitted.",
