@@ -137,3 +137,51 @@ satu baris berbahasa Indonesia. Tidak ada push.
   `instagram_support` kosong sampai diisi SuperAdmin.
 - `php artisan view:cache` berhasil; `view:clear` dijalankan setelah verifikasi.
 - Cek visual browser untuk light/dark dan mobile masih pending.
+
+## Konsolidasi v2 — satu halaman Owner
+
+Tanggal: 2026-10-24
+Status: disetujui; implementasi dimulai.
+
+### Keputusan
+
+- `/` menjadi satu-satunya halaman landing Owner dengan anchor
+  `#beranda`, `#tentang`, `#fitur`, `#buka-toko`, `#faq`, dan `#kontak`.
+- `/customer` tetap menjadi home marketplace pembeli. Prioritas root tetap
+  Owner selama akuisisi Owner menjadi fokus.
+- `/untuk-brand` diarahkan permanen (301) ke `/#tentang`.
+- `/buka-toko` diarahkan permanen (301) ke `/#buka-toko`.
+- Nama route lama `landing.brand` dan `landing.open-store` dipertahankan
+  sebagai route redirect agar tautan lama tidak rusak.
+- View `landing/brand.blade.php` dan `landing/open-store.blade.php` dihapus
+  setelah isinya digabung ke `landing/index.blade.php`.
+- Navbar: Beranda, Tentang, Fitur, Buka Toko, FAQ, Kontak. Sisi kanan:
+  **Belanja** sebagai pill menonjol, switch ID/EN, toggle tema,
+  Masuk/Dashboard, dan CTA Daftar Owner.
+- Footer memakai anchor yang sama, menonjolkan Belanja, dan tetap
+  menampilkan kontak secara kondisional.
+- Tidak ada klaim "tanpa komisi". Komisi platform tetap dijelaskan 5%
+  dan dipotong saat pesanan selesai.
+
+### Section hasil merge
+
+1. Hero `#beranda`: copy Owner, mockup dashboard, CTA Owner, dan tautan
+   Belanja yang terlihat.
+2. Trust strip: verifikasi, dashboard, produksi, laporan.
+3. `#tentang`: alasan NexPrint, audiens brand, dan kutipan editorial.
+4. `#fitur`: delapan fitur operasional.
+5. `#buka-toko`: empat langkah, persyaratan, alur setelah daftar, dan CTA
+   daftar Owner.
+6. `#faq`: enam pertanyaan termasuk komisi platform dan pencairan.
+7. `#kontak`: email/WhatsApp/Instagram hanya dirender jika setting terisi;
+   fallback ke Pusat Bantuan.
+
+### Verifikasi
+
+- Test redirect 301 untuk dua URL lama.
+- Test anchor, CTA Belanja, CTA daftar, komisi 5%, kontak kondisional, dan
+  switch bahasa.
+- `php artisan view:cache` lalu `php artisan view:clear`.
+- `git diff --check`.
+- Cek manual light/dark dan mobile.
+- Setiap file di-commit terpisah dengan `git commit --no-verify`; tidak push.
