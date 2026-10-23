@@ -30,14 +30,43 @@
         ];
 
         $steps = [
-            ['title' => __('landing.home.step_1_title'), 'text' => __('landing.home.step_1_text')],
-            ['title' => __('landing.home.step_2_title'), 'text' => __('landing.home.step_2_text')],
-            ['title' => __('landing.home.step_3_title'), 'text' => __('landing.home.step_3_text')],
-            ['title' => __('landing.home.step_4_title'), 'text' => __('landing.home.step_4_text')],
+            ['title' => __('landing.open_store.step_1_title'), 'text' => __('landing.open_store.step_1_text')],
+            ['title' => __('landing.open_store.step_2_title'), 'text' => __('landing.open_store.step_2_text')],
+            ['title' => __('landing.open_store.step_3_title'), 'text' => __('landing.open_store.step_3_text')],
+            ['title' => __('landing.open_store.step_4_title'), 'text' => __('landing.open_store.step_4_text')],
+        ];
+
+        $requirements = [
+            __('landing.open_store.requirement_1'),
+            __('landing.open_store.requirement_2'),
+            __('landing.open_store.requirement_3'),
+        ];
+
+        $afterSteps = [
+            __('landing.open_store.after_1'),
+            __('landing.open_store.after_2'),
+            __('landing.open_store.after_3'),
+            __('landing.open_store.after_4'),
+        ];
+
+        $audienceItems = [
+            __('landing.brand.audience_1'),
+            __('landing.brand.audience_2'),
+            __('landing.brand.audience_3'),
+            __('landing.brand.audience_4'),
+        ];
+
+        $faqs = [
+            ['q' => __('landing.open_store.faq_1_q'), 'a' => __('landing.open_store.faq_1_a')],
+            ['q' => __('landing.open_store.faq_2_q'), 'a' => __('landing.open_store.faq_2_a', ['percent' => $commissionPercent])],
+            ['q' => __('landing.open_store.faq_3_q'), 'a' => __('landing.open_store.faq_3_a')],
+            ['q' => __('landing.open_store.faq_4_q'), 'a' => __('landing.open_store.faq_4_a')],
+            ['q' => __('landing.open_store.faq_5_q'), 'a' => __('landing.open_store.faq_5_a')],
+            ['q' => __('landing.open_store.faq_6_q'), 'a' => __('landing.open_store.faq_6_a')],
         ];
     @endphp
 
-    <section class="relative overflow-hidden pb-16 pt-28 sm:pb-24 sm:pt-36">
+    <section id="beranda" class="relative overflow-hidden pb-16 pt-28 sm:pb-24 sm:pt-36">
         <div class="hero-orb -left-24 top-24 h-72 w-72 bg-gold-accent/10"></div>
         <div class="hero-orb -right-24 top-40 h-96 w-96 bg-gold-accent/5"></div>
         <div class="hero-grid pointer-events-none absolute inset-x-0 top-0 h-[34rem] opacity-60"></div>
@@ -53,12 +82,18 @@
                     <p class="mt-6 max-w-xl text-base leading-8 text-on-surface-variant sm:text-lg">{{ __('landing.home.description') }}</p>
 
                     <div class="mt-8 flex flex-col gap-3 sm:flex-row">
-                        <a href="{{ route('landing.brand') }}" class="btn-primary">
-                            {{ __('landing.home.cta_primary') }}
+                        <a href="{{ route('register') }}" class="btn-primary">
+                            {{ __('landing.common.register_owner') }}
                             <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
                         </a>
-                        <a href="{{ route('landing.open-store') }}" class="btn-secondary">{{ __('landing.home.cta_secondary') }}</a>
+                        <a href="#buka-toko" class="btn-secondary">{{ __('landing.home.cta_secondary') }}</a>
                     </div>
+
+                    <a href="{{ route('customer.home') }}" class="mt-5 inline-flex items-center gap-2 text-xs font-bold text-gold-accent underline decoration-gold-accent/30 underline-offset-4 transition-colors hover:decoration-gold-accent">
+                        <span class="material-symbols-outlined text-[18px]">shopping_bag</span>
+                        {{ __('landing.home.buyer_cta') }}
+                        <span class="material-symbols-outlined text-[15px]">arrow_outward</span>
+                    </a>
 
                     <div class="mt-7 flex flex-wrap gap-x-5 gap-y-2 text-[11px] font-semibold text-on-surface-variant">
                         <span class="inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px] text-gold-accent">check_circle</span>{{ __('landing.home.hero_note') }}</span>
@@ -191,14 +226,14 @@
         </div>
     </section>
 
-    <section class="py-20 sm:py-28">
+    <section id="tentang" class="py-20 sm:py-28">
         <div class="mx-auto max-w-8xl px-5 sm:px-8">
             <div class="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-start lg:gap-16">
                 <div class="reveal lg:sticky lg:top-28">
                     <span class="eyebrow">{{ __('landing.home.why_eyebrow') }}</span>
                     <h2 class="mt-4 max-w-md font-display text-4xl leading-[1.05] tracking-[-0.02em] sm:text-5xl">{{ __('landing.home.why_title') }}</h2>
                     <p class="mt-5 max-w-md text-sm leading-7 text-on-surface-variant">{{ __('landing.home.why_description') }}</p>
-                    <a href="{{ route('landing.brand') }}" class="btn-secondary mt-7">
+                    <a href="#fitur" class="btn-secondary mt-7">
                         {{ __('landing.common.see_features') }}
                         <span class="material-symbols-outlined text-[16px]">arrow_outward</span>
                     </a>
@@ -216,10 +251,52 @@
                     @endforeach
                 </div>
             </div>
+
+            <div class="mt-16 grid gap-8 border-t border-muted-border pt-12 lg:grid-cols-[0.92fr_1.08fr] lg:items-center lg:gap-16">
+                <div class="grid grid-cols-2 gap-3 sm:gap-4">
+                    <div class="image-frame aspect-[4/5] reveal">
+                        <img src="{{ asset('assets/picture/home-pictures/1.jfif') }}" alt="{{ __('landing.brand.eyebrow') }}" loading="lazy" />
+                    </div>
+                    <div class="space-y-3 sm:space-y-4">
+                        <div class="image-frame aspect-[4/3] reveal" style="--reveal-delay: 80ms">
+                            <img src="{{ asset('assets/picture/home-pictures/2.jfif') }}" alt="" loading="lazy" />
+                        </div>
+                        <div class="reveal rounded-2xl border border-muted-border bg-surface-container-lowest p-5" style="--reveal-delay: 140ms">
+                            <span class="icon-tile !h-9 !w-9 !rounded-xl">
+                                <span class="material-symbols-outlined text-[18px]">auto_awesome</span>
+                            </span>
+                            <p class="mt-4 font-display text-2xl leading-tight">{{ __('landing.common.built_for_brands') }}</p>
+                            <p class="mt-2 text-xs leading-5 text-on-surface-variant">{{ __('landing.home.why_1_text') }}</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="reveal" style="--reveal-delay: 100ms">
+                    <span class="eyebrow">{{ __('landing.brand.intro_eyebrow') }}</span>
+                    <h2 class="mt-4 max-w-lg font-display text-4xl leading-[1.05] tracking-[-0.02em] sm:text-5xl">{{ __('landing.brand.intro_title') }}</h2>
+                    <p class="mt-5 max-w-lg text-sm leading-7 text-on-surface-variant">{{ __('landing.brand.intro_text') }}</p>
+
+                    <h3 class="mt-8 font-display text-2xl">{{ __('landing.brand.audience_title') }}</h3>
+                    <div class="mt-5 grid gap-3 sm:grid-cols-2">
+                        @foreach ($audienceItems as $item)
+                            <div class="flex items-start gap-3 rounded-xl border border-muted-border bg-surface-container-lowest p-4">
+                                <span class="material-symbols-outlined mt-0.5 text-[18px] text-gold-accent">check_circle</span>
+                                <p class="text-sm leading-6 text-on-surface-variant">{{ $item }}</p>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            <figure class="reveal mx-auto mt-16 max-w-3xl border-t border-muted-border pt-12 text-center">
+                <span class="material-symbols-outlined text-5xl text-gold-accent">format_quote</span>
+                <blockquote class="mt-4 font-display text-3xl leading-[1.12] tracking-[-0.02em] sm:text-4xl">{{ __('landing.brand.quote') }}</blockquote>
+                <figcaption class="mt-5 text-[10px] font-extrabold uppercase tracking-[0.18em] text-on-surface-variant">{{ __('landing.brand.quote_author') }}</figcaption>
+            </figure>
         </div>
     </section>
 
-    <section id="fitur" class="bg-surface-container-lowest py-20 sm:py-28">
+    <section id="fitur" class="border-y border-muted-border bg-surface-container-lowest py-20 sm:py-28">
         <div class="mx-auto max-w-8xl px-5 sm:px-8">
             <div class="max-w-2xl reveal">
                 <span class="eyebrow">{{ __('landing.home.features_eyebrow') }}</span>
@@ -241,34 +318,61 @@
         </div>
     </section>
 
-    <section class="py-20 sm:py-28">
+    <section id="buka-toko" class="py-20 sm:py-28">
         <div class="mx-auto max-w-8xl px-5 sm:px-8">
-            <div class="grid gap-10 lg:grid-cols-[0.72fr_1.28fr] lg:gap-16">
-                <div class="reveal">
-                    <span class="eyebrow">{{ __('landing.home.steps_eyebrow') }}</span>
-                    <h2 class="mt-4 max-w-sm font-display text-4xl leading-[1.05] tracking-[-0.02em] sm:text-5xl">{{ __('landing.home.steps_title') }}</h2>
-                    <a href="{{ route('landing.open-store') }}" class="btn-primary mt-7">
-                        {{ __('landing.common.open_store') }}
+            <div class="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
+                <div class="max-w-2xl reveal">
+                    <span class="eyebrow">{{ __('landing.open_store.eyebrow') }}</span>
+                    <h2 class="mt-4 font-display text-4xl leading-[1.05] tracking-[-0.02em] sm:text-5xl">{{ __('landing.open_store.title') }}</h2>
+                    <p class="mt-5 text-sm leading-7 text-on-surface-variant">{{ __('landing.open_store.description') }}</p>
+                </div>
+                <div class="flex flex-col gap-3 sm:flex-row lg:flex-col">
+                    <a href="{{ route('register') }}" class="btn-primary">
+                        {{ __('landing.open_store.cta_primary') }}
                         <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
                     </a>
-                </div>
-
-                <div class="grid gap-3 sm:grid-cols-2">
-                    @foreach ($steps as $index => $step)
-                        <article class="reveal rounded-2xl border border-muted-border bg-surface-container-lowest p-5" style="--reveal-delay: {{ $index * 80 }}ms">
-                            <span class="step-number">0{{ $index + 1 }}</span>
-                            <h3 class="mt-4 font-display text-xl">{{ $step['title'] }}</h3>
-                            <p class="mt-2 text-sm leading-6 text-on-surface-variant">{{ $step['text'] }}</p>
-                        </article>
-                    @endforeach
+                    <a href="{{ route('login') }}" class="btn-secondary">{{ __('landing.open_store.cta_secondary') }}</a>
                 </div>
             </div>
-        </div>
-    </section>
 
-    <section class="pb-20 sm:pb-28">
-        <div class="mx-auto max-w-8xl px-5 sm:px-8">
-            <div class="relative overflow-hidden rounded-[2rem] bg-[#1b1c1c] px-6 py-12 text-white sm:px-12 sm:py-16">
+            <div class="mt-10 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+                @foreach ($steps as $index => $step)
+                    <article class="feature-card reveal" style="--reveal-delay: {{ $index * 80 }}ms">
+                        <span class="step-number">0{{ $index + 1 }}</span>
+                        <h3 class="mt-4 font-display text-xl leading-tight">{{ $step['title'] }}</h3>
+                        <p class="mt-2 text-sm leading-6 text-on-surface-variant">{{ $step['text'] }}</p>
+                    </article>
+                @endforeach
+            </div>
+
+            <div class="mt-6 grid gap-6 lg:grid-cols-2">
+                <div class="reveal rounded-2xl border border-muted-border bg-surface-container-lowest p-6 sm:p-8">
+                    <span class="eyebrow">{{ __('landing.open_store.requirements_title') }}</span>
+                    <div class="mt-6 grid gap-4">
+                        @foreach ($requirements as $requirement)
+                            <div class="flex items-start gap-3">
+                                <span class="material-symbols-outlined mt-0.5 text-[19px] text-gold-accent">check_circle</span>
+                                <p class="text-sm leading-6 text-on-surface-variant">{{ $requirement }}</p>
+                            </div>
+                        @endforeach
+                    </div>
+                    <p class="mt-6 border-t border-muted-border pt-4 text-[11px] leading-5 text-on-surface-variant">{{ __('landing.open_store.requirement_note') }}</p>
+                </div>
+
+                <div class="reveal rounded-2xl border border-muted-border bg-[#1b1c1c] p-6 text-white sm:p-8" style="--reveal-delay: 100ms">
+                    <span class="eyebrow !text-[#e9c9d0]">{{ __('landing.open_store.after_title') }}</span>
+                    <div class="mt-6 grid gap-4">
+                        @foreach ($afterSteps as $index => $after)
+                            <div class="flex items-start gap-3">
+                                <span class="inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-white/20 bg-white/10 text-[10px] font-bold">{{ $index + 1 }}</span>
+                                <p class="text-sm leading-6 text-white/75">{{ $after }}</p>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
+            <div class="reveal relative mt-6 overflow-hidden rounded-[2rem] bg-[#1b1c1c] px-6 py-12 text-white sm:px-12 sm:py-16">
                 <div class="pointer-events-none absolute -right-20 -top-24 h-72 w-72 rounded-full bg-[#8B1E3F]/40 blur-3xl"></div>
                 <div class="pointer-events-none absolute -bottom-24 left-1/3 h-56 w-56 rounded-full bg-[#8B1E3F]/20 blur-3xl"></div>
                 <div class="relative grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
@@ -278,8 +382,108 @@
                         <p class="mt-4 max-w-xl text-sm leading-7 text-white/65">{{ __('landing.home.cta_text') }}</p>
                     </div>
                     <div class="flex flex-col gap-3 sm:flex-row lg:flex-col">
-                        <a href="{{ route('landing.open-store') }}" class="btn-light">{{ __('landing.common.open_store') }}</a>
-                        <a href="{{ route('customer.help') }}" class="btn-outline-light">{{ __('landing.common.contact_support') }}</a>
+                        <a href="{{ route('register') }}" class="btn-light">{{ __('landing.common.register_owner') }}</a>
+                        <a href="#kontak" class="btn-outline-light">{{ __('landing.common.contact_support') }}</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="faq" class="border-y border-muted-border bg-surface-container-lowest py-20 sm:py-28">
+        <div class="mx-auto max-w-8xl px-5 sm:px-8">
+            <div class="grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
+                <div class="reveal">
+                    <span class="eyebrow">{{ __('landing.nav.faq') }}</span>
+                    <h2 class="mt-4 max-w-sm font-display text-4xl leading-[1.05] tracking-[-0.02em] sm:text-5xl">{{ __('landing.open_store.faq_title') }}</h2>
+                    <p class="mt-5 max-w-sm text-sm leading-7 text-on-surface-variant">{{ __('landing.open_store.support_text') }}</p>
+                    <a href="#kontak" class="btn-secondary mt-6">{{ __('landing.open_store.support_cta') }}</a>
+                </div>
+
+                <div class="reveal" style="--reveal-delay: 100ms">
+                    @foreach ($faqs as $faq)
+                        <details class="faq-item">
+                            <summary>
+                                <span>{{ $faq['q'] }}</span>
+                                <span class="material-symbols-outlined faq-plus text-[20px]">add</span>
+                            </summary>
+                            <p>{{ $faq['a'] }}</p>
+                        </details>
+                    @endforeach
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="kontak" class="py-20 sm:py-28">
+        <div class="mx-auto max-w-8xl px-5 sm:px-8">
+            <div class="rounded-[2rem] border border-muted-border bg-surface-container-lowest p-6 sm:p-10">
+                <div class="grid gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:gap-12">
+                    <div class="reveal">
+                        <span class="eyebrow">{{ __('landing.contact.eyebrow') }}</span>
+                        <h2 class="mt-4 max-w-xl font-display text-3xl leading-tight sm:text-4xl">{{ __('landing.contact.title') }}</h2>
+                        <p class="mt-4 max-w-xl text-sm leading-7 text-on-surface-variant">{{ __('landing.contact.text') }}</p>
+
+                        <div class="mt-7 flex flex-col gap-3 border-t border-muted-border pt-6 text-sm sm:flex-row sm:items-center sm:justify-between">
+                            <p class="text-on-surface-variant">
+                                {{ __('landing.contact.buyer_note') }}
+                                <a href="{{ route('customer.home') }}" class="font-bold text-gold-accent underline decoration-gold-accent/30 underline-offset-4 hover:decoration-gold-accent">{{ __('landing.contact.buyer_cta') }}</a>
+                            </p>
+                            <a href="{{ route('customer.help') }}" class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-[0.12em] text-on-surface-variant transition-colors hover:text-gold-accent">
+                                {{ __('landing.contact.help_cta') }}
+                                <span class="material-symbols-outlined text-[15px]">arrow_outward</span>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="reveal grid gap-3" style="--reveal-delay: 100ms">
+                        @if ($emailSupport !== '')
+                            <a href="mailto:{{ $emailSupport }}" class="flex items-center gap-4 rounded-2xl border border-muted-border bg-surface p-4 transition-colors hover:border-gold-accent/40">
+                                <span class="icon-tile shrink-0 !h-10 !w-10 !rounded-xl">
+                                    <span class="material-symbols-outlined text-[20px]">mail</span>
+                                </span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block text-[9px] font-bold uppercase tracking-[0.14em] text-on-surface-variant">{{ __('landing.footer.email') }}</span>
+                                    <span class="mt-0.5 block break-all text-sm font-semibold">{{ $emailSupport }}</span>
+                                </span>
+                                <span class="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_outward</span>
+                            </a>
+                        @endif
+
+                        @if ($whatsappDigits !== '')
+                            <a href="https://wa.me/{{ $whatsappDigits }}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-4 rounded-2xl border border-muted-border bg-surface p-4 transition-colors hover:border-gold-accent/40">
+                                <span class="icon-tile shrink-0 !h-10 !w-10 !rounded-xl">
+                                    <span class="material-symbols-outlined text-[20px]">chat</span>
+                                </span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block text-[9px] font-bold uppercase tracking-[0.14em] text-on-surface-variant">{{ __('landing.footer.whatsapp') }}</span>
+                                    <span class="mt-0.5 block text-sm font-semibold">+{{ $whatsappDigits }}</span>
+                                </span>
+                                <span class="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_outward</span>
+                            </a>
+                        @endif
+
+                        @if ($instagramUrl !== '')
+                            <a href="{{ $instagramUrl }}" target="_blank" rel="noopener noreferrer" class="flex items-center gap-4 rounded-2xl border border-muted-border bg-surface p-4 transition-colors hover:border-gold-accent/40">
+                                <span class="icon-tile shrink-0 !h-10 !w-10 !rounded-xl">
+                                    <span class="material-symbols-outlined text-[20px]">photo_camera</span>
+                                </span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block text-[9px] font-bold uppercase tracking-[0.14em] text-on-surface-variant">{{ __('landing.footer.instagram') }}</span>
+                                    <span class="mt-0.5 block break-all text-sm font-semibold">{{ $instagramSupport }}</span>
+                                </span>
+                                <span class="material-symbols-outlined text-[18px] text-on-surface-variant">arrow_outward</span>
+                            </a>
+                        @endif
+
+                        @if ($emailSupport === '' && $whatsappDigits === '' && $instagramUrl === '')
+                            <div class="rounded-2xl border border-dashed border-muted-border bg-surface p-5">
+                                <div class="flex items-start gap-3">
+                                    <span class="material-symbols-outlined mt-0.5 text-[20px] text-gold-accent">info</span>
+                                    <p class="text-sm leading-6 text-on-surface-variant">{{ __('landing.contact.fallback') }}</p>
+                                </div>
+                            </div>
+                        @endif
                     </div>
                 </div>
             </div>
