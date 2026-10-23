@@ -299,6 +299,13 @@
                 0 12px 24px -8px rgba(0, 0, 0, .18);
         }
 
+        /* Light mode: shadow luar dikecilkan agar kartu tidak terlihat berat. */
+        html:not(.theme-dark) .frame-gold {
+            box-shadow:
+                inset 0 0 26px var(--gold-inner),
+                0 4px 12px -10px rgba(0, 0, 0, .05);
+        }
+
         :root {
             --gold-inner: rgba(139, 30, 30, .30);
         }
