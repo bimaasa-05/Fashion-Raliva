@@ -12,6 +12,14 @@ class AuthSecurityTest extends TestCase
 {
     use DatabaseTransactions;
 
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Assertion memakai string Indonesia; kunci locale agar deterministik meski .env memakai en.
+        app()->setLocale('id');
+    }
+
     public function test_login_is_rate_limited_after_repeated_failures(): void
     {
         $email = 'throttle-'.uniqid().'@raliva.test';
