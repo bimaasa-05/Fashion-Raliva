@@ -58,7 +58,7 @@
             const container = document.getElementById('notif-toast-container');
             if (!container) return;
             const el = document.createElement('div');
-            el.className = 'pointer-events-auto flex items-start gap-3 bg-white border border-muted-border rounded-xl shadow-2xl px-4 py-3 translate-y-[-16px] opacity-0 transition-all duration-300 cursor-pointer';
+            el.className = 'pointer-events-auto flex items-start gap-3 bg-surface-container-lowest border border-muted-border rounded-xl shadow-2xl px-4 py-3 translate-y-[-16px] opacity-0 transition-all duration-300 cursor-pointer';
             el.style.boxShadow = '0 10px 40px rgba(12,12,20,0.18)';
             const tone = TONES[item.type] || '#E6C27A';
             el.innerHTML =
