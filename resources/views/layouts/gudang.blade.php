@@ -161,6 +161,7 @@
                     })->all() : [];
             @endphp
             @include('partials.notification-panel', ['items' => $notifications, 'lihatSemuaRoute' => 'gudang.notifikasi'])
+            @include('partials.locale-switcher', ['compact' => true])
             @include('partials.profile-menu', ['compact' => true, 'name' => $user?->nama_lengkap ?? 'User', 'role' => $user?->role?->nama_role ?? 'Gudang', 'profilRoute' => 'gudang.profil', 'showPengaturan' => false])
         </div>
     </header>
@@ -244,6 +245,7 @@
             </div>
             <div class="flex items-center gap-6">
                 @include('partials.notification-panel', ['items' => $notifications, 'lihatSemuaRoute' => 'gudang.notifikasi'])
+                @include('partials.locale-switcher')
                 @include('partials.profile-menu', ['name' => $user?->nama_lengkap ?? 'User', 'role' => $user?->role?->nama_role ?? 'Gudang', 'profilRoute' => 'gudang.profil', 'showPengaturan' => false])
             </div>
         </header>
