@@ -167,6 +167,7 @@
             </button>
             @include('partials.notification-panel', ['lihatSemuaRoute' => 'produksi.notifikasi'])
             @php $prodHeaderUserM = Auth::user(); @endphp
+            @include('partials.locale-switcher', ['compact' => true])
             @include('partials.profile-menu', ['compact' => true, 'name' => $prodHeaderUserM?->nama_lengkap ?? 'Produksi', 'role' => $prodHeaderUserM?->role?->nama_role ?? 'Produksi', 'profilRoute' => 'produksi.profil', 'showPengaturan' => false])
         </div>
     </header>
@@ -242,6 +243,7 @@
                 </button>
                 @include('partials.notification-panel', ['lihatSemuaRoute' => 'produksi.notifikasi'])
                 @php $prodHeaderUserD = Auth::user(); @endphp
+                @include('partials.locale-switcher')
                 @include('partials.profile-menu', ['name' => $prodHeaderUserD?->nama_lengkap ?? 'Produksi', 'role' => $prodHeaderUserD?->role?->nama_role ?? 'Produksi', 'profilRoute' => 'produksi.profil', 'showPengaturan' => false])
             </div>
         </header>
