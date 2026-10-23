@@ -36,6 +36,7 @@ return [
         'owner_dashboard' => 'Owner dashboard',
         'built_for_brands' => 'Built for fashion brands',
         'back_home' => 'Back to home',
+        'skip_to_content' => 'Skip to content',
     ],
 
     'home' => [
@@ -55,6 +56,9 @@ return [
         'stat_orders' => 'New orders',
         'stat_revenue' => 'Revenue',
         'stat_products' => 'Active products',
+        'variant_count' => '12 variants',
+        'view_all' => 'View all',
+        'days' => ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
         'chart_title' => 'Sales performance',
         'chart_period' => 'Last 7 days',
         'recent_orders' => 'Recent orders',
