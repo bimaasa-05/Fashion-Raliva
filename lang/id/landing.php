@@ -36,6 +36,7 @@ return [
         'owner_dashboard' => 'Dashboard Owner',
         'built_for_brands' => 'Dibuat untuk brand fashion',
         'back_home' => 'Kembali ke beranda',
+        'skip_to_content' => 'Lewati ke konten',
     ],
 
     'home' => [
@@ -55,6 +56,9 @@ return [
         'stat_orders' => 'Pesanan baru',
         'stat_revenue' => 'Pendapatan',
         'stat_products' => 'Produk aktif',
+        'variant_count' => '12 varian',
+        'view_all' => 'Lihat semua',
+        'days' => ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'],
         'chart_title' => 'Performa penjualan',
         'chart_period' => '7 hari terakhir',
         'recent_orders' => 'Pesanan terbaru',
