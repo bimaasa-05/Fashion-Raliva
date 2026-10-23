@@ -1,7 +1,7 @@
 # Revisi SuperAdmin — Pengaturan Umum, Dark Mode, Hapus User, Bahasa
 
 Tanggal keputusan: 2026-10-23.
-Status dokumen: sedang dieksekusi.
+Status dokumen: selesai dieksekusi; verifikasi otomatis lulus, cek visual browser pending.
 Lokasi final di repo: `Docs/plan/revisi-superadmin-pengaturan-darkmode-hapus-user-bahasa.md`.
 
 ## Latar belakang
@@ -121,13 +121,17 @@ Commit:
 
 ## Paket 6 — Verifikasi & penutupan
 
-- [ ] `php artisan migrate` (2 migrasi baru).
-- [ ] `php artisan view:cache && php artisan view:clear`.
-- [ ] `php artisan test --filter "ManajemenPenggunaDelete|LocaleSwitcher"` + regresi terkait.
-- [ ] `php artisan test --filter "AdminLaporan"` (regresi laporan admin).
-- [ ] `git diff --check`; cek working tree bersih.
-- [ ] Update checklist + log progres dokumen ini, commit terpisah.
+- [x] `php artisan migrate` (2 migrasi baru) — keduanya `Ran`.
+- [x] `php artisan view:cache && php artisan view:clear` — OK.
+- [x] `php artisan test --filter "ManajemenPenggunaDeleteTest|LocaleSwitcherTest"` —
+      8 passed (35 assertions).
+- [x] `php artisan test --filter "AdminLaporan"` — 7 passed (36 assertions).
+- [x] `php artisan test --filter "AuthSecurityTest|MultiRoleSessionTest|ProfileSmokeTest"` —
+      11 passed (74 assertions).
+- [x] `git diff --check`; working tree bersih.
+- [x] Update checklist + log progres dokumen ini, commit terpisah.
 - [ ] Verifikasi manual browser: light/dark semua role, hapus user, switcher bahasa.
+      (Belum dijalankan di sesi ini; sudah lolos compile view + tes render topbar.)
 
 ## Log progres
 
@@ -139,12 +143,15 @@ Commit:
 | 2026-10-23 | `0644bbf5`–`f1b2ffd0` | Paket 3 — soft delete | ✅ |
 | 2026-10-23 | `1a7892ee` | Paket 4 — login shadow | ✅ |
 | 2026-10-23 | `6fa58b77`–`81cf7918` | Paket 5 — pemilih bahasa | ✅ |
-| 2026-10-23 | - | Paket 6 — verifikasi | ⏳ |
+| 2026-10-23 | `b391c8fd` | Kunci locale `AuthSecurityTest` | ✅ |
+| 2026-10-23 | `e424b5f5` | Lengkapi terjemahan hapus pengguna | ✅ |
+| 2026-10-23 | - | Paket 6 — verifikasi | ✅ (visual browser pending) |
 
 ## Catatan risiko
 
-- Perubahan token `gold-accent` juga mengubah warna ikon, border, dan link aksen
-  di dark mode (bukan hanya teks nominal) — sudah disepakati.
+- Aksen dark mode menyasar teks/ikon `text-gold-accent` dan gradient nominal;
+  border/background solid tetap maroon agar teks putih pada tombol tetap terbaca.
+  Jika border/background ingin ikut merah cerah, perlu override terpisah + uji kontras.
 - Chart/JS dengan warna hardcoded tidak otomatis ikut; hanya diubah jika terlihat
   bermasalah saat verifikasi visual.
 - Email akun terhapus tetap unik; registrasi ulang dengan email yang sama akan
