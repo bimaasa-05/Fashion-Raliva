@@ -1,7 +1,7 @@
 # Perbaikan Toast & Popup Notifikasi di Dark Mode
 
 Tanggal: 2026-10-23
-Status: rencana; belum dieksekusi.
+Status: selesai dieksekusi; verifikasi otomatis lulus, cek visual browser pending.
 Lokasi final repo: `Docs/plan/perbaikan-toast-notifikasi-dark-mode.md`.
 
 ## Latar belakang
@@ -131,21 +131,30 @@ di-commit** tanpa konfirmasi. Saat ini DB berisi `nama_platform = "NexPrint"` da
 `email_support = "support@raliva.com"`, jadi ada perbedaan dengan isi migrasi.
 Perlu keputusan terpisah apakah migrasi seed ingin diselaraskan.
 
-## Commit yang direncanakan
+## Commit yang dieksekusi
 
-1. `chore: tambah dokumen rencana toast dark mode`
-2. `fix: sesuaikan toast flash dengan tema dark`
-3. `fix: sesuaikan popup notifikasi dengan tema dark`
-4. `test: tema toast dan popup notifikasi`
-5. `chore: catat progres perbaikan toast`
+1. `chore: tambah dokumen rencana toast dark mode` — `d8e69b5a`
+2. `fix: sesuaikan toast flash dengan tema dark` — `811de768`
+3. `fix: sesuaikan popup notifikasi dengan tema dark` — `c3fbd7c6`
+4. `test: tema toast dan popup notifikasi` — `5a6b8e41`
+5. `chore: catat progres perbaikan toast` — commit dokumen ini
 
 Aturan tetap: 1 file = 1 commit, `--no-verify`, tanpa push.
+
+## Hasil verifikasi
+
+- `php artisan test --filter=ToastThemeTest` — 4 passed (11 assertions).
+- `php artisan test --filter="PengaturanSistemBrandingTest|ProfileSmokeTest"` —
+  16 passed (75 assertions).
+- `php artisan view:cache` + `view:clear` — OK.
+- `git diff --check` — bersih.
+- Verifikasi visual browser dark/light belum dijalankan di sesi ini.
 
 ## Log progres
 
 | Tanggal | Commit | Langkah | Status |
 |---|---|---|---|
-| 2026-10-23 | - | Dokumen rencana | ⏳ |
-| 2026-10-23 | - | Toast flash | ⏳ |
-| 2026-10-23 | - | Popup notifikasi | ⏳ |
-| 2026-10-23 | - | Tes & verifikasi | ⏳ |
+| 2026-10-23 | `d8e69b5a` | Dokumen rencana | ✅ |
+| 2026-10-23 | `811de768` | Toast flash | ✅ |
+| 2026-10-23 | `c3fbd7c6` | Popup notifikasi | ✅ |
+| 2026-10-23 | `5a6b8e41` | Tes & verifikasi | ✅ (visual browser pending) |
