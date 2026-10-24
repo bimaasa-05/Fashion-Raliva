@@ -41,19 +41,19 @@
         <div data-reveal-group class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Pengajuan Menunggu') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-primary break-words">{{ $stats['pending'] }}</span>
+                <span class="sa-figure text-primary whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::count($stats['pending']) }}">{{ \App\Support\NumberDisplay::count($stats['pending']) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">menunggu verifikasi &amp; persetujuan</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">pending_actions</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-gold-accent/25 rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium hover:border-gold-accent transition-colors hero-glow">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Nominal Menunggu') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold break-words">Rp {{ number_format($stats['nominal_menunggu'], 0, ',', '.') }}</span>
+                <span class="sa-figure text-gradient-gold whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::rupiah($stats['nominal_menunggu']) }}">{{ \App\Support\NumberDisplay::compactRupiah($stats['nominal_menunggu']) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('diajukan Owner') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Disetujui') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">Rp {{ number_format($stats['total_semua'], 0, ',', '.') }}</span>
+                <span class="sa-figure text-on-surface whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::rupiah($stats['total_semua']) }}">{{ \App\Support\NumberDisplay::compactRupiah($stats['total_semua']) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('pencairan diproses / dibayar') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">task_alt</span>
             </div>
@@ -142,7 +142,7 @@
                                 </div>
                             </td>
                             <td class="p-6">
-                                <p class="font-title-md text-title-md text-gold-accent">Rp {{ number_format((float) $w->jumlah, 0, ',', '.') }}</p>
+                                <p class="font-title-md text-title-md text-gold-accent tabular-nums whitespace-nowrap" title="{{ \App\Support\NumberDisplay::rupiah($w->jumlah) }}">{{ \App\Support\NumberDisplay::compactRupiah($w->jumlah) }}</p>
                                 <p class="text-on-surface-variant">{{ $w->diajukan_pada?->translatedFormat('d M Y') }}</p>
                             </td>
                             <td class="p-6">
@@ -233,7 +233,7 @@
                     <dl class="space-y-2 font-body-md text-sm mb-4">
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">{{ __('Jumlah') }}</dt>
-                            <dd class="font-title-md text-gold-accent text-right">Rp {{ number_format((float) $w->jumlah, 0, ',', '.') }}</dd>
+                            <dd class="font-title-md text-gold-accent text-right tabular-nums whitespace-nowrap" title="{{ \App\Support\NumberDisplay::rupiah($w->jumlah) }}">{{ \App\Support\NumberDisplay::compactRupiah($w->jumlah) }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">{{ __('Diajukan') }}</dt>
