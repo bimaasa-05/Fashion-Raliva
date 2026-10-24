@@ -37,8 +37,8 @@
                     </div>
                     <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">{{ __('Komisi :brand', ['brand' => brand()]) }}</span>
                     <div class="flex items-baseline gap-2">
-                        <span class="font-display-lg text-5xl md:text-6xl tracking-tight text-gradient-gold">{{ number_format($komisi, 0, ',', '.') }}</span>
-                        <span class="font-display-lg text-3xl md:text-4xl text-gold-accent/70 self-end mb-1">%</span>
+                        <span class="sa-num font-display-lg text-5xl md:text-6xl tracking-tight text-gradient-gold">{{ number_format($komisi, 0, ',', '.') }}</span>
+                        <span class="sa-num font-display-lg text-3xl md:text-4xl text-gold-accent/70 self-end mb-1">%</span>
                     </div>
                     <p class="font-body-md text-sm text-on-surface-variant">{{ __('Potongan dari setiap transaksi toko yang menjadi pendapatan bersih :brand. Dikelola di halaman Komisi Global.', ['brand' => brand()]) }}</p>
                     <a href="{{ route('superadmin.komisi-global') }}" class="inline-flex items-center justify-center gap-2 px-6 py-3 bg-deep-onyx text-on-primary font-label-sm text-[11px] uppercase tracking-widest rounded btn-premium self-start mt-1">
@@ -59,8 +59,8 @@
                     </div>
                     <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest">{{ __('Pajak Penjualan (PPN)') }}</span>
                     <div class="flex items-baseline gap-2">
-                        <span class="font-display-lg text-5xl md:text-6xl tracking-tight text-on-surface">{{ number_format($pajak, 0, ',', '.') }}</span>
-                        <span class="font-display-lg text-3xl md:text-4xl text-secondary self-end mb-1">%</span>
+                        <span class="sa-num font-display-lg text-5xl md:text-6xl tracking-tight text-on-surface">{{ number_format($pajak, 0, ',', '.') }}</span>
+                        <span class="sa-num font-display-lg text-3xl md:text-4xl text-secondary self-end mb-1">%</span>
                     </div>
                     <p class="font-body-md text-sm text-on-surface-variant">{{ __('PPN sesuai tarif yang berlaku, dipungut atas nama pemerintah lalu disetor — tidak masuk kas :brand maupun toko.', ['brand' => brand()]) }}</p>
                     <button type="button" data-modal-open="modal-edit-biaya" class="inline-flex items-center justify-center gap-2 px-6 py-3 border border-secondary text-secondary font-label-sm text-[11px] uppercase tracking-widest rounded hover:bg-secondary/10 transition-colors self-start mt-1">
@@ -76,13 +76,13 @@
         <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium relative overflow-hidden">
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-secondary/10 fill pointer-events-none select-none" aria-hidden="true">account_balance</span>
             <p class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">{{ __('Pajak Terkumpul') }}</p>
-            <p class="font-headline-lg text-headline-lg md:text-display-lg text-secondary mt-2">Rp {{ number_format($pajakTerkumpul, 0, ',', '.') }}</p>
+            <p class="sa-num font-headline-lg text-headline-lg md:text-display-lg text-secondary mt-2">Rp {{ number_format($pajakTerkumpul, 0, ',', '.') }}</p>
             <p class="font-body-md text-sm text-on-surface-variant mt-1">{{ __('Total PPN tersimpan dari seluruh transaksi (dibayar/disetor ke negara).') }}</p>
         </div>
         <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-6 card-premium relative overflow-hidden">
             <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/10 fill pointer-events-none select-none" aria-hidden="true">receipt_long</span>
             <p class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">{{ __('Biaya Layanan Terkumpul') }}</p>
-            <p class="font-headline-lg text-headline-lg md:text-display-lg text-on-surface mt-2">Rp {{ number_format($biayaLayananTerkumpul, 0, ',', '.') }}</p>
+            <p class="sa-num font-headline-lg text-headline-lg md:text-display-lg text-on-surface mt-2">Rp {{ number_format($biayaLayananTerkumpul, 0, ',', '.') }}</p>
             <p class="font-body-md text-sm text-on-surface-variant mt-1">Total biaya layanan dari seluruh transaksi (default {{ $biayaLayanan > 0 ? 'Rp '.number_format($biayaLayanan, 0, ',', '.') : 'tidak berlaku' }} per transaksi).</p>
         </div>
     </section>
@@ -101,8 +101,8 @@
                 </p>
                 <ul class="divide-y divide-muted-border">
                     <li class="flex items-center justify-between py-3"><span class="font-body-md text-sm text-on-surface">{{ __('Subtotal barang') }}</span><span class="font-title-md text-title-md text-on-surface">Rp 100.000</span></li>
-                    <li class="flex items-center justify-between py-3"><span class="font-body-md text-sm text-secondary inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">account_balance</span>PPN {{ $pajak }}% <em class="not-italic text-on-surface-variant text-xs">{{ __('(pajak)') }}</em></span><span class="font-title-md text-title-md text-secondary">+ Rp {{ number_format(100000 * $pajak / 100, 0, ',', '.') }}</span></li>
-                    <li class="flex items-center justify-between pt-3 border-t border-muted-border"><span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">{{ __('Total Dibayar Pelanggan') }}</span><span class="font-headline-lg-mobile text-headline-lg-mobile text-deep-onyx">Rp {{ number_format(100000 + (100000 * $pajak / 100), 0, ',', '.') }}</span></li>
+                    <li class="flex items-center justify-between py-3"><span class="font-body-md text-sm text-secondary inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">account_balance</span>PPN {{ $pajak }}% <em class="not-italic text-on-surface-variant text-xs">{{ __('(pajak)') }}</em></span><span class="sa-num font-title-md text-title-md text-secondary">+ Rp {{ number_format(100000 * $pajak / 100, 0, ',', '.') }}</span></li>
+                    <li class="flex items-center justify-between pt-3 border-t border-muted-border"><span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">{{ __('Total Dibayar Pelanggan') }}</span><span class="sa-num font-headline-lg-mobile text-headline-lg-mobile text-deep-onyx">Rp {{ number_format(100000 + (100000 * $pajak / 100), 0, ',', '.') }}</span></li>
                 </ul>
             </div>
             <!-- Jalur Platform -->
@@ -113,8 +113,8 @@
                 </p>
                 <ul class="divide-y divide-muted-border relative">
                     <li class="flex items-center justify-between py-3"><span class="font-body-md text-sm text-on-surface">{{ __('Nilai transaksi (subtotal)') }}</span><span class="font-title-md text-title-md text-on-surface">Rp 100.000</span></li>
-                    <li class="flex items-center justify-between py-3"><span class="font-body-md text-sm text-gold-accent inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">percent</span>Komisi {{ brand() }} {{ $komisi }}% <em class="not-italic text-on-surface-variant text-xs">{{ __('(pendapatan platform)') }}</em></span><span class="font-title-md text-title-md text-gold-accent">Rp {{ number_format(100000 * $komisi / 100, 0, ',', '.') }}</span></li>
-                    <li class="flex items-center justify-between py-3"><span class="font-body-md text-sm text-on-surface-variant">{{ __('Penerima bersih (toko)') }}</span><span class="font-title-md text-title-md text-on-surface">Rp {{ number_format(100000 - (100000 * $komisi / 100), 0, ',', '.') }}</span></li>
+                    <li class="flex items-center justify-between py-3"><span class="font-body-md text-sm text-gold-accent inline-flex items-center gap-1.5"><span class="material-symbols-outlined text-[16px]">percent</span>Komisi {{ brand() }} {{ $komisi }}% <em class="not-italic text-on-surface-variant text-xs">{{ __('(pendapatan platform)') }}</em></span><span class="sa-num font-title-md text-title-md text-gold-accent">Rp {{ number_format(100000 * $komisi / 100, 0, ',', '.') }}</span></li>
+                    <li class="flex items-center justify-between py-3"><span class="font-body-md text-sm text-on-surface-variant">{{ __('Penerima bersih (toko)') }}</span><span class="sa-num font-title-md text-title-md text-on-surface">Rp {{ number_format(100000 - (100000 * $komisi / 100), 0, ',', '.') }}</span></li>
                     <li class="flex items-center justify-between pt-3 border-t border-muted-border"><span class="font-label-sm text-label-sm uppercase tracking-widest text-on-surface-variant">{{ __('Catatan') }}</span><span class="text-right text-xs text-on-surface-variant max-w-[55%]">{{ __('Pajak disetor ke negara; komisi masuk kas :brand.', ['brand' => brand()]) }}</span></li>
                 </ul>
             </div>
@@ -194,7 +194,7 @@
             </div>
             <div class="text-right">
                 <span class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-1">{{ __('Pajak Terkumpul') }}</span>
-                <span class="font-headline-lg text-headline-lg text-secondary" id="fee-preview-amount">Rp {{ number_format(100000 * $pajak / 100, 0, ',', '.') }}</span>
+                <span class="sa-num font-headline-lg text-headline-lg text-secondary" id="fee-preview-amount">Rp {{ number_format(100000 * $pajak / 100, 0, ',', '.') }}</span>
             </div>
         </div>
         @slot('footer')
