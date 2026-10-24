@@ -1,12 +1,11 @@
 @php
     $logo = brand_logo_url();
     $navItems = [
-        ['href' => route('landing').'#beranda', 'label' => __('landing.nav.home'), 'current' => request()->routeIs('landing')],
-        ['href' => route('landing').'#tentang', 'label' => __('landing.nav.about')],
         ['href' => route('landing').'#fitur', 'label' => __('landing.nav.features')],
-        ['href' => route('landing').'#buka-toko', 'label' => __('landing.nav.open_store')],
+        ['href' => route('landing').'#cara-kerja', 'label' => __('landing.nav.how_it_works')],
+        ['href' => route('landing').'#untuk-siapa', 'label' => __('landing.nav.for_who')],
+        ['href' => route('landing').'#daftar', 'label' => __('landing.nav.register')],
         ['href' => route('landing').'#faq', 'label' => __('landing.nav.faq')],
-        ['href' => route('landing').'#kontak', 'label' => __('landing.nav.contact')],
     ];
 @endphp
 
@@ -24,7 +23,7 @@
 
             <nav class="hidden items-center gap-6 xl:flex" aria-label="{{ __('landing.nav.menu') }}">
                 @foreach ($navItems as $item)
-                    <a class="nav-link" href="{{ $item['href'] }}" @if ($item['current'] ?? false) aria-current="page" @endif>{{ $item['label'] }}</a>
+                    <a class="nav-link" href="{{ $item['href'] }}">{{ $item['label'] }}</a>
                 @endforeach
             </nav>
 
