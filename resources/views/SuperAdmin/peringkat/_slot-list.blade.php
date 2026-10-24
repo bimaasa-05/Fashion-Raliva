@@ -62,7 +62,7 @@
                         </div>
                     </td>
                     <td class="p-4 text-on-surface-variant">{{ $slot->store->nama_toko ?? '-' }}</td>
-                    <td class="p-4 text-right font-title-md text-sm {{ $rank === 1 ? 'text-gold-accent' : 'text-on-surface' }} font-bold">Rp {{ number_format((float)$slot->nominal_bid, 0, ',', '.') }}</td>
+                    <td class="sa-num p-4 text-right font-title-md text-sm {{ $rank === 1 ? 'text-gold-accent' : 'text-on-surface' }} font-bold">Rp {{ number_format((float)$slot->nominal_bid, 0, ',', '.') }}</td>
                     <td class="p-4 text-center text-on-surface-variant whitespace-nowrap">{{ $slot->tanggal_mulai ? \Carbon\Carbon::parse($slot->tanggal_mulai)->locale('id')->translatedFormat('d M') : '-' }} – {{ $slot->tanggal_selesai ? \Carbon\Carbon::parse($slot->tanggal_selesai)->locale('id')->translatedFormat('d M Y') : __('Menunggu') }}</td>
                     <td class="p-4 text-center"><span class="inline-flex items-center gap-1 px-2 py-1 rounded-full {{ $st[1] }} text-[10px] font-bold uppercase border">{{ $st[0] }}</span>@if($slot->status === 'ditunda')<div class="mt-1"><span class="inline-flex px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ $slot->payment_status === 'terverifikasi' ? 'bg-success/10 text-success border-success/20' : ($slot->payment_status === 'ditolak' ? 'bg-error/10 text-error border-error/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/20') }}">{{ \App\Support\StatusStyle::label($slot->payment_status ?? 'menunggu_verifikasi') }}</span></div>@if($slot->bankAccount)<div class="text-[10px] text-on-surface-variant mt-1">{{ $slot->bankAccount->bank->nama_bank ?? '' }} • {{ $slot->bankAccount->nomor_rekening }}</div>@endif @if($slot->file_bukti)<div class="mt-1"><a href="{{ asset('storage/' . $slot->file_bukti) }}" target="_blank" class="text-[10px] text-gold-accent hover:underline">{{ __('Lihat Bukti') }}</a></div>@endif @endif</td>
                     @if($showAksi)
@@ -134,7 +134,7 @@
             <dl class="space-y-2 font-body-md text-sm mb-4">
                 <div class="flex justify-between gap-3">
                     <dt class="text-on-surface-variant">{{ __('Bayaran (Bid)') }}</dt>
-                    <dd class="font-bold {{ $rank === 1 ? 'text-gold-accent' : 'text-on-surface' }} text-right">Rp {{ number_format((float)$slot->nominal_bid, 0, ',', '.') }}</dd>
+                    <dd class="sa-num font-bold {{ $rank === 1 ? 'text-gold-accent' : 'text-on-surface' }} text-right">Rp {{ number_format((float)$slot->nominal_bid, 0, ',', '.') }}</dd>
                 </div>
                 <div class="flex justify-between gap-3">
                     <dt class="text-on-surface-variant">{{ __('Periode') }}</dt>
