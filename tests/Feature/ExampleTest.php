@@ -15,7 +15,7 @@ class ExampleTest extends TestCase
         $response = $this->get('/');
 
         $response->assertOk()
-            ->assertSee('id="buka-toko"', false)
+            ->assertSee('id="daftar"', false)
             ->assertSee(route('customer.home'), false);
     }
 }
