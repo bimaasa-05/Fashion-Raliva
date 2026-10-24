@@ -249,7 +249,7 @@
                     <div class="w-11 h-11 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">payments</span></div>
                     <div>
                         <p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">{{ __('Total Nominal') }}</p>
-                        <p class="font-title-md text-title-md text-on-surface">Rp {{ number_format((float) $kategoriPengeluaran->sum('total_nominal'), 0, ',', '.') }}</p>
+                        <p class="sa-num font-title-md text-title-md text-on-surface">Rp {{ number_format((float) $kategoriPengeluaran->sum('total_nominal'), 0, ',', '.') }}</p>
                     </div>
                 </div>
             </div>
@@ -271,7 +271,7 @@
                             <td class="p-4 text-center text-on-surface-variant font-mono">{{ $loop->iteration }}</td>
                             <td class="p-4 text-on-surface font-semibold">{{ $k->kategori }}</td>
                             <td class="p-4 text-center"><span class="inline-flex items-center justify-center min-w-[40px] px-2.5 py-1 rounded-full bg-secondary-container/20 text-secondary text-xs font-bold">{{ $k->total }}</span></td>
-                            <td class="p-4 text-right text-on-surface font-bold">Rp {{ number_format((float) $k->total_nominal, 0, ',', '.') }}</td>
+                            <td class="sa-num p-4 text-right text-on-surface font-bold">Rp {{ number_format((float) $k->total_nominal, 0, ',', '.') }}</td>
                         </tr>
                     @empty
                         <tr>
