@@ -10,10 +10,10 @@
 <div class="relative" data-notification-container>
     <button type="button" data-notification-toggle class="relative text-on-surface hover:text-secondary transition-colors" aria-label="{{ __('Notifikasi') }}">
         <span class="material-symbols-outlined">notifications</span>
-        <span data-notif-badge class="absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 items-center justify-center bg-error text-white text-[10px] font-bold leading-none rounded-full {{ $unreadCount > 0 ? 'flex' : 'hidden' }}">{{ $unreadLabel }}</span>
+        <span data-notif-badge class="sa-notif-badge absolute -top-1.5 -right-1.5 min-w-[18px] h-[18px] px-1 items-center justify-center bg-error text-white text-[10px] font-bold leading-none rounded-full {{ $unreadCount > 0 ? 'flex' : 'hidden' }}">{{ $unreadLabel }}</span>
     </button>
     <div data-notification-menu class="hidden absolute right-0 top-full mt-2 w-80 max-w-[calc(100vw-2rem)] bg-surface-container-lowest border border-muted-border rounded-lg shadow-xl z-[60] overflow-hidden">
-        <div class="flex items-center justify-between px-4 py-3 border-b border-muted-border">
+        <div class="sa-notif-panel-head flex items-center justify-between px-4 py-3 border-b border-muted-border">
             <p class="font-label-sm text-sm text-on-surface uppercase tracking-wider">{{ __('Notifikasi') }}</p>
             <button type="button" data-mark-all-read class="font-label-sm text-[10px] text-gold-accent uppercase hover:underline">{{ __('Tandai Dibaca') }}</button>
         </div>
@@ -133,7 +133,7 @@
                     '<p class="font-label-sm text-[10px] text-on-surface-variant uppercase mt-1">' + esc(n.waktu || '') + '</p>' +
                     '</div>';
                 if (unread) {
-                    html += '<span class="w-2 h-2 bg-error rounded-full mt-1.5 shrink-0" aria-hidden="true"></span>';
+                    html += '<span class="sa-notif-dot w-2 h-2 bg-error rounded-full mt-1.5 shrink-0" aria-hidden="true"></span>';
                 }
                 li.innerHTML = html;
                 bindItem(li);
