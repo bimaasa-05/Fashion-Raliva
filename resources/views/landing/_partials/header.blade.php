@@ -1,10 +1,11 @@
 @php
     $logo = brand_logo_url();
     $navItems = [
+        ['href' => route('landing').'#beranda', 'label' => __('landing.nav.home')],
+        ['href' => route('landing').'#tentang', 'label' => __('landing.nav.about')],
         ['href' => route('landing').'#fitur', 'label' => __('landing.nav.features')],
         ['href' => route('landing').'#cara-kerja', 'label' => __('landing.nav.how_it_works')],
         ['href' => route('landing').'#untuk-siapa', 'label' => __('landing.nav.for_who')],
-        ['href' => route('landing').'#daftar', 'label' => __('landing.nav.register')],
         ['href' => route('landing').'#faq', 'label' => __('landing.nav.faq')],
     ];
 @endphp
@@ -28,10 +29,6 @@
             </nav>
 
             <div class="hidden items-center gap-3 xl:flex">
-                <a href="{{ route('customer.home') }}" class="inline-flex items-center gap-2 rounded-full border border-gold-accent/30 bg-gold-accent/10 px-4 py-2 text-[10px] font-extrabold uppercase tracking-[0.12em] text-gold-accent transition-colors hover:bg-gold-accent hover:text-white">
-                    <span class="material-symbols-outlined text-[16px]">shopping_bag</span>
-                    {{ __('landing.nav.shop') }}
-                </a>
                 @include('partials.locale-switcher')
                 <button type="button" data-theme-toggle aria-pressed="false" aria-label="{{ __('landing.nav.switch_theme') }}" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-muted-border bg-surface-container-lowest text-on-surface-variant transition-colors hover:border-gold-accent/40 hover:text-gold-accent">
                     <span class="material-symbols-outlined theme-icon-light text-[18px]">dark_mode</span>
@@ -59,14 +56,6 @@
 
     <div id="mobile-menu" class="mobile-menu xl:hidden">
         <div class="mx-auto max-w-8xl space-y-4 px-5 py-5 sm:px-8">
-            <a href="{{ route('customer.home') }}" class="flex items-center justify-between gap-3 rounded-xl bg-gold-accent px-4 py-3 text-sm font-extrabold text-white">
-                <span class="inline-flex items-center gap-2">
-                    <span class="material-symbols-outlined text-[20px]">shopping_bag</span>
-                    {{ __('landing.nav.shop') }}
-                </span>
-                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-            </a>
-
             <nav class="grid gap-1" aria-label="{{ __('landing.nav.menu') }}">
                 @foreach ($navItems as $item)
                     <a class="rounded-xl px-3 py-3 text-sm font-bold text-on-surface transition-colors hover:bg-surface-container-low" href="{{ $item['href'] }}">{{ $item['label'] }}</a>
