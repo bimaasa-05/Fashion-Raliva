@@ -51,7 +51,7 @@
                         <p class="font-title-md text-title-md text-on-surface leading-snug">{{ $pd['items'][0]['nama'] }}</p>
                         <p class="text-on-surface-variant text-xs mt-0.5">{{ $pd['items'][0]['sub_meta'] ?? $pd['items'][0]['meta'] }}</p>
                     </div>
-                    <span class="font-headline-lg-mobile text-headline-lg-mobile text-black leading-none">{{ $pd['items'][0]['display'] }}</span>
+                    <span class="sa-figure text-black leading-none whitespace-nowrap text-[24px] sm:text-[26px]" title="{{ $pd['items'][0]['display_full'] ?? $pd['items'][0]['display'] }}">{{ $pd['items'][0]['display'] }}</span>
                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/15 text-amber-500 text-[10px] font-bold uppercase border border-amber-400/40"><span class="material-symbols-outlined text-[12px]">check_circle</span>{{ __('Posisi Teratas') }}</span>
                 </div>
                 @endif
@@ -62,7 +62,7 @@
                         <p class="font-title-md text-sm text-on-surface leading-snug">{{ $pd['items'][1]['nama'] }}</p>
                         <p class="text-on-surface-variant text-xs mt-0.5">{{ $pd['items'][1]['sub_meta'] ?? $pd['items'][1]['meta'] }}</p>
                     </div>
-                    <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-none">{{ $pd['items'][1]['display'] }}</span>
+                    <span class="sa-figure text-on-surface leading-none whitespace-nowrap text-[24px] sm:text-[26px]" title="{{ $pd['items'][1]['display_full'] ?? $pd['items'][1]['display'] }}">{{ $pd['items'][1]['display'] }}</span>
                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-400/25 text-on-surface-variant text-[10px] font-bold uppercase border border-slate-400/60">{{ __('Posisi 2') }}</span>
                 </div>
                 @endif
@@ -73,7 +73,7 @@
                         <p class="font-title-md text-sm text-on-surface leading-snug">{{ $pd['items'][2]['nama'] }}</p>
                         <p class="text-on-surface-variant text-xs mt-0.5">{{ $pd['items'][2]['sub_meta'] ?? $pd['items'][2]['meta'] }}</p>
                     </div>
-                    <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-none">{{ $pd['items'][2]['display'] }}</span>
+                    <span class="sa-figure text-on-surface leading-none whitespace-nowrap text-[24px] sm:text-[26px]" title="{{ $pd['items'][2]['display_full'] ?? $pd['items'][2]['display'] }}">{{ $pd['items'][2]['display'] }}</span>
                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">{{ __('Posisi 3') }}</span>
                 </div>
                 @endif
