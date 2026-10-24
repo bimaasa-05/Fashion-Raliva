@@ -45,11 +45,25 @@
             --color-gold-accent: #8B1E3F;
             --sa-number-accent: #9B2D42;
             --sa-number-on-gold: #4A0E1D;
+            --sa-sidebar-text: #3A2E31;
+            --sa-sidebar-muted: #6F5F64;
+            --sa-sidebar-accent: #8B1E3F;
+            --sa-sidebar-active-bg: #8B1E3F;
+            --sa-sidebar-active-border: #C03A5A;
+            --sa-notif-accent: #B23A55;
+            --sa-notif-on-accent: #FFFFFF;
         }
         .dark {
             --c-secondary: 139 30 63;
             --sa-number-accent: #E58AA0;
             --sa-number-on-gold: #4A0E1D;
+            --sa-sidebar-text: #F5F2F2;
+            --sa-sidebar-muted: #D8D2D2;
+            --sa-sidebar-accent: #E58AA0;
+            --sa-sidebar-active-bg: #9B2D42;
+            --sa-sidebar-active-border: #F0A6B8;
+            --sa-notif-accent: #E58AA0;
+            --sa-notif-on-accent: #4A0E1D;
         }
         /* SuperAdmin premium accents → burgundy (scoped) */
         .sa-figure {
@@ -59,16 +73,63 @@
             letter-spacing: -0.03em;
             line-height: 1.05;
         }
-        /* Angka & nominal utama memakai aksen pilihan; aksen UI lain tetap burgundy lama. */
-        main .sa-figure { color: var(--sa-number-accent) !important; }
-        main .sa-figure.text-black { color: var(--sa-number-on-gold) !important; }
-        main .sa-figure.text-gradient-gold {
+        /* Angka & nominal utama memakai aksen pilihan; aksen UI lain tetap burgundy lama.
+           .sa-num dipakai untuk angka yang belum punya tabular-nums; selector tabular-nums
+           menangkap angka netral lain tanpa mengubah nominal plus/minus semantik. */
+        main .sa-figure,
+        main .sa-figure.text-gold-accent,
+        main .sa-num,
+        main .sa-num.text-gold-accent,
+        main .tabular-nums:not(.text-white):not(.text-on-primary):not(.text-black):not(.text-success):not(.text-error):not(.text-secondary):not(.stat-chip-value) {
+            color: var(--sa-number-accent) !important;
+        }
+        main .sa-figure.text-black,
+        main .sa-num.text-black { color: var(--sa-number-on-gold) !important; }
+        main .sa-figure.text-gradient-gold,
+        main .sa-num.text-gradient-gold,
+        main .tabular-nums.text-gradient-gold {
             background: none !important;
             -webkit-background-clip: border-box !important;
             background-clip: border-box !important;
             -webkit-text-fill-color: var(--sa-number-accent) !important;
             color: var(--sa-number-accent) !important;
         }
+        /* Nominal plus/minus tetap memakai makna semantik (positif/negatif). */
+        main .sa-num.text-success { color: rgb(var(--c-success)) !important; }
+        main .sa-num.text-error { color: rgb(var(--c-error)) !important; }
+        /* ===== Sidebar Super Admin — kontras menu & state aktif burgundy ===== */
+        #sidebar nav a:not(.sa-sidebar-active) { color: var(--sa-sidebar-text) !important; }
+        #sidebar nav a:not(.sa-sidebar-active) .material-symbols-outlined { color: var(--sa-sidebar-muted) !important; }
+        #sidebar nav a:not(.sa-sidebar-active):hover {
+            color: var(--sa-sidebar-accent) !important;
+            background-color: rgba(139, 30, 63, 0.08) !important;
+        }
+        #sidebar nav a:not(.sa-sidebar-active):hover .material-symbols-outlined { color: var(--sa-sidebar-accent) !important; }
+        .dark #sidebar nav a:not(.sa-sidebar-active):hover { background-color: rgba(229, 138, 160, 0.12) !important; }
+        #sidebar [data-sidebar-group-button],
+        #sidebar [data-group-label] { color: var(--sa-sidebar-accent) !important; opacity: 1 !important; }
+        #sidebar .sidebar-collapse-btn,
+        #sidebar .theme-toggle [data-theme-icon] { color: var(--sa-sidebar-accent) !important; }
+        #sidebar .sa-sidebar-active {
+            background-color: var(--sa-sidebar-active-bg) !important;
+            color: #FFFFFF !important;
+            border-color: var(--sa-sidebar-active-border) !important;
+            box-shadow: 0 8px 20px -12px rgba(139, 30, 63, 0.65);
+        }
+        #sidebar .sa-sidebar-active .material-symbols-outlined { color: #FFFFFF !important; }
+        #sidebar .sa-sidebar-active .sa-notif-badge {
+            background-color: #FFFFFF !important;
+            color: var(--sa-sidebar-active-bg) !important;
+        }
+        /* ===== Notifikasi Super Admin — badge cerah, tetap terbaca di kedua tema ===== */
+        .sa-notif-badge {
+            background-color: var(--sa-notif-accent) !important;
+            color: var(--sa-notif-on-accent) !important;
+            box-shadow: 0 0 0 2px rgb(var(--c-sc-lowest) / 0.85);
+        }
+        .sa-notif-dot { background-color: var(--sa-notif-accent) !important; }
+        .sa-notif-panel-head { background: linear-gradient(90deg, rgba(178, 58, 85, 0.12), transparent) !important; }
+        .dark .sa-notif-panel-head { background: linear-gradient(90deg, rgba(229, 138, 160, 0.14), transparent) !important; }
         .card-premium:hover { border-color: rgb(139 30 63 / 0.45) !important; }
         .premium-heading::before { background: #8B1E3F !important; }
         .premium-table tbody tr td:first-child::before { background: #8B1E3F !important; }
@@ -241,13 +302,22 @@
         html[data-motion="minimal"] .gauge-progress { transition: none !important; }
         /* Transisi kecil tetap jalan tapi super cepat (hover tetap terasa, popup tidak dipotong). */
         html[data-motion="minimal"] * { transition-duration: 0.05s !important; transition-delay: 0s !important; }
+        /* Drawer sidebar & grup menu tetap halus di mode minimal — ini navigasi, bukan dekorasi. */
+        html[data-motion="minimal"] #sidebar,
+        html[data-motion="minimal"] #sidebar *,
+        html[data-motion="minimal"] #sidebar-overlay {
+            transition-duration: 300ms !important;
+            transition-delay: 0s !important;
+        }
+        #sidebar-toggle .material-symbols-outlined { transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
+        #sidebar-toggle[aria-expanded="true"] .material-symbols-outlined { transform: rotate(90deg); }
     </style>
 </head>
 <body class="text-on-background font-body-md antialiased min-h-screen flex flex-col">
     <div id="app-shell" class="flex-1 min-w-0 flex flex-col md:flex-row">
     <!-- Mobile Nav (TopAppBar) -->
     <header class="md:hidden flex justify-between items-center w-full px-container-margin h-16 bg-surface border-b border-outline-variant sticky top-0 z-40">
-        <button id="sidebar-toggle" class="text-on-surface hover:opacity-80 transition-opacity">
+        <button id="sidebar-toggle" type="button" aria-expanded="false" aria-controls="sidebar" aria-label="{{ __('Buka menu') }}" class="text-on-surface hover:opacity-80 transition-opacity">
             <span class="material-symbols-outlined">menu</span>
         </button>
         <span class="font-display-lg text-headline-md tracking-widest text-on-surface uppercase">@include('partials.brand-content', ['logoClass' => 'h-7'])</span>
