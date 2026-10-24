@@ -143,7 +143,7 @@
                         <td class="p-4 text-on-surface">{{ $produk->store->nama_toko ?? '-' }}</td>
                         <td class="p-4 text-on-surface-variant">{{ $produk->category->nama_kategori ?? '-' }}</td>
                         <td class="p-4"><span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase border border-outline-variant">{{ ucfirst($produk->tipe_produk) }}</span></td>
-                        <td class="p-4 text-right font-bold text-gold-accent">Rp {{ number_format((float) $produk->harga_dasar, 0, ',', '.') }}</td>
+                        <td class="sa-num p-4 text-right font-bold text-gold-accent">Rp {{ number_format((float) $produk->harga_dasar, 0, ',', '.') }}</td>
                         <td class="p-4 text-center"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $statusLabel[1] }} text-[10px] font-bold uppercase border">{{ $statusLabel[0] }}</span></td>
                     </tr>
                 @empty
@@ -223,7 +223,7 @@
                     </div>
                     <div class="flex justify-between gap-3">
                         <dt class="text-on-surface-variant">{{ __('Harga') }}</dt>
-                        <dd class="font-bold text-gold-accent text-right">Rp {{ number_format((float) $produk->harga_dasar, 0, ',', '.') }}</dd>
+                        <dd class="sa-num font-bold text-gold-accent text-right">Rp {{ number_format((float) $produk->harga_dasar, 0, ',', '.') }}</dd>
                     </div>
                 </dl>
             </article>
