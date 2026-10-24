@@ -102,7 +102,12 @@
         }
 
         html {
+            color-scheme: light;
             scroll-padding-top: 6rem;
+        }
+
+        html.theme-dark {
+            color-scheme: dark;
         }
 
         body {
@@ -112,6 +117,16 @@
             font-family: 'Manrope', sans-serif;
             -webkit-font-smoothing: antialiased;
             text-rendering: optimizeLegibility;
+        }
+
+        /* Transisi tema halus: warna/permukaan saja, tanpa menggeser layout. */
+        html.theme-transition,
+        html.theme-transition body,
+        html.theme-transition body * {
+            transition-property: background-color, border-color, color, fill, stroke, box-shadow !important;
+            transition-duration: 320ms !important;
+            transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+            transition-delay: 0s !important;
         }
 
         ::selection {
@@ -208,13 +223,28 @@
         .mobile-menu {
             max-height: 0;
             overflow: hidden;
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transform: translateY(-8px);
             border-top: 1px solid transparent;
-            transition: max-height 0.3s ease, border-color 0.3s ease;
+            will-change: max-height, opacity, transform;
+            transition:
+                max-height 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.24s ease,
+                transform 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                border-color 0.3s ease,
+                visibility 0s linear 0.38s;
         }
 
         .mobile-menu.is-open {
             max-height: 44rem;
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+            transform: translateY(0);
             border-top-color: rgb(var(--c-border));
+            transition-delay: 0s;
         }
 
         .btn-primary,
@@ -530,8 +560,34 @@
             transition: transform 0.2s ease;
         }
 
-        .faq-item[open] summary .faq-plus {
+        .faq-item[open] summary .faq-plus,
+        .faq-item.is-open summary .faq-plus {
             transform: rotate(45deg);
+        }
+
+        .faq-answer {
+            display: grid;
+            grid-template-rows: 0fr;
+            opacity: 0;
+            transition:
+                grid-template-rows 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.24s ease;
+        }
+
+        .faq-item.is-open .faq-answer {
+            grid-template-rows: 1fr;
+            opacity: 1;
+        }
+
+        /* Fallback tanpa JS: tetap bisa dibuka secara native. */
+        html:not(.faq-enhanced) .faq-item[open] .faq-answer {
+            grid-template-rows: 1fr;
+            opacity: 1;
+        }
+
+        .faq-answer-inner {
+            min-height: 0;
+            overflow: hidden;
         }
 
         .faq-item p {
@@ -589,6 +645,12 @@
                 opacity: 1;
                 transform: none;
             }
+
+            html.theme-transition,
+            html.theme-transition body,
+            html.theme-transition body * {
+                transition-duration: 0.01ms !important;
+            }
         }
     </style>
 
@@ -617,40 +679,86 @@
                 });
             }
 
+            let themeTimer;
+            function applyTheme(isDark) {
+                root.classList.add('theme-transition');
+                root.style.colorScheme = isDark ? 'dark' : 'light';
+                void root.offsetWidth;
+                root.classList.toggle('theme-dark', isDark);
+                localStorage.setItem('raliva-theme', isDark ? 'dark' : 'light');
+                syncThemeButtons();
+                clearTimeout(themeTimer);
+                themeTimer = setTimeout(function () {
+                    root.classList.remove('theme-transition');
+                }, 360);
+            }
+
             themeButtons.forEach(function (button) {
                 button.addEventListener('click', function () {
-                    const isDark = root.classList.toggle('theme-dark');
-                    localStorage.setItem('raliva-theme', isDark ? 'dark' : 'light');
-                    syncThemeButtons();
+                    applyTheme(!root.classList.contains('theme-dark'));
                 });
             });
 
             syncThemeButtons();
+            root.style.colorScheme = root.classList.contains('theme-dark') ? 'dark' : 'light';
 
             const menu = document.getElementById('mobile-menu');
             const menuToggle = document.querySelector('[data-mobile-menu-toggle]');
 
             if (menu && menuToggle) {
+                function setMobileMenu(open) {
+                    menu.classList.toggle('is-open', open);
+                    menuToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                }
+
                 menuToggle.addEventListener('click', function () {
-                    const isOpen = menu.classList.toggle('is-open');
-                    menuToggle.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+                    setMobileMenu(!menu.classList.contains('is-open'));
                 });
 
                 menu.querySelectorAll('a').forEach(function (link) {
                     link.addEventListener('click', function () {
-                        menu.classList.remove('is-open');
-                        menuToggle.setAttribute('aria-expanded', 'false');
+                        setMobileMenu(false);
                     });
                 });
 
                 document.addEventListener('keydown', function (event) {
                     if (event.key === 'Escape' && menu.classList.contains('is-open')) {
-                        menu.classList.remove('is-open');
-                        menuToggle.setAttribute('aria-expanded', 'false');
+                        setMobileMenu(false);
                         menuToggle.focus();
                     }
                 });
             }
+
+            /* FAQ: animasi buka/tutup dengan grid-template-rows + opacity. */
+            root.classList.add('faq-enhanced');
+            document.querySelectorAll('.faq-item').forEach(function (item) {
+                const summary = item.querySelector('summary');
+                const answer = item.querySelector('.faq-answer');
+                if (!summary || !answer) return;
+
+                summary.setAttribute('aria-expanded', item.hasAttribute('open') ? 'true' : 'false');
+                if (item.hasAttribute('open')) item.classList.add('is-open');
+
+                summary.addEventListener('click', function (event) {
+                    event.preventDefault();
+                    clearTimeout(item._faqTimer);
+                    const isOpen = item.classList.contains('is-open');
+
+                    if (isOpen) {
+                        item.classList.remove('is-open');
+                        summary.setAttribute('aria-expanded', 'false');
+                        item._faqTimer = setTimeout(function () {
+                            if (!item.classList.contains('is-open')) item.removeAttribute('open');
+                        }, 380);
+                    } else {
+                        item.setAttribute('open', '');
+                        summary.setAttribute('aria-expanded', 'true');
+                        requestAnimationFrame(function () {
+                            if (item.hasAttribute('open')) item.classList.add('is-open');
+                        });
+                    }
+                });
+            });
 
             const header = document.getElementById('site-header');
             function syncHeader() {
