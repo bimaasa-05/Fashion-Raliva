@@ -6,12 +6,11 @@
     }
     $instagramLabel = '@'.ltrim($instagramLabel, '@');
     $platformLinks = [
-        ['href' => route('landing').'#beranda', 'label' => __('landing.nav.home')],
-        ['href' => route('landing').'#tentang', 'label' => __('landing.nav.about')],
         ['href' => route('landing').'#fitur', 'label' => __('landing.nav.features')],
-        ['href' => route('landing').'#buka-toko', 'label' => __('landing.nav.open_store')],
+        ['href' => route('landing').'#cara-kerja', 'label' => __('landing.nav.how_it_works')],
+        ['href' => route('landing').'#untuk-siapa', 'label' => __('landing.nav.for_who')],
+        ['href' => route('landing').'#daftar', 'label' => __('landing.nav.register')],
         ['href' => route('landing').'#faq', 'label' => __('landing.nav.faq')],
-        ['href' => route('landing').'#kontak', 'label' => __('landing.nav.contact')],
     ];
 @endphp
 
@@ -93,7 +92,7 @@
                     @if ($emailSupport === '' && $whatsappDigits === '' && $instagramUrl === '')
                         <a class="footer-contact-link items-start" href="{{ route('customer.help') }}">
                             <span class="material-symbols-outlined mt-0.5 text-[18px]">help</span>
-                            <span>{{ __('landing.footer.no_contact') }}</span>
+                            <span>{{ __('landing.contact.fallback') }}</span>
                         </a>
                     @endif
                 </div>
