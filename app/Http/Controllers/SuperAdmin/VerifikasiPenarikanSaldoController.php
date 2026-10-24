@@ -25,7 +25,7 @@ class VerifikasiPenarikanSaldoController extends Controller
             'disetujui' => (clone $base)->where('status', CustomerWithdrawal::STATUS_DISETUJUI)->count(),
             'dibayar' => (clone $base)->where('status', CustomerWithdrawal::STATUS_DIBAYAR)->count(),
             'ditolak' => (clone $base)->where('status', CustomerWithdrawal::STATUS_DITOLAK)->count(),
-            'fee_terkumpul' => (float) $penarikans->where('status', CustomerWithdrawal::STATUS_DIBAYAR)->sum('fee'),
+            'fee_terkumpul' => (float) (clone $base)->where('status', CustomerWithdrawal::STATUS_DIBAYAR)->sum('fee'),
         ];
 
         $penarikans = $base
