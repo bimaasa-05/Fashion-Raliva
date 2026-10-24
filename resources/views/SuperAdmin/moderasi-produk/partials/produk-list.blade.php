@@ -63,7 +63,7 @@
             <div class="flex flex-col flex-grow px-4 pb-4 pt-2 gap-1">
                 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wide">{{ strtoupper($product->store->nama_toko ?? '-') }}</span>
                 <h3 class="font-body-md text-body-md font-semibold text-on-surface leading-tight truncate">{{ $product->nama_produk }}</h3>
-                <div class="font-body-md text-body-md font-bold text-gold-accent mt-0.5">Rp {{ number_format($product->harga_dasar, 0, ',', '.') }}</div>
+                <div class="sa-num font-body-md text-body-md font-bold text-gold-accent mt-0.5">Rp {{ number_format($product->harga_dasar, 0, ',', '.') }}</div>
                 <div class="flex items-center gap-1.5 flex-wrap mt-2 pt-2 border-t border-muted-border">
                     <span class="inline-flex items-center px-1.5 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase border border-outline-variant">{{ ucfirst($product->tipe_produk) }}</span>
                     @if ($product->status === \App\Models\Product::STATUS_PENDING)
