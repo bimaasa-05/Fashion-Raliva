@@ -189,8 +189,8 @@ class DashboardController extends Controller
             ],
             'perhatian' => $perhatian,
             'komposisiTokoDonut' => [
-                ['value' => (int) $tokoAktif, 'color' => '#8B2942', 'label' => 'Aktif'],
-                ['value' => (int) $perhatian['toko'], 'color' => '#B23A55', 'label' => 'Menunggu'],
+                ['value' => (int) $tokoAktif, 'color' => '#8B1E3F', 'label' => 'Aktif'],
+                ['value' => (int) $perhatian['toko'], 'color' => '#c03a5a', 'label' => 'Menunggu'],
                 ['value' => (int) $tokoNonaktif + (int) $tokoDitolak, 'color' => '#BA1A26', 'label' => 'Nonaktif/Ditolak'],
             ],
             'topToko' => $topToko,
