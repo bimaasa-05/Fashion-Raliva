@@ -35,17 +35,21 @@
     <style>
         /* SuperAdmin RALIVA burgundy override — scoped only to this layout (hanya Super Admin) */
         :root {
-            --c-secondary: 139 41 66;
-            --color-secondary-container: #8B2942;
-            --color-secondary-fixed: #8B2942;
-            --color-secondary-fixed-dim: #8B2942;
-            --color-on-secondary-fixed-variant: #6F1F35;
-            --color-on-secondary-fixed: #6F1F35;
-            --color-on-secondary-container: #6F1F35;
-            --color-gold-accent: #8B2942;
+            --c-secondary: 139 30 63;
+            --color-secondary-container: #8B1E3F;
+            --color-secondary-fixed: #8B1E3F;
+            --color-secondary-fixed-dim: #8B1E3F;
+            --color-on-secondary-fixed-variant: #6D1428;
+            --color-on-secondary-fixed: #6D1428;
+            --color-on-secondary-container: #6D1428;
+            --color-gold-accent: #8B1E3F;
+            --sa-number-accent: #9B2D42;
+            --sa-number-on-gold: #4A0E1D;
         }
         .dark {
-            --c-secondary: 139 41 66;
+            --c-secondary: 139 30 63;
+            --sa-number-accent: #E58AA0;
+            --sa-number-on-gold: #4A0E1D;
         }
         /* SuperAdmin premium accents → burgundy (scoped) */
         .sa-figure {
@@ -55,129 +59,120 @@
             letter-spacing: -0.03em;
             line-height: 1.05;
         }
-        .card-premium:hover { border-color: rgb(139 41 66 / 0.45) !important; }
-        .premium-heading::before { background: #8B2942 !important; }
-        .premium-table tbody tr td:first-child::before { background: #8B2942 !important; }
-        .text-gradient-gold { background: linear-gradient(115deg, #6F1F35 0%, #8B2942 35%, #B23A55 55%, #8B2942 80%, #6F1F35 100%) !important; -webkit-background-clip: text !important; background-clip: text !important; color: transparent !important; }
-        .hero-glow::before { background: radial-gradient(circle at 70% 30%, rgba(139, 41, 66, 0.14), transparent 45%), radial-gradient(circle at 15% 85%, rgba(139, 41, 66, 0.08), transparent 40%) !important; }
-        /* Profil premium (shared partial) → burgundy, scoped hanya SuperAdmin */
-        .profil-hero { box-shadow: 0 1px 2px rgb(17 17 17 / 0.04), 0 28px 64px -28px rgba(139, 41, 66, 0.55) !important; }
-        .profil-hero:hover { box-shadow: 0 2px 4px rgb(17 17 17 / 0.05), 0 36px 84px -32px rgba(139, 41, 66, 0.7) !important; }
-        .profil-hero::after { background: linear-gradient(90deg, transparent, rgba(139, 41, 66, 0.5) 20%, #B23A55 50%, rgba(139, 41, 66, 0.5) 80%, transparent) !important; }
-        .hero-ornt { border-color: rgba(139, 41, 66, 0.55) !important; }
-        .name-shimmer { background-image: linear-gradient(115deg, #6F1F35 0%, #8B2942 32%, #B23A55 50%, #8B2942 68%, #6F1F35 100%) !important; }
-        .avatar-ring { background: linear-gradient(140deg, #6F1F35 0%, #8B2942 45%, #B23A55 72%, #6F1F35 100%) !important; box-shadow: 0 10px 34px -10px rgba(139, 41, 66, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.06) !important; }
-        .avatar-ring:hover { box-shadow: 0 14px 44px -12px rgba(139, 41, 66, 0.75), 0 0 0 4px rgba(178, 58, 85, 0.18), inset 0 0 0 1px rgba(255, 255, 255, 0.08) !important; }
-        .profil-stat { background: rgba(139, 41, 66, 0.05) !important; border-color: rgba(139, 41, 66, 0.2) !important; }
-        .profil-stat:hover { border-color: rgba(178, 58, 85, 0.55) !important; box-shadow: 0 10px 22px -12px rgba(139, 41, 66, 0.5) !important; }
-        .profil-stat .material-symbols-outlined { color: #8B2942 !important; }
-        .profil-stat .val { font-variant-numeric: tabular-nums; }
-        .dark .profil-stat { background: rgba(139, 41, 66, 0.08) !important; border-color: rgba(139, 41, 66, 0.25) !important; }
-        .dark .profil-stat .material-symbols-outlined { color: #B23A55 !important; }
-        .profil-card::before { background: linear-gradient(90deg, transparent, rgba(139, 41, 66, 0.5) 22%, #B23A55 50%, rgba(139, 41, 66, 0.5) 78%, transparent) !important; }
-        .icon-tile { background: linear-gradient(140deg, #8B2942, #B23A55) !important; box-shadow: 0 8px 20px -8px rgba(139, 41, 66, 0.6), inset 0 0 0 1px rgba(255, 255, 255, 0.1) !important; }
-        .profil-input:hover:not(:focus):not(:disabled) { border-color: rgba(139, 41, 66, 0.4) !important; }
-        .profil-input:focus { border-color: #8B2942 !important; box-shadow: 0 0 0 3px rgba(139, 41, 66, 0.14), 0 0 0 1px rgba(178, 58, 85, 0.28) !important; }
-        .photo-upload-label:hover { background-color: #8B2942 !important; }
-        .gauge-progress { filter: drop-shadow(0 0 6px rgba(139, 41, 66, 0.45)) !important; }
-        #sidebar-tip-global { border-color: rgba(139, 41, 66, .45) !important; }
+        /* Angka & nominal utama memakai aksen pilihan; aksen UI lain tetap burgundy lama. */
+        main .sa-figure { color: var(--sa-number-accent) !important; }
+        main .sa-figure.text-black { color: var(--sa-number-on-gold) !important; }
+        main .sa-figure.text-gradient-gold {
+            background: none !important;
+            -webkit-background-clip: border-box !important;
+            background-clip: border-box !important;
+            -webkit-text-fill-color: var(--sa-number-accent) !important;
+            color: var(--sa-number-accent) !important;
+        }
+        .card-premium:hover { border-color: rgb(139 30 63 / 0.45) !important; }
+        .premium-heading::before { background: #8B1E3F !important; }
+        .premium-table tbody tr td:first-child::before { background: #8B1E3F !important; }
+        .text-gradient-gold { background: linear-gradient(115deg, #6D1428 0%, #8B1E3F 35%, #c03a5a 55%, #8B1E3F 80%, #6D1428 100%) !important; -webkit-background-clip: text !important; background-clip: text !important; color: transparent !important; }
+        .hero-glow::before { background: radial-gradient(circle at 70% 30%, rgba(139, 30, 63, 0.14), transparent 45%), radial-gradient(circle at 15% 85%, rgba(139, 30, 63, 0.08), transparent 40%) !important; }
+        .gauge-progress { filter: drop-shadow(0 0 6px rgba(139, 30, 63, 0.45)) !important; }
+        #sidebar-tip-global { border-color: rgba(139, 30, 63, .45) !important; }
         /* Gold-accent utilities → burgundy (scoped, overrides CDN hard hex #C9A24D) */
-        .bg-gold-accent { background-color: #8B2942 !important; }
-        .bg-gold-accent\/5 { background-color: rgba(139,41,66,0.05) !important; }
-        .bg-gold-accent\/10 { background-color: rgba(139,41,66,0.1) !important; }
-        .bg-gold-accent\/15 { background-color: rgba(139,41,66,0.15) !important; }
-        .bg-gold-accent\/20 { background-color: rgba(139,41,66,0.2) !important; }
-        .bg-gold-accent\/25 { background-color: rgba(139,41,66,0.25) !important; }
-        .bg-gold-accent\/30 { background-color: rgba(139,41,66,0.3) !important; }
-        .bg-gold-accent\/40 { background-color: rgba(139,41,66,0.4) !important; }
-        .bg-gold-accent\/50 { background-color: rgba(139,41,66,0.5) !important; }
-        .bg-gold-accent\/60 { background-color: rgba(139,41,66,0.6) !important; }
-        .bg-gold-accent\/70 { background-color: rgba(139,41,66,0.7) !important; }
-        .text-gold-accent { color: #8B2942 !important; }
-        .text-gold-accent\/5 { color: rgba(139,41,66,0.05) !important; }
-        .text-gold-accent\/10 { color: rgba(139,41,66,0.1) !important; }
-        .text-gold-accent\/15 { color: rgba(139,41,66,0.15) !important; }
-        .text-gold-accent\/20 { color: rgba(139,41,66,0.2) !important; }
-        .text-gold-accent\/25 { color: rgba(139,41,66,0.25) !important; }
-        .text-gold-accent\/30 { color: rgba(139,41,66,0.3) !important; }
-        .text-gold-accent\/40 { color: rgba(139,41,66,0.4) !important; }
-        .text-gold-accent\/50 { color: rgba(139,41,66,0.5) !important; }
-        .text-gold-accent\/60 { color: rgba(139,41,66,0.6) !important; }
-        .text-gold-accent\/70 { color: rgba(139,41,66,0.7) !important; }
-        .text-gold-accent\/80 { color: rgba(139,41,66,0.8) !important; }
-        .border-gold-accent { border-color: #8B2942 !important; }
-        .border-gold-accent\/10 { border-color: rgba(139,41,66,0.1) !important; }
-        .border-gold-accent\/15 { border-color: rgba(139,41,66,0.15) !important; }
-        .border-gold-accent\/20 { border-color: rgba(139,41,66,0.2) !important; }
-        .border-gold-accent\/25 { border-color: rgba(139,41,66,0.25) !important; }
-        .border-gold-accent\/30 { border-color: rgba(139,41,66,0.3) !important; }
-        .border-gold-accent\/40 { border-color: rgba(139,41,66,0.4) !important; }
-        .border-gold-accent\/50 { border-color: rgba(139,41,66,0.5) !important; }
-        .border-gold-accent\/60 { border-color: rgba(139,41,66,0.6) !important; }
-        .border-gold-accent\/70 { border-color: rgba(139,41,66,0.7) !important; }
-        .border-t-gold-accent\/70 { border-top-color: rgba(139,41,66,0.7) !important; }
-        .text-gold-accent\/\[0\.06\] { color: rgba(139,41,66,0.06) !important; }
-        .bg-gold-accent\/\[0\.06\] { background-color: rgba(139,41,66,0.06) !important; }
+        .bg-gold-accent { background-color: #8B1E3F !important; }
+        .bg-gold-accent\/5 { background-color: rgba(139,30,63,0.05) !important; }
+        .bg-gold-accent\/10 { background-color: rgba(139,30,63,0.1) !important; }
+        .bg-gold-accent\/15 { background-color: rgba(139,30,63,0.15) !important; }
+        .bg-gold-accent\/20 { background-color: rgba(139,30,63,0.2) !important; }
+        .bg-gold-accent\/25 { background-color: rgba(139,30,63,0.25) !important; }
+        .bg-gold-accent\/30 { background-color: rgba(139,30,63,0.3) !important; }
+        .bg-gold-accent\/40 { background-color: rgba(139,30,63,0.4) !important; }
+        .bg-gold-accent\/50 { background-color: rgba(139,30,63,0.5) !important; }
+        .bg-gold-accent\/60 { background-color: rgba(139,30,63,0.6) !important; }
+        .bg-gold-accent\/70 { background-color: rgba(139,30,63,0.7) !important; }
+        .text-gold-accent { color: #8B1E3F !important; }
+        .text-gold-accent\/5 { color: rgba(139,30,63,0.05) !important; }
+        .text-gold-accent\/10 { color: rgba(139,30,63,0.1) !important; }
+        .text-gold-accent\/15 { color: rgba(139,30,63,0.15) !important; }
+        .text-gold-accent\/20 { color: rgba(139,30,63,0.2) !important; }
+        .text-gold-accent\/25 { color: rgba(139,30,63,0.25) !important; }
+        .text-gold-accent\/30 { color: rgba(139,30,63,0.3) !important; }
+        .text-gold-accent\/40 { color: rgba(139,30,63,0.4) !important; }
+        .text-gold-accent\/50 { color: rgba(139,30,63,0.5) !important; }
+        .text-gold-accent\/60 { color: rgba(139,30,63,0.6) !important; }
+        .text-gold-accent\/70 { color: rgba(139,30,63,0.7) !important; }
+        .text-gold-accent\/80 { color: rgba(139,30,63,0.8) !important; }
+        .border-gold-accent { border-color: #8B1E3F !important; }
+        .border-gold-accent\/10 { border-color: rgba(139,30,63,0.1) !important; }
+        .border-gold-accent\/15 { border-color: rgba(139,30,63,0.15) !important; }
+        .border-gold-accent\/20 { border-color: rgba(139,30,63,0.2) !important; }
+        .border-gold-accent\/25 { border-color: rgba(139,30,63,0.25) !important; }
+        .border-gold-accent\/30 { border-color: rgba(139,30,63,0.3) !important; }
+        .border-gold-accent\/40 { border-color: rgba(139,30,63,0.4) !important; }
+        .border-gold-accent\/50 { border-color: rgba(139,30,63,0.5) !important; }
+        .border-gold-accent\/60 { border-color: rgba(139,30,63,0.6) !important; }
+        .border-gold-accent\/70 { border-color: rgba(139,30,63,0.7) !important; }
+        .border-t-gold-accent\/70 { border-top-color: rgba(139,30,63,0.7) !important; }
+        .text-gold-accent\/\[0\.06\] { color: rgba(139,30,63,0.06) !important; }
+        .bg-gold-accent\/\[0\.06\] { background-color: rgba(139,30,63,0.06) !important; }
         /* Secondary-container / secondary-fixed family → burgundy (scoped, overrides CDN literal #fdd177/#ffdf9f/#ebc168) */
-        .bg-secondary { background-color: rgb(139 41 66) !important; }
-        .bg-secondary\/10 { background-color: rgba(139,41,66,0.1) !important; }
-        .bg-secondary\/15 { background-color: rgba(139,41,66,0.15) !important; }
-        .bg-secondary\/20 { background-color: rgba(139,41,66,0.2) !important; }
-        .bg-secondary\/30 { background-color: rgba(139,41,66,0.3) !important; }
-        .bg-secondary-container { background-color: #8B2942 !important; }
-        .bg-secondary-container\/10 { background-color: rgba(139,41,66,0.1) !important; }
-        .bg-secondary-container\/15 { background-color: rgba(139,41,66,0.15) !important; }
-        .bg-secondary-container\/20 { background-color: rgba(139,41,66,0.2) !important; }
-        .bg-secondary-container\/25 { background-color: rgba(139,41,66,0.25) !important; }
-        .bg-secondary-container\/30 { background-color: rgba(139,41,66,0.3) !important; }
-        .bg-secondary-fixed { background-color: #8B2942 !important; }
-        .bg-secondary-fixed-dim { background-color: #8B2942 !important; }
-        .text-secondary { color: rgb(139 41 66) !important; }
-        .text-secondary\/70 { color: rgba(139,41,66,0.7) !important; }
-        .text-on-secondary-container { color: #6F1F35 !important; }
-        .text-on-secondary-fixed { color: #6F1F35 !important; }
-        .text-on-secondary-fixed-variant { color: #6F1F35 !important; }
-        .border-secondary { border-color: rgb(139 41 66) !important; }
-        .border-secondary\/20 { border-color: rgba(139,41,66,0.2) !important; }
-        .border-secondary\/30 { border-color: rgba(139,41,66,0.3) !important; }
-        .border-secondary-container { border-color: #8B2942 !important; }
-        .border-secondary-container\/20 { border-color: rgba(139,41,66,0.2) !important; }
-        .border-secondary-container\/30 { border-color: rgba(139,41,66,0.3) !important; }
-        .hover\:bg-gold-accent:hover { background-color: #8B2942 !important; }
-        .hover\:text-gold-accent:hover { color: #8B2942 !important; }
-        .hover\:border-gold-accent:hover { border-color: #8B2942 !important; }
-        .focus\:border-gold-accent:focus { border-color: #8B2942 !important; }
-        .focus\:ring-gold-accent:focus { --tw-ring-color: rgba(139,41,66,0.1) !important; }
+        .bg-secondary { background-color: rgb(139 30 63) !important; }
+        .bg-secondary\/10 { background-color: rgba(139,30,63,0.1) !important; }
+        .bg-secondary\/15 { background-color: rgba(139,30,63,0.15) !important; }
+        .bg-secondary\/20 { background-color: rgba(139,30,63,0.2) !important; }
+        .bg-secondary\/30 { background-color: rgba(139,30,63,0.3) !important; }
+        .bg-secondary-container { background-color: #8B1E3F !important; }
+        .bg-secondary-container\/10 { background-color: rgba(139,30,63,0.1) !important; }
+        .bg-secondary-container\/15 { background-color: rgba(139,30,63,0.15) !important; }
+        .bg-secondary-container\/20 { background-color: rgba(139,30,63,0.2) !important; }
+        .bg-secondary-container\/25 { background-color: rgba(139,30,63,0.25) !important; }
+        .bg-secondary-container\/30 { background-color: rgba(139,30,63,0.3) !important; }
+        .bg-secondary-fixed { background-color: #8B1E3F !important; }
+        .bg-secondary-fixed-dim { background-color: #8B1E3F !important; }
+        .text-secondary { color: rgb(139 30 63) !important; }
+        .text-secondary\/70 { color: rgba(139,30,63,0.7) !important; }
+        .text-on-secondary-container { color: #6D1428 !important; }
+        .text-on-secondary-fixed { color: #6D1428 !important; }
+        .text-on-secondary-fixed-variant { color: #6D1428 !important; }
+        .border-secondary { border-color: rgb(139 30 63) !important; }
+        .border-secondary\/20 { border-color: rgba(139,30,63,0.2) !important; }
+        .border-secondary\/30 { border-color: rgba(139,30,63,0.3) !important; }
+        .border-secondary-container { border-color: #8B1E3F !important; }
+        .border-secondary-container\/20 { border-color: rgba(139,30,63,0.2) !important; }
+        .border-secondary-container\/30 { border-color: rgba(139,30,63,0.3) !important; }
+        .hover\:bg-gold-accent:hover { background-color: #8B1E3F !important; }
+        .hover\:text-gold-accent:hover { color: #8B1E3F !important; }
+        .hover\:border-gold-accent:hover { border-color: #8B1E3F !important; }
+        .focus\:border-gold-accent:focus { border-color: #8B1E3F !important; }
+        .focus\:ring-gold-accent:focus { --tw-ring-color: rgba(139,30,63,0.1) !important; }
         /* Kuning → maroon: ring statis + fokus raliva-* (compiled @apply) + varian focus:ring-gold-accent/* */
-        [class*="ring-gold-accent"] { --tw-ring-color: rgba(139,41,66,.25) !important; }
+        [class*="ring-gold-accent"] { --tw-ring-color: rgba(139,30,63,.25) !important; }
         main .raliva-input:focus, main .raliva-textarea:focus, main .raliva-search:focus, main .raliva-select:focus,
-        [class*="focus:ring-gold-accent"]:focus { border-color: #8B2942 !important; --tw-ring-color: rgba(139,41,66,.15) !important; }
-        .group:hover .group-hover\:text-gold-accent { color: #8B2942 !important; }
-        .group:hover .group-hover\:border-gold-accent { border-color: #8B2942 !important; }
-        .group\/row:hover .group-hover\/row\:text-gold-accent { color: #8B2942 !important; }
+        [class*="focus:ring-gold-accent"]:focus { border-color: #8B1E3F !important; --tw-ring-color: rgba(139,30,63,.15) !important; }
+        .group:hover .group-hover\:text-gold-accent { color: #8B1E3F !important; }
+        .group:hover .group-hover\:border-gold-accent { border-color: #8B1E3F !important; }
+        .group\/row:hover .group-hover\/row\:text-gold-accent { color: #8B1E3F !important; }
         /* Bar chart (Pesanan per Bulan) & leaderboard gradients → burgundy */
-        .from-gold-accent { --tw-gradient-from: #8B2942 !important; --tw-gradient-to: rgb(139 41 66 / 0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-        .from-gold-accent\/5 { --tw-gradient-from: rgba(139,41,66,0.05) !important; --tw-gradient-to: rgba(139,41,66,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-        .from-gold-accent\/10 { --tw-gradient-from: rgba(139,41,66,0.1) !important; --tw-gradient-to: rgba(139,41,66,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-        .from-gold-accent\/15 { --tw-gradient-from: rgba(139,41,66,0.15) !important; --tw-gradient-to: rgba(139,41,66,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-        .from-gold-accent\/20 { --tw-gradient-from: rgba(139,41,66,0.2) !important; --tw-gradient-to: rgba(139,41,66,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-        .from-gold-accent\/25 { --tw-gradient-from: rgba(139,41,66,0.25) !important; --tw-gradient-to: rgba(139,41,66,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-        .via-gold-accent\/10 { --tw-gradient-to: rgba(139,41,66,0) !important; --tw-gradient-stops: var(--tw-gradient-from), rgba(139,41,66,0.1), var(--tw-gradient-to) !important; }
-        .from-gold-accent\/45 { --tw-gradient-from: rgba(139,41,66,0.45) !important; --tw-gradient-to: rgba(139,41,66,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-        .from-gold-accent\/40 { --tw-gradient-from: rgba(139,41,66,0.4) !important; --tw-gradient-to: rgba(139,41,66,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-        .from-gold-accent\/60 { --tw-gradient-from: rgba(139,41,66,0.6) !important; --tw-gradient-to: rgba(139,41,66,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-        .from-secondary-container { --tw-gradient-from: #8B2942 !important; --tw-gradient-to: rgb(139 41 66 / 0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-        .from-secondary-container\/15 { --tw-gradient-from: rgba(139,41,66,0.15) !important; --tw-gradient-to: rgba(139,41,66,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-        .from-secondary-container\/20 { --tw-gradient-from: rgba(139,41,66,0.2) !important; --tw-gradient-to: rgba(139,41,66,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-        .from-secondary-container\/30 { --tw-gradient-from: rgba(139,41,66,0.3) !important; --tw-gradient-to: rgba(139,41,66,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-        .to-gold-accent { --tw-gradient-to: #8B2942 !important; }
-        .to-gold-accent\/5 { --tw-gradient-to: rgba(139,41,66,0.05) !important; }
-        .via-gold-accent\/5 { --tw-gradient-to: rgba(139,41,66,0) !important; --tw-gradient-stops: var(--tw-gradient-from), rgba(139,41,66,0.05), var(--tw-gradient-to) !important; }
-        .via-gold-accent\/40 { --tw-gradient-to: rgba(139,41,66,0) !important; --tw-gradient-stops: var(--tw-gradient-from), rgba(139,41,66,0.4), var(--tw-gradient-to) !important; }
-        .from-secondary-container\/5 { --tw-gradient-from: rgba(139,41,66,0.05) !important; --tw-gradient-to: rgba(139,41,66,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-        .to-secondary-container\/5 { --tw-gradient-to: rgba(139,41,66,0.05) !important; }
-        .hover\:from-gold-accent\/70:hover { --tw-gradient-from: rgba(139,41,66,0.7) !important; --tw-gradient-to: rgba(139,41,66,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
-        .hover\:shadow-\[0_0_12px_rgba\(201\,162\,77\,0\.35\)\]:hover { --tw-shadow: 0 0 12px rgba(139,41,66,0.35) !important; --tw-shadow-colored: 0 0 12px rgba(139,41,66,0.35) !important; box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important; }
+        .from-gold-accent { --tw-gradient-from: #8B1E3F !important; --tw-gradient-to: rgb(139 30 63 / 0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .from-gold-accent\/5 { --tw-gradient-from: rgba(139,30,63,0.05) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .from-gold-accent\/10 { --tw-gradient-from: rgba(139,30,63,0.1) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .from-gold-accent\/15 { --tw-gradient-from: rgba(139,30,63,0.15) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .from-gold-accent\/20 { --tw-gradient-from: rgba(139,30,63,0.2) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .from-gold-accent\/25 { --tw-gradient-from: rgba(139,30,63,0.25) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .via-gold-accent\/10 { --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), rgba(139,30,63,0.1), var(--tw-gradient-to) !important; }
+        .from-gold-accent\/45 { --tw-gradient-from: rgba(139,30,63,0.45) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .from-gold-accent\/40 { --tw-gradient-from: rgba(139,30,63,0.4) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .from-gold-accent\/60 { --tw-gradient-from: rgba(139,30,63,0.6) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .from-secondary-container { --tw-gradient-from: #8B1E3F !important; --tw-gradient-to: rgb(139 30 63 / 0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .from-secondary-container\/15 { --tw-gradient-from: rgba(139,30,63,0.15) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .from-secondary-container\/20 { --tw-gradient-from: rgba(139,30,63,0.2) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .from-secondary-container\/30 { --tw-gradient-from: rgba(139,30,63,0.3) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .to-gold-accent { --tw-gradient-to: #8B1E3F !important; }
+        .to-gold-accent\/5 { --tw-gradient-to: rgba(139,30,63,0.05) !important; }
+        .via-gold-accent\/5 { --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), rgba(139,30,63,0.05), var(--tw-gradient-to) !important; }
+        .via-gold-accent\/40 { --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), rgba(139,30,63,0.4), var(--tw-gradient-to) !important; }
+        .from-secondary-container\/5 { --tw-gradient-from: rgba(139,30,63,0.05) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .to-secondary-container\/5 { --tw-gradient-to: rgba(139,30,63,0.05) !important; }
+        .hover\:from-gold-accent\/70:hover { --tw-gradient-from: rgba(139,30,63,0.7) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
+        .hover\:shadow-\[0_0_12px_rgba\(201\,162\,77\,0\.35\)\]:hover { --tw-shadow: 0 0 12px rgba(139,30,63,0.35) !important; --tw-shadow-colored: 0 0 12px rgba(139,30,63,0.35) !important; box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow) !important; }
     </style>
     <style>
         /* Raliva Motion — reveal on scroll (sama dengan dashboard owner).
@@ -207,8 +202,8 @@
         /* ===== Popup premium Super Admin (gaya Data Bank) — global untuk semua halaman SA ===== */
         .banner-gradient { background-image: linear-gradient(118deg, #141414 0%, #1f0c10 55%, #421329 100%); }
         .banner-glow { position: absolute; border-radius: 9999px; pointer-events: none; }
-        .banner-glow-1 { top: -90px; right: -50px; width: 260px; height: 260px; background: rgba(139, 41, 66, 0.4); }
-        .banner-glow-2 { bottom: -120px; left: -60px; width: 220px; height: 220px; background: rgba(139, 41, 66, 0.24); }
+        .banner-glow-1 { top: -90px; right: -50px; width: 260px; height: 260px; background: rgba(139, 30, 63, 0.4); }
+        .banner-glow-2 { bottom: -120px; left: -60px; width: 220px; height: 220px; background: rgba(139, 30, 63, 0.24); }
 
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -216,8 +211,8 @@
         .btn-modal { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 24px; border-radius: 10px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; white-space: normal; min-width: 0; overflow-wrap: break-word; transition: all 0.18s ease; }
         .btn-modal-ghost { border: 1px solid var(--color-outline); color: var(--color-on-surface-variant); background: transparent; }
         .btn-modal-ghost:hover { background: var(--color-surface-container-low); border-color: var(--color-outline-variant); }
-        .btn-modal-primary { background: linear-gradient(90deg, #8B2942 0%, #B23A55 100%); color: var(--color-on-primary); box-shadow: 0 10px 22px -12px rgba(139, 41, 66, 0.55); }
-        .btn-modal-primary:hover { filter: brightness(1.1); box-shadow: 0 12px 26px -12px rgba(139, 41, 66, 0.65); }
+        .btn-modal-primary { background: linear-gradient(90deg, #8B1E3F 0%, #c03a5a 100%); color: var(--color-on-primary); box-shadow: 0 10px 22px -12px rgba(139, 30, 63, 0.55); }
+        .btn-modal-primary:hover { filter: brightness(1.1); box-shadow: 0 12px 26px -12px rgba(139, 30, 63, 0.65); }
         .btn-modal-danger { background: #d32f2f; color: #fff; box-shadow: 0 10px 22px -12px rgba(211, 47, 47, 0.5); }
         .btn-modal-danger:hover { filter: brightness(1.1); }
         .btn-modal-success { background: linear-gradient(90deg, #147d46, #2ea15f); color: #fff; box-shadow: 0 10px 22px -12px rgba(46, 161, 95, 0.5); }
