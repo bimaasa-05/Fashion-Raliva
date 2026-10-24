@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Review;
+use App\Support\NumberDisplay;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -64,7 +65,7 @@ class PeringkatController extends Controller
         return $this->decorate($rows, fn (object $row) => [
             'id' => $row->store_id,
             'nama' => $row->nama_toko,
-            'meta' => sprintf('%s pesanan • Rating %s', number_format((float) $row->jumlah_pesanan, 0, ',', '.'), $ratings->get($row->store_id, '-')),
+            'meta' => sprintf('%s pesanan • Rating %s', NumberDisplay::count($row->jumlah_pesanan), $ratings->get($row->store_id, '-')),
             'sub_meta' => $row->alamat,
             'nilai' => (float) $row->total_omzet,
         ]);
@@ -91,7 +92,7 @@ class PeringkatController extends Controller
         return $this->decorate($rows, fn (object $row) => [
             'id' => $row->category_id,
             'nama' => $row->nama_kategori,
-            'meta' => sprintf('%s terjual • %s toko aktif', number_format((float) $row->total_terjual, 0, ',', '.'), $row->jumlah_toko),
+            'meta' => sprintf('%s terjual • %s toko aktif', NumberDisplay::count($row->total_terjual), $row->jumlah_toko),
             'sub_meta' => null,
             'nilai' => (float) $row->total_omzet,
         ]);
@@ -116,7 +117,7 @@ class PeringkatController extends Controller
         return $this->decorate($rows, fn (object $row) => [
             'id' => $row->user_id,
             'nama' => $row->nama_lengkap,
-            'meta' => sprintf('%s pesanan • Loyal sejak %s', number_format((float) $row->jumlah_pesanan, 0, ',', '.'), Carbon::parse($row->pesanan_pertama)->translatedFormat('M Y')),
+            'meta' => sprintf('%s pesanan • Loyal sejak %s', NumberDisplay::count($row->jumlah_pesanan), Carbon::parse($row->pesanan_pertama)->translatedFormat('M Y')),
             'sub_meta' => null,
             'nilai' => (float) $row->total_belanja,
         ]);
@@ -131,7 +132,8 @@ class PeringkatController extends Controller
             ->map(function (array $item, int $index) use ($max) {
                 $item['name'] = $item['nama'];
                 $item['pct'] = $max > 0 ? max(4, (int) round($item['nilai'] / $max * 100)) : 0;
-                $item['display'] = 'Rp '.number_format($item['nilai'], 0, ',', '.');
+                $item['display'] = NumberDisplay::compactRupiah($item['nilai']);
+                $item['display_full'] = NumberDisplay::rupiah($item['nilai']);
 
                 return $item;
             })
