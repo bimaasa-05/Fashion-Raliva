@@ -64,9 +64,9 @@
                     @forelse ($promos as $promo)
                         @php
                             $sisaHari = max(0, (int) now()->diffInDays(\Illuminate\Support\Carbon::parse($promo->berakhir_pada), false));
-                            $tipeLabel = $promo->tipe_diskon === 'persen'
-                                ? 'Diskon '.($promo->nilai_diskon % 1 == 0 ? number_format((float) $promo->nilai_diskon, 0) : $promo->nilai_diskon).'%'
-                                : 'Diskon Rp '.number_format((float) $promo->nilai_diskon, 0, ',', '.');
+                            $tipeLabelHtml = $promo->tipe_diskon === 'persen'
+                                ? 'Diskon <span class="sa-num">'.e($promo->nilai_diskon % 1 == 0 ? number_format((float) $promo->nilai_diskon, 0) : $promo->nilai_diskon).'%</span>'
+                                : 'Diskon <span class="sa-num">Rp '.e(number_format((float) $promo->nilai_diskon, 0, ',', '.')).'</span>';
                         @endphp
                         <tr class="border-b border-muted-border hover:bg-surface-container-low transition-colors" data-promo-row
                             data-id="{{ $promo->slot_promo_id }}"
@@ -75,7 +75,7 @@
                             data-search="{{ strtolower($promo->nama_promo.' '.$promo->kode_promo.' '.($promo->package?->nama_paket ?? '').' '.($promo->deskripsi ?? '')) }}">
                             <td class="p-6">
                                 <p class="text-on-surface font-semibold">{{ $promo->package?->nama_paket ?? '-' }}</p>
-                                <p class="text-on-surface-variant text-xs">{{ $promo->package?->jumlah_slot ?? '-' }} slot &bull; Rp {{ number_format((float) ($promo->package?->harga ?? 0), 0, ',', '.') }}</p>
+                                <p class="text-on-surface-variant text-xs"><span class="sa-num">{{ $promo->package?->jumlah_slot ?? '-' }}</span> slot &bull; <span class="sa-num">Rp {{ number_format((float) ($promo->package?->harga ?? 0), 0, ',', '.') }}</span></p>
                             </td>
                             <td class="p-6">
                                 <p class="text-on-surface font-semibold">{{ $promo->nama_promo }}</p>
@@ -85,9 +85,9 @@
                                 @endif
                             </td>
                             <td class="p-6">
-                                <p class="text-on-surface">{{ $tipeLabel }}</p>
+                                <p class="text-on-surface">{!! $tipeLabelHtml !!}</p>
                                 @if ($promo->maksimal_diskon)
-                                    <p class="text-on-surface-variant text-xs">Maks. Rp {{ number_format((float) $promo->maksimal_diskon, 0, ',', '.') }}</p>
+                                    <p class="text-on-surface-variant text-xs">Maks. <span class="sa-num">Rp {{ number_format((float) $promo->maksimal_diskon, 0, ',', '.') }}</span></p>
                                 @endif
                             </td>
                             <td class="p-6 text-on-surface-variant text-xs">
@@ -125,9 +125,9 @@
             @forelse ($promos as $promo)
                 @php
                     $sisaHari = max(0, (int) now()->diffInDays(\Illuminate\Support\Carbon::parse($promo->berakhir_pada), false));
-                    $tipeLabel = $promo->tipe_diskon === 'persen'
-                        ? 'Diskon '.($promo->nilai_diskon % 1 == 0 ? number_format((float) $promo->nilai_diskon, 0) : $promo->nilai_diskon).'%'
-                        : 'Diskon Rp '.number_format((float) $promo->nilai_diskon, 0, ',', '.');
+                    $tipeLabelHtml = $promo->tipe_diskon === 'persen'
+                        ? 'Diskon <span class="sa-num">'.e($promo->nilai_diskon % 1 == 0 ? number_format((float) $promo->nilai_diskon, 0) : $promo->nilai_diskon).'%</span>'
+                        : 'Diskon <span class="sa-num">Rp '.e(number_format((float) $promo->nilai_diskon, 0, ',', '.')).'</span>';
                 @endphp
                 <div class="bg-surface-container-lowest border border-muted-border rounded-xl p-4" data-promo-row
                     data-id="{{ $promo->slot_promo_id }}"
@@ -137,7 +137,7 @@
                     <div class="flex items-start justify-between gap-2">
                         <div>
                             <p class="text-on-surface font-semibold">{{ $promo->package?->nama_paket ?? '-' }}</p>
-                            <p class="text-on-surface-variant text-xs">{{ $promo->package?->jumlah_slot ?? '-' }} slot</p>
+                            <p class="text-on-surface-variant text-xs"><span class="sa-num">{{ $promo->package?->jumlah_slot ?? '-' }}</span> slot</p>
                         </div>
                         @if ($promo->status === 'aktif' && now()->between($promo->mulai_pada, $promo->berakhir_pada))
                             <span class="inline-flex items-center px-2 py-1 rounded-full bg-gold-accent/20 text-gold-accent text-[10px] font-bold uppercase border border-gold-accent/30">{{ __('Aktif') }}</span>
@@ -148,7 +148,7 @@
                         @endif
                     </div>
                     <p class="text-on-surface font-semibold mt-3">{{ $promo->nama_promo }} <span class="font-mono text-xs text-gold-accent">{{ $promo->kode_promo }}</span></p>
-                    <p class="text-on-surface-variant text-xs mt-1">{{ $tipeLabel }}@if ($promo->maksimal_diskon) &bull; Maks. Rp {{ number_format((float) $promo->maksimal_diskon, 0, ',', '.') }}@endif</p>
+                    <p class="text-on-surface-variant text-xs mt-1">{!! $tipeLabelHtml !!}@if ($promo->maksimal_diskon) &bull; Maks. <span class="sa-num">Rp {{ number_format((float) $promo->maksimal_diskon, 0, ',', '.') }}</span>@endif</p>
                     <div class="flex items-center justify-between pt-3 mt-3 border-t border-muted-border">
                         <p class="text-on-surface-variant text-xs">{{ $sisaHari > 0 ? 'Sisa '.$sisaHari.' hari' : 'Berakhir' }}</p>
                         <div class="flex gap-1">
