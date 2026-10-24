@@ -521,6 +521,10 @@
 <div class="md:col-span-6">
 <h4 class="font-display-lg text-headline-md tracking-widest text-[var(--chrome-accent)] mb-md uppercase">@include('partials.brand-content', ['logoClass' => 'h-8'])</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant max-w-xs">{{ __('Curated fashion for the modern minimalist. Discover the art of everyday dressing.') }}</p>
+<a href="{{ route('landing') }}" class="btn-gold mt-md inline-flex items-center gap-sm rounded-full px-lg py-sm font-label-caps text-label-caps uppercase tracking-widest">
+{{ __('landing.nav.register_owner') }}
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
 </div>
 <div class="md:col-span-3 flex flex-col gap-sm">
 <h5 class="font-label-caps text-label-caps text-on-surface uppercase mb-xs">{{ __('Shop') }}</h5>
