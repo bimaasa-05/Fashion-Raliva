@@ -81,9 +81,9 @@
             <div class="grid items-center gap-12 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
                 <div class="reveal">
                     <span class="eyebrow">{{ __('landing.home.eyebrow') }}</span>
-                    <h1 class="mt-5 max-w-3xl font-display text-[2.8rem] leading-[0.98] tracking-[-0.03em] sm:text-6xl lg:text-[4.55rem]">
+                    <h1 class="mt-5 max-w-3xl font-heading font-extrabold text-[2.7rem] leading-[1.04] tracking-[-0.025em] sm:text-6xl sm:leading-[1.04] lg:text-[4.3rem]">
                         {{ __('landing.home.title_before') }}
-                        <span class="italic text-gold-accent">{{ __('landing.home.title_accent') }}</span>
+                        <span class="text-gold-accent">{{ __('landing.home.title_accent') }}</span>
                     </h1>
                     <p class="mt-6 max-w-xl text-base leading-8 text-on-surface-variant sm:text-lg">{{ __('landing.home.description') }}</p>
 
@@ -116,7 +116,7 @@
                             <div class="flex items-start justify-between gap-4">
                                 <div>
                                     <p class="text-[9px] font-extrabold uppercase tracking-[0.16em] text-gold-accent">{{ __('landing.home.dashboard_title') }}</p>
-                                    <h2 class="mt-1 font-display text-2xl">{{ __('landing.home.dashboard_greeting') }}</h2>
+                                    <h2 class="mt-1 font-heading font-bold text-2xl">{{ __('landing.home.dashboard_greeting') }}</h2>
                                     <p class="mt-1 text-[11px] leading-5 text-on-surface-variant">{{ __('landing.home.dashboard_subtitle') }}</p>
                                 </div>
                                 <span class="inline-flex shrink-0 items-center gap-1 rounded-full border border-emerald-500/20 bg-emerald-500/10 px-2.5 py-1 text-[9px] font-bold uppercase tracking-wider text-emerald-700">
@@ -128,17 +128,17 @@
                             <div class="mt-5 grid grid-cols-3 gap-2">
                                 <div class="stat-card">
                                     <p class="text-[9px] font-bold uppercase tracking-wider text-on-surface-variant">{{ __('landing.home.stat_orders') }}</p>
-                                    <p class="mt-1 font-display text-xl">128</p>
+                                    <p class="mt-1 font-heading font-extrabold text-[15px] whitespace-nowrap sm:text-xl">128</p>
                                     <p class="mt-0.5 text-[9px] font-semibold text-emerald-600">+12%</p>
                                 </div>
                                 <div class="stat-card">
                                     <p class="text-[9px] font-bold uppercase tracking-wider text-on-surface-variant">{{ __('landing.home.stat_revenue') }}</p>
-                                    <p class="mt-1 font-display text-xl">Rp 24,8 jt</p>
+                                    <p class="mt-1 font-heading font-extrabold text-[15px] whitespace-nowrap sm:text-xl">Rp 24,8 jt</p>
                                     <p class="mt-0.5 text-[9px] font-semibold text-emerald-600">+8,4%</p>
                                 </div>
                                 <div class="stat-card">
                                     <p class="text-[9px] font-bold uppercase tracking-wider text-on-surface-variant">{{ __('landing.home.stat_products') }}</p>
-                                    <p class="mt-1 font-display text-xl">64</p>
+                                    <p class="mt-1 font-heading font-extrabold text-[15px] whitespace-nowrap sm:text-xl">64</p>
                                     <p class="mt-0.5 text-[9px] font-semibold text-on-surface-variant">{{ __('landing.home.variant_count') }}</p>
                                 </div>
                             </div>
@@ -237,7 +237,7 @@
             <div class="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-start lg:gap-16">
                 <div class="reveal lg:sticky lg:top-28">
                     <span class="eyebrow">{{ __('landing.home.why_eyebrow') }}</span>
-                    <h2 class="mt-4 max-w-md font-display text-4xl leading-[1.05] tracking-[-0.02em] sm:text-5xl">{{ __('landing.home.why_title') }}</h2>
+                    <h2 class="mt-4 max-w-md font-heading font-bold text-4xl leading-[1.08] tracking-[-0.02em] sm:text-5xl sm:leading-[1.08]">{{ __('landing.home.why_title') }}</h2>
                     <p class="mt-5 max-w-md text-sm leading-7 text-on-surface-variant">{{ __('landing.home.why_description') }}</p>
                     <a href="#fitur" class="btn-secondary mt-7">
                         {{ __('landing.common.see_features') }}
@@ -251,7 +251,7 @@
                             <span class="icon-tile">
                                 <span class="material-symbols-outlined text-[22px]">{{ $item['icon'] }}</span>
                             </span>
-                            <h3 class="mt-5 font-display text-xl leading-tight">{{ $item['title'] }}</h3>
+                            <h3 class="mt-5 font-heading font-semibold text-xl leading-tight">{{ $item['title'] }}</h3>
                             <p class="mt-3 text-sm leading-6 text-on-surface-variant">{{ $item['text'] }}</p>
                         </article>
                     @endforeach
@@ -271,7 +271,7 @@
                             <span class="icon-tile !h-9 !w-9 !rounded-xl">
                                 <span class="material-symbols-outlined text-[18px]">auto_awesome</span>
                             </span>
-                            <p class="mt-4 font-display text-2xl leading-tight">{{ __('landing.common.built_for_brands') }}</p>
+                            <p class="mt-4 font-heading font-bold text-2xl leading-tight">{{ __('landing.common.built_for_brands') }}</p>
                             <p class="mt-2 text-xs leading-5 text-on-surface-variant">{{ __('landing.home.why_1_text') }}</p>
                         </div>
                     </div>
@@ -279,10 +279,10 @@
 
                 <div class="reveal" style="--reveal-delay: 100ms">
                     <span class="eyebrow">{{ __('landing.brand.intro_eyebrow') }}</span>
-                    <h2 class="mt-4 max-w-lg font-display text-4xl leading-[1.05] tracking-[-0.02em] sm:text-5xl">{{ __('landing.brand.intro_title') }}</h2>
+                    <h2 class="mt-4 max-w-lg font-heading font-bold text-4xl leading-[1.08] tracking-[-0.02em] sm:text-5xl sm:leading-[1.08]">{{ __('landing.brand.intro_title') }}</h2>
                     <p class="mt-5 max-w-lg text-sm leading-7 text-on-surface-variant">{{ __('landing.brand.intro_text') }}</p>
 
-                    <h3 class="mt-8 font-display text-2xl">{{ __('landing.brand.audience_title') }}</h3>
+                    <h3 class="mt-8 font-heading font-bold text-2xl">{{ __('landing.brand.audience_title') }}</h3>
                     <div class="mt-5 grid gap-3 sm:grid-cols-2">
                         @foreach ($audienceItems as $item)
                             <div class="flex items-start gap-3 rounded-xl border border-muted-border bg-surface-container-lowest p-4">
@@ -296,7 +296,7 @@
 
             <figure class="reveal mx-auto mt-16 max-w-3xl border-t border-muted-border pt-12 text-center">
                 <span class="material-symbols-outlined text-5xl text-gold-accent">format_quote</span>
-                <blockquote class="mt-4 font-display text-3xl leading-[1.12] tracking-[-0.02em] sm:text-4xl">{{ __('landing.brand.quote') }}</blockquote>
+                <blockquote class="mt-4 font-heading font-medium text-3xl leading-[1.2] tracking-[-0.01em] sm:text-4xl sm:leading-[1.2]">{{ __('landing.brand.quote') }}</blockquote>
                 <figcaption class="mt-5 text-[10px] font-extrabold uppercase tracking-[0.18em] text-on-surface-variant">{{ __('landing.brand.quote_author') }}</figcaption>
             </figure>
         </div>
@@ -306,7 +306,7 @@
         <div class="mx-auto max-w-8xl px-5 sm:px-8">
             <div class="max-w-2xl reveal">
                 <span class="eyebrow">{{ __('landing.home.features_eyebrow') }}</span>
-                <h2 class="mt-4 font-display text-4xl leading-[1.05] tracking-[-0.02em] sm:text-5xl">{{ __('landing.home.features_title') }}</h2>
+                <h2 class="mt-4 font-heading font-bold text-4xl leading-[1.08] tracking-[-0.02em] sm:text-5xl sm:leading-[1.08]">{{ __('landing.home.features_title') }}</h2>
                 <p class="mt-5 text-sm leading-7 text-on-surface-variant">{{ __('landing.home.features_description') }}</p>
             </div>
 
@@ -316,7 +316,7 @@
                         <span class="icon-tile">
                             <span class="material-symbols-outlined text-[21px]">{{ $feature['icon'] }}</span>
                         </span>
-                        <h3 class="mt-4 font-display text-lg leading-tight">{{ $feature['title'] }}</h3>
+                        <h3 class="mt-4 font-heading font-semibold text-lg leading-tight">{{ $feature['title'] }}</h3>
                         <p class="mt-2 text-xs leading-6 text-on-surface-variant">{{ $feature['text'] }}</p>
                     </article>
                 @endforeach
@@ -329,7 +329,7 @@
             <div class="grid gap-8 lg:grid-cols-[1fr_auto] lg:items-end">
                 <div class="max-w-2xl reveal">
                     <span class="eyebrow">{{ __('landing.open_store.eyebrow') }}</span>
-                    <h2 class="mt-4 font-display text-4xl leading-[1.05] tracking-[-0.02em] sm:text-5xl">{{ __('landing.open_store.title') }}</h2>
+                    <h2 class="mt-4 font-heading font-bold text-4xl leading-[1.08] tracking-[-0.02em] sm:text-5xl sm:leading-[1.08]">{{ __('landing.open_store.title') }}</h2>
                     <p class="mt-5 text-sm leading-7 text-on-surface-variant">{{ __('landing.open_store.description') }}</p>
                 </div>
                 <div class="flex flex-col gap-3 sm:flex-row lg:flex-col">
@@ -345,7 +345,7 @@
                 @foreach ($steps as $index => $step)
                     <article class="feature-card reveal" style="--reveal-delay: {{ $index * 80 }}ms">
                         <span class="step-number">0{{ $index + 1 }}</span>
-                        <h3 class="mt-4 font-display text-xl leading-tight">{{ $step['title'] }}</h3>
+                        <h3 class="mt-4 font-heading font-semibold text-xl leading-tight">{{ $step['title'] }}</h3>
                         <p class="mt-2 text-sm leading-6 text-on-surface-variant">{{ $step['text'] }}</p>
                     </article>
                 @endforeach
@@ -382,7 +382,7 @@
                 <div class="grid gap-6 lg:grid-cols-[1fr_auto] lg:items-center">
                     <div>
                         <span class="eyebrow">{{ __('landing.home.cta_eyebrow') }}</span>
-                        <h2 class="mt-4 max-w-2xl font-display text-3xl leading-[1.05] tracking-[-0.02em] sm:text-4xl">{{ __('landing.home.cta_title') }}</h2>
+                        <h2 class="mt-4 max-w-2xl font-heading font-bold text-3xl leading-[1.1] tracking-[-0.02em] sm:text-4xl sm:leading-[1.1]">{{ __('landing.home.cta_title') }}</h2>
                         <p class="mt-3 max-w-xl text-sm leading-7 text-on-surface-variant">{{ __('landing.home.cta_text') }}</p>
                     </div>
                     <div class="flex flex-col gap-3 sm:flex-row lg:flex-col">
@@ -399,7 +399,7 @@
             <div class="grid gap-10 lg:grid-cols-[0.7fr_1.3fr] lg:gap-16">
                 <div class="reveal">
                     <span class="eyebrow">{{ __('landing.nav.faq') }}</span>
-                    <h2 class="mt-4 max-w-sm font-display text-4xl leading-[1.05] tracking-[-0.02em] sm:text-5xl">{{ __('landing.open_store.faq_title') }}</h2>
+                    <h2 class="mt-4 max-w-sm font-heading font-bold text-4xl leading-[1.08] tracking-[-0.02em] sm:text-5xl sm:leading-[1.08]">{{ __('landing.open_store.faq_title') }}</h2>
                     <p class="mt-5 max-w-sm text-sm leading-7 text-on-surface-variant">{{ __('landing.open_store.support_text') }}</p>
                     <a href="#kontak" class="btn-secondary mt-6">{{ __('landing.open_store.support_cta') }}</a>
                 </div>
@@ -425,7 +425,7 @@
                 <div class="grid gap-8 lg:grid-cols-[1fr_0.9fr] lg:items-center lg:gap-12">
                     <div class="reveal">
                         <span class="eyebrow">{{ __('landing.contact.eyebrow') }}</span>
-                        <h2 class="mt-4 max-w-xl font-display text-3xl leading-tight sm:text-4xl">{{ __('landing.contact.title') }}</h2>
+                        <h2 class="mt-4 max-w-xl font-heading font-bold text-3xl leading-[1.12] sm:text-4xl sm:leading-[1.12]">{{ __('landing.contact.title') }}</h2>
                         <p class="mt-4 max-w-xl text-sm leading-7 text-on-surface-variant">{{ __('landing.contact.text') }}</p>
 
                         <div class="mt-7 flex flex-col gap-3 border-t border-muted-border pt-6 text-sm sm:flex-row sm:items-center sm:justify-between">
