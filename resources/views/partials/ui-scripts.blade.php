@@ -349,24 +349,63 @@
         });
     });
 
-    window.ralivaShortRp = (v) => {
+    window.ralivaFormatNumber = (v) => new Intl.NumberFormat('id-ID').format(Number(v) || 0);
+
+    window.ralivaFormatRp = (v) => {
         const n = Number(v) || 0;
-        if (n >= 1000000) return (n / 1000000).toLocaleString('id-ID', { maximumFractionDigits: 1 }) + ' jt';
-        if (n >= 1000) return Math.round(n / 1000) + ' rb';
-        return String(Math.round(n));
+        return (n < 0 ? '-' : '') + 'Rp\u00A0' + window.ralivaFormatNumber(Math.abs(n));
     };
+
+    window.ralivaFormatCompactNumber = (v) => {
+        const n = Number(v) || 0;
+        const sign = n < 0 ? '-' : '';
+        const absolute = Math.abs(n);
+        const format = (value, suffix) => sign + value.toLocaleString('id-ID', {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 1,
+        }) + suffix;
+
+        if (absolute >= 1e12) return format(absolute / 1e12, ' T');
+        if (absolute >= 1e9) return format(absolute / 1e9, ' M');
+        if (absolute >= 1e6) return format(absolute / 1e6, ' jt');
+        if (absolute >= 1e4) return format(Math.round(absolute / 1e3), ' rb');
+
+        return sign + window.ralivaFormatNumber(absolute);
+    };
+
+    window.ralivaFormatCompactRp = (v) => {
+        const n = Number(v) || 0;
+        const sign = n < 0 ? '-' : '';
+        return sign + 'Rp\u00A0' + window.ralivaFormatCompactNumber(Math.abs(n));
+    };
+
+    window.ralivaShortRp = window.ralivaFormatCompactNumber;
 
     window.ralivaCountUp = (el, target, suffix = '', duration = 900) => {
         if (!el) return;
         const start = performance.now();
-        const hasDecimal = !Number.isInteger(target);
+        const decimals = Number.parseInt(el.dataset.countDecimals ?? '', 10);
+        const format = el.dataset.countFormat || 'number';
+        const hasDecimal = Number.isInteger(decimals) ? decimals > 0 : !Number.isInteger(target);
+        const formatter = (value) => {
+            if (format === 'compact-currency') return window.ralivaFormatCompactRp(value);
+            if (format === 'currency') return window.ralivaFormatRp(value);
+
+            const fractionDigits = Number.isInteger(decimals)
+                ? decimals
+                : (hasDecimal ? 1 : 0);
+
+            return value.toLocaleString('id-ID', {
+                minimumFractionDigits: fractionDigits,
+                maximumFractionDigits: fractionDigits,
+            });
+        };
+
         const step = (now) => {
             const t = Math.min((now - start) / duration, 1);
             const eased = 1 - Math.pow(1 - t, 3);
             const val = target * eased;
-            el.innerText = (hasDecimal
-                ? (Math.round(val * 10) / 10).toFixed(1)
-                : Math.round(val).toLocaleString('id-ID')) + suffix;
+            el.innerText = formatter(val) + suffix;
             if (t < 1) requestAnimationFrame(step);
         };
         requestAnimationFrame(step);
@@ -521,7 +560,7 @@
                 '<span class="w-8 h-8 rounded-full flex items-center justify-center font-label-sm text-xs font-bold shrink-0 ' + rankCls + '">' + (i + 1) + '</span>' +
                 '<div class="flex-1 min-w-0">' +
                     '<div class="flex items-center justify-between gap-3"><p class="font-title-md text-sm text-on-surface truncate">' + (r.name || '-') + '</p>' +
-                    '<span class="shrink-0 font-title-md text-sm text-gold-accent">' + (r.display || '') + '</span></div>' +
+                    '<span class="shrink-0 font-title-md text-sm text-gold-accent tabular-nums" title="' + (r.display_full || r.display || '') + '">' + (r.display || '') + '</span></div>' +
                     (r.meta ? '<p class="text-xs text-on-surface-variant mb-1.5">' + r.meta + '</p>' : '') +
                     '<div class="h-1 w-full bg-surface-container-high rounded-full overflow-hidden"><div class="h-full rounded-full raliva-lb-fill bg-gradient-to-r from-gold-accent/60 to-gold-accent" style="width:0%" data-w="' + (r.pct || 0) + '%"></div></div>' +
                 '</div>';
