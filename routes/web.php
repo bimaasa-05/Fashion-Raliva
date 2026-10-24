@@ -360,6 +360,9 @@ Route::prefix('superadmin')->name('superadmin.')->middleware(['auth', 'role:Supe
     Route::post('/pengaturan-sistem/help/faq', [PengaturanSistemController::class, 'storeHelpFaq'])->name('pengaturan-sistem.help.faq.store');
     Route::put('/pengaturan-sistem/help/faq/{helpFaq}', [PengaturanSistemController::class, 'updateHelpFaq'])->name('pengaturan-sistem.help.faq.update');
     Route::delete('/pengaturan-sistem/help/faq/{helpFaq}', [PengaturanSistemController::class, 'destroyHelpFaq'])->name('pengaturan-sistem.help.faq.destroy');
+    Route::post('/pengaturan-sistem/landing-faq', [PengaturanSistemController::class, 'storeLandingFaq'])->name('pengaturan-sistem.landing-faq.store');
+    Route::put('/pengaturan-sistem/landing-faq/{landingFaq}', [PengaturanSistemController::class, 'updateLandingFaq'])->name('pengaturan-sistem.landing-faq.update');
+    Route::delete('/pengaturan-sistem/landing-faq/{landingFaq}', [PengaturanSistemController::class, 'destroyLandingFaq'])->name('pengaturan-sistem.landing-faq.destroy');
     Route::post('/pengaturan-sistem/sosmed', [PengaturanSistemController::class, 'storeSosmed'])->name('pengaturan-sistem.sosmed.store');
     Route::post('/pengaturan-sistem/sosmed/{platform}/toggle', [PengaturanSistemController::class, 'toggleSosmed'])->name('pengaturan-sistem.sosmed.toggle');
     Route::get('/profil', [ProfilController::class, 'index'])->name('profil');
