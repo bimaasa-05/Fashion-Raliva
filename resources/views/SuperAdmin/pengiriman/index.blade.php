@@ -134,7 +134,7 @@ $pelanggan = $s->order?->checkout?->user;
                                 <td class="p-6">{{ $s->order->store->nama_toko ?? '-' }}</td>
                                 <td class="p-6">{{ $s->courier->nama_kurir ?? '-' }}</td>
                                 <td class="p-6 font-mono text-on-surface-variant text-xs">{{ $s->nomor_resi ?? '-' }}</td>
-                                <td class="p-6 text-right text-on-surface">Rp {{ number_format((float) $s->ongkir, 0, ',', '.') }}</td>
+                                <td class="sa-num p-6 text-right text-on-surface">Rp {{ number_format((float) $s->ongkir, 0, ',', '.') }}</td>
                                 <td class="p-6">
                                     <form method="POST" action="{{ route('superadmin.pengiriman.status', $s->shipment_id) }}" class="inline-flex">
                                         @csrf
@@ -263,7 +263,7 @@ $pelanggan = $s->order?->checkout?->user;
                             </div>
                             <div class="flex justify-between gap-3">
                                 <dt class="text-on-surface-variant">{{ __('Ongkir') }}</dt>
-                                <dd class="text-on-surface text-right">Rp {{ number_format((float) $s->ongkir, 0, ',', '.') }}</dd>
+                                <dd class="sa-num text-on-surface text-right">Rp {{ number_format((float) $s->ongkir, 0, ',', '.') }}</dd>
                             </div>
                             <div class="flex justify-between gap-3">
                                 <dt class="text-on-surface-variant">{{ __('Pelanggan') }}</dt>
