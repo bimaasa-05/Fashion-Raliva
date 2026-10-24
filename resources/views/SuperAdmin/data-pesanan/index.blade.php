@@ -107,7 +107,7 @@
                                 </div>
                                 <div>
                                     <p class="font-body-md text-on-surface">{{ $order->store->nama_toko ?? '-' }}</p>
-                                    <p class="text-on-surface-variant text-xs">{{ $order->jumlah_produk }} produk</p>
+                                    <p class="text-on-surface-variant text-xs"><span class="sa-num">{{ $order->jumlah_produk }}</span> produk</p>
                                 </div>
                             </div>
                         </td>
@@ -115,7 +115,7 @@
                             <p class="font-body-md text-on-surface">{{ $pelNama }}</p>
                             <p class="text-on-surface-variant text-xs">{{ $pelEmail }}</p>
                         </td>
-                        <td class="p-6"><span class="font-bold text-gold-accent">Rp {{ number_format((float) $order->grand_total, 0, ',', '.') }}</span></td>
+                        <td class="p-6"><span class="sa-num font-bold text-gold-accent">Rp {{ number_format((float) $order->grand_total, 0, ',', '.') }}</span></td>
                         <td class="p-6">
                             <span class="inline-flex items-center px-2 py-1 rounded {{ $st[1] }} text-xs uppercase">{{ $st[0] }}</span>
                         </td>
@@ -191,7 +191,7 @@
                     </div>
                     <div class="flex justify-between gap-3">
                         <dt class="text-on-surface-variant">{{ __('Total') }}</dt>
-                        <dd class="font-bold text-gold-accent text-right">Rp {{ number_format((float) $order->grand_total, 0, ',', '.') }}</dd>
+                        <dd class="sa-num font-bold text-gold-accent text-right">Rp {{ number_format((float) $order->grand_total, 0, ',', '.') }}</dd>
                     </div>
                 </dl>
 
@@ -254,12 +254,12 @@
                                 <p class="text-xs text-on-surface-variant mt-0.5">Catatan: {{ Str::limit($it->catatan_custom, 60) }}</p>
                             @endif
                             @if((float) $it->diskon > 0)
-                                <p class="text-xs text-secondary mt-1">{{ __('Diskon produk:') }} <b>&minus; Rp {{ number_format((float) $it->diskon, 0, ',', '.') }}</b></p>
+                                <p class="text-xs text-secondary mt-1">{{ __('Diskon produk:') }} <b class="sa-num">&minus; Rp {{ number_format((float) $it->diskon, 0, ',', '.') }}</b></p>
                             @endif
                         </div>
                         <div class="text-right shrink-0">
-                            <p class="text-on-surface-variant text-xs whitespace-nowrap">Rp {{ number_format((float) $it->harga_snapshot, 0, ',', '.') }} &times; {{ $it->quantity }}</p>
-                            <p class="font-bold text-sm text-on-surface whitespace-nowrap">Rp {{ number_format((float) $it->subtotal, 0, ',', '.') }}</p>
+                            <p class="sa-num text-on-surface-variant text-xs whitespace-nowrap">Rp {{ number_format((float) $it->harga_snapshot, 0, ',', '.') }} &times; {{ $it->quantity }}</p>
+                            <p class="sa-num font-bold text-sm text-on-surface whitespace-nowrap">Rp {{ number_format((float) $it->subtotal, 0, ',', '.') }}</p>
                         </div>
                     </li>
                 @empty
@@ -281,12 +281,12 @@
                 </div>
                 <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
                     <dt class="text-on-surface-variant shrink-0">{{ __('Subtotal') }}</dt>
-                    <dd class="text-on-surface text-right">Rp {{ number_format((float) $order->subtotal, 0, ',', '.') }}</dd>
+                    <dd class="sa-num text-on-surface text-right">Rp {{ number_format((float) $order->subtotal, 0, ',', '.') }}</dd>
                 </div>
                 <div class="pb-3 border-b border-muted-border space-y-1">
                     <div class="flex justify-between gap-4">
                         <dt class="text-on-surface-variant">{{ __('Diskon') }}</dt>
-                        <dd class="text-secondary text-right">
+                        <dd class="sa-num text-secondary text-right">
                             @if((float) $order->total_diskon > 0)
                                 &minus; Rp {{ number_format((float) $order->total_diskon, 0, ',', '.') }}
                             @else
@@ -302,7 +302,7 @@
                             @foreach($diskons as $d)
                                 <li class="flex justify-between gap-4">
                                     <span>{{ $d->nama_produk_snapshot }}</span>
-                                    <span class="shrink-0">&minus; Rp {{ number_format((float) $d->diskon, 0, ',', '.') }}</span>
+                                    <span class="sa-num shrink-0">&minus; Rp {{ number_format((float) $d->diskon, 0, ',', '.') }}</span>
                                 </li>
                             @endforeach
                         </ul>
@@ -313,20 +313,20 @@
                 <div class="pb-3 border-b border-muted-border">
                     <div class="flex justify-between gap-4">
                         <dt class="text-on-surface-variant shrink-0">{{ __('Pajak') }}</dt>
-                        <dd class="text-on-surface text-right">Rp {{ number_format((float) $order->total_pajak, 0, ',', '.') }}</dd>
+                        <dd class="sa-num text-on-surface text-right">Rp {{ number_format((float) $order->total_pajak, 0, ',', '.') }}</dd>
                     </div>
                     <p class="text-xs text-on-surface-variant mt-1">PPN {{ $pajakPersen }}% diterapkan otomatis dari subtotal pada checkout &amp; pesanan baru.</p>
                 </div>
                 <div class="pb-3 border-b border-muted-border">
                     <div class="flex justify-between gap-4">
                         <dt class="text-on-surface-variant shrink-0">{{ __('Biaya Layanan') }}</dt>
-                        <dd class="text-on-surface text-right">Rp {{ number_format((float) $order->biaya_layanan, 0, ',', '.') }}</dd>
+                        <dd class="sa-num text-on-surface text-right">Rp {{ number_format((float) $order->biaya_layanan, 0, ',', '.') }}</dd>
                     </div>
                     <p class="text-xs text-on-surface-variant mt-1">{{ __('Biaya layanan diterapkan otomatis sesuai setting (Rp 0 jika belum diatur).') }}</p>
                 </div>
                 <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
                     <dt class="text-on-surface-variant shrink-0">{{ __('Ongkir') }}</dt>
-                    <dd class="text-on-surface text-right">Rp {{ number_format((float) $order->total_ongkir, 0, ',', '.') }}</dd>
+                    <dd class="sa-num text-on-surface text-right">Rp {{ number_format((float) $order->total_ongkir, 0, ',', '.') }}</dd>
                 </div>
                 <div class="flex justify-between gap-4 pb-3 border-b border-muted-border">
                     <dt class="text-on-surface-variant shrink-0">{{ __('Status') }}</dt>
@@ -338,7 +338,7 @@
                 </div>
                 <div class="flex justify-between gap-4 pt-2 border-t border-muted-border">
                     <dt class="font-bold text-on-surface">{{ __('Total Bayar') }}</dt>
-                    <dd class="font-bold text-gold-accent text-right text-base">Rp {{ number_format((float) $order->grand_total, 0, ',', '.') }}</dd>
+                    <dd class="sa-num font-bold text-gold-accent text-right text-base">Rp {{ number_format((float) $order->grand_total, 0, ',', '.') }}</dd>
                 </div>
             </dl>
         </section>
