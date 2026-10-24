@@ -149,17 +149,17 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
         <div class="flex flex-col items-center text-center p-3 rounded-xl bg-surface-container-low border border-muted-border">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Omzet Bulan Ini vs Bulan Lalu</p>
-            <div data-donut='[{"value":{{ $targetOmzet['persen'] }},"color":"#8B2942","label":"Tercapai"},{"value":{{ 100 - $targetOmzet['persen'] }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Bulan Lalu" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+            <div data-donut='[{"value":{{ $targetOmzet['persen'] }},"color":"#8B1E3F","label":"Tercapai"},{"value":{{ 100 - $targetOmzet['persen'] }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Bulan Lalu" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
             <p class="text-[11px] text-on-surface-variant mt-1">{{ \App\Support\NumberDisplay::compactRupiah($targetOmzet['bulanIni']) }} dari {{ \App\Support\NumberDisplay::compactRupiah($targetOmzet['bulanLalu']) }} bulan lalu</p>
         </div>
         <div class="flex flex-col items-center text-center p-3 rounded-xl bg-surface-container-low border border-muted-border">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Kepuasan Pelanggan</p>
-            <div data-donut='[{"value":{{ $kepuasan['persen'] }},"color":"#8B2942","label":"Puas"},{"value":{{ 100 - $kepuasan['persen'] }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Rating {{ $kepuasan['rata'] > 0 ? \App\Support\NumberDisplay::decimal($kepuasan['rata']) : '-' }} / 5" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+            <div data-donut='[{"value":{{ $kepuasan['persen'] }},"color":"#8B1E3F","label":"Puas"},{"value":{{ 100 - $kepuasan['persen'] }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Rating {{ $kepuasan['rata'] > 0 ? \App\Support\NumberDisplay::decimal($kepuasan['rata']) : '-' }} / 5" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
             <p class="text-[11px] text-on-surface-variant mt-1">{{ sprintf(__('Dari %s ulasan'), \App\Support\NumberDisplay::count($kepuasan['total'])) }}</p>
         </div>
         <div class="flex flex-col items-center text-center p-3 rounded-xl bg-surface-container-low border border-muted-border">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">SLA Respons Komplain</p>
-            <div data-donut='[{"value":{{ $sla['total'] > 0 ? $sla['persen'] : 0 }},"color":"#B23A55","label":"Tepat SLA"},{"value":{{ $sla['total'] > 0 ? 100 - $sla['persen'] : 100 }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="{{ $sla['total'] > 0 ? 'Target 24 Jam' : 'Belum Ada Data' }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+            <div data-donut='[{"value":{{ $sla['total'] > 0 ? $sla['persen'] : 0 }},"color":"#c03a5a","label":"Tepat SLA"},{"value":{{ $sla['total'] > 0 ? 100 - $sla['persen'] : 100 }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="{{ $sla['total'] > 0 ? 'Target 24 Jam' : 'Belum Ada Data' }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
             <p class="text-[11px] text-on-surface-variant mt-1">{{ $sla['total'] > 0 ? 'Rata-rata balasan dalam '.$sla['rataJam'].' jam • '.\App\Support\NumberDisplay::count($sla['total']).' komplain' : 'Belum ada komplain yang dibalas — tidak dihitung.' }}</p>
         </div>
     </div>
@@ -458,7 +458,7 @@
                 data: {
                     labels: data.labels,
                     datasets: [
-                        { label: '{{ __('Volume Transaksi') }}', data: data.transaksi, borderColor: '#8B2942', backgroundColor: 'rgba(139, 41, 66, 0.12)', fill: true, tension: 0.38, borderWidth: 2, pointBackgroundColor: '#8B2942', pointRadius: 3 },
+                        { label: '{{ __('Volume Transaksi') }}', data: data.transaksi, borderColor: '#8B1E3F', backgroundColor: 'rgba(139, 30, 63, 0.12)', fill: true, tension: 0.38, borderWidth: 2, pointBackgroundColor: '#8B1E3F', pointRadius: 3 },
                         { label: '{{ __('Jumlah Pesanan') }}', data: data.pesanan, borderColor: c.tick, backgroundColor: 'transparent', fill: false, tension: 0.38, borderWidth: 2, pointBackgroundColor: c.tick, pointRadius: 3, yAxisID: 'y1' }
                     ]
                 },
