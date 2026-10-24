@@ -5,6 +5,7 @@ namespace App\Http\Controllers\SuperAdmin;
 use App\Http\Controllers\Controller;
 use App\Models\HelpCategory;
 use App\Models\HelpFaq;
+use App\Models\LandingFaq;
 use App\Models\Notification;
 use App\Models\Setting;
 use App\Support\ActivityLogger;
@@ -44,6 +45,7 @@ class PengaturanSistemController extends Controller
             ],
             'helpCategories' => HelpCategory::terurut()->get(),
             'helpFaqs' => HelpFaq::with('category')->terurut()->get(),
+            'landingFaqs' => LandingFaq::terurut()->get(),
             'helpHero' => [
                 'title' => Setting::get(Setting::HELP_HERO_TITLE, 'How can we help?'),
                 'subtitle' => Setting::get(Setting::HELP_HERO_SUBTITLE, 'Search our help center or browse popular topics below.'),
@@ -407,6 +409,59 @@ class PengaturanSistemController extends Controller
         return back()->with('toast', ['message' => __('FAQ berhasil dihapus.'), 'icon' => 'delete']);
     }
 
+    public function storeLandingFaq(Request $request)
+    {
+        $data = $this->validateLandingFaq($request);
+
+        $faq = LandingFaq::create([
+            'pertanyaan_id' => $data['pertanyaan_id'],
+            'jawaban_id' => $data['jawaban_id'],
+            'pertanyaan_en' => $data['pertanyaan_en'],
+            'jawaban_en' => $data['jawaban_en'],
+            'urutan' => $data['urutan'] ?? ((LandingFaq::max('urutan') ?? 0) + 1),
+            'is_active' => true,
+        ]);
+
+        ActivityLogger::log('landing.faq.create', LandingFaq::class, $faq->landing_faq_id, null, $faq->only(['pertanyaan_id', 'pertanyaan_en', 'urutan']), 'Menambahkan FAQ landing baru.');
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'FAQ Landing Ditambahkan', 'FAQ landing baru ditambahkan.', route('superadmin.pengaturan-sistem').'#kartu-landing-faq');
+
+        return back()->with('toast', ['message' => __('FAQ landing berhasil ditambahkan.'), 'icon' => 'task_alt']);
+    }
+
+    public function updateLandingFaq(Request $request, LandingFaq $landingFaq)
+    {
+        $data = $this->validateLandingFaq($request);
+
+        $lama = $landingFaq->only(['pertanyaan_id', 'jawaban_id', 'pertanyaan_en', 'jawaban_en', 'urutan', 'is_active']);
+
+        $landingFaq->update([
+            'pertanyaan_id' => $data['pertanyaan_id'],
+            'jawaban_id' => $data['jawaban_id'],
+            'pertanyaan_en' => $data['pertanyaan_en'],
+            'jawaban_en' => $data['jawaban_en'],
+            'urutan' => $data['urutan'] ?? $landingFaq->urutan,
+            'is_active' => $request->boolean('is_active'),
+        ]);
+
+        ActivityLogger::log('landing.faq.update', LandingFaq::class, $landingFaq->landing_faq_id, $lama, $landingFaq->only(['pertanyaan_id', 'jawaban_id', 'pertanyaan_en', 'jawaban_en', 'urutan', 'is_active']), 'Mengubah FAQ landing.');
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'FAQ Landing Diperbarui', 'FAQ landing diperbarui.', route('superadmin.pengaturan-sistem').'#kartu-landing-faq');
+
+        return back()->with('toast', ['message' => __('FAQ landing berhasil diperbarui.'), 'icon' => 'task_alt']);
+    }
+
+    public function destroyLandingFaq(LandingFaq $landingFaq)
+    {
+        $id = $landingFaq->landing_faq_id;
+        $pertanyaan = $landingFaq->pertanyaan_id;
+        $lama = $landingFaq->only(['pertanyaan_id', 'jawaban_id', 'pertanyaan_en', 'jawaban_en', 'urutan']);
+        $landingFaq->delete();
+
+        ActivityLogger::log('landing.faq.delete', LandingFaq::class, $id, $lama, null, 'Menghapus FAQ landing.');
+        Notification::fireSelf(Notification::TIPE_SISTEM, 'FAQ Landing Dihapus', "FAQ landing \"{$pertanyaan}\" dihapus.", route('superadmin.pengaturan-sistem').'#kartu-landing-faq');
+
+        return back()->with('toast', ['message' => __('FAQ landing berhasil dihapus.'), 'icon' => 'delete']);
+    }
+
     private function validateHelpCategory(Request $request): array
     {
         return $request->validate([
@@ -430,6 +485,23 @@ class PengaturanSistemController extends Controller
             'help_category_id' => 'Kategori',
             'pertanyaan' => 'Pertanyaan',
             'jawaban' => 'Jawaban',
+        ]);
+    }
+
+    private function validateLandingFaq(Request $request): array
+    {
+        return $request->validate([
+            'pertanyaan_id' => 'required|string|max:255',
+            'jawaban_id' => 'required|string|min:3',
+            'pertanyaan_en' => 'required|string|max:255',
+            'jawaban_en' => 'required|string|min:3',
+            'urutan' => 'nullable|integer|min:1',
+        ], [], [
+            'pertanyaan_id' => 'Pertanyaan (ID)',
+            'jawaban_id' => 'Jawaban (ID)',
+            'pertanyaan_en' => 'Question (EN)',
+            'jawaban_en' => 'Answer (EN)',
+            'urutan' => 'Urutan',
         ]);
     }
 }
