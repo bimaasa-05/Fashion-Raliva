@@ -347,16 +347,50 @@
         html[data-motion="minimal"] #sidebar [data-sidebar-group] { transition-duration: 380ms !important; }
         html[data-motion="minimal"] #sidebar [data-sidebar-group] > .sa-sidebar-group-inner { transition-duration: 220ms, 300ms !important; }
         html[data-motion="minimal"] #sidebar-overlay { transition-duration: 300ms !important; }
-        #sidebar-toggle .material-symbols-outlined { transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
-        #sidebar-toggle[aria-expanded="true"] .material-symbols-outlined { transform: rotate(90deg); }
+        html[data-motion="minimal"] #sidebar-toggle .sa-menu-icon > span { transition-duration: 300ms !important; }
+        .sa-menu-icon {
+            position: relative;
+            display: block;
+            width: 20px;
+            height: 16px;
+        }
+        .sa-menu-icon > span {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            border-radius: 9999px;
+            background: currentColor;
+            transform-origin: center;
+            transition:
+                transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.2s ease;
+        }
+        .sa-menu-icon > span:nth-child(1) { top: 0; }
+        .sa-menu-icon > span:nth-child(2) { top: 7px; }
+        .sa-menu-icon > span:nth-child(3) { top: 14px; }
+        #sidebar-toggle[aria-expanded="true"] .sa-menu-icon > span:nth-child(1) {
+            transform: translateY(7px) rotate(45deg);
+        }
+        #sidebar-toggle[aria-expanded="true"] .sa-menu-icon > span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0.2);
+        }
+        #sidebar-toggle[aria-expanded="true"] .sa-menu-icon > span:nth-child(3) {
+            transform: translateY(-7px) rotate(-45deg);
+        }
     </style>
 </head>
 <body class="text-on-background font-body-md antialiased min-h-screen flex flex-col">
     <div id="app-shell" class="flex-1 min-w-0 flex flex-col md:flex-row">
     <!-- Mobile Nav (TopAppBar) -->
     <header class="md:hidden flex justify-between items-center w-full px-container-margin h-16 bg-surface border-b border-outline-variant sticky top-0 z-40">
-        <button id="sidebar-toggle" type="button" aria-expanded="false" aria-controls="sidebar" aria-label="{{ __('Buka menu') }}" class="text-on-surface hover:opacity-80 transition-opacity">
-            <span class="material-symbols-outlined">menu</span>
+        <button id="sidebar-toggle" type="button" aria-expanded="false" aria-controls="sidebar" aria-label="{{ __('Buka menu') }}" class="inline-flex h-10 w-10 items-center justify-center rounded-lg text-on-surface hover:bg-surface-container-low transition-colors">
+            <span class="sa-menu-icon" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+            </span>
         </button>
         <span class="font-display-lg text-headline-md tracking-widest text-on-surface uppercase">@include('partials.brand-content', ['logoClass' => 'h-7'])</span>
         <div class="flex items-center gap-2">
