@@ -386,11 +386,15 @@
                 <div class="reveal" style="--reveal-delay: 100ms">
                     @foreach ($faqs as $faq)
                         <details class="faq-item">
-                            <summary>
+                            <summary aria-expanded="false">
                                 <span>{{ $faq['q'] }}</span>
                                 <span class="material-symbols-outlined faq-plus text-[20px]">add</span>
                             </summary>
-                            <p>{{ $faq['a'] }}</p>
+                            <div class="faq-answer">
+                                <div class="faq-answer-inner">
+                                    <p>{{ $faq['a'] }}</p>
+                                </div>
+                            </div>
                         </details>
                     @endforeach
                 </div>
