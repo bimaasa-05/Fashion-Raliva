@@ -127,9 +127,11 @@ use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', [LandingController::class, 'index'])->name('landing');
-Route::permanentRedirect('/untuk-brand', '/#untuk-siapa')->name('landing.brand');
-Route::permanentRedirect('/buka-toko', '/#daftar')->name('landing.open-store');
+Route::get('/', [HomeController::class, 'index'])->name('customer.home');
+Route::permanentRedirect('/customer', '/');
+Route::get('/join', [LandingController::class, 'index'])->name('landing');
+Route::permanentRedirect('/untuk-brand', '/join#untuk-siapa')->name('landing.brand');
+Route::permanentRedirect('/buka-toko', '/join#daftar')->name('landing.open-store');
 
 /* ===== Unified Authentication (semua role) ===== */
 Route::get('/login', [LoginController::class, 'create'])->name('login');
@@ -144,8 +146,6 @@ Route::post('/reset-password', [ResetPasswordController::class, 'reset'])->middl
 
 // customer
 Route::prefix('customer')->name('customer.')->group(function () {
-    Route::get('/', [HomeController::class, 'index'])->name('home');
-
     Route::get('/shop', [ShopController::class, 'index'])->name('shop');
 
     Route::get('/shop/produk/{id}', [ShopController::class, 'produkDetail'])->name('shop.produk-detail');
