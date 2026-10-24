@@ -2,17 +2,29 @@
     const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebar-toggle');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
+    const sidebarToggleIcon = sidebarToggle?.querySelector('.material-symbols-outlined');
+    let sidebarOverlayTimer;
+
+    const setSidebarToggleState = (open) => {
+        if (!sidebarToggle) return;
+        sidebarToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+        if (sidebarToggleIcon) sidebarToggleIcon.textContent = open ? 'close' : 'menu';
+    };
 
     const openSidebar = () => {
+        clearTimeout(sidebarOverlayTimer);
         sidebar.classList.remove('-translate-x-full');
         sidebarOverlay.classList.remove('hidden');
+        setSidebarToggleState(true);
         requestAnimationFrame(() => sidebarOverlay.classList.remove('opacity-0'));
     };
 
     const closeSidebar = () => {
         sidebar.classList.add('-translate-x-full');
         sidebarOverlay.classList.add('opacity-0');
-        setTimeout(() => sidebarOverlay.classList.add('hidden'), 300);
+        setSidebarToggleState(false);
+        clearTimeout(sidebarOverlayTimer);
+        sidebarOverlayTimer = setTimeout(() => sidebarOverlay.classList.add('hidden'), 300);
     };
 
     sidebarToggle?.addEventListener('click', () => {
@@ -86,15 +98,27 @@
         document.querySelectorAll('.theme-toggle .icon-sun').forEach((el) => el.classList.toggle('hidden', !isDark));
     };
 
+    let themeTransitionTimer;
+    const applyTheme = (isDark) => {
+        const root = document.documentElement;
+        root.classList.add('theme-transition');
+        root.style.colorScheme = isDark ? 'dark' : 'light';
+        void root.offsetWidth;
+        root.classList.toggle('dark', isDark);
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        updateThemeIcons();
+        clearTimeout(themeTransitionTimer);
+        themeTransitionTimer = setTimeout(() => root.classList.remove('theme-transition'), 360);
+    };
+
     document.querySelectorAll('.theme-toggle').forEach((btn) => {
         btn.addEventListener('click', () => {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('theme', isDark ? 'dark' : 'light');
-            updateThemeIcons();
+            applyTheme(!document.documentElement.classList.contains('dark'));
         });
     });
 
     updateThemeIcons();
+    document.documentElement.style.colorScheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
 
     /* Buka-tutup grup sidebar dengan animasi halus (teknik grid-rows) */
     document.querySelectorAll('[data-sidebar-group-button]').forEach((btn) => {
