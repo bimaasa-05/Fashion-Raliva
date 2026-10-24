@@ -26,7 +26,7 @@
     <div data-reveal-group class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
         <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hero-glow">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Pendapatan') }}</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight">Rp <span data-count="{{ $totalPendapatan }}" data-count-decimals="0">{{ number_format($totalPendapatan, 0, ',', '.') }}</span></span>
+            <span class="sa-figure text-on-surface leading-tight whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::rupiah($totalPendapatan) }}"><span data-count="{{ $totalPendapatan }}" data-count-format="compact-currency">{{ \App\Support\NumberDisplay::compactRupiah($totalPendapatan) }}</span></span>
             <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>{{ __('Semua transaksi berhasil') }}</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:66%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:58%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:74%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:68%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:88%"></i>
@@ -36,7 +36,7 @@
 
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Pesanan') }}</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight"><span data-count="{{ $totalPesanan }}">{{ number_format($totalPesanan, 0, ',', '.') }}</span></span>
+            <span class="sa-figure text-on-surface leading-tight whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::count($totalPesanan) }}"><span data-count="{{ $totalPesanan }}" data-count-format="number">{{ \App\Support\NumberDisplay::count($totalPesanan) }}</span></span>
             <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-gold-accent">shopping_bag</span>{{ __('Pesanan berhasil') }}</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:50%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:70%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:64%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:80%"></i>
@@ -46,7 +46,7 @@
 
         <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium hero-glow">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Komisi :brand', ['brand' => brand()]) }}</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold leading-tight">Rp <span data-count="{{ $komisiRaliva }}" data-count-decimals="0">{{ number_format($komisiRaliva, 0, ',', '.') }}</span></span>
+            <span class="sa-figure text-gradient-gold leading-tight whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::rupiah($komisiRaliva) }}"><span data-count="{{ $komisiRaliva }}" data-count-format="compact-currency">{{ \App\Support\NumberDisplay::compactRupiah($komisiRaliva) }}</span></span>
             <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">trending_up</span>{{ __('Total komisi terkumpul') }}</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:46%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:72%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:84%"></i>
@@ -56,7 +56,7 @@
 
         <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Toko Aktif') }}</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight"><span data-count="{{ $tokoAktif }}">{{ $tokoAktif }}</span></span>
+            <span class="sa-figure text-on-surface leading-tight whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::count($tokoAktif) }}"><span data-count="{{ $tokoAktif }}" data-count-format="number">{{ \App\Support\NumberDisplay::count($tokoAktif) }}</span></span>
             <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-gold-accent">storefront</span>{{ __('Toko terverifikasi') }}</span>
             <div class="flex items-end gap-[3px] h-6 mt-auto">
                 <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:30%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:35%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:32%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:42%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:52%"></i>
@@ -171,7 +171,7 @@
                         <td class="p-4 font-mono text-sm text-on-surface">{{ $tx->nomor_order }}</td>
                         <td class="p-4 font-body-md text-sm text-on-surface-variant">{{ $tx->created_at ? \Carbon\Carbon::parse($tx->created_at)->locale('id')->translatedFormat('d M Y - H.i') : '-' }}</td>
                         <td class="p-4 font-body-md text-sm text-on-surface">{{ $tx->store->nama_toko ?? '-' }}</td>
-                        <td class="p-4 font-title-md text-sm text-on-surface">Rp {{ number_format((float)$tx->grand_total, 0, ',', '.') }}</td>
+                        <td class="p-4 font-title-md text-sm text-on-surface tabular-nums whitespace-nowrap">{{ \App\Support\NumberDisplay::rupiah($tx->grand_total) }}</td>
                         <td class="p-4"><span class="inline-flex items-center px-2 py-1 rounded-full {{ $st[1] }} text-[10px] font-bold uppercase border">{{ $st[0] }}</span></td>
                     </tr>
                 @empty
@@ -212,7 +212,7 @@
                     </div>
                     <div class="flex justify-between gap-3">
                         <dt class="text-on-surface-variant">{{ __('Jumlah') }}</dt>
-                        <dd class="text-on-surface font-bold text-right">Rp {{ number_format((float)$tx->grand_total, 0, ',', '.') }}</dd>
+                        <dd class="text-on-surface font-bold text-right tabular-nums whitespace-nowrap">{{ \App\Support\NumberDisplay::rupiah($tx->grand_total) }}</dd>
                     </div>
                 </dl>
             </article>
@@ -247,14 +247,7 @@
     const totalEl = document.getElementById('trend-total');
     const badgeText = document.getElementById('trend-badge-text');
 
-    const formatRupiahShort = (value) => {
-        if (value >= 1000000000) return (value / 1000000000).toFixed(1).replace('.', ',') + ' M';
-        if (value >= 1000000) return (value / 1000000).toFixed(1).replace('.', ',') + ' jt';
-        if (value >= 1000) return Math.round(value / 1000) + ' rb';
-        return value;
-    };
-
-    const formatRupiah = (value) => new Intl.NumberFormat('id-ID').format(Math.round(value));
+    const formatRupiahShort = (value) => window.ralivaFormatCompactNumber(value);
 
     const chartTheme = () => {
         const isDark = document.documentElement.classList.contains('dark');
@@ -283,7 +276,7 @@
         const c = chartTheme();
         const data = rangeData[currentTrendRange] || rangeData['30'];
 
-        if (totalEl) totalEl.textContent = 'Rp ' + formatRupiah(data.total || 0);
+        if (totalEl) totalEl.textContent = window.ralivaFormatRp(data.total || 0);
 
         const hasData = (data.data || []).some((v) => v > 0);
         chartEmpty?.classList.toggle('hidden', hasData);
@@ -296,9 +289,9 @@
         }
 
         if (data.best && data.best.value > 0) {
-            insightText.textContent = '{{ __('Pendapatan tertinggi pada') }} ' + data.best.label + ' {{ __('sebesar Rp') }} ' + formatRupiah(data.best.value) + '.';
+            insightText.textContent = '{{ __('Pendapatan tertinggi pada') }} ' + data.best.label + ' {{ __('sebesar Rp') }} ' + window.ralivaFormatNumber(data.best.value) + '.';
         } else {
-            insightText.textContent = '{{ __('Pendapatan periode ini: Rp') }} ' + formatRupiah(data.total || 0) + '.';
+            insightText.textContent = '{{ __('Pendapatan periode ini: Rp') }} ' + window.ralivaFormatNumber(data.total || 0) + '.';
         }
 
         if (!revenueChart) {
@@ -309,12 +302,12 @@
                     datasets: [{
                         label: '{{ __('Pendapatan') }}',
                         data: data.data,
-                        borderColor: '#8B1E3F',
-                        backgroundColor: 'rgba(139, 30, 63, 0.12)',
+                        borderColor: '#8B2942',
+                        backgroundColor: 'rgba(139, 41, 66, 0.12)',
                         fill: true,
                         tension: 0.38,
                         borderWidth: 2,
-                        pointBackgroundColor: '#8B1E3F',
+                        pointBackgroundColor: '#8B2942',
                         pointRadius: 3,
                         pointHoverRadius: 5
                     }]
@@ -330,7 +323,7 @@
                             backgroundColor: c.tooltipBg, titleColor: c.tooltipText, bodyColor: c.tooltipText,
                             titleFont: { family: 'Manrope', size: 12, weight: '700' }, bodyFont: { family: 'Manrope', size: 14 },
                             padding: 12, cornerRadius: 0, displayColors: false,
-                            callbacks: { label: (ctx) => ' Pendapatan: Rp ' + formatRupiah(ctx.raw) }
+                            callbacks: { label: (ctx) => ' Pendapatan: ' + window.ralivaFormatRp(ctx.raw) }
                         }
                     },
                     scales: {
