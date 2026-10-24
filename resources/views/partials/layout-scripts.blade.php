@@ -2,13 +2,11 @@
     const sidebar = document.getElementById('sidebar');
     const sidebarToggle = document.getElementById('sidebar-toggle');
     const sidebarOverlay = document.getElementById('sidebar-overlay');
-    const sidebarToggleIcon = sidebarToggle?.querySelector('.material-symbols-outlined');
     let sidebarOverlayTimer;
 
     const setSidebarToggleState = (open) => {
         if (!sidebarToggle) return;
         sidebarToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
-        if (sidebarToggleIcon) sidebarToggleIcon.textContent = open ? 'close' : 'menu';
     };
 
     const openSidebar = () => {
