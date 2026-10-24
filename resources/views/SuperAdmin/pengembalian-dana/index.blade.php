@@ -37,7 +37,7 @@
         <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Kasus Menunggu') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary break-words">{{ $stats['requested'] }}</span>
+                <span class="sa-figure text-secondary whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::count($stats['requested']) }}">{{ \App\Support\NumberDisplay::count($stats['requested']) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('perlu keputusan') }}</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
                     <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:72%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:64%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:84%"></i>
@@ -46,7 +46,7 @@
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-gold-accent/25 rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium hover:border-gold-accent transition-colors hero-glow">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Nominal Menunggu') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold break-words">Rp {{ number_format($stats['nominal_menunggu'], 0, ',', '.') }}</span>
+                <span class="sa-figure text-gradient-gold whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::rupiah($stats['nominal_menunggu']) }}">{{ \App\Support\NumberDisplay::compactRupiah($stats['nominal_menunggu']) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('diajukan Customer') }}</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
                     <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:66%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:58%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:74%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:88%"></i>
@@ -55,7 +55,7 @@
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Disetujui') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">{{ $stats['disetujui'] }}</span>
+                <span class="sa-figure text-on-surface whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::count($stats['disetujui']) }}">{{ \App\Support\NumberDisplay::count($stats['disetujui']) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('sedang diproses') }}</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
                     <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:46%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:72%"></i>
@@ -64,7 +64,7 @@
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Selesai') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">{{ $stats['selesai'] }}</span>
+                <span class="sa-figure text-on-surface whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::count($stats['selesai']) }}">{{ \App\Support\NumberDisplay::count($stats['selesai']) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('dana dikembalikan') }}</span>
                 <div class="flex items-end gap-[3px] h-6 mt-auto">
                     <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:45%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:38%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:56%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:50%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:66%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:78%"></i>
@@ -153,7 +153,7 @@
                                 <p class="text-on-surface-variant text-xs break-words">{{ $refund->order?->store?->nama_toko ?? '-' }}</p>
                             </td>
                             <td class="p-6 text-on-surface max-w-[240px] w-[240px] break-words [overflow-wrap:anywhere]" title="{{ $refund->alasan }}">{{ \Illuminate\Support\Str::limit($refund->alasan, 60) }}</td>
-                            <td class="p-6 text-right font-bold text-gold-accent whitespace-nowrap">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</td>
+                            <td class="p-6 text-right font-bold text-gold-accent whitespace-nowrap tabular-nums" title="{{ \App\Support\NumberDisplay::rupiah($refund->jumlah) }}">{{ \App\Support\NumberDisplay::compactRupiah($refund->jumlah) }}</td>
                             <td class="p-6 text-center">
                                 <span class="inline-flex items-center px-2 py-1 rounded {{ $badge['class'] }} text-xs uppercase">{{ $badge['label'] }}</span>
                             </td>
@@ -236,7 +236,7 @@
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">{{ __('Jumlah') }}</dt>
-                            <dd class="font-bold text-gold-accent text-right whitespace-nowrap min-w-0">Rp {{ number_format((float) $refund->jumlah, 0, ',', '.') }}</dd>
+                            <dd class="font-bold text-gold-accent text-right whitespace-nowrap min-w-0 tabular-nums" title="{{ \App\Support\NumberDisplay::rupiah($refund->jumlah) }}">{{ \App\Support\NumberDisplay::compactRupiah($refund->jumlah) }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">{{ __('Diajukan') }}</dt>
@@ -306,7 +306,7 @@
             @csrf
             <div class="text-center">
                 <h3 class="font-title-md text-title-md text-on-surface">{{ __('Setujui Refund?') }}</h3>
-                <p class="text-sm text-on-surface-variant mt-2 mb-4">{{ __('Refund') }} <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> {{ sprintf(__('sebesar %s untuk pesanan %s akan disetujui dan ditandai selesai.'), 'Rp ' . number_format((float) $refund->jumlah, 0, ',', '.'), $refund->order?->nomor_order ?? '-') }}</p>
+                <p class="text-sm text-on-surface-variant mt-2 mb-4">{{ __('Refund') }} <span class="font-mono font-bold text-on-surface">{{ $kodeRefund }}</span> {{ sprintf(__('sebesar %s untuk pesanan %s akan disetujui dan ditandai selesai.'), \App\Support\NumberDisplay::rupiah($refund->jumlah), $refund->order?->nomor_order ?? '-') }}</p>
             </div>
             @if ($isSaldoAkunRefund)
                 <div class="rounded-xl border border-emerald-500/25 bg-emerald-500/10 p-4">
