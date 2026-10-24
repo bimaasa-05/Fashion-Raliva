@@ -24,13 +24,16 @@ class LandingPageTest extends TestCase
 
         $response->assertOk()
             ->assertSee('NexPrint')
-            ->assertSee('Bangun brand fashion', false)
+            ->assertSee('Satu platform', false)
             ->assertSee('id="beranda"', false)
-            ->assertSee('id="tentang"', false)
             ->assertSee('id="fitur"', false)
-            ->assertSee('id="buka-toko"', false)
+            ->assertSee('id="cara-kerja"', false)
+            ->assertSee('id="untuk-siapa"', false)
+            ->assertSee('id="daftar"', false)
             ->assertSee('id="faq"', false)
-            ->assertSee('id="kontak"', false)
+            ->assertDontSee('id="tentang"', false)
+            ->assertDontSee('id="buka-toko"', false)
+            ->assertDontSee('id="kontak"', false)
             ->assertSee(route('customer.home'), false)
             ->assertSee(route('register'), false)
             ->assertSee('Belanja');
@@ -40,11 +43,11 @@ class LandingPageTest extends TestCase
     {
         $brand = $this->get('/untuk-brand');
         $brand->assertStatus(301);
-        $this->assertSame('/#tentang', $brand->headers->get('Location'));
+        $this->assertSame('/#untuk-siapa', $brand->headers->get('Location'));
 
         $openStore = $this->get('/buka-toko');
         $openStore->assertStatus(301);
-        $this->assertSame('/#buka-toko', $openStore->headers->get('Location'));
+        $this->assertSame('/#daftar', $openStore->headers->get('Location'));
     }
 
     public function test_kontak_support_muncul_saat_setting_terisi(): void
@@ -94,8 +97,9 @@ class LandingPageTest extends TestCase
 
         $this->get(route('landing'))
             ->assertOk()
-            ->assertSee('Build your fashion brand', false)
-            ->assertSee('Open a Store', false)
+            ->assertSee('One platform for', false)
+            ->assertSee('How it works', false)
+            ->assertSee('Join as Owner', false)
             ->assertSee('Shop');
     }
 }
