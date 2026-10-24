@@ -26,28 +26,47 @@ class LandingPageTest extends TestCase
             ->assertSee('NexPrint')
             ->assertSee('Satu platform', false)
             ->assertSee('id="beranda"', false)
+            ->assertSee('id="tentang"', false)
             ->assertSee('id="fitur"', false)
             ->assertSee('id="cara-kerja"', false)
             ->assertSee('id="untuk-siapa"', false)
             ->assertSee('id="daftar"', false)
             ->assertSee('id="faq"', false)
-            ->assertDontSee('id="tentang"', false)
             ->assertDontSee('id="buka-toko"', false)
             ->assertDontSee('id="kontak"', false)
-            ->assertSee(route('customer.home'), false)
+            ->assertSee(route('customer.shop'), false)
             ->assertSee(route('register'), false)
-            ->assertSee('Belanja');
+            ->assertSee('Join Bersama Kami')
+            ->assertDontSee('Daftar Owner');
+    }
+
+    public function test_header_landing_menampilkan_menu_utama_tanpa_belanja(): void
+    {
+        $html = view('landing._partials.header', ['dashboardUrl' => null])->render();
+
+        $this->assertStringContainsString(route('landing').'#beranda', $html);
+        $this->assertStringContainsString(route('landing').'#tentang', $html);
+        $this->assertStringContainsString(route('landing').'#fitur', $html);
+        $this->assertStringContainsString(route('landing').'#cara-kerja', $html);
+        $this->assertStringContainsString(route('landing').'#untuk-siapa', $html);
+        $this->assertStringContainsString(route('landing').'#faq', $html);
+        $this->assertStringContainsString(route('register'), $html);
+        $this->assertStringContainsString(__('landing.nav.login'), $html);
+        $this->assertStringContainsString(__('landing.nav.register_owner'), $html);
+        $this->assertStringNotContainsString(__('landing.nav.register'), $html);
+        $this->assertStringNotContainsString(__('landing.nav.shop'), $html);
+        $this->assertStringNotContainsString('shopping_bag', $html);
     }
 
     public function test_url_lama_diarahkan_ke_anchor_landing(): void
     {
         $brand = $this->get('/untuk-brand');
         $brand->assertStatus(301);
-        $this->assertSame('/#untuk-siapa', $brand->headers->get('Location'));
+        $this->assertSame('/join#untuk-siapa', $brand->headers->get('Location'));
 
         $openStore = $this->get('/buka-toko');
         $openStore->assertStatus(301);
-        $this->assertSame('/#daftar', $openStore->headers->get('Location'));
+        $this->assertSame('/join#daftar', $openStore->headers->get('Location'));
     }
 
     public function test_kontak_support_muncul_saat_setting_terisi(): void
@@ -86,7 +105,8 @@ class LandingPageTest extends TestCase
         $this->get(route('landing'))
             ->assertOk()
             ->assertSee(route('register'), false)
-            ->assertSee('Daftar Owner')
+            ->assertSee('Join Bersama Kami')
+            ->assertDontSee('Daftar Owner')
             ->assertSee('5%', false)
             ->assertSee('KTP wajib');
     }
@@ -99,7 +119,8 @@ class LandingPageTest extends TestCase
             ->assertOk()
             ->assertSee('One platform for', false)
             ->assertSee('How it works', false)
-            ->assertSee('Join as Owner', false)
+            ->assertSee('Join Us', false)
+            ->assertDontSee('Join as Owner', false)
             ->assertSee('Shop');
     }
 }
