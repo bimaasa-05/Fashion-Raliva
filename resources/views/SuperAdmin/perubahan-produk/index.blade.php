@@ -49,7 +49,7 @@
                     <p class="text-xs font-bold uppercase tracking-widest text-error">{{ __('Admin mengajukan penghapusan produk ini') }}</p>
                     <p class="text-sm text-on-surface"><span class="font-semibold">{{ $item->before_snapshot['product']['nama_produk'] ?? $item->product?->nama_produk ?? '-' }}</span>
                         • {{ $item->before_snapshot['product']['kategori'] ?? '-' }}
-                        • Rp {{ number_format((float) ($item->before_snapshot['product']['harga_dasar'] ?? 0), 0, ',', '.') }}
+                        • <span class="sa-num">Rp {{ number_format((float) ($item->before_snapshot['product']['harga_dasar'] ?? 0), 0, ',', '.') }}</span>
                         • {{ count($item->before_snapshot['variants'] ?? []) }} varian
                         • {{ count($item->before_snapshot['images'] ?? []) }} foto</p>
                     <p class="text-sm text-on-surface-variant italic">“{{ $item->after_payload['alasan'] ?? '-' }}”</p>
