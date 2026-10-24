@@ -33,16 +33,16 @@
         <div class="relative z-10 p-8 md:p-12">
             <div class="flex flex-wrap items-center gap-3 mb-4">
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gold-accent/10 text-gold-accent text-[10px] font-bold uppercase tracking-wider border border-gold-accent/20">
-                    <span class="w-1.5 h-1.5 rounded-full bg-gold-accent"></span>{{ $summary['totals']['toko'] }} {{ __('Toko') }}
+                    <span class="w-1.5 h-1.5 rounded-full bg-gold-accent"></span><span class="sa-num">{{ $summary['totals']['toko'] }}</span> {{ __('Toko') }}
                 </span>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase tracking-wider border border-secondary/20">
-                    <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>{{ number_format($summary['totals']['kuota']) }} {{ __('Slot') }}
+                    <span class="w-1.5 h-1.5 rounded-full bg-secondary"></span><span class="sa-num">{{ number_format($summary['totals']['kuota']) }}</span> {{ __('Slot') }}
                 </span>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success/10 text-success text-[10px] font-bold uppercase tracking-wider border border-success/20">
-                    <span class="w-1.5 h-1.5 rounded-full bg-success"></span>{{ number_format($summary['totals']['used']) }} {{ __('Terpakai') }}
+                    <span class="w-1.5 h-1.5 rounded-full bg-success"></span><span class="sa-num">{{ number_format($summary['totals']['used']) }}</span> {{ __('Terpakai') }}
                 </span>
                 <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-bold uppercase tracking-wider border border-outline-variant">
-                    {{ $pendingCount }} {{ __('Permintaan') }}
+                    <span class="sa-num">{{ $pendingCount }}</span> {{ __('Permintaan') }}
                 </span>
             </div>
             <p class="font-body-md text-body-md text-on-surface-variant max-w-lg">{{ __('Setiap toko memiliki kuota slot untuk produk yang dapat tampil. Kelola kuota gratis, paket berbayar, dan proses pembelian slot.') }}</p>
@@ -89,7 +89,7 @@
                         <span class="material-symbols-outlined text-[20px] text-gold-accent mt-0.5">workspace_premium</span>
                         <div>
                             <p class="font-bold text-on-surface">{{ __('Slot Awal Toko Baru') }}</p>
-                            <p class="text-xs text-on-surface-variant mt-0.5">{{ __('Kuota gratis otomatis untuk toko yang baru disetujui. Saat ini') }} <span class="font-bold text-on-surface">{{ number_format($slotAwalDefault) }} slot</span>{{ __('. Kuota toko yang sudah ada tidak terpengaruh.') }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ __('Kuota gratis otomatis untuk toko yang baru disetujui. Saat ini') }} <span class="sa-num font-bold text-on-surface">{{ number_format($slotAwalDefault) }} slot</span>{{ __('. Kuota toko yang sudah ada tidak terpengaruh.') }}</p>
                         </div>
                     </div>
                     <form method="POST" action="{{ route('superadmin.slot-produk.default') }}" onsubmit="return openConfirmSlot(event, '{{ __('Slot awal toko baru akan diubah. Lanjutkan?') }}')" class="flex items-center gap-2">
@@ -106,7 +106,7 @@
                         <span class="material-symbols-outlined text-[20px] text-gold-accent mt-0.5">payments</span>
                         <div>
                             <p class="font-bold text-on-surface">{{ __('Harga Per Slot Fleksibel') }}</p>
-                            <p class="text-xs text-on-surface-variant mt-0.5">{{ __('Harga satuan untuk pembelian slot fleksibel oleh Owner. Saat ini') }} <span class="font-bold text-on-surface">Rp {{ number_format($hargaPerSlot) }}</span> {{ __('per slot. Total = jumlah slot × harga satuan.') }}</p>
+                            <p class="text-xs text-on-surface-variant mt-0.5">{{ __('Harga satuan untuk pembelian slot fleksibel oleh Owner. Saat ini') }} <span class="sa-num font-bold text-on-surface">Rp {{ number_format($hargaPerSlot) }}</span> {{ __('per slot. Total = jumlah slot × harga satuan.') }}</p>
                         </div>
                     </div>
                     <form method="POST" action="{{ route('superadmin.slot-produk.harga-per-slot') }}" onsubmit="return openConfirmSlot(event, '{{ __('Harga per slot akan diubah. Lanjutkan?') }}')" class="flex items-center gap-2">
@@ -157,19 +157,19 @@
                                             </div>
                                             <div class="min-w-0">
                                                 <p class="font-bold text-on-surface truncate">{{ $store->nama_toko }}</p>
-                                                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant mt-0.5">Kuota Gratis: {{ number_format($s['free_quota']) }}</p>
+                                                <p class="text-[10px] uppercase tracking-wider text-on-surface-variant mt-0.5">Kuota Gratis: <span class="sa-num">{{ number_format($s['free_quota']) }}</span></p>
                                             </div>
                                         </div>
                                     </td>
-                                    <td class="py-3.5 px-4 text-center font-semibold text-on-surface">{{ number_format($s['total']) }}</td>
-                                    <td class="py-3.5 px-4 text-center text-on-surface-variant">{{ number_format($s['used']) }}</td>
+                                    <td class="sa-num py-3.5 px-4 text-center font-semibold text-on-surface">{{ number_format($s['total']) }}</td>
+                                    <td class="sa-num py-3.5 px-4 text-center text-on-surface-variant">{{ number_format($s['used']) }}</td>
                                     <td class="py-3.5 px-4 text-center">
                                         <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold {{ $s['available'] < 1 ? 'bg-error/10 text-error' : 'bg-success/10 text-success' }}">{{ number_format($s['available']) }}</span>
                                     </td>
                                     <td class="py-3.5 px-4 text-center">
                                         <div class="inline-flex items-center gap-2 min-w-[120px]">
                                             <div class="w-20 h-1.5 bg-surface-container-high rounded-full overflow-hidden"><div class="h-full bg-gold-accent rounded-full" style="width: {{ min(100, $s['progress']) }}%"></div></div>
-                                            <span class="text-xs text-on-surface-variant">{{ $s['progress'] }}%</span>
+                                            <span class="sa-num text-xs text-on-surface-variant">{{ $s['progress'] }}%</span>
                                         </div>
                                     </td>
                                     <td class="py-3.5 px-4 text-right">
@@ -200,15 +200,15 @@
                                     </div>
                                     <div class="min-w-0">
                                         <p class="font-title-md text-title-md text-on-surface truncate">{{ $store->nama_toko }}</p>
-                                        <p class="text-xs text-on-surface-variant">Kuota Gratis: {{ number_format($s['free_quota']) }}</p>
+                                        <p class="text-xs text-on-surface-variant">Kuota Gratis: <span class="sa-num">{{ number_format($s['free_quota']) }}</span></p>
                                     </div>
                                 </div>
                                 <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold {{ $s['available'] < 1 ? 'bg-error/10 text-error' : 'bg-success/10 text-success' }}">Sisa {{ number_format($s['available']) }}</span>
                             </div>
                             <div class="mb-3">
                                 <div class="flex justify-between text-xs text-on-surface-variant mb-1">
-                                    <span>{{ number_format($s['used']) }} / {{ number_format($s['total']) }} terpakai</span>
-                                    <span>{{ $s['progress'] }}%</span>
+                                    <span class="sa-num">{{ number_format($s['used']) }} / {{ number_format($s['total']) }} terpakai</span>
+                                    <span class="sa-num">{{ $s['progress'] }}%</span>
                                 </div>
                                 <div class="w-full h-2 bg-surface-container-high rounded-full overflow-hidden"><div class="h-full bg-gold-accent rounded-full" style="width: {{ min(100, $s['progress']) }}%"></div></div>
                             </div>
@@ -266,10 +266,10 @@
                                 </div>
                                 <span class="inline-flex px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ $paket->status === \App\Models\ProductSlotPackage::STATUS_AKTIF ? 'bg-success/10 text-success border-success/20' : 'bg-error/10 text-error border-error/30' }}">{{ $paket->status }}</span>
                             </div>
-                            <div class="text-2xl font-bold text-gold-accent mb-4">Rp {{ number_format($paket->harga, 0, ',', '.') }}</div>
+                            <div class="sa-num text-2xl font-bold text-gold-accent mb-4">Rp {{ number_format($paket->harga, 0, ',', '.') }}</div>
                             <ul class="space-y-2 font-body-md text-sm text-on-surface-variant flex-1 mb-5">
-                                <li class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">check_circle</span>{{ sprintf(__('%s slot produk'), number_format($paket->jumlah_slot)) }}</li>
-                                <li class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">check_circle</span>{{ sprintf(__('%s hari masa berlaku'), number_format($paket->durasi_hari)) }}</li>
+                                <li class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">check_circle</span>{!! sprintf(e(__('%s slot produk')), '<span class="sa-num">'.e(number_format($paket->jumlah_slot)).'</span>') !!}</li>
+                                <li class="flex items-center gap-2"><span class="material-symbols-outlined text-[16px] text-gold-accent">check_circle</span>{!! sprintf(e(__('%s hari masa berlaku')), '<span class="sa-num">'.e(number_format($paket->durasi_hari)).'</span>') !!}</li>
                             </ul>
                             <form method="POST" action="{{ route('superadmin.slot-produk.paket.toggle', $paket->slot_package_id) }}" onsubmit="return openConfirmSlot(event, '{{ $paket->status === \App\Models\ProductSlotPackage::STATUS_AKTIF ? __('Nonaktifkan paket ini?') : __('Aktifkan paket ini?') }}')">
                                 @csrf
@@ -339,9 +339,9 @@
                                             <span class="inline-flex px-2 py-0.5 rounded-full text-[9px] font-bold uppercase border {{ $payBadge }}">Bayar: {{ str_replace('_', ' ', $rmt->payment_status ?? '-') }}</span>
                                         </div>
                                         <p class="text-sm text-on-surface mt-1">
-                                            <span class="font-semibold">{{ number_format($rmt->jumlah_slot) }} slot</span>
-                                            {{ __('• total') }} <span class="font-bold text-gold-accent">Rp {{ number_format((float) $rmt->total_harga, 0, ',', '.') }}</span>
-                                            (satuan Rp {{ number_format((float) $rmt->harga_per_slot, 0, ',', '.') }})
+                                            <span class="sa-num font-semibold">{{ number_format($rmt->jumlah_slot) }} slot</span>
+                                            {{ __('• total') }} <span class="sa-num font-bold text-gold-accent">Rp {{ number_format((float) $rmt->total_harga, 0, ',', '.') }}</span>
+                                            (satuan <span class="sa-num">Rp {{ number_format((float) $rmt->harga_per_slot, 0, ',', '.') }}</span>)
                                             @if ($rmt->metode_pembayaran) • {{ $rmt->metode_pembayaran }} @endif
                                         </p>
                                         <p class="text-xs text-on-surface-variant mt-0.5">diajukan {{ $rmt->diajukan_pada?->translatedFormat('d M Y, H:i') ?? '-' }}</p>
