@@ -48,7 +48,11 @@
                     <span class="material-symbols-outlined theme-icon-dark text-[18px]">light_mode</span>
                 </button>
                 <button type="button" data-mobile-menu-toggle aria-expanded="false" aria-controls="mobile-menu" aria-label="{{ __('landing.nav.menu') }}" class="inline-flex h-9 w-9 items-center justify-center rounded-full border border-muted-border bg-surface-container-lowest text-on-surface">
-                    <span class="material-symbols-outlined text-[20px]">menu</span>
+                    <span class="landing-menu-icon" aria-hidden="true">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </span>
                 </button>
             </div>
         </div>
