@@ -6,10 +6,11 @@
     }
     $instagramLabel = '@'.ltrim($instagramLabel, '@');
     $platformLinks = [
+        ['href' => route('landing').'#beranda', 'label' => __('landing.nav.home')],
+        ['href' => route('landing').'#tentang', 'label' => __('landing.nav.about')],
         ['href' => route('landing').'#fitur', 'label' => __('landing.nav.features')],
         ['href' => route('landing').'#cara-kerja', 'label' => __('landing.nav.how_it_works')],
         ['href' => route('landing').'#untuk-siapa', 'label' => __('landing.nav.for_who')],
-        ['href' => route('landing').'#daftar', 'label' => __('landing.nav.register')],
         ['href' => route('landing').'#faq', 'label' => __('landing.nav.faq')],
     ];
 @endphp
