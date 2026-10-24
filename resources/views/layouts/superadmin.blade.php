@@ -130,6 +130,34 @@
         .sa-notif-dot { background-color: var(--sa-notif-accent) !important; }
         .sa-notif-panel-head { background: linear-gradient(90deg, rgba(178, 58, 85, 0.12), transparent) !important; }
         .dark .sa-notif-panel-head { background: linear-gradient(90deg, rgba(229, 138, 160, 0.14), transparent) !important; }
+        /* ===== Animasi navigasi SuperAdmin (drawer mobile + grup sidebar) =====
+           Sengaja eksplisit agar tidak bergantung pada transition-all / mode minimal. */
+        #sidebar {
+            transition: transform 380ms cubic-bezier(0.22, 1, 0.36, 1), width 220ms ease !important;
+            will-change: transform;
+        }
+        #sidebar-overlay {
+            transition: opacity 300ms ease !important;
+            will-change: opacity;
+        }
+        @media (min-width: 768px) {
+            #sidebar { transition: width 220ms ease !important; will-change: auto; }
+        }
+        #sidebar [data-sidebar-group] {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 380ms cubic-bezier(0.22, 1, 0.36, 1) !important;
+        }
+        #sidebar [data-sidebar-group].sa-group-open { max-height: 1000px; }
+        #sidebar [data-sidebar-group] > .sa-sidebar-group-inner {
+            opacity: 0;
+            transform: translateY(-6px);
+            transition: opacity 220ms ease, transform 300ms cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        #sidebar [data-sidebar-group].sa-group-open > .sa-sidebar-group-inner {
+            opacity: 1;
+            transform: translateY(0);
+        }
         .card-premium:hover { border-color: rgb(139 30 63 / 0.45) !important; }
         .premium-heading::before { background: #8B1E3F !important; }
         .premium-table tbody tr td:first-child::before { background: #8B1E3F !important; }
@@ -211,6 +239,17 @@
         .group:hover .group-hover\:text-gold-accent { color: #8B1E3F !important; }
         .group:hover .group-hover\:border-gold-accent { border-color: #8B1E3F !important; }
         .group\/row:hover .group-hover\/row\:text-gold-accent { color: #8B1E3F !important; }
+        /* Dark mode SuperAdmin: buang merah cerah global (theme-head), pakai aksen burgundy/pink. */
+        .dark .text-gold-accent { color: var(--sa-number-accent) !important; }
+        .dark .text-gradient-gold {
+            background: linear-gradient(115deg, #8B1E3F 0%, #E58AA0 48%, #F2A7BB 55%, #E58AA0 70%, #8B1E3F 100%) !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            color: transparent !important;
+        }
+        .dark .hover\:text-gold-accent:hover { color: var(--sa-number-accent) !important; }
+        .dark .group:hover .group-hover\:text-gold-accent { color: var(--sa-number-accent) !important; }
+        .dark .group\/row:hover .group-hover\/row\:text-gold-accent { color: var(--sa-number-accent) !important; }
         /* Bar chart (Pesanan per Bulan) & leaderboard gradients → burgundy */
         .from-gold-accent { --tw-gradient-from: #8B1E3F !important; --tw-gradient-to: rgb(139 30 63 / 0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
         .from-gold-accent\/5 { --tw-gradient-from: rgba(139,30,63,0.05) !important; --tw-gradient-to: rgba(139,30,63,0) !important; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to) !important; }
@@ -303,12 +342,11 @@
         /* Transisi kecil tetap jalan tapi super cepat (hover tetap terasa, popup tidak dipotong). */
         html[data-motion="minimal"] * { transition-duration: 0.05s !important; transition-delay: 0s !important; }
         /* Drawer sidebar & grup menu tetap halus di mode minimal — ini navigasi, bukan dekorasi. */
-        html[data-motion="minimal"] #sidebar,
-        html[data-motion="minimal"] #sidebar *,
-        html[data-motion="minimal"] #sidebar-overlay {
-            transition-duration: 300ms !important;
-            transition-delay: 0s !important;
-        }
+        html[data-motion="minimal"] #sidebar { transition-duration: 380ms !important; }
+        html[data-motion="minimal"] #sidebar * { transition-duration: 300ms !important; transition-delay: 0s !important; }
+        html[data-motion="minimal"] #sidebar [data-sidebar-group] { transition-duration: 380ms !important; }
+        html[data-motion="minimal"] #sidebar [data-sidebar-group] > .sa-sidebar-group-inner { transition-duration: 220ms, 300ms !important; }
+        html[data-motion="minimal"] #sidebar-overlay { transition-duration: 300ms !important; }
         #sidebar-toggle .material-symbols-outlined { transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1); }
         #sidebar-toggle[aria-expanded="true"] .material-symbols-outlined { transform: rotate(90deg); }
     </style>
