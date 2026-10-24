@@ -24,7 +24,7 @@
     @media (min-width: 768px) { .quick-nav { top: 84px; } }
     .quick-nav-pill { display: inline-flex; align-items: center; gap: 6px; padding: 9px 16px; border-radius: 9999px; white-space: nowrap; border: 1px solid var(--color-muted-border); background: var(--color-surface-container-lowest); color: var(--color-on-surface-variant); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; transition: all 0.18s ease; }
     .quick-nav-pill:hover { border-color: var(--color-gold-accent); color: var(--color-gold-accent); }
-    .quick-nav-pill.is-active { border-color: var(--color-gold-accent); background: rgba(139, 41, 66, 0.12); background: color-mix(in srgb, var(--color-gold-accent) 12%, transparent); color: var(--color-gold-accent); }
+    .quick-nav-pill.is-active { border-color: var(--color-gold-accent); background: rgba(139, 30, 63, 0.12); background: color-mix(in srgb, var(--color-gold-accent) 12%, transparent); color: var(--color-gold-accent); }
 
     .snap-anchor { scroll-margin-top: 128px; }
     @media (min-width: 768px) { .snap-anchor { scroll-margin-top: 144px; } }
