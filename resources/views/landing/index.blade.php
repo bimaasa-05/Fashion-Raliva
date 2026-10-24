@@ -49,13 +49,6 @@
             ['icon' => 'shopping_bag', 'text' => __('landing.brand.audience_4')],
         ];
 
-        $faqs = [
-            ['q' => __('landing.open_store.faq_1_q'), 'a' => __('landing.open_store.faq_1_a')],
-            ['q' => __('landing.open_store.faq_2_q'), 'a' => __('landing.open_store.faq_2_a', ['percent' => $commissionPercent])],
-            ['q' => __('landing.open_store.faq_3_q'), 'a' => __('landing.open_store.faq_3_a')],
-            ['q' => __('landing.open_store.faq_4_q'), 'a' => __('landing.open_store.faq_4_a')],
-            ['q' => __('landing.open_store.faq_6_q'), 'a' => __('landing.open_store.faq_6_a')],
-        ];
     @endphp
 
     <section id="beranda" class="relative overflow-hidden pb-16 pt-28 sm:pb-24 sm:pt-36">
@@ -388,7 +381,7 @@
                         <details class="faq-item">
                             <summary aria-expanded="false">
                                 <span>{{ $faq['q'] }}</span>
-                                <span class="material-symbols-outlined faq-plus text-[20px]">add</span>
+                                <span class="material-symbols-outlined faq-plus text-[20px]" aria-hidden="true">add</span>
                             </summary>
                             <div class="faq-answer">
                                 <div class="faq-answer-inner">
