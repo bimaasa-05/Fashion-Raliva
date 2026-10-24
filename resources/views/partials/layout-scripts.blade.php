@@ -24,7 +24,7 @@
         sidebarOverlay.classList.add('opacity-0');
         setSidebarToggleState(false);
         clearTimeout(sidebarOverlayTimer);
-        sidebarOverlayTimer = setTimeout(() => sidebarOverlay.classList.add('hidden'), 300);
+        sidebarOverlayTimer = setTimeout(() => sidebarOverlay.classList.add('hidden'), 400);
     };
 
     sidebarToggle?.addEventListener('click', () => {
@@ -120,15 +120,60 @@
     updateThemeIcons();
     document.documentElement.style.colorScheme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
 
-    /* Buka-tutup grup sidebar dengan animasi halus (teknik grid-rows) */
+    /* Buka-tutup grup sidebar dengan animasi max-height + fade (SuperAdmin) */
+    const settleGroupHeight = (group, finalHeight) => {
+        if (group.saGroupCleanup) group.saGroupCleanup();
+        const finish = () => {
+            group.style.maxHeight = finalHeight;
+            if (group.saGroupCleanup) group.saGroupCleanup();
+        };
+        const onEnd = (event) => {
+            if (event.target === group && event.propertyName === 'max-height') finish();
+        };
+        group.addEventListener('transitionend', onEnd);
+        const timer = setTimeout(finish, 700);
+        group.saGroupCleanup = () => {
+            clearTimeout(timer);
+            group.removeEventListener('transitionend', onEnd);
+            group.saGroupCleanup = null;
+        };
+    };
+
     document.querySelectorAll('[data-sidebar-group-button]').forEach((btn) => {
         const group = btn.parentElement.querySelector('[data-sidebar-group]');
         if (!group) return;
-        btn.setAttribute('aria-expanded', group.classList.contains('grid-rows-[1fr]') ? 'true' : 'false');
+        const isSaGroup = group.classList.contains('sa-sidebar-group');
+        if (isSaGroup && group.classList.contains('sa-group-open')) {
+            group.style.maxHeight = 'none';
+        }
+        btn.setAttribute('aria-expanded', (isSaGroup ? group.classList.contains('sa-group-open') : group.classList.contains('grid-rows-[1fr]')) ? 'true' : 'false');
         btn.addEventListener('click', () => {
-            const isOpen = group.classList.contains('grid-rows-[1fr]');
-            group.classList.toggle('grid-rows-[1fr]', !isOpen);
-            group.classList.toggle('grid-rows-[0fr]', isOpen);
+            const isOpen = isSaGroup ? group.classList.contains('sa-group-open') : group.classList.contains('grid-rows-[1fr]');
+            if (isSaGroup && group.saGroupCleanup) group.saGroupCleanup();
+
+            if (isSaGroup) {
+                if (isOpen) {
+                    group.style.maxHeight = `${group.scrollHeight}px`;
+                    void group.offsetHeight;
+                    group.classList.remove('sa-group-open');
+                    group.classList.remove('grid-rows-[1fr]');
+                    group.classList.add('grid-rows-[0fr]');
+                    requestAnimationFrame(() => {
+                        group.style.maxHeight = '0px';
+                        settleGroupHeight(group, '');
+                    });
+                } else {
+                    group.style.maxHeight = `${group.scrollHeight}px`;
+                    group.classList.add('sa-group-open');
+                    group.classList.remove('grid-rows-[0fr]');
+                    group.classList.add('grid-rows-[1fr]');
+                    settleGroupHeight(group, 'none');
+                }
+            } else {
+                group.classList.toggle('grid-rows-[1fr]', !isOpen);
+                group.classList.toggle('grid-rows-[0fr]', isOpen);
+            }
+
             btn.setAttribute('aria-expanded', String(!isOpen));
             btn.querySelector('.material-symbols-outlined')?.classList.toggle('rotate-180', !isOpen);
             /* Jaga label tetap terpandang setelah tinggi grup berubah (anti tabrakan scroll).
@@ -147,7 +192,7 @@
                         behavior: 'smooth',
                     });
                 }
-            }, 330);
+            }, 400);
         });
     });
 
@@ -158,6 +203,11 @@
         document.querySelectorAll('[data-sidebar-group]').forEach((group) => {
             group.classList.remove('grid-rows-[0fr]');
             group.classList.add('grid-rows-[1fr]');
+            if (group.classList.contains('sa-sidebar-group')) {
+                if (group.saGroupCleanup) group.saGroupCleanup();
+                group.classList.add('sa-group-open');
+                group.style.maxHeight = 'none';
+            }
         });
     };
 
