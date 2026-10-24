@@ -12,6 +12,12 @@
             ['icon' => 'monitoring', 'title' => __('landing.home.trust_4_title'), 'text' => __('landing.home.trust_4_text')],
         ];
 
+        $whyItems = [
+            ['icon' => 'storefront', 'title' => __('landing.home.why_1_title'), 'text' => __('landing.home.why_1_text')],
+            ['icon' => 'verified_user', 'title' => __('landing.home.why_2_title'), 'text' => __('landing.home.why_2_text')],
+            ['icon' => 'monitoring', 'title' => __('landing.home.why_3_title'), 'text' => __('landing.home.why_3_text')],
+        ];
+
         $features = [
             ['icon' => 'styler', 'title' => __('landing.home.feature_1_title'), 'text' => __('landing.home.feature_1_text')],
             ['icon' => 'local_shipping', 'title' => __('landing.home.feature_2_title'), 'text' => __('landing.home.feature_2_text')],
@@ -208,6 +214,34 @@
                         </div>
                     </div>
                 @endforeach
+            </div>
+        </div>
+    </section>
+
+    <section id="tentang" class="border-b border-muted-border bg-surface-container-lowest/70 py-20 sm:py-28">
+        <div class="mx-auto max-w-8xl px-5 sm:px-8">
+            <div class="grid gap-10 lg:grid-cols-[0.82fr_1.18fr] lg:items-start lg:gap-16">
+                <div class="reveal lg:sticky lg:top-28">
+                    <span class="eyebrow">{{ __('landing.home.why_eyebrow') }}</span>
+                    <h2 class="mt-4 max-w-md font-heading font-bold text-4xl leading-[1.08] tracking-[-0.02em] sm:text-5xl sm:leading-[1.08]">{{ __('landing.home.why_title') }}</h2>
+                    <p class="mt-5 max-w-md text-sm leading-7 text-on-surface-variant">{{ __('landing.home.why_description') }}</p>
+                    <a href="#fitur" class="btn-secondary mt-7">
+                        {{ __('landing.common.see_features') }}
+                        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                    </a>
+                </div>
+
+                <div class="grid gap-3 sm:grid-cols-3">
+                    @foreach ($whyItems as $index => $item)
+                        <article class="feature-card reveal" style="--reveal-delay: {{ $index * 70 }}ms">
+                            <span class="icon-tile">
+                                <span class="material-symbols-outlined text-[21px]">{{ $item['icon'] }}</span>
+                            </span>
+                            <h3 class="mt-4 font-heading font-semibold text-lg leading-tight">{{ $item['title'] }}</h3>
+                            <p class="mt-2 text-xs leading-6 text-on-surface-variant">{{ $item['text'] }}</p>
+                        </article>
+                    @endforeach
+                </div>
             </div>
         </div>
     </section>
