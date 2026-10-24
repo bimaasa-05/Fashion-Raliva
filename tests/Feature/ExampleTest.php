@@ -15,7 +15,9 @@ class ExampleTest extends TestCase
         $response = $this->get('/');
 
         $response->assertOk()
-            ->assertSee('id="daftar"', false)
-            ->assertSee(route('customer.home'), false);
+            ->assertSee(__('Curated fashion for the modern minimalist. Discover the art of everyday dressing.'))
+            ->assertSee(route('landing'), false)
+            ->assertSee(__('landing.nav.register_owner'))
+            ->assertDontSee('id="daftar"', false);
     }
 }
