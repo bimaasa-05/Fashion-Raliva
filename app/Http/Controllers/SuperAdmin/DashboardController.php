@@ -9,9 +9,10 @@ use App\Models\Commission;
 use App\Models\Complaint;
 use App\Models\Order;
 use App\Models\Store;
-use App\Models\User;
 use App\Models\Payment;
 use App\Models\Review;
+use App\Models\User;
+use App\Support\NumberDisplay;
 use App\Support\SuperAdminBadgeCounter;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -188,8 +189,8 @@ class DashboardController extends Controller
             ],
             'perhatian' => $perhatian,
             'komposisiTokoDonut' => [
-                ['value' => (int) $tokoAktif, 'color' => '#8B1E3F', 'label' => 'Aktif'],
-                ['value' => (int) $perhatian['toko'], 'color' => '#c03a5a', 'label' => 'Menunggu'],
+                ['value' => (int) $tokoAktif, 'color' => '#8B2942', 'label' => 'Aktif'],
+                ['value' => (int) $perhatian['toko'], 'color' => '#B23A55', 'label' => 'Menunggu'],
                 ['value' => (int) $tokoNonaktif + (int) $tokoDitolak, 'color' => '#BA1A26', 'label' => 'Nonaktif/Ditolak'],
             ],
             'topToko' => $topToko,
@@ -312,8 +313,9 @@ class DashboardController extends Controller
         return $rows->map(function ($row, $i) use ($max) {
             return [
                 'name' => $row->nama_toko,
-                'meta' => $row->jumlah_pesanan . ' pesanan',
-                'display' => 'Rp ' . number_format((float) $row->total_omzet, 0, ',', '.'),
+                'meta' => NumberDisplay::count($row->jumlah_pesanan) . ' pesanan',
+                'display' => NumberDisplay::compactRupiah($row->total_omzet),
+                'display_full' => NumberDisplay::rupiah($row->total_omzet),
                 'pct' => max(4, (int) round(((float) $row->total_omzet / $max) * 100)),
             ];
         })->all();
@@ -340,8 +342,9 @@ class DashboardController extends Controller
         return $rows->map(function ($row) use ($max) {
             return [
                 'name' => $row->nama_kategori,
-                'meta' => number_format((float) $row->total_terjual, 0, ',', '.') . ' terjual',
-                'display' => 'Rp ' . number_format((float) $row->total_omzet, 0, ',', '.'),
+                'meta' => NumberDisplay::count($row->total_terjual) . ' terjual',
+                'display' => NumberDisplay::compactRupiah($row->total_omzet),
+                'display_full' => NumberDisplay::rupiah($row->total_omzet),
                 'pct' => max(4, (int) round(((float) $row->total_omzet / $max) * 100)),
             ];
         })->all();
@@ -367,8 +370,9 @@ class DashboardController extends Controller
         return $rows->map(function ($row) use ($max) {
             return [
                 'name' => $row->nama_lengkap,
-                'meta' => $row->jumlah_pesanan . ' pesanan',
-                'display' => 'Rp ' . number_format((float) $row->total_belanja, 0, ',', '.'),
+                'meta' => NumberDisplay::count($row->jumlah_pesanan) . ' pesanan',
+                'display' => NumberDisplay::compactRupiah($row->total_belanja),
+                'display_full' => NumberDisplay::rupiah($row->total_belanja),
                 'pct' => max(4, (int) round(((float) $row->total_belanja / $max) * 100)),
             ];
         })->all();
@@ -394,8 +398,9 @@ class DashboardController extends Controller
         return $rows->map(function ($row) use ($max) {
             return [
                 'name' => $row->nama_produk,
-                'meta' => number_format((float) $row->total_terjual, 0, ',', '.') . ' terjual',
-                'display' => 'Rp ' . number_format((float) $row->total_omzet, 0, ',', '.'),
+                'meta' => NumberDisplay::count($row->total_terjual) . ' terjual',
+                'display' => NumberDisplay::compactRupiah($row->total_omzet),
+                'display_full' => NumberDisplay::rupiah($row->total_omzet),
                 'pct' => max(4, (int) round(((float) $row->total_omzet / $max) * 100)),
             ];
         })->all();
@@ -425,7 +430,8 @@ class DashboardController extends Controller
             return [
                 'name' => $slot->product->nama_produk,
                 'meta' => $slot->store->nama_toko . ' • ' . $periode,
-                'display' => 'Rp ' . number_format((float) $slot->nominal_bid, 0, ',', '.'),
+                'display' => NumberDisplay::compactRupiah($slot->nominal_bid),
+                'display_full' => NumberDisplay::rupiah($slot->nominal_bid),
                 'pct' => max(4, (int) round(((float) $slot->nominal_bid / $max) * 100)),
             ];
         })->all();
