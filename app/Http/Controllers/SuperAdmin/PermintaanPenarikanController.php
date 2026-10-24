@@ -25,7 +25,7 @@ class PermintaanPenarikanController extends Controller
             'disetujui' => (clone $base)->where('status', Withdrawal::STATUS_DISETUJUI)->count(),
             'dibayar' => (clone $base)->where('status', Withdrawal::STATUS_DIBAYAR)->count(),
             'ditolak' => (clone $base)->where('status', Withdrawal::STATUS_DITOLAK)->count(),
-            'total_semua' => (float) $withdrawals->whereIn('status', [Withdrawal::STATUS_DISETUJUI, Withdrawal::STATUS_DIBAYAR])->sum('jumlah'),
+            'total_semua' => (float) (clone $base)->whereIn('status', [Withdrawal::STATUS_DISETUJUI, Withdrawal::STATUS_DIBAYAR])->sum('jumlah'),
         ];
 
         $withdrawals = $base
