@@ -23,10 +23,10 @@
 <svg viewBox="0 0 {{ $w }} {{ $h }}" preserveAspectRatio="none" class="w-full h-6" aria-hidden="true" focusable="false">
     <defs>
         <linearGradient id="{{ $gid }}" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#8B1E3F" stop-opacity="0.30" />
-            <stop offset="100%" stop-color="#8B1E3F" stop-opacity="0" />
+            <stop offset="0%" stop-color="#8B2942" stop-opacity="0.30" />
+            <stop offset="100%" stop-color="#8B2942" stop-opacity="0" />
         </linearGradient>
     </defs>
     <polygon points="{{ $area }}" fill="url(#{{ $gid }})" />
-    <polyline points="{{ $line }}" fill="none" stroke="#8B1E3F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" />
+    <polyline points="{{ $line }}" fill="none" stroke="#8B2942" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke" />
 </svg>
