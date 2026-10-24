@@ -302,12 +302,12 @@
                     datasets: [{
                         label: '{{ __('Pendapatan') }}',
                         data: data.data,
-                        borderColor: '#8B2942',
-                        backgroundColor: 'rgba(139, 41, 66, 0.12)',
+                        borderColor: '#8B1E3F',
+                        backgroundColor: 'rgba(139, 30, 63, 0.12)',
                         fill: true,
                         tension: 0.38,
                         borderWidth: 2,
-                        pointBackgroundColor: '#8B2942',
+                        pointBackgroundColor: '#8B1E3F',
                         pointRadius: 3,
                         pointHoverRadius: 5
                     }]
