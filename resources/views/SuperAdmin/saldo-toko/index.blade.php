@@ -23,19 +23,19 @@
         <div data-reveal-group class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
             <div data-reveal class="bg-surface-container-lowest border border-gold-accent/25 rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium hover:border-gold-accent transition-colors hero-glow">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Saldo Tersedia') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold break-words">Rp {{ number_format($totalTersedia, 0, ',', '.') }}</span>
+                <span class="sa-figure text-gradient-gold whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::rupiah($totalTersedia) }}">{{ \App\Support\NumberDisplay::compactRupiah($totalTersedia) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('dapat digunakan toko') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Saldo Tertahan') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">Rp {{ number_format($totalTertahan, 0, ',', '.') }}</span>
+                <span class="sa-figure text-on-surface whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::rupiah($totalTertahan) }}">{{ \App\Support\NumberDisplay::compactRupiah($totalTertahan) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('dalam proses') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">lock</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Jumlah Toko') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">{{ $jumlahToko }}</span>
+                <span class="sa-figure text-on-surface whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::count($jumlahToko) }}">{{ \App\Support\NumberDisplay::count($jumlahToko) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('toko terdaftar') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">storefront</span>
             </div>
@@ -64,10 +64,10 @@
                         <span class="font-title-md text-title-md text-on-surface">{{ $wallet->store->nama_toko ?? '-' }}</span>
                         <span class="material-symbols-outlined text-gold-accent">account_balance_wallet</span>
                     </div>
-                    <div class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">Rp {{ number_format((float)$wallet->saldo_tersedia, 0, ',', '.') }}</div>
+                    <div class="sa-figure text-gold-accent whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::rupiah($wallet->saldo_tersedia) }}">{{ \App\Support\NumberDisplay::compactRupiah($wallet->saldo_tersedia) }}</div>
                     <div class="pt-4 border-t border-muted-border flex justify-between font-body-md text-sm">
                         <span class="text-on-surface-variant">{{ __('Menunggu Cair') }}</span>
-                        <span class="text-on-surface font-bold">Rp {{ number_format((float)$wallet->saldo_tertahan, 0, ',', '.') }}</span>
+                        <span class="text-on-surface font-bold tabular-nums" title="{{ \App\Support\NumberDisplay::rupiah($wallet->saldo_tertahan) }}">{{ \App\Support\NumberDisplay::compactRupiah($wallet->saldo_tertahan) }}</span>
                     </div>
                 </div>
             @empty
@@ -137,11 +137,11 @@
                             <td class="p-4 text-on-surface">{{ $tx->wallet->store->nama_toko ?? '-' }}</td>
                             <td class="p-4 text-on-surface-variant text-xs uppercase">{{ str_replace('_', ' ', $tx->jenis_transaksi) }}</td>
                             <td class="p-4 text-on-surface">{{ $tx->keterangan ?? '-' }}</td>
-                            <td class="p-4 text-right text-on-surface-variant">Rp {{ number_format((float)$tx->saldo_sebelum, 0, ',', '.') }}</td>
-                            <td class="p-4 text-right font-bold {{ $isPositive ? 'text-secondary' : 'text-error' }}">
-                                {{ $isPositive ? '+' : '-' }} Rp {{ number_format(abs((float)$tx->jumlah), 0, ',', '.') }}
+                            <td class="p-4 text-right text-on-surface-variant tabular-nums whitespace-nowrap">{{ \App\Support\NumberDisplay::rupiah($tx->saldo_sebelum) }}</td>
+                            <td class="p-4 text-right font-bold tabular-nums whitespace-nowrap {{ $isPositive ? 'text-secondary' : 'text-error' }}">
+                                {{ $isPositive ? '+' : '-' }} {{ \App\Support\NumberDisplay::rupiah(abs((float) $tx->jumlah)) }}
                             </td>
-                            <td class="p-4 text-right text-on-surface-variant">Rp {{ number_format((float)$tx->saldo_sesudah, 0, ',', '.') }}</td>
+                            <td class="p-4 text-right text-on-surface-variant tabular-nums whitespace-nowrap">{{ \App\Support\NumberDisplay::rupiah($tx->saldo_sesudah) }}</td>
                             <td class="p-4 text-on-surface-variant">{{ $tx->created_at ? \Carbon\Carbon::parse($tx->created_at)->locale('id')->diffForHumans() : '-' }}</td>
                         </tr>
                     @empty
@@ -169,7 +169,7 @@
                             <p class="font-title-md text-title-md text-on-surface truncate">{{ $tx->wallet->store->nama_toko ?? '-' }}</p>
                             <p class="text-on-surface-variant text-xs uppercase mt-0.5">{{ str_replace('_', ' ', $tx->jenis_transaksi) }}</p>
                         </div>
-                        <p class="font-bold whitespace-nowrap {{ $isPositive ? 'text-secondary' : 'text-error' }}">{{ $isPositive ? '+' : '-' }} Rp {{ number_format(abs((float)$tx->jumlah), 0, ',', '.') }}</p>
+                        <p class="font-bold whitespace-nowrap tabular-nums {{ $isPositive ? 'text-secondary' : 'text-error' }}">{{ $isPositive ? '+' : '-' }} {{ \App\Support\NumberDisplay::rupiah(abs((float) $tx->jumlah)) }}</p>
                     </div>
                     <dl class="space-y-2 font-body-md text-sm">
                         <div class="flex justify-between gap-3">
@@ -178,11 +178,11 @@
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">{{ __('Saldo Sebelum') }}</dt>
-                            <dd class="text-on-surface-variant text-right">Rp {{ number_format((float)$tx->saldo_sebelum, 0, ',', '.') }}</dd>
+                            <dd class="text-on-surface-variant text-right tabular-nums whitespace-nowrap">{{ \App\Support\NumberDisplay::rupiah($tx->saldo_sebelum) }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">{{ __('Saldo Sesudah') }}</dt>
-                            <dd class="text-on-surface text-right">Rp {{ number_format((float)$tx->saldo_sesudah, 0, ',', '.') }}</dd>
+                            <dd class="text-on-surface text-right tabular-nums whitespace-nowrap">{{ \App\Support\NumberDisplay::rupiah($tx->saldo_sesudah) }}</dd>
                         </div>
                         <div class="flex justify-between gap-3">
                             <dt class="text-on-surface-variant">{{ __('Waktu') }}</dt>
