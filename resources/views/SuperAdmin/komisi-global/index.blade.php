@@ -15,7 +15,7 @@
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
     .text-gradient-gold {
-        background: linear-gradient(115deg, #6D1428 0%, #8B1E3F 35%, #c03a5a 55%, #8B1E3F 80%, #6D1428 100%);
+        background: linear-gradient(115deg, #6F1F35 0%, #8B2942 35%, #B23A55 55%, #8B2942 80%, #6F1F35 100%);
         -webkit-background-clip: text;
         background-clip: text;
         color: transparent;
@@ -25,14 +25,14 @@
         content: '';
         position: absolute;
         inset: -30%;
-        background: radial-gradient(circle at 70% 30%, rgba(139, 30, 63, 0.14), transparent 45%),
-                    radial-gradient(circle at 15% 85%, rgba(139, 30, 63, 0.08), transparent 40%);
+        background: radial-gradient(circle at 70% 30%, rgba(139, 41, 66, 0.14), transparent 45%),
+                    radial-gradient(circle at 15% 85%, rgba(139, 41, 66, 0.08), transparent 40%);
         pointer-events: none;
     }
 
     .gauge-progress {
         transition: stroke-dashoffset 1.2s cubic-bezier(0.22, 1, 0.36, 1);
-        filter: drop-shadow(0 0 6px rgba(139, 30, 63, 0.45));
+        filter: drop-shadow(0 0 6px rgba(139, 41, 66, 0.45));
     }
 
     @keyframes riseIn {
@@ -42,7 +42,7 @@
     .rise { opacity: 0; animation: riseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
 
     .sim-chip { transition: all 0.2s ease; }
-    .sim-chip:hover { border-color: rgba(139, 30, 63, 0.5); color: #8B1E3F; transform: translateY(-1px); }
+    .sim-chip:hover { border-color: rgba(139, 41, 66, 0.5); color: #8B2942; transform: translateY(-1px); }
 </style>
 @endpush
 
@@ -62,7 +62,7 @@
                 </div>
                 <p class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest mb-2">{{ __('Tarif Komisi Saat Ini') }}</p>
                 <div class="flex items-end gap-4 mb-4">
-                    <span id="current-rate" class="font-display-lg text-gradient-gold text-7xl md:text-8xl leading-none tracking-tight">{{ number_format($komisi, 0, ',', '.') }}%</span>
+                    <span id="current-rate" class="sa-figure text-gradient-gold text-7xl md:text-8xl leading-none tracking-tight tabular-nums">{{ number_format($komisi, 0, ',', '.') }}%</span>
                     <span class="material-symbols-outlined text-gold-accent text-[28px] mb-2 fill">trending_up</span>
                 </div>
                 <p class="font-body-md text-body-md text-on-surface-variant max-w-md">{{ __('Diterapkan otomatis ke penjualan toko di seluruh platform. Perubahan tarif akan tercatat dalam riwayat audit.') }}</p>
@@ -82,10 +82,10 @@
                 <div class="relative w-[210px] h-[210px]">
                     <svg viewBox="0 0 200 200" class="w-full h-full -rotate-90">
                         <circle cx="100" cy="100" r="84" fill="none" stroke="rgba(127,127,127,0.18)" stroke-width="12" />
-                        <circle id="gauge-ring" cx="100" cy="100" r="84" fill="none" stroke="#8B1E3F" stroke-width="12" stroke-linecap="round" stroke-dasharray="527.79" stroke-dashoffset="527.79" class="gauge-progress" />
+                        <circle id="gauge-ring" cx="100" cy="100" r="84" fill="none" stroke="#8B2942" stroke-width="12" stroke-linecap="round" stroke-dasharray="527.79" stroke-dashoffset="527.79" class="gauge-progress" />
                     </svg>
                     <div class="absolute inset-0 flex flex-col items-center justify-center text-center rotate-0">
-                        <span class="font-title-md text-title-md text-on-surface leading-none" id="gauge-value">{{ number_format($komisi, 0, ',', '.') }}%</span>
+                        <span class="font-title-md text-title-md text-on-surface leading-none tabular-nums" id="gauge-value">{{ number_format($komisi, 0, ',', '.') }}%</span>
                         <span class="font-label-sm text-[9px] text-on-surface-variant uppercase tracking-widest mt-1">{{ __('dari skala') }}<br />{{ __('maks. 15%') }}</span>
                     </div>
                 </div>
@@ -98,25 +98,25 @@
         <div data-reveal-group class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">{{ __('Estimasi Komisi') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent">Rp {{ number_format($stats['estimasi_komisi'], 0, ',', '.') }}</span>
+                <span class="sa-figure text-gold-accent whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::rupiah($stats['estimasi_komisi']) }}">{{ \App\Support\NumberDisplay::compactRupiah($stats['estimasi_komisi']) }}</span>
                 <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-secondary">trending_{{ $stats['persen_komisi'] >= 0 ? 'up' : 'down' }}"></span>{{ $stats['persen_komisi'] >= 0 ? '+' : '' }}{{ $stats['persen_komisi'] }}% vs bulan lalu</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">payments</span>
             </div>
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">{{ __('Transaksi Berkomisi') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ number_format($stats['transaksi'], 0, ',', '.') }}</span>
+                <span class="sa-figure text-on-surface whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]">{{ \App\Support\NumberDisplay::count($stats['transaksi']) }}</span>
                 <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-secondary">trending_{{ $stats['persen_transaksi'] >= 0 ? 'up' : 'down' }}"></span>{{ $stats['persen_transaksi'] >= 0 ? '+' : '' }}{{ $stats['persen_transaksi'] }}% vs bulan lalu</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">shopping_bag</span>
             </div>
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">{{ __('Toko Terdampak') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['toko'] }}</span>
+                <span class="sa-figure text-on-surface whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]">{{ \App\Support\NumberDisplay::count($stats['toko']) }}</span>
                 <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant"><span class="material-symbols-outlined text-[14px] text-on-surface-variant">storefront</span>{{ __('aktif bulan ini') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">storefront</span>
             </div>
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-wider">{{ __('Perubahan Tarif') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface">{{ $stats['perubahan'] }}×</span>
+                <span class="sa-figure text-on-surface whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]">{{ \App\Support\NumberDisplay::count($stats['perubahan']) }}×</span>
                 <span class="inline-flex items-center gap-1 text-xs text-on-surface-variant">{{ __('sepanjang masa') }}</span>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[64px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">history</span>
             </div>
@@ -158,17 +158,17 @@
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 content-start">
                 <div class="rounded-xl p-6 bg-gradient-to-br from-gold-accent/15 via-gold-accent/5 to-transparent border border-gold-accent/25">
                     <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant block mb-2">{{ __('Komisi Platform') }}</span>
-                    <span id="sim-commission" class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent block leading-tight">Rp 2.500.000</span>
+                    <span id="sim-commission" class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent block leading-tight tabular-nums whitespace-nowrap">Rp 2.500.000</span>
                     <span class="text-xs text-on-surface-variant mt-2 block">{{ __('5% dari penjualan') }}</span>
                 </div>
                 <div class="rounded-xl p-6 bg-surface-container-low border border-muted-border">
                     <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant block mb-2">{{ __('Diterima Toko') }}</span>
-                    <span id="sim-store" class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface block leading-tight">Rp 47.500.000</span>
+                    <span id="sim-store" class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface block leading-tight tabular-nums whitespace-nowrap">Rp 47.500.000</span>
                     <span class="text-xs text-on-surface-variant mt-2 block">{{ __('95% dari penjualan') }}</span>
                 </div>
                 <div class="sm:col-span-2 rounded-xl border border-muted-border bg-surface-container-low px-5 py-4 flex items-center justify-between">
                     <span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">{{ __('Total Penjualan') }}</span>
-                    <span id="sim-total" class="font-title-md text-title-md text-on-surface">Rp 50.000.000</span>
+                    <span id="sim-total" class="font-title-md text-title-md text-on-surface tabular-nums whitespace-nowrap">Rp 50.000.000</span>
                 </div>
             </div>
         </div>
@@ -179,7 +179,7 @@
         <ol class="relative border-l border-muted-border ml-3 space-y-6">
             @forelse ($riwayat as $item)
                 <li class="pl-8 relative">
-                    <span class="absolute -left-[9px] top-1 w-4 h-4 rounded-full {{ $loop->first ? 'bg-gold-accent border-4 border-surface-container-lowest shadow-[0_0_0_3px_rgba(139, 30, 63,0.25)]' : 'bg-secondary border-4 border-surface-container-lowest' }}"></span>
+                    <span class="absolute -left-[9px] top-1 w-4 h-4 rounded-full {{ $loop->first ? 'bg-gold-accent border-4 border-surface-container-lowest shadow-[0_0_0_3px_rgba(139, 41, 66,0.25)]' : 'bg-secondary border-4 border-surface-container-lowest' }}"></span>
                     <div class="flex flex-wrap items-center gap-3 mb-2">
                         <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant">{{ $item['tanggal']->translatedFormat('d M Y') }}</span>
                         @if ($item['nilai_lama'] && $item['nilai_baru'])
@@ -236,7 +236,7 @@
             </div>
             <div class="bg-surface-container border border-gold-accent/20 p-container-margin flex flex-col sm:flex-row justify-between items-start sm:items-center gap-gutter rounded-lg">
                 <div><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">{{ __('Pratinjau') }}</span><span class="font-body-md text-body-md">{{ __('Dari penjualan Rp 1.000.000') }}</span></div>
-                <div class="text-right"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">{{ __('Pendapatan Platform') }}</span><span class="font-title-md text-title-md text-gold-accent" id="preview-amount">Rp {{ number_format($komisi * 10000, 0, ',', '.') }}</span></div>
+                <div class="text-right"><span class="font-label-sm text-label-sm text-on-surface-variant uppercase block mb-1">{{ __('Pendapatan Platform') }}</span><span class="font-title-md text-title-md text-gold-accent tabular-nums whitespace-nowrap" id="preview-amount">Rp {{ number_format($komisi * 10000, 0, ',', '.') }}</span></div>
             </div>
         @slot('footer')
             <div class="flex gap-4">
