@@ -406,9 +406,9 @@
     #chat-search-panel { opacity: 0; transform: translateX(20px); pointer-events: none; transition: opacity .3s cubic-bezier(.22,1,.36,1), transform .3s cubic-bezier(.22,1,.36,1); z-index: 30; }
     #chat-search-panel.chat-search-open { opacity: 1; transform: translateX(0); pointer-events: auto; }
     #chat-search-input, #chat-search-input:focus, #chat-search-input:focus-visible, #chat-search-input:active { outline: none !important; box-shadow: none !important; -webkit-appearance: none; appearance: none; }
-    #chat-search-input { caret-color: #8B2942; }
-    #chat-search-input::selection { background: rgba(139,41,66,.55); color: #ffffff; }
-    #chat-search-toggle:focus-visible, #chat-search-close:focus-visible, #chat-search-clear:focus-visible { outline: none !important; box-shadow: 0 0 0 2px rgba(139,41,66,.5); border-radius: 9999px; }
+    #chat-search-input { caret-color: #8B1E3F; }
+    #chat-search-input::selection { background: rgba(139,30,63,.55); color: #ffffff; }
+    #chat-search-toggle:focus-visible, #chat-search-close:focus-visible, #chat-search-clear:focus-visible { outline: none !important; box-shadow: 0 0 0 2px rgba(139,30,63,.5); border-radius: 9999px; }
     #chat-input, #chat-edit-input {
         resize: none;
         min-height: 40px;
