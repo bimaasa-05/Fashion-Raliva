@@ -209,6 +209,22 @@
         border: 1px solid rgb(var(--c-outline-variant));
     }
 
+    html { color-scheme: light; }
+    .dark { color-scheme: dark; }
+    /* Transisi tema halus: hanya warna/permukaan yang dianimasikan, bukan layout. */
+    html.theme-transition,
+    html.theme-transition body,
+    html.theme-transition body * {
+        transition-property: background-color, border-color, color, fill, stroke, box-shadow !important;
+        transition-duration: 320ms !important;
+        transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1) !important;
+        transition-delay: 0s !important;
+    }
+    @media (prefers-reduced-motion: reduce) {
+        html.theme-transition,
+        html.theme-transition body,
+        html.theme-transition body * { transition-duration: 0.01ms !important; }
+    }
     body { background-color: rgb(var(--c-background)); }
     .material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
     .material-symbols-outlined.fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
