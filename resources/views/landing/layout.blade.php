@@ -18,7 +18,7 @@
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;1,500&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600&display=swap" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet" />
 
     <script id="tailwind-config">
@@ -43,8 +43,8 @@
                         'on-primary': 'rgb(var(--c-on-accent) / <alpha-value>)',
                     },
                     fontFamily: {
-                        display: ['"Playfair Display"', 'serif'],
-                        body: ['Manrope', 'sans-serif'],
+                        heading: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+                        body: ['Manrope', 'ui-sans-serif', 'system-ui', 'sans-serif'],
                     },
                     maxWidth: {
                         '8xl': '90rem',
@@ -166,6 +166,7 @@
 
         .brand-wordmark {
             font-family: 'Playfair Display', serif;
+            font-weight: 600;
             letter-spacing: 0.16em;
             line-height: 1;
         }
