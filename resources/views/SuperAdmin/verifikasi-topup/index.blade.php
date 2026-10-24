@@ -43,19 +43,19 @@
         <div data-reveal-group class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Menunggu Verifikasi') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-primary break-words">{{ $stats['menunggu'] }}</span>
+                <span class="sa-figure text-primary whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::count($stats['menunggu']) }}">{{ \App\Support\NumberDisplay::count($stats['menunggu']) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('top up bukti belum diverifikasi') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">pending_actions</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-gold-accent/25 rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium hover:border-gold-accent transition-colors hero-glow">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Nominal Menunggu') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold break-words">Rp {{ number_format($stats['nominal_menunggu'], 0, ',', '.') }}</span>
+                <span class="sa-figure text-gradient-gold whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::rupiah($stats['nominal_menunggu']) }}">{{ \App\Support\NumberDisplay::compactRupiah($stats['nominal_menunggu']) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('belum diterbitkan') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Terverifikasi') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">Rp {{ number_format($stats['total_terverifikasi'], 0, ',', '.') }}</span>
+                <span class="sa-figure text-on-surface whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::rupiah($stats['total_terverifikasi']) }}">{{ \App\Support\NumberDisplay::compactRupiah($stats['total_terverifikasi']) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('akumulasi saldo diterbitkan') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">task_alt</span>
             </div>
@@ -146,7 +146,7 @@ $metodeTujuan = $tp->payment?->paymentMethod?->nama_metode ?? '-';
                                 </div>
                             </td>
                             <td class="p-6">
-                                <p class="font-title-md text-title-md text-gold-accent">Rp {{ number_format((float) $tp->jumlah, 0, ',', '.') }}</p>
+                                <p class="font-title-md text-title-md text-gold-accent tabular-nums whitespace-nowrap" title="{{ \App\Support\NumberDisplay::rupiah($tp->jumlah) }}">{{ \App\Support\NumberDisplay::compactRupiah($tp->jumlah) }}</p>
                                 <p class="text-on-surface-variant">#{{ $tp->customer_topup_id }} • {{ $tp->created_at?->translatedFormat('d M Y, H:i') }}</p>
                                 @if ($tp->dibayar_pada)
                                     <p class="text-emerald-600 text-xs">Diterbitkan {{ \Carbon\Carbon::parse($tp->dibayar_pada)->translatedFormat('d M Y, H:i') }}</p>
@@ -237,7 +237,7 @@ $metodeTujuan = $tp->payment?->paymentMethod?->nama_metode ?? '-';
                     </div>
                     <div class="flex items-center justify-between gap-3">
                         <div>
-                            <p class="font-title-md text-title-md text-gold-accent">Rp {{ number_format((float) $tp->jumlah, 0, ',', '.') }}</p>
+                            <p class="font-title-md text-title-md text-gold-accent tabular-nums whitespace-nowrap" title="{{ \App\Support\NumberDisplay::rupiah($tp->jumlah) }}">{{ \App\Support\NumberDisplay::compactRupiah($tp->jumlah) }}</p>
                             <p class="text-on-surface-variant text-xs">#{{ $tp->customer_topup_id }} • {{ $tp->created_at?->translatedFormat('d M Y, H:i') }}</p>
                         </div>
                         <div class="text-right">
