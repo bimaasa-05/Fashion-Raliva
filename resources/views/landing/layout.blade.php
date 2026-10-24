@@ -220,6 +220,43 @@
             transform-origin: left;
         }
 
+        .landing-menu-icon {
+            position: relative;
+            display: block;
+            width: 18px;
+            height: 14px;
+        }
+
+        .landing-menu-icon > span {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            border-radius: 9999px;
+            background: currentColor;
+            transform-origin: center;
+            transition:
+                transform 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity 0.2s ease;
+        }
+
+        .landing-menu-icon > span:nth-child(1) { top: 0; }
+        .landing-menu-icon > span:nth-child(2) { top: 6px; }
+        .landing-menu-icon > span:nth-child(3) { top: 12px; }
+
+        [data-mobile-menu-toggle][aria-expanded="true"] .landing-menu-icon > span:nth-child(1) {
+            transform: translateY(6px) rotate(45deg);
+        }
+
+        [data-mobile-menu-toggle][aria-expanded="true"] .landing-menu-icon > span:nth-child(2) {
+            opacity: 0;
+            transform: scaleX(0.2);
+        }
+
+        [data-mobile-menu-toggle][aria-expanded="true"] .landing-menu-icon > span:nth-child(3) {
+            transform: translateY(-6px) rotate(-45deg);
+        }
+
         .mobile-menu {
             max-height: 0;
             overflow: hidden;
@@ -557,37 +594,51 @@
         .faq-item summary .faq-plus {
             flex: 0 0 auto;
             color: rgb(var(--c-accent));
-            transition: transform 0.2s ease;
+            transform-origin: center;
+            transition:
+                transform 0.28s cubic-bezier(0.22, 1, 0.36, 1),
+                color 0.2s ease;
         }
 
-        .faq-item[open] summary .faq-plus,
         .faq-item.is-open summary .faq-plus {
             transform: rotate(45deg);
         }
 
+        /* Fallback tanpa JS: ikon tetap berputar saat details dibuka native. */
+        html:not(.faq-enhanced) .faq-item[open] summary .faq-plus {
+            transform: rotate(45deg);
+        }
+
         .faq-answer {
-            display: grid;
-            grid-template-rows: 0fr;
+            display: block;
+            height: 0;
+            overflow: hidden;
             opacity: 0;
             transition:
-                grid-template-rows 0.38s cubic-bezier(0.22, 1, 0.36, 1),
+                height 0.38s cubic-bezier(0.22, 1, 0.36, 1),
                 opacity 0.24s ease;
         }
 
         .faq-item.is-open .faq-answer {
-            grid-template-rows: 1fr;
             opacity: 1;
         }
 
         /* Fallback tanpa JS: tetap bisa dibuka secara native. */
         html:not(.faq-enhanced) .faq-item[open] .faq-answer {
-            grid-template-rows: 1fr;
+            height: auto;
             opacity: 1;
         }
 
         .faq-answer-inner {
             min-height: 0;
-            overflow: hidden;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .landing-menu-icon > span,
+            .faq-item summary .faq-plus,
+            .faq-answer {
+                transition: none;
+            }
         }
 
         .faq-item p {
@@ -729,36 +780,64 @@
                 });
             }
 
-            /* FAQ: animasi buka/tutup dengan grid-template-rows + opacity. */
-            root.classList.add('faq-enhanced');
+            /* FAQ: plus berputar menjadi X, jawaban dianimasikan dengan tinggi terukur. */
             document.querySelectorAll('.faq-item').forEach(function (item) {
                 const summary = item.querySelector('summary');
                 const answer = item.querySelector('.faq-answer');
                 if (!summary || !answer) return;
 
-                summary.setAttribute('aria-expanded', item.hasAttribute('open') ? 'true' : 'false');
-                if (item.hasAttribute('open')) item.classList.add('is-open');
+                function openFaq() {
+                    clearTimeout(item._faqTimer);
+                    item.setAttribute('open', '');
+                    item.classList.add('is-open');
+                    summary.setAttribute('aria-expanded', 'true');
+                    answer.removeAttribute('aria-hidden');
+                    answer.style.height = answer.scrollHeight + 'px';
+                    item._faqTimer = setTimeout(function () {
+                        if (item.classList.contains('is-open')) answer.style.height = 'auto';
+                    }, 400);
+                }
+
+                function closeFaq() {
+                    clearTimeout(item._faqTimer);
+                    answer.style.height = answer.scrollHeight + 'px';
+                    void answer.offsetHeight;
+                    item.classList.remove('is-open');
+                    summary.setAttribute('aria-expanded', 'false');
+                    answer.setAttribute('aria-hidden', 'true');
+                    requestAnimationFrame(function () {
+                        answer.style.height = '0px';
+                    });
+                    item._faqTimer = setTimeout(function () {
+                        if (!item.classList.contains('is-open')) {
+                            item.removeAttribute('open');
+                            answer.style.height = '';
+                        }
+                    }, 400);
+                }
+
+                if (item.hasAttribute('open')) {
+                    item.classList.add('is-open');
+                    summary.setAttribute('aria-expanded', 'true');
+                    answer.removeAttribute('aria-hidden');
+                    answer.style.height = 'auto';
+                } else {
+                    summary.setAttribute('aria-expanded', 'false');
+                    answer.setAttribute('aria-hidden', 'true');
+                    answer.style.height = '0px';
+                }
 
                 summary.addEventListener('click', function (event) {
                     event.preventDefault();
-                    clearTimeout(item._faqTimer);
-                    const isOpen = item.classList.contains('is-open');
-
-                    if (isOpen) {
-                        item.classList.remove('is-open');
-                        summary.setAttribute('aria-expanded', 'false');
-                        item._faqTimer = setTimeout(function () {
-                            if (!item.classList.contains('is-open')) item.removeAttribute('open');
-                        }, 380);
+                    if (item.classList.contains('is-open')) {
+                        closeFaq();
                     } else {
-                        item.setAttribute('open', '');
-                        summary.setAttribute('aria-expanded', 'true');
-                        requestAnimationFrame(function () {
-                            if (item.hasAttribute('open')) item.classList.add('is-open');
-                        });
+                        openFaq();
                     }
                 });
             });
+
+            root.classList.add('faq-enhanced');
 
             const header = document.getElementById('site-header');
             function syncHeader() {
