@@ -42,25 +42,25 @@
         <div data-reveal-group class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-gutter">
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Menunggu Verifikasi') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-primary break-words">{{ $stats['pending'] }}</span>
+                <span class="sa-figure text-primary whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::count($stats['pending']) }}">{{ \App\Support\NumberDisplay::count($stats['pending']) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('pengajuan belum diproses') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">pending_actions</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-gold-accent/25 rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium hover:border-gold-accent transition-colors hero-glow">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Nominal Menunggu (Bersih)') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold break-words">Rp {{ number_format($stats['nominal_menunggu'], 0, ',', '.') }}</span>
+                <span class="sa-figure text-gradient-gold whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::rupiah($stats['nominal_menunggu']) }}">{{ \App\Support\NumberDisplay::compactRupiah($stats['nominal_menunggu']) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('belum ditransfer') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Sudah Dibayar') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface break-words">{{ $stats['dibayar'] }}</span>
+                <span class="sa-figure text-on-surface whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::count($stats['dibayar']) }}">{{ \App\Support\NumberDisplay::count($stats['dibayar']) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('pengajuan selesai ditransfer') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">task_alt</span>
             </div>
             <div data-reveal class="bg-surface-container-lowest p-5 border border-gold-accent/25 rounded-xl flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium hover:border-gold-accent transition-colors hero-glow">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Fee Terkumpul') }}</span>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold break-words">Rp {{ number_format($stats['fee_terkumpul'], 0, ',', '.') }}</span>
+                <span class="sa-figure text-gradient-gold whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::rupiah($stats['fee_terkumpul']) }}">{{ \App\Support\NumberDisplay::compactRupiah($stats['fee_terkumpul']) }}</span>
                 <span class="font-label-sm text-[10px] uppercase text-on-surface-variant">{{ __('dari penarikan yang dibayar') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">percent</span>
             </div>
@@ -141,9 +141,9 @@
                                 </div>
                             </td>
                             <td class="p-6">
-                                <p class="font-title-md text-title-md text-gold-accent">Rp {{ number_format((float) $wd->jumlah_bersih, 0, ',', '.') }}</p>
+                                <p class="font-title-md text-title-md text-gold-accent tabular-nums whitespace-nowrap" title="{{ \App\Support\NumberDisplay::rupiah($wd->jumlah_bersih) }}">{{ \App\Support\NumberDisplay::compactRupiah($wd->jumlah_bersih) }}</p>
                                 <p class="text-on-surface-variant">#{{ $wd->customer_withdrawal_id }} • {{ $wd->diajukan_pada?->translatedFormat('d M Y, H:i') }}</p>
-                                <p class="text-on-surface-variant text-xs">Nominal Rp {{ number_format((float) $wd->jumlah, 0, ',', '.') }} • Fee Rp {{ number_format((float) $wd->fee, 0, ',', '.') }}</p>
+                                <p class="text-on-surface-variant text-xs">Nominal {{ \App\Support\NumberDisplay::compactRupiah($wd->jumlah) }} • Fee {{ \App\Support\NumberDisplay::compactRupiah($wd->fee) }}</p>
                             </td>
                             <td class="p-6">
                                 <p class="text-primary">{{ $tujuan }}</p>
@@ -225,7 +225,7 @@
                     </div>
                     <div class="flex items-center justify-between gap-3">
 <div>
-                                    <p class="font-title-md text-title-md text-gold-accent">Rp {{ number_format((float) $wd->jumlah_bersih, 0, ',', '.') }}</p>
+                                    <p class="font-title-md text-title-md text-gold-accent tabular-nums whitespace-nowrap" title="{{ \App\Support\NumberDisplay::rupiah($wd->jumlah_bersih) }}">{{ \App\Support\NumberDisplay::compactRupiah($wd->jumlah_bersih) }}</p>
                                     <p class="text-on-surface-variant text-xs">#{{ $wd->customer_withdrawal_id }} • {{ $tujuan }}</p>
                                     @if ($wd->file_bukti)
                                         <a href="{{ asset('storage/' . ltrim($wd->file_bukti, '/')) }}" target="_blank" rel="noopener"
