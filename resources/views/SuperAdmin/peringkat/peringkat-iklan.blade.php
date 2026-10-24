@@ -31,22 +31,22 @@
     <div data-reveal-group class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter">
         <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">{{ __('Total Pendapatan Iklan') }}</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-gradient-gold leading-tight break-words">Rp {{ number_format($totalPendapatan, 0, ',', '.') }}</span>
+            <span class="sa-figure text-gradient-gold leading-tight whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::rupiah($totalPendapatan) }}">{{ \App\Support\NumberDisplay::compactRupiah($totalPendapatan) }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">payments</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">{{ __('Slot Aktif') }}</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight break-words">{{ $slotAktif }} slot</span>
+            <span class="sa-figure text-on-surface leading-tight whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]">{{ \App\Support\NumberDisplay::count($slotAktif) }} slot</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">ads_click</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">{{ __('Menunggu Aktif') }}</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight break-words">{{ $slotTerjadwal }} slot</span>
+            <span class="sa-figure text-on-surface leading-tight whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]">{{ \App\Support\NumberDisplay::count($slotTerjadwal) }} slot</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">schedule</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest border border-muted-border rounded-xl p-5 flex flex-col gap-2 relative overflow-hidden min-w-0 card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest">{{ __('Rata-rata Bid') }}</span>
-            <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-tight break-words">Rp {{ number_format($rataRataBid, 0, ',', '.') }}</span>
+            <span class="sa-figure text-on-surface leading-tight whitespace-nowrap text-[26px] sm:text-[28px] xl:text-[30px]" title="{{ \App\Support\NumberDisplay::rupiah($rataRataBid) }}">{{ \App\Support\NumberDisplay::compactRupiah($rataRataBid) }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">trending_up</span>
         </div>
     </div>
@@ -82,7 +82,7 @@
                     <p class="font-title-md text-title-md text-on-surface leading-snug">{{ $top3[0]->product->nama_produk ?? '-' }}</p>
                     <p class="text-on-surface-variant text-xs mt-0.5">{{ $top3[0]->store->nama_toko ?? '-' }}</p>
                 </div>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-black leading-none">Rp {{ number_format((float)$top3[0]->nominal_bid, 0, ',', '.') }}</span>
+                <span class="sa-figure text-black leading-none whitespace-nowrap text-[24px] sm:text-[26px]" title="{{ \App\Support\NumberDisplay::rupiah($top3[0]->nominal_bid) }}">{{ \App\Support\NumberDisplay::compactRupiah($top3[0]->nominal_bid) }}</span>
                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-400/15 text-amber-500 text-[10px] font-bold uppercase border border-amber-400/40"><span class="material-symbols-outlined text-[12px]">check_circle</span>{{ __('Posisi Teratas') }}</span>
             </div>
             @endif
@@ -101,7 +101,7 @@
                     <p class="font-title-md text-sm text-on-surface leading-snug">{{ $top3[1]->product->nama_produk ?? '-' }}</p>
                     <p class="text-on-surface-variant text-xs mt-0.5">{{ $top3[1]->store->nama_toko ?? '-' }}</p>
                 </div>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-none">Rp {{ number_format((float)$top3[1]->nominal_bid, 0, ',', '.') }}</span>
+                <span class="sa-figure text-on-surface leading-none whitespace-nowrap text-[24px] sm:text-[26px]" title="{{ \App\Support\NumberDisplay::rupiah($top3[1]->nominal_bid) }}">{{ \App\Support\NumberDisplay::compactRupiah($top3[1]->nominal_bid) }}</span>
                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-400/25 text-on-surface-variant text-[10px] font-bold uppercase border border-slate-400/60">{{ __('Posisi 2') }}</span>
             </div>
             @endif
@@ -120,7 +120,7 @@
                     <p class="font-title-md text-sm text-on-surface leading-snug">{{ $top3[2]->product->nama_produk ?? '-' }}</p>
                     <p class="text-on-surface-variant text-xs mt-0.5">{{ $top3[2]->store->nama_toko ?? '-' }}</p>
                 </div>
-                <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-none">Rp {{ number_format((float)$top3[2]->nominal_bid, 0, ',', '.') }}</span>
+                <span class="sa-figure text-on-surface leading-none whitespace-nowrap text-[24px] sm:text-[26px]" title="{{ \App\Support\NumberDisplay::rupiah($top3[2]->nominal_bid) }}">{{ \App\Support\NumberDisplay::compactRupiah($top3[2]->nominal_bid) }}</span>
                 <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[10px] font-bold uppercase border border-amber-500/30">{{ __('Posisi 3') }}</span>
             </div>
             @endif
