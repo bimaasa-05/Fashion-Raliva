@@ -47,7 +47,7 @@
                 <button type="button" data-sidebar-group-button aria-expanded="{{ $isActive ? 'true' : 'false' }}" class="w-full flex items-center justify-between px-2 py-2 text-[10px] font-label-sm uppercase tracking-widest text-gold-accent/70 hover:text-gold-accent transition-colors">
                     <span class="flex items-center gap-2 min-w-0">
                         <span data-group-label>{{ __($group['label']) }}</span>
-                        <span data-sidebar-group-dot data-group-badges="{{ $groupBadgeKeys->implode(',') }}" class="w-2 h-2 rounded-full bg-error shrink-0 {{ $groupHasBadges ? '' : 'hidden' }}"></span>
+                        <span data-sidebar-group-dot data-group-badges="{{ $groupBadgeKeys->implode(',') }}" class="sa-notif-dot w-2 h-2 rounded-full bg-error shrink-0 {{ $groupHasBadges ? '' : 'hidden' }}"></span>
                     </span>
                     <span class="material-symbols-outlined text-[18px] transition-transform duration-200 {{ $isActive ? 'rotate-180' : '' }}">keyboard_arrow_down</span>
                 </button>
@@ -71,7 +71,7 @@
                     @else
                     <a class="group flex items-center gap-2.5 py-2.5 transition-all duration-200
                         @if($isActive)
-                            pl-3 pr-[28px] mr-[-16px] rounded-l-lg bg-gold-accent/10 text-gold-accent border-l-[3px] border-gold-accent
+                            sa-sidebar-active pl-3 pr-[28px] mr-[-16px] rounded-l-lg bg-gold-accent/10 text-gold-accent border-l-[3px] border-gold-accent
                         @else
                             px-3 rounded-lg text-on-sidebar/80 hover:bg-sidebar-hover hover:text-on-sidebar border-l-[3px] border-transparent
                         @endif"
@@ -80,9 +80,9 @@
                             {{ $item['icon'] }}
                         </span>
                         <span class="sidebar-tip">{{ __($item['text']) }}</span>
-                        <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate">{{ __($item['text']) }}</span>
+                        <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate {{ $item['route'] === 'produksi.dashboard' ? 'sidebar-label-full' : '' }}" title="{{ __($item['text']) }}">{{ __($item['text']) }}</span>
                         @if (! empty($item['badge']) && (($sidebarBadges[$item['badge']] ?? 0) > 0))
-                            <span data-sidebar-badge="{{ $item['badge'] }}" class="inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-gold-accent text-white text-[10px] font-bold shrink-0">{{ min(99, $sidebarBadges[$item['badge']]) }}</span>
+                            <span data-sidebar-badge="{{ $item['badge'] }}" class="sa-notif-badge inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-gold-accent text-white text-[10px] font-bold shrink-0">{{ min(99, $sidebarBadges[$item['badge']]) }}</span>
                         @elseif (! empty($item['badge']))
                             <span data-sidebar-badge="{{ $item['badge'] }}" class="hidden"></span>
                         @endif
