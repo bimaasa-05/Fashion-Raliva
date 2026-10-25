@@ -133,14 +133,17 @@
                     <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Format ICO/PNG, maks 512 KB. Selama favicon kosong, ikon tab memakai logo platform atau ikon bawaan.') }}</p>
                 </div>
             </div>
-            <div class="flex items-center justify-between gap-4 p-4 border border-muted-border rounded-lg hover:bg-surface-container-low transition-colors">
+            <div class="flex items-center justify-between gap-4 p-4 border border-muted-border rounded-lg opacity-60">
                 <div>
-                    <p class="font-title-md text-sm text-on-surface">{{ __('Mode Pemeliharaan') }}</p>
-                    <p class="font-body-md text-xs text-on-surface-variant mt-1">{{ __('Nonaktifkan akses publik sementara saat perbaikan sistem.') }}</p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <p class="font-title-md text-sm text-on-surface">{{ __('Mode Pemeliharaan') }}</p>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase tracking-wider border border-outline-variant">{{ __('Belum aktif') }}</span>
+                    </div>
+                    <p class="font-body-md text-xs text-on-surface-variant mt-1">{{ __('Nonaktifkan akses publik sementara saat perbaikan sistem. Belum aktif — akan dihubungkan ke middleware maintenance.') }}</p>
                 </div>
-                <label class="raliva-toggle">
-                    <input type="hidden" name="mode_maintenance" value="0" />
-                    <input type="checkbox" name="mode_maintenance" value="1" class="sr-only peer" {{ $maintenanceOn ? 'checked' : '' }} />
+                <label class="raliva-toggle cursor-not-allowed" title="{{ __('Belum aktif') }}">
+                    <input type="hidden" name="mode_maintenance" value="0" disabled />
+                    <input type="checkbox" name="mode_maintenance" value="1" class="sr-only peer" {{ $maintenanceOn ? 'checked' : '' }} disabled />
                     <span class="raliva-toggle-track"></span>
                     <span class="raliva-toggle-knob"></span>
                 </label>
@@ -160,7 +163,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="komisi_persen_default">{{ __('Komisi Default (%)') }}</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="komisi_persen_default" name="komisi_persen_default" type="number" min="0" max="100" step="0.5" value="{{ $settings['komisi_persen_default'] }}" required />
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="komisi_persen_default" name="komisi_persen_default" type="number" min="0" max="15" step="0.5" value="{{ $settings['komisi_persen_default'] }}" required />
                     <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Sumber pendapatan :brand dari setiap transaksi berhasil.', ['brand' => brand()]) }}</p>
                 </div>
                 <div>
@@ -169,10 +172,13 @@
                     <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Ditampilkan ke customer secara transparan saat checkout.') }}</p>
                 </div>
             </div>
-            <div>
-                <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="min_pencairan">{{ __('Minimal Pencairan (Rp)') }}</label>
-                <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="min_pencairan" name="min_pencairan" type="number" min="0" value="{{ $settings['min_pencairan'] }}" required />
-                <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Batas minimal saldo Owner untuk mengajukan pencairan dana.') }}</p>
+            <div class="opacity-60">
+                <div class="flex items-center gap-2 flex-wrap mb-2">
+                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase" for="min_pencairan">{{ __('Minimal Pencairan (Rp)') }}</label>
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase tracking-wider border border-outline-variant">{{ __('Belum aktif') }}</span>
+                </div>
+                <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md cursor-not-allowed" id="min_pencairan" name="min_pencairan" type="number" min="0" value="{{ $settings['min_pencairan'] }}" disabled />
+                <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Belum aktif — alur Owner sementara masih memakai minimal Rp 100.000.') }}</p>
             </div>
             <div>
                 <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="biaya_penarikan_saldo">{{ __('Biaya Penarikan Saldo Customer (%, persen)') }}</label>
@@ -191,20 +197,25 @@
                 <div class="flex items-center gap-3"><div class="w-10 h-10 rounded-lg bg-gold-accent/10 border border-gold-accent/25 flex items-center justify-center shrink-0"><span class="material-symbols-outlined text-gold-accent text-[20px]">fact_check</span></div><h2 class="font-title-md text-title-md text-on-surface uppercase tracking-wider premium-heading">Moderasi &amp; Konten</h2></div>
                 <p class="font-body-md text-sm text-on-surface-variant mt-2">{{ __('Alur persetujuan produk baru sebelum tampil ke publik.') }}</p>
             </div>
-            <div class="flex items-center justify-between gap-4 p-4 border border-muted-border rounded-lg hover:bg-surface-container-low transition-colors">
+            <div class="flex items-center justify-between gap-4 p-4 border border-muted-border rounded-lg opacity-60">
                 <div>
-                    <p class="font-title-md text-sm text-on-surface">{{ __('Moderasi Otomatis') }}</p>
-                    <p class="font-body-md text-xs text-on-surface-variant mt-1">Tandai produk baru sebagai "pending" sebelum ditinjau Super Admin.</p>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <p class="font-title-md text-sm text-on-surface">{{ __('Moderasi Otomatis') }}</p>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase tracking-wider border border-outline-variant">{{ __('Belum aktif') }}</span>
+                    </div>
+                    <p class="font-body-md text-xs text-on-surface-variant mt-1">Tandai produk baru sebagai "pending" sebelum ditinjau Super Admin. Belum aktif — saat ini produk baru selalu menunggu moderasi.</p>
                 </div>
-                <label class="raliva-toggle">
-                    <input type="hidden" name="moderasi_otomatis" value="0" />
-                    <input type="checkbox" name="moderasi_otomatis" value="1" class="sr-only peer" {{ ($settings['moderasi_otomatis'] ?? '1') === '1' ? 'checked' : '' }} />
+                <label class="raliva-toggle cursor-not-allowed" title="{{ __('Belum aktif') }}">
+                    <input type="hidden" name="moderasi_otomatis" value="0" disabled />
+                    <input type="checkbox" name="moderasi_otomatis" value="1" class="sr-only peer" {{ ($settings['moderasi_otomatis'] ?? '1') === '1' ? 'checked' : '' }} disabled />
                     <span class="raliva-toggle-track"></span>
                     <span class="raliva-toggle-knob"></span>
                 </label>
             </div>
             <div class="flex justify-end pt-gutter border-t border-muted-border">
-                <button type="submit" data-save-button class="px-8 py-3 bg-deep-onyx text-on-primary font-label-sm text-label-sm uppercase tracking-widest hover:bg-tertiary-container transition-colors btn-premium">{{ __('Simpan Pengaturan Moderasi') }}</button>
+                <button type="submit" data-save-button disabled class="px-8 py-3 bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest rounded cursor-not-allowed opacity-60 flex items-center gap-2" title="{{ __('Belum aktif') }}">
+                    <span class="material-symbols-outlined text-[16px]">lock</span>{{ __('Simpan Pengaturan Moderasi') }}
+                </button>
             </div>
         </form>
 
@@ -216,13 +227,21 @@
                 <p class="font-body-md text-sm text-on-surface-variant mt-2">{{ __('Ambang operasional harian, jendela refund transaksi, dan auto-konfirmasi pesanan selesai.') }}</p>
             </div>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-gutter">
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="maks_pengajuan_pencairan">{{ __('Maks Pengajuan Pencairan per Hari') }}</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="maks_pengajuan_pencairan" name="maks_pengajuan_pencairan" type="number" min="1" value="{{ $settings['maks_pengajuan_pencairan'] }}" />
+                <div class="opacity-60">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase" for="maks_pengajuan_pencairan">{{ __('Maks Pengajuan Pencairan per Hari') }}</label>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase tracking-wider border border-outline-variant">{{ __('Belum aktif') }}</span>
+                    </div>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md cursor-not-allowed" id="maks_pengajuan_pencairan" name="maks_pengajuan_pencairan" type="number" min="1" value="{{ $settings['maks_pengajuan_pencairan'] }}" disabled />
+                    <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Belum aktif — akan dihubungkan ke alur pencairan.') }}</p>
                 </div>
-                <div>
-                    <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="batas_waktu_refund">{{ __('Batas Waktu Refund (hari)') }}</label>
-                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md focus:outline-none focus:border-gold-accent focus:ring-1 focus:ring-gold-accent transition-colors" id="batas_waktu_refund" name="batas_waktu_refund" type="number" min="1" value="{{ $settings['batas_waktu_refund'] }}" />
+                <div class="opacity-60">
+                    <div class="flex items-center gap-2 flex-wrap mb-2">
+                        <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase" for="batas_waktu_refund">{{ __('Batas Waktu Refund (hari)') }}</label>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[9px] font-bold uppercase tracking-wider border border-outline-variant">{{ __('Belum aktif') }}</span>
+                    </div>
+                    <input class="w-full bg-transparent border border-muted-border rounded-lg p-4 font-body-md text-body-md cursor-not-allowed" id="batas_waktu_refund" name="batas_waktu_refund" type="number" min="1" value="{{ $settings['batas_waktu_refund'] }}" disabled />
+                    <p class="font-body-md text-xs text-on-surface-variant mt-2">{{ __('Belum aktif — akan dihubungkan ke alur refund.') }}</p>
                 </div>
                 <div>
                     <label class="block font-label-sm text-label-sm text-on-surface-variant uppercase mb-2" for="konfirmasi_selesai_hari">{{ __('Auto Konfirmasi Selesai (hari)') }}</label>
