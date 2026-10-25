@@ -383,6 +383,63 @@
     #sidebar.sidebar-collapsed .sidebar-profile { justify-content: center; padding: 10px 0; margin-left: 0; margin-right: 0; background: transparent !important; border-color: transparent !important; box-shadow: none !important; }
     #sidebar.sidebar-collapsed .sidebar-profile .w-11 { width: 2.75rem; height: 2.75rem; font-size: 13px; border-width: 2px; }
 
+    /* ===== Tema sidebar & notifikasi SuperAdmin — dipakai semua role non-Customer ===== */
+    :root {
+        --sa-sidebar-text: #3A2E31;
+        --sa-sidebar-muted: #6F5F64;
+        --sa-sidebar-accent: #8B1E3F;
+        --sa-sidebar-active-bg: #8B1E3F;
+        --sa-sidebar-active-border: #C03A5A;
+        --sa-notif-accent: #B23A55;
+        --sa-notif-on-accent: #FFFFFF;
+    }
+    .dark {
+        --sa-sidebar-text: #F5F2F2;
+        --sa-sidebar-muted: #D8D2D2;
+        --sa-sidebar-accent: #E58AA0;
+        --sa-sidebar-active-bg: #9B2D42;
+        --sa-sidebar-active-border: #F0A6B8;
+        --sa-notif-accent: #E58AA0;
+        --sa-notif-on-accent: #4A0E1D;
+    }
+    #sidebar nav a:not(.sa-sidebar-active) { color: var(--sa-sidebar-text) !important; }
+    #sidebar nav a:not(.sa-sidebar-active) .material-symbols-outlined { color: var(--sa-sidebar-muted) !important; }
+    #sidebar nav a:not(.sa-sidebar-active):hover {
+        color: var(--sa-sidebar-accent) !important;
+        background-color: rgba(139, 30, 63, 0.08) !important;
+    }
+    #sidebar nav a:not(.sa-sidebar-active):hover .material-symbols-outlined { color: var(--sa-sidebar-accent) !important; }
+    .dark #sidebar nav a:not(.sa-sidebar-active):hover { background-color: rgba(229, 138, 160, 0.12) !important; }
+    #sidebar [data-sidebar-group-button],
+    #sidebar [data-group-label] { color: var(--sa-sidebar-accent) !important; opacity: 1 !important; }
+    #sidebar .sidebar-collapse-btn,
+    #sidebar .theme-toggle [data-theme-icon] { color: var(--sa-sidebar-accent) !important; }
+    #sidebar .sa-sidebar-active {
+        background-color: var(--sa-sidebar-active-bg) !important;
+        color: #FFFFFF !important;
+        border-color: var(--sa-sidebar-active-border) !important;
+        box-shadow: 0 8px 20px -12px rgba(139, 30, 63, 0.65);
+    }
+    #sidebar .sa-sidebar-active .material-symbols-outlined { color: #FFFFFF !important; }
+    #sidebar .sa-sidebar-active .sa-notif-badge {
+        background-color: #FFFFFF !important;
+        color: var(--sa-sidebar-active-bg) !important;
+    }
+    .sa-notif-badge {
+        background-color: var(--sa-notif-accent) !important;
+        color: var(--sa-notif-on-accent) !important;
+        box-shadow: 0 0 0 2px rgb(var(--c-sc-lowest) / 0.85);
+    }
+    .sa-notif-dot { background-color: var(--sa-notif-accent) !important; }
+    .sa-notif-panel-head { background: linear-gradient(90deg, rgba(178, 58, 85, 0.12), transparent) !important; }
+    .dark .sa-notif-panel-head { background: linear-gradient(90deg, rgba(229, 138, 160, 0.14), transparent) !important; }
+    #sidebar [data-menu-label].sidebar-label-full {
+        min-width: max-content !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        white-space: nowrap !important;
+    }
+
     /* Leaderboard global fix — seragam 3 card bawah (Status Pesanan, Komplain, Pesanan Masuk) tanpa ubah HTML */
     div.grid.lg\:grid-cols-3 { align-items: stretch !important; }
     div.grid.lg\:grid-cols-3 > section { display: flex; flex-direction: column; }
