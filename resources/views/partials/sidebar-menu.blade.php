@@ -107,7 +107,7 @@
                             {{ $item['icon'] }}
                         </span>
                         <span class="sidebar-tip">{{ str_replace(':brand', brand(), __($item['text'])) }}</span>
-                        <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate">{{ str_replace(':brand', brand(), __($item['text'])) }}</span>
+                        <span data-menu-label class="font-body-md text-[13.5px] leading-snug flex-1 min-w-0 truncate {{ $item['route'] === 'superadmin.dashboard' ? 'sidebar-label-full' : '' }}" title="{{ str_replace(':brand', brand(), __($item['text'])) }}">{{ str_replace(':brand', brand(), __($item['text'])) }}</span>
                         @if (! empty($item['badge']) && (($sidebarBadges[$item['badge']] ?? 0) > 0))
                             <span data-sidebar-badge="{{ $item['badge'] }}" class="sa-notif-badge inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-gold-accent text-white text-[10px] font-bold shrink-0">{{ min(99, $sidebarBadges[$item['badge']]) }}</span>
                         @elseif (! empty($item['badge']))
