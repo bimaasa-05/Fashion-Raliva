@@ -186,20 +186,33 @@
         --c-on-sidebar: 255 255 255;
         --c-sidebar-border: 46 46 46;
         --c-sidebar-hover: 41 41 41;
-        --c-accent: 255 90 90;
+        --c-accent: 139 30 63;
     }
 
-    /* Nominal & aksen teks: merah cerah di dark mode (semua role).
-       Selector .dark menang specificity atas override hardcode di layout. */
+    /* Nominal & aksen teks: burgundy/pink di dark mode (semua role staff).
+       Background/border/ring memakai burgundy dari --c-accent; teks utama
+       memakai pink agar kontras, sama seperti SuperAdmin. */
     .dark .text-gold-accent {
-        color: rgb(var(--c-accent)) !important;
+        color: #E58AA0 !important;
     }
 
     .dark .text-gradient-gold {
-        background: linear-gradient(115deg, #b91c1c 0%, #ff5a5a 35%, #ffc1c1 55%, #ff5a5a 80%, #b91c1c 100%) !important;
+        background: linear-gradient(115deg, #8B1E3F 0%, #E58AA0 48%, #F2A7BB 55%, #E58AA0 70%, #8B1E3F 100%) !important;
         -webkit-background-clip: text !important;
         background-clip: text !important;
         color: transparent !important;
+    }
+
+    .dark .hover\:text-gold-accent:hover {
+        color: #E58AA0 !important;
+    }
+
+    .dark .group:hover .group-hover\:text-gold-accent {
+        color: #E58AA0 !important;
+    }
+
+    .dark .group\/row:hover .group-hover\/row\:text-gold-accent {
+        color: #E58AA0 !important;
     }
 
     /* Toast flash: jangan pakai inverse-surface di dark (hasilnya putih). */
