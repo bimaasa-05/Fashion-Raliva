@@ -43,7 +43,7 @@
             </div>
             <div class="flex-1 text-center sm:text-left">
                 <div class="flex flex-col sm:flex-row sm:items-center gap-3 justify-center sm:justify-start">
-                    <h2 class="raliva-figure text-[26px] text-on-surface">{{ $store?->nama_toko ?? __('Toko') }}</h2>
+                    <h2 class="raliva-figure raliva-figure-text text-[26px] text-on-surface">{{ $store?->nama_toko ?? __('Toko') }}</h2>
                     @php $heroDitolak = in_array($store?->status, ['ditolak', 'nonaktif'], true); @endphp
                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full {{ $store?->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : ($heroDitolak ? 'bg-error/10 text-error border-error/25' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30') }} text-[10px] font-bold uppercase border w-fit mx-auto sm:mx-0">
                         <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === 'aktif' ? 'verified' : ($heroDitolak ? 'cancel' : 'schedule') }}</span>{{ $store?->status === 'aktif' ? __('Terverifikasi') : ucfirst($store?->status ?? __('Menunggu')) }}
