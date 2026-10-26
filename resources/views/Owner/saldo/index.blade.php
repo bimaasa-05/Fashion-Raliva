@@ -54,7 +54,7 @@
             <div data-reveal class="bg-deep-onyx text-on-primary rounded-lg p-6 relative overflow-hidden flex flex-col">
                 <span class="material-symbols-outlined absolute -right-4 -bottom-6 text-[130px] text-on-primary/5 pointer-events-none select-none" aria-hidden="true">account_balance_wallet</span>
                 <p class="raliva-label text-gold-accent relative">{{ __('Saldo Tersedia') }}</p>
-                <p class="raliva-figure text-[34px] md:text-[42px] mt-4 relative">{{ $fmt($wallet->saldo_tersedia) }}</p>
+                <p class="raliva-figure text-on-primary text-[34px] md:text-[42px] mt-4 relative">{{ $fmt($wallet->saldo_tersedia) }}</p>
                 <div class="flex items-center justify-between mt-auto pt-6 relative gap-gutter flex-wrap">
                     <p class="font-body-md text-xs text-inverse-on-surface/60">{{ __('Siap dicairkan kapan saja') }}</p>
                     <a href="#pencairan" class="py-2.5 px-5 bg-gold-accent text-[#111] text-xs font-semibold rounded btn-premium shrink-0">{{ __('Cairkan') }}</a>
