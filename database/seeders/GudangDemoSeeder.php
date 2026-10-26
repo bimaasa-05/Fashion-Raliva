@@ -25,6 +25,8 @@ class GudangDemoSeeder extends Seeder
      */
     public function run(): void
     {
+        $seedDemoTransactions = filter_var(env('RALIVA_SEED_DEMO_TRANSACTIONS', false), FILTER_VALIDATE_BOOLEAN);
+
         // Pemilik toko: pakai Owner yang sudah ada, atau buatkan akun demo.
         // (Hardcode owner_id=4 menyebabkan FK violation bila user 4 tidak ada.)
         $ownerRoleId = \App\Models\Role::where('nama_role', 'Owner')->value('role_id');
@@ -307,6 +309,7 @@ class GudangDemoSeeder extends Seeder
         // Insert semua movement sekaligus.
         StockMovement::insert($movements);
 
+        if ($seedDemoTransactions) {
         // Beberapa pesanan pelanggan yang menunggu pemenuhan gudang
         // Pesanan menunggu pemenuhan gudang
         // (status dibayar/diproses) — mengisi widget SLA di dashboard.
@@ -399,6 +402,7 @@ class GudangDemoSeeder extends Seeder
                     'updated_at' => now()->subHours(2),
                 ],
             ]);
+        }
         }
 
         $this->command?->info('GudangDemoSeeder selesai: ' . Warehouse::count() . ' gudang, ' . Product::count() . ' produk, ' . WarehouseStock::count() . ' stok, ' . StockMovement::count() . ' pergerakan.');
