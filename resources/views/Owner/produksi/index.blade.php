@@ -3,7 +3,7 @@
 @section('title', __('Produksi'))
 
 @section('header-title', __('Produksi'))
-@section('header-badge', __('3 Berjalan'))
+@section('header-badge', $summary['berjalan'] . ' ' . __('Berjalan'))
 @section('header-subtitle', __('Pantau permintaan produksi barang untuk toko Anda.'))
 
 @section('content')
@@ -43,7 +43,7 @@
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">task_alt</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Unit Diproduksi (Agu)') }}</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Unit Diproduksi') }} ({{ now()->locale('id')->translatedFormat('M') }})</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $summary['unit'] }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">inventory</span>
         </div>
