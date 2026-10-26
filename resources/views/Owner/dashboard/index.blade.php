@@ -40,7 +40,7 @@
             </div>
             <div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <p class="raliva-figure text-xl {{ ! $store ? 'text-on-surface-variant' : 'text-on-surface' }}">{{ $store?->nama_toko ?? __('Belum punya toko') }}</p>
+                    <p class="raliva-figure raliva-figure-text text-xl {{ ! $store ? 'text-on-surface-variant' : 'text-on-surface' }}">{{ $store?->nama_toko ?? __('Belum punya toko') }}</p>
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full {{ $store?->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' }} text-[10px] font-bold uppercase border">
                         <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === 'aktif' ? 'verified' : 'schedule' }}</span>{{ $store ? \App\Support\StatusStyle::label($store->status) : __('Menunggu') }}
                     </span>
@@ -88,7 +88,7 @@
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Produk Aktif') }}</span>
                 <span class="raliva-figure text-[26px] text-on-surface">{{ $produkAktif }}</span>
-                <span class="font-label-sm text-[11px] text-on-surface-variant">{{ __('dari 200 slot paket') }}</span>
+                <span class="font-label-sm text-[11px] text-on-surface-variant">{{ $totalSlot > 0 ? __('dari :total slot paket', ['total' => number_format($totalSlot, 0, ',', '.')]) : __('belum ada slot paket') }}</span>
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">checkroom</span>
             </div>
             <div class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium" data-reveal>
