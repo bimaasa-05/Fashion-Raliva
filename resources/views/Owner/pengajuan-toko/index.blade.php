@@ -50,7 +50,7 @@
                 </div>
                 <div>
                     <p class="text-xs font-medium text-on-surface-variant">{{ __('Status Pengajuan') }}</p>
-                    <h2 class="raliva-figure text-[26px] text-on-surface mt-1">{{ $statusTitle }}</h2>
+                    <h2 class="raliva-figure raliva-figure-text text-[26px] text-on-surface mt-1">{{ $statusTitle }}</h2>
                     <p class="text-on-surface-variant font-body-md text-sm mt-1">{{ $statusLine }}</p>
                     @if($isDitolak && $store->alasan_penolakan)
                         <p class="text-error text-sm mt-2 bg-error/5 border border-error/20 rounded-lg px-3 py-2">{{ __('Alasan:') }} {{ $store->alasan_penolakan }}</p>
