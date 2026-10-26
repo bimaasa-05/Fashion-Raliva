@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Owner;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use App\Models\Order;
 use App\Models\Promotion;
 use App\Support\OwnerContext;
 use Illuminate\Http\Request;
@@ -27,7 +28,12 @@ class PromoController extends Controller
             'total' => Promotion::where('store_id', $storeId)->count(),
         ];
 
-        return view('Owner.promo.index', compact('promos', 'counts', 'store'));
+        $totalDiskon = (float) Order::where('store_id', $storeId)
+            ->whereIn('status', Order::STATUS_PENDAPATAN)
+            ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+            ->sum('total_diskon');
+
+        return view('Owner.promo.index', compact('promos', 'counts', 'store', 'totalDiskon'));
     }
 
     public function store(Request $request)
