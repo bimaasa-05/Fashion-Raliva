@@ -31,12 +31,12 @@
             </div>
             <div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <p class="raliva-figure text-xl text-on-surface">{{ __('Atelier Produksi Raliva') }}</p>
+                    <p class="raliva-figure raliva-figure-text text-xl text-on-surface">{{ __('Atelier Produksi Raliva') }}</p>
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">
                         <span class="material-symbols-outlined fill text-[12px]">verified</span>Workshop Kemang
                     </span>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">{{ __('Raliva Atelier Jakarta • 12 staf aktif • Kapasitas 120 unit/hari') }}</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">{{ __('Kelola produksi, pemeriksaan kualitas, dan hasil kerja atelier.') }}</p>
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-gutter self-start md:self-auto">
