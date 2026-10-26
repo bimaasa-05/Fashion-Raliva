@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
+use App\Models\Order;
 use App\Models\Promotion;
 use App\Models\Store;
 use App\Support\AdminContext;
@@ -28,7 +29,12 @@ class PromoController extends Controller
             'total' => Promotion::whereIn('store_id', $storeIds)->count(),
         ];
 
-        return view('Admin.promo.index', compact('promos', 'counts', 'store'));
+        $totalDiskon = (float) Order::whereIn('store_id', $storeIds)
+            ->whereIn('status', Order::STATUS_PENDAPATAN)
+            ->whereBetween('created_at', [now()->startOfMonth(), now()->endOfMonth()])
+            ->sum('total_diskon');
+
+        return view('Admin.promo.index', compact('promos', 'counts', 'store', 'totalDiskon'));
     }
 
     public function store(Request $request)
