@@ -3,7 +3,7 @@
 @section('title', __('Data Pesanan'))
 
 @section('header-title', __('Data Pesanan'))
-@section('header-badge', __('18 Baru'))
+@section('header-badge', $counts['baru'] . ' ' . __('Baru'))
 @section('header-subtitle', __('Pantau pesanan toko dan perkembangan statusnya.'))
 
 @section('content')
