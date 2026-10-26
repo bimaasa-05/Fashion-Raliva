@@ -19,6 +19,8 @@ class AdminDemoSeeder extends Seeder
 {
     public function run(): void
     {
+        $seedDemoTransactions = filter_var(env('RALIVA_SEED_DEMO_TRANSACTIONS', false), FILTER_VALIDATE_BOOLEAN);
+
         // Supplier
         $suppliers = [
             ['nama_supplier' => 'CV Tekstil Bandung', 'kota' => 'Bandung', 'kontak' => 'Budi Santoso', 'email' => 'budi@tekstilbandung.co.id', 'jenis' => 'kain', 'status' => 'aktif', 'catatan' => 'Minimum order 50 meter.'],
@@ -60,6 +62,7 @@ class AdminDemoSeeder extends Seeder
             }
         }
 
+        if ($seedDemoTransactions) {
         // ActivityLog (contoh riwayat aktivitas admin)
         if (ActivityLog::count() === 0) {
             $admin = User::whereHas('role', fn ($q) => $q->where('nama_role', 'Admin Toko'))->first() ?? User::first();
@@ -98,6 +101,7 @@ class AdminDemoSeeder extends Seeder
                 'pesan' => 'Terima kasih informasinya, kami akan proses penggantian barangnya.',
             ]);
         }
+        }
 
         // WarehouseStock contoh (agar halaman Stok punya data)
         if (WarehouseStock::count() === 0) {
@@ -113,6 +117,7 @@ class AdminDemoSeeder extends Seeder
             }
         }
 
+        if ($seedDemoTransactions) {
         // Refund contoh (buat payment bila belum ada, lalu refund)
         if (Refund::count() === 0) {
             $order = Order::with('checkout')->first();
@@ -159,6 +164,7 @@ class AdminDemoSeeder extends Seeder
                     'uploaded_at' => now(),
                 ]);
             }
+        }
         }
 
         $this->command?->info('AdminDemoSeeder selesai: ' . Supplier::count() . ' supplier, ' . ActivityLog::count() . ' log, ' . WarehouseStock::count() . ' stok, ' . Refund::count() . ' refund, ' . \App\Models\Payment::where('status', \App\Models\Payment::STATUS_MENUNGGU_VERIFIKASI)->count() . ' verifikasi.');
