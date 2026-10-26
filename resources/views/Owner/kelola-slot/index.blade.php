@@ -41,7 +41,7 @@
         <div class="relative flex flex-col lg:flex-row lg:items-center justify-between gap-8">
             <div>
                 <p class="raliva-label text-gold-accent">{{ __('Kuota Aktif') }}</p>
-                <p class="raliva-figure text-[34px] md:text-[42px] mt-2">{{ $used ?? 0 }} <span class="text-on-primary/50 text-[22px] font-normal">/ {{ $total ?? 0 }}</span> <span class="text-sm font-normal text-on-primary/60">{{ __('slot terpakai') }}</span></p>
+                <p class="raliva-figure text-on-primary text-[34px] md:text-[42px] mt-2">{{ $used ?? 0 }} <span class="text-on-primary/50 text-[22px] font-normal">/ {{ $total ?? 0 }}</span> <span class="text-sm font-normal text-on-primary/60">{{ __('slot terpakai') }}</span></p>
                 <p class="font-body-md text-sm text-inverse-on-surface/60 mt-2">{{ __('Sisa') }} {{ $sisa ?? 0 }} {{ __('dari Maksimal') }} {{ $total ?? 0 }} {{ __('slot') }} • {{ __('Kelola penuh oleh SuperAdmin') }}</p>
             </div>
             <div class="w-full max-w-md">
