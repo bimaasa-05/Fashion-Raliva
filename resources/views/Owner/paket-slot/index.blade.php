@@ -49,7 +49,7 @@
         <div class="relative flex flex-col lg:flex-row lg:items-center justify-between gap-8">
             <div>
                 <p class="text-xs font-semibold text-gold-accent">{{ __('Paket Aktif') }}</p>
-                <h2 class="raliva-figure text-[30px] mt-2">{{ $active['nama'] }}</h2>
+                <h2 class="raliva-figure raliva-figure-text text-[30px] mt-2">{{ $active['nama'] }}</h2>
                 <p class="font-body-md text-sm text-inverse-on-surface/70 mt-2">{{ $active['harga'] }} {{ $active['nama'] === 'Fleksibel' ? __('/ slot') : __('/ bulan') }}</p>
             </div>
             <div class="w-full max-w-md">
