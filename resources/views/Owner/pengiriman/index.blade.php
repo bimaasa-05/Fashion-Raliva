@@ -3,7 +3,7 @@
 @section('title', __('Pengiriman'))
 
 @section('header-title', __('Pengiriman'))
-@section('header-badge', __('45 Berjalan'))
+@section('header-badge', $summary['dikirim'] . ' ' . __('Berjalan'))
 @section('header-subtitle', __('Atur pilihan kurir toko dan pantau proses pengiriman.'))
 
 @section('content')
@@ -97,7 +97,9 @@
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
             <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Rata-rata Waktu Kirim') }}</span>
-            <span class="raliva-figure text-[26px] text-on-surface"><span>2</span>,3 {{ __('hari') }}</span>
+            <span class="raliva-figure text-[26px] {{ $summary['rata_hari'] === null ? 'text-on-surface-variant' : 'text-on-surface' }}">
+                {{ $summary['rata_hari'] === null ? '—' : number_format($summary['rata_hari'], 1, ',', '.') . ' ' . __('hari') }}
+            </span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">timer</span>
         </div>
     </section>
