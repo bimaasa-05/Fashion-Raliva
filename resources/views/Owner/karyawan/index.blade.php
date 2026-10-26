@@ -3,7 +3,7 @@
 @section('title', __('Karyawan'))
 
 @section('header-title', __('Karyawan'))
-@section('header-badge', __('6 Aktif'))
+@section('header-badge', ($summary['total'] - $summary['nonaktif']) . ' ' . __('Aktif'))
 @section('header-subtitle', __('Tambah, tugaskan, dan kelola tim Admin, Produksi, dan Gudang toko Anda.'))
 
 @section('content')
