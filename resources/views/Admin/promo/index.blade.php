@@ -24,20 +24,20 @@
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">local_offer</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Penukaran Bulan Ini') }}</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Promo') }}</span>
             <span class="raliva-figure text-[26px] text-on-surface">{{ $counts['total'] }}</span>
-            <span class="font-label-sm text-[11px] text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">trending_up</span>+22% {{ __('vs Bulan Lalu') }}</span>
+            <span class="font-label-sm text-[11px] text-secondary flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">local_offer</span>{{ $counts['aktif'] }} {{ __('aktif') }} · {{ $counts['terjadwal'] }} {{ __('terjadwal') }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">redeem</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Estimasi Diskon Diberikan') }}</span>
-            <span class="raliva-figure text-[26px] text-gold-accent">Rp 0</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Diskon Bulan Ini') }}</span>
+            <span class="raliva-figure text-[26px] text-gold-accent">Rp {{ number_format($totalDiskon, 0, ',', '.') }}</span>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">savings</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Konversi Promo') }}</span>
-            <span class="raliva-figure text-[26px] text-secondary"><span>{{ $counts['aktif'] > 0 ? '18' : '0' }}</span>%</span>
-            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">query_stats</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Promo Terjadwal') }}</span>
+            <span class="raliva-figure text-[26px] text-secondary">{{ $counts['terjadwal'] }}</span>
+            <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">event_upcoming</span>
         </div>
     </section>
 
