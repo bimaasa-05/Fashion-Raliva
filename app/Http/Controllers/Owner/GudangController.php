@@ -23,6 +23,10 @@ class GudangController extends Controller
         $storeId = OwnerContext::firstStoreId();
 
         $warehouses = Warehouse::with('staff')
+            ->with(['stocks' => function ($query) {
+                $query->whereColumn('jumlah_stok', '<=', 'stok_minimum')
+                    ->with(['productVariant.product', 'warehouse']);
+            }])
             ->withCount(['stocks as total_sku'])
             ->withCount([
                 'stocks as menipis_sku' => fn ($query) => $query
