@@ -40,6 +40,8 @@ class OwnerSeeder extends Seeder
      */
     public function run(): void
     {
+        $seedDemoTransactions = filter_var(env('RALIVA_SEED_DEMO_TRANSACTIONS', false), FILTER_VALIDATE_BOOLEAN);
+
         // Bersihkan data demo lama agar seeding deterministik (idempoten).
         $old = Store::where('nama_toko', 'Raliva Atelier Jakarta')->first();
         if ($old) {
@@ -192,6 +194,7 @@ class OwnerSeeder extends Seeder
             );
         }
 
+        if ($seedDemoTransactions) {
         // ---- PELANGGAN + PESANAN (agar podium & tabel pelanggan keisi) ----
         $customerNames = [
             ['Anindya Putri', 'anindya@raliva.test', 3],
@@ -334,6 +337,7 @@ class OwnerSeeder extends Seeder
                 'tanggal' => now()->subDays(rand(1, 25)),
             ]);
         }
+        }
 
         // ---- DOKUMEN TOKO ----
         foreach (['ktp', 'npwp', 'foto_depan', 'siu'] as $jenis) {
@@ -345,6 +349,7 @@ class OwnerSeeder extends Seeder
             \App\Support\DemoStoreDoc::ensure($docPath);
         }
 
+        if ($seedDemoTransactions) {
         // ---- KOMPLAIN (demo) ----
         $custForComplaint = User::whereHas('role', fn($q) => $q->where('nama_role', 'Customer'))->first();
         $orderForComplaint = Order::where('store_id', $store->store_id)->first();
@@ -365,6 +370,7 @@ class OwnerSeeder extends Seeder
                 'dibuat_pada' => now()->subDays($ci + 1),
                 'diselesaikan_pada' => $c[2] === 'selesai' ? now()->subDays(1) : null,
             ]);
+        }
         }
 
         // ---- PERMINTAAN PRODUKSI (demo) ----
