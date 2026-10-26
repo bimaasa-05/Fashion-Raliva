@@ -40,10 +40,10 @@
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">inventory_2</span>
         </div>
         <div data-reveal class="bg-surface-container-lowest p-5 border border-muted-border rounded-lg flex flex-col gap-3 relative overflow-hidden card-premium">
-            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Kapasitas Terpakai') }}</span>
-            <span class="raliva-figure text-[26px] text-secondary"><span>63</span>%</span>
+            <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Kesehatan Stok') }}</span>
+            <span class="raliva-figure text-[26px] text-secondary">{{ $summary['health'] }}%</span>
             <div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
-                <div class="progress-fill h-full rounded-full" data-progress-mode="quota" data-progress="63"></div>
+                <div class="progress-fill h-full rounded-full" data-progress-mode="quota" data-progress="{{ $summary['health'] }}"></div>
             </div>
             <span class="material-symbols-outlined absolute right-2 bottom-2 text-[72px] text-gold-accent/25 fill drop-shadow-[0_0_6px_rgba(201,162,77,0.35)] pointer-events-none select-none" aria-hidden="true">equalizer</span>
         </div>
@@ -85,25 +85,25 @@
 
                     <div>
                         <div class="flex items-center justify-between mb-1.5">
-                            <span class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Kapasitas Terpakai') }}</span>
-                            <span class="font-label-sm text-[11px] font-bold text-on-surface">{{ $g->kapasitas }}%</span>
+                            <span class="font-label-sm text-[10px] uppercase tracking-wider text-on-surface-variant">{{ __('Kesehatan Stok') }}</span>
+                            <span class="font-label-sm text-[11px] font-bold text-on-surface">{{ $g->health }}%</span>
                         </div>
                         <div class="h-2 bg-surface-container-high rounded-full overflow-hidden">
-                            <div class="progress-fill h-full rounded-full" data-progress-mode="quota" data-progress="{{ $g->kapasitas }}"></div>
+                            <div class="progress-fill h-full rounded-full" data-progress-mode="quota" data-progress="{{ $g->health }}"></div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter pt-4 border-t border-muted-border text-center">
                         <div>
-                            <p class="font-title-md text-base text-on-surface">{{ number_format($summary['unit'], 0, ',', '.') }}</p>
+                            <p class="font-title-md text-base text-on-surface">{{ number_format($g->unit, 0, ',', '.') }}</p>
                             <p class="text-[11px] text-on-surface-variant mt-0.5">{{ __('Unit Stok') }}</p>
                         </div>
                         <div class="border-x border-muted-border">
-                            <p class="font-title-md text-base text-on-surface">{{ $g->produk ?? 0 }}</p>
+                            <p class="font-title-md text-base text-on-surface">{{ $g->variants }}</p>
                             <p class="text-[11px] text-on-surface-variant mt-0.5">{{ __('Varian Produk') }}</p>
                         </div>
                         <div>
-                            <p class="font-title-md text-base {{ $summary['menipis'] > 0 ? 'text-error' : 'text-secondary' }}">{{ $summary['menipis'] }}</p>
+                            <p class="font-title-md text-base {{ $g->menipis > 0 ? 'text-error' : 'text-secondary' }}">{{ $g->menipis }}</p>
                             <p class="text-[11px] text-on-surface-variant mt-0.5">{{ __('Stok Menipis') }}</p>
                         </div>
                     </div>
