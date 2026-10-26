@@ -104,12 +104,12 @@
             <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium mini-stat p-5 flex flex-col gap-1 relative overflow-hidden">
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[56px] text-gold-accent/20 fill pointer-events-none select-none" aria-hidden="true">badge</span>
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest relative">{{ __('Role') }}</span>
-                <span class="raliva-figure text-[26px] text-gold-accent relative break-words">{{ $roleName }}</span>
+                <span class="raliva-figure raliva-figure-text text-[26px] text-gold-accent relative break-words">{{ $roleName }}</span>
             </div>
             <div class="bg-surface-container-lowest border border-muted-border rounded-xl card-premium mini-stat p-5 flex flex-col gap-1 relative overflow-hidden">
                 <span class="material-symbols-outlined absolute right-2 bottom-2 text-[56px] text-gold-accent/20 fill pointer-events-none select-none" aria-hidden="true">verified_user</span>
                 <span class="text-on-surface-variant font-label-sm text-[10px] uppercase tracking-widest relative">{{ __('Status Akun') }}</span>
-                <span class="raliva-figure text-[26px] text-secondary relative uppercase">{{ $user->status ?? 'aktif' }}</span>
+                <span class="raliva-figure raliva-figure-text text-[26px] text-secondary relative uppercase">{{ $user->status ?? 'aktif' }}</span>
             </div>
         </div>
     </section>
