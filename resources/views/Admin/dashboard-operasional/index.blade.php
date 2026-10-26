@@ -36,7 +36,7 @@
         </div>
         <div>
             <div class="flex items-center gap-2 flex-wrap">
-                <p class="raliva-figure text-xl {{ ! $store ? 'text-on-surface-variant' : 'text-on-surface' }}">{{ $store?->nama_toko ?? 'Toko' }}</p>
+                <p class="raliva-figure raliva-figure-text text-xl {{ ! $store ? 'text-on-surface-variant' : 'text-on-surface' }}">{{ $store?->nama_toko ?? 'Toko' }}</p>
                 <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full {{ $store?->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' }} text-[10px] font-bold uppercase border">
                     <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === 'aktif' ? 'verified' : 'schedule' }}</span>{{ $store ? \App\Support\StatusStyle::label($store->status) : __('Menunggu') }}
                 </span>
