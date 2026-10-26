@@ -23,14 +23,37 @@ class GudangController extends Controller
         $storeId = OwnerContext::firstStoreId();
 
         $warehouses = Warehouse::with('staff')
+            ->withCount(['stocks as total_sku'])
+            ->withCount([
+                'stocks as menipis_sku' => fn ($query) => $query
+                    ->whereColumn('jumlah_stok', '<=', 'stok_minimum'),
+            ])
+            ->withSum('stocks as unit_stok', 'jumlah_stok')
             ->where('store_id', $storeId)
             ->get();
 
+        $warehouses->each(function (Warehouse $warehouse) {
+            $warehouse->setAttribute('unit', (int) ($warehouse->unit_stok ?? 0));
+            $warehouse->setAttribute('variants', (int) ($warehouse->total_sku ?? 0));
+            $warehouse->setAttribute('menipis', (int) ($warehouse->menipis_sku ?? 0));
+            $warehouse->setAttribute(
+                'health',
+                $warehouse->variants > 0
+                    ? (int) round((($warehouse->variants - $warehouse->menipis) / $warehouse->variants) * 100)
+                    : 0
+            );
+        });
+
+        $totalVariants = $warehouses->sum('variants');
+        $totalMenipis = $warehouses->sum('menipis');
+
         $summary = [
             'total' => $warehouses->count(),
-            'unit' => 0,
-            'menipis' => 0,
-            'kapasitas' => $warehouses->avg('kapasitas') ?? 0,
+            'unit' => $warehouses->sum('unit'),
+            'menipis' => $totalMenipis,
+            'health' => $totalVariants > 0
+                ? (int) round((($totalVariants - $totalMenipis) / $totalVariants) * 100)
+                : 0,
         ];
 
         $menungguPersetujuan = $storeId
