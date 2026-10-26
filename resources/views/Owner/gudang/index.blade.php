@@ -202,14 +202,14 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @forelse ($warehouses->flatMap->variants ?: [] as $v)
+                    @forelse ($warehouses->flatMap->stocks as $v)
                         <tr data-table-row class="border-b border-muted-border last:border-0">
                             <td class="py-3.5 px-4">
-                                <p class="font-bold text-on-surface">{{ $v->product->nama_produk ?? '-' }}</p>
-                                <p class="text-xs text-on-surface-variant mt-0.5">{{ $v->sku }}</p>
+                                <p class="font-bold text-on-surface">{{ $v->productVariant?->product?->nama_produk ?? '-' }}</p>
+                                <p class="text-xs text-on-surface-variant mt-0.5">{{ $v->productVariant?->sku ?? '-' }}</p>
                             </td>
-                            <td class="py-3.5 px-4 text-on-surface-variant">—</td>
-                            <td class="py-3.5 px-4 text-center font-bold text-on-surface-variant">—</td>
+                            <td class="py-3.5 px-4 text-on-surface-variant">{{ $v->warehouse?->nama_gudang ?? '-' }}</td>
+                            <td class="py-3.5 px-4 text-center font-bold raliva-figure text-error">{{ number_format($v->jumlah_stok, 0, ',', '.') }}</td>
                             <td class="py-3.5 px-4 text-on-surface-variant">—</td>
                             <td class="py-3.5 px-4 text-right text-xs font-semibold text-on-surface-variant">{{ __('Read-only') }}</td>
                         </tr>
