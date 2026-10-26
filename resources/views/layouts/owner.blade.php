@@ -241,7 +241,7 @@
         <!-- Mobile Greeting -->
         <div class="md:hidden px-container-margin py-6">
             <div class="flex items-center gap-3 flex-wrap">
-                <h1 class="{{ request()->routeIs('owner.dashboard') ? 'font-headline-lg-mobile text-headline-lg-mobile' : 'raliva-figure text-[24px]' }} text-on-surface">@yield('header-title', __('Dashboard Toko'))</h1>
+                <h1 class="{{ request()->routeIs('owner.dashboard') ? 'font-headline-lg-mobile text-headline-lg-mobile' : 'raliva-figure raliva-figure-text text-[24px]' }} text-on-surface">@yield('header-title', __('Dashboard Toko'))</h1>
                 @hasSection('header-badge')
                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 font-label-sm text-[10px] uppercase tracking-wider">@yield('header-badge')</span>
                 @endif
