@@ -12,6 +12,7 @@ use App\Models\Review;
 use App\Models\Wallet;
 use App\Services\KaryawanReportService;
 use App\Support\OwnerContext;
+use App\Support\SlotService;
 use App\Support\StoreGate;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
@@ -82,12 +83,15 @@ class DashboardController extends Controller
             $roi = (new KaryawanReportService)->ringkasanKeuangan([$storeId])['roi'] ?? null;
         }
 
+        $totalSlot = $storeId ? SlotService::totalQuota($storeId) : 0;
+
         return view('Owner.dashboard.index', compact(
             'store',
             'penjualanHariIni',
             'pesananBaru',
             'produkAktif',
             'produkPending',
+            'totalSlot',
             'saldoTersedia',
             'saldoTertahan',
             'komplainTerbuka',
@@ -143,37 +147,57 @@ class DashboardController extends Controller
 
         // Produksi toko ini
         $produksi = ProductionOrder::where('store_id', $storeId)
-            ->where('status', '!=', 'selesai')
+            ->whereNotIn('status', [
+                ProductionOrder::STATUS_SELESAI,
+                ProductionOrder::STATUS_DIBATALKAN,
+            ])
             ->latest()
             ->first();
         if ($produksi) {
             $p = match ($produksi->status) {
-                'diproses' => 55,
-                'pending', 'menunggu' => 15,
-                'selesai' => 100,
+                ProductionOrder::STATUS_DIPROSES => 55,
+                ProductionOrder::STATUS_REQUESTED => 15,
+                ProductionOrder::STATUS_MENUNGGU_QC => 80,
                 default => 30,
             };
+
+            $subtitle = match ($produksi->status) {
+                ProductionOrder::STATUS_REQUESTED => 'Menunggu persetujuan',
+                ProductionOrder::STATUS_MENUNGGU_QC => 'Menunggu pemeriksaan QC',
+                default => 'Sedang berjalan',
+            };
+
             $items[] = [
                 'icon' => 'inventory_2',
                 'title' => 'Produksi '.($produksi->nomor_produksi ?? 'PRQ-'.$produksi->production_order_id),
-                'subtitle' => 'Sedang berjalan',
+                'subtitle' => $subtitle,
                 'progress' => $p,
             ];
         }
 
         // Promo aktif
         $promo = Promotion::where('store_id', $storeId)
-            ->where('status', 'aktif')
+            ->where('status', Promotion::STATUS_AKTIF)
+            ->where('mulai_pada', '<=', Carbon::today())
             ->where('berakhir_pada', '>=', Carbon::today())
             ->latest()
             ->first();
         if ($promo) {
             $sisa = Carbon::today()->diffInDays($promo->berakhir_pada, false);
+
+            $diskon = $promo->tipe_diskon === Promotion::TIPE_PORSENTE
+                ? $promo->nilai_diskon . '%'
+                : 'Rp ' . number_format((float) $promo->nilai_diskon, 0, ',', '.');
+
+            $totalHari = max(1, $promo->mulai_pada->diffInDays($promo->berakhir_pada));
+            $berjalan = max(0, $promo->mulai_pada->diffInDays(Carbon::today()));
+            $progress = (int) min(100, max(0, round($berjalan / $totalHari * 100)));
+
             $items[] = [
                 'icon' => 'local_offer',
                 'title' => 'Promo '.$promo->nama_promo.' berjalan',
-                'subtitle' => 'Diskon '.$promo->nilai_diskon.'% — sisa '.max(0, $sisa).' hari',
-                'progress' => 56,
+                'subtitle' => 'Diskon '.$diskon.' — sisa '.max(0, $sisa).' hari',
+                'progress' => $progress,
             ];
         }
 
