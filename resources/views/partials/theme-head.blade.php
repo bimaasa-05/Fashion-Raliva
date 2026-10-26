@@ -148,6 +148,7 @@
         --c-sidebar-hover: 239 237 237;
         --c-scrim: 0 0 0;
         --c-accent: 139 30 63;
+        --c-number-accent: #9B2D42;
     }
 
     .dark {
@@ -187,6 +188,7 @@
         --c-sidebar-border: 46 46 46;
         --c-sidebar-hover: 41 41 41;
         --c-accent: 139 30 63;
+        --c-number-accent: #E58AA0;
     }
 
     /* Nominal & aksen teks: burgundy/pink di dark mode (semua role staff).
@@ -213,6 +215,39 @@
 
     .dark .group\/row:hover .group-hover\/row\:text-gold-accent {
         color: #E58AA0 !important;
+    }
+
+    /* Angka & nominal staff: aksen konsisten SuperAdmin. */
+    main .raliva-figure:not(.raliva-figure-text) {
+        color: var(--c-number-accent) !important;
+    }
+
+    /* Pengecualian kontras: angka di card gelap/terang mengikuti warna card. */
+    main .raliva-figure.text-on-primary {
+        color: rgb(var(--c-on-primary)) !important;
+    }
+
+    /* Harga coret dan teks muted tetap muted. */
+    main .raliva-figure.text-on-surface-variant {
+        color: rgb(var(--c-on-surface-variant)) !important;
+    }
+
+    /* Merah/hijau tetap semantik. */
+    main .raliva-figure.text-success {
+        color: rgb(var(--c-success)) !important;
+    }
+
+    main .raliva-figure.text-error {
+        color: rgb(var(--c-error)) !important;
+    }
+
+    /* Dark mode: teks secondary jadi pink, bukan burgundy gelap. */
+    .dark .text-secondary {
+        color: #E58AA0 !important;
+    }
+
+    .dark .text-secondary\/70 {
+        color: rgba(229, 138, 160, .7) !important;
     }
 
     /* Toast flash: jangan pakai inverse-surface di dark (hasilnya putih). */
