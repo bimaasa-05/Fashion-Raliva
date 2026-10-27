@@ -127,6 +127,8 @@ use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
+
+//Landing page dan Home 
 Route::get('/', [HomeController::class, 'index'])->name('customer.home');
 Route::permanentRedirect('/customer', '/');
 Route::get('/join', [LandingController::class, 'index'])->name('landing');
