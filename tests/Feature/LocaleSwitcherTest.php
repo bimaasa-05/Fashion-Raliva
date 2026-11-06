@@ -26,6 +26,16 @@ class LocaleSwitcherTest extends TestCase
         $response->assertSessionHas('locale', 'id');
     }
 
+    public function test_locale_default_adalah_indonesia(): void
+    {
+        $this->assertSame('id', config('app.locale'));
+        $this->assertSame('id', config('app.fallback_locale'));
+
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertSee('Masuk', false);
+    }
+
     public function test_locale_tidak_valid_ditolak(): void
     {
         $response = $this->from(route('login'))
