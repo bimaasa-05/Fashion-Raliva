@@ -33,7 +33,7 @@
 
         <div class="p-4 border border-gold-accent/25 rounded-lg bg-gold-accent/5">
             <p class="font-body-md text-xs leading-relaxed text-on-surface-variant">
-                {{ __('Field ID wajib untuk Judul dan Deskripsi. Field lain boleh kosong dan akan memakai teks bawaan. Field EN opsional; jika kosong, website memakai versi ID.') }}
+                {{ __('Nilai di bawah sudah terisi dengan konten yang tampil di landing. Edit lalu simpan. Field ID wajib untuk Judul dan Deskripsi. Field EN opsional; jika kosong, website memakai versi ID.') }}
             </p>
         </div>
 
