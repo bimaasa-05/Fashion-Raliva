@@ -3,15 +3,12 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Middleware\EnsureRole;
-use App\Models\Role;
-use App\Models\Store;
 use App\Models\User;
+use App\Support\PostLoginRedirector;
 use App\Support\SessionArea;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class LoginController extends Controller
@@ -51,44 +48,7 @@ class LoginController extends Controller
                 ->withErrors(['email' => __('Akun tidak aktif. Hubungi administrator.')]);
         }
 
-        $request->session()->regenerate();
-
-        if (SessionArea::isEnabled()) {
-            $area = SessionArea::areaForRole($user->role?->nama_role);
-
-            if ($area !== null) {
-                $cookie = SessionArea::cookieNameForArea($area);
-
-                config(['session.cookie' => $cookie]);
-                $request->session()->setName($cookie);
-            }
-        }
-
-        $intended = $request->input('redirect');
-        if (is_string($intended) && $intended !== '') {
-            // Path relatif (aman dari open redirect)...
-            if (Str::startsWith($intended, '/') && ! Str::contains($intended, '//')) {
-                return redirect($intended);
-            }
-            // ...atau URL absolut same-origin (banyak pemanggil memakai route()).
-            $base = rtrim(url('/'), '/');
-            if (Str::startsWith($intended, $base)
-                && (strlen($intended) === strlen($base) || $intended[strlen($base)] === '/')) {
-                return redirect($intended);
-            }
-        }
-
-        if ($user->role?->nama_role === Role::OWNER) {
-            $hasOperationalStore = $user->ownedStores()
-                ->whereIn('status', [Store::STATUS_AKTIF, Store::STATUS_NONAKTIF])
-                ->exists();
-
-            if (! $hasOperationalStore) {
-                return redirect()->route('owner.pengajuan-toko');
-            }
-        }
-
-        return redirect()->intended(route(EnsureRole::homeRouteFor($user->role?->nama_role)));
+        return PostLoginRedirector::redirect($request, $user);
     }
 
     public function destroy(Request $request): RedirectResponse
