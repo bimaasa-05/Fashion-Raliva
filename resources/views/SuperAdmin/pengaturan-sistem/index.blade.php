@@ -77,6 +77,7 @@
             <a href="#kartu-batas" data-scroll-link="batas" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">speed</span> {{ __('Batas') }}</a>
             <a href="#kartu-legal" data-scroll-link="legal" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">verified_user</span> {{ __('Dokumen Legal') }}</a>
             <a href="#kartu-help" data-scroll-link="help" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">help_center</span> {{ __('Pusat Bantuan') }}</a>
+            <a href="#kartu-landing-penawaran" data-scroll-link="landing-penawaran" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">campaign</span> {{ __('Penawaran Landing') }}</a>
             <a href="#kartu-landing-faq" data-scroll-link="landing-faq" class="quick-nav-pill"><span class="material-symbols-outlined text-[16px]">quiz</span> {{ __('FAQ Landing') }}</a>
         </div>
     </nav>
@@ -509,6 +510,7 @@
         </div>
     </section>
 
+    @include('SuperAdmin.pengaturan-sistem._landing-penawaran', ['landingOffer' => $landingOffer])
     @include('SuperAdmin.pengaturan-sistem._landing-faq', ['landingFaqs' => $landingFaqs])
 </div>
 
