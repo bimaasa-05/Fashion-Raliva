@@ -36,12 +36,6 @@
             ['title' => __('landing.home.step_4_title'), 'text' => __('landing.home.step_4_text')],
         ];
 
-        $requirements = [
-            __('landing.open_store.requirement_1'),
-            __('landing.open_store.requirement_2'),
-            __('landing.open_store.requirement_3'),
-        ];
-
         $audienceItems = [
             ['icon' => 'storefront', 'text' => __('landing.brand.audience_1')],
             ['icon' => 'precision_manufacturing', 'text' => __('landing.brand.audience_2')],
@@ -321,16 +315,12 @@
             <div class="reveal rounded-[2rem] border border-muted-border bg-surface p-6 sm:p-10">
                 <div class="grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start lg:gap-12">
                     <div>
-                        <span class="eyebrow">{{ __('landing.open_store.eyebrow') }}</span>
-                        <h2 class="mt-4 max-w-xl font-heading font-bold text-4xl leading-[1.08] tracking-[-0.02em] sm:text-5xl sm:leading-[1.08]">{{ __('landing.open_store.title') }}</h2>
-                        <p class="mt-5 max-w-xl text-sm leading-7 text-on-surface-variant">{{ __('landing.open_store.description') }}</p>
+                        <span class="eyebrow">{{ $landingOffer['eyebrow'] }}</span>
+                        <h2 class="mt-4 max-w-xl font-heading font-bold text-4xl leading-[1.08] tracking-[-0.02em] sm:text-5xl sm:leading-[1.08]">{{ $landingOffer['title'] }}</h2>
+                        <p class="mt-5 max-w-xl text-sm leading-7 text-on-surface-variant">{{ $landingOffer['description'] }}</p>
 
                         <div class="mt-7 grid gap-3 sm:grid-cols-3">
-                            @foreach ([
-                                ['icon' => 'rocket_launch', 'text' => __('landing.common.free_registration')],
-                                ['icon' => 'verified_user', 'text' => __('landing.common.verified_store')],
-                                ['icon' => 'dashboard', 'text' => __('landing.common.owner_dashboard')],
-                            ] as $item)
+                            @foreach ($landingOffer['benefits'] as $item)
                                 <div class="flex items-center gap-2 rounded-xl border border-muted-border bg-surface-container-lowest p-3">
                                     <span class="material-symbols-outlined text-[18px] text-gold-accent">{{ $item['icon'] }}</span>
                                     <span class="text-xs font-semibold">{{ $item['text'] }}</span>
@@ -340,26 +330,26 @@
                     </div>
 
                     <div class="rounded-2xl border border-gold-accent/25 bg-surface-container-lowest p-5 sm:p-6">
-                        <span class="eyebrow">{{ __('landing.open_store.requirements_title') }}</span>
+                        <span class="eyebrow">{{ $landingOffer['requirements_title'] }}</span>
                         <div class="mt-5 grid gap-3">
-                            @foreach ($requirements as $requirement)
+                            @foreach ($landingOffer['requirements'] as $requirement)
                                 <div class="flex items-start gap-3">
                                     <span class="material-symbols-outlined mt-0.5 text-[18px] text-gold-accent">check_circle</span>
                                     <p class="text-sm leading-6 text-on-surface-variant">{{ $requirement }}</p>
                                 </div>
                             @endforeach
                         </div>
-                        <p class="mt-4 border-t border-muted-border pt-4 text-[11px] leading-5 text-on-surface-variant">{{ __('landing.open_store.requirement_note') }}</p>
+                        <p class="mt-4 border-t border-muted-border pt-4 text-[11px] leading-5 text-on-surface-variant">{{ $landingOffer['requirement_note'] }}</p>
 
                         <div class="mt-5 flex flex-col gap-3">
                             <a href="{{ route('register') }}" class="btn-primary">
-                                {{ __('landing.open_store.cta_primary') }}
+                                {{ $landingOffer['cta_primary'] }}
                                 <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
                             </a>
-                            <a href="{{ route('login') }}" class="btn-secondary">{{ __('landing.open_store.cta_secondary') }}</a>
+                            <a href="{{ route('login') }}" class="btn-secondary">{{ $landingOffer['cta_secondary'] }}</a>
                         </div>
 
-                        <p class="mt-4 text-[11px] leading-5 text-on-surface-variant">{{ __('landing.open_store.commission_note', ['percent' => $commissionPercent]) }}</p>
+                        <p class="mt-4 text-[11px] leading-5 text-on-surface-variant">{{ $landingOffer['commission_note'] }}</p>
                     </div>
                 </div>
             </div>
