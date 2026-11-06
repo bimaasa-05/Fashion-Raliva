@@ -1,7 +1,7 @@
 # Revisi Login, Bahasa, Landing Penawaran, dan Google Login
 
 Tanggal dibuat: 2026-11-06  
-Status: Fase 0-3 selesai; Fase 4-5 pending  
+Status: Fase 0-4 terimplementasi; Fase 5 pending; verifikasi browser Google OAuth pending  
 Repo: `C:\laragon\www\Raliva-Fashion`  
 Branch: `main`  
 Baseline commit: `a1726835`  
@@ -15,7 +15,7 @@ Dokumen ini adalah **satu file plan** untuk seluruh pekerjaan. Semua fase, file,
 - [x] Fase 1 — shadow login light mode
 - [x] Fase 2 — Bahasa Indonesia default
 - [x] Fase 3 — penawaran landing editable di Superadmin
-- [ ] Fase 4 — Google Login (menunggu Google Cloud credentials)
+- [x] Fase 4 — Google Login (implementasi + automated test; verifikasi browser pending)
 - [ ] Fase 5 — regression penuh
 
 ---
@@ -417,14 +417,14 @@ Google OAuth aktif di halaman login. Tombol Google di halaman register dihapus u
 
 ### Prasyarat eksternal
 
-- [ ] Buat OAuth Client ID tipe Web Application di Google Cloud Console.
-- [ ] Authorized redirect URI:
+- [x] Buat OAuth Client ID tipe Web Application di Google Cloud Console.
+- [ ] Authorized redirect URI (local sudah; production menunggu deployment):
   ```text
   http://localhost:8000/auth/google/callback
   https://nexprint.my.id/auth/google/callback
   ```
-- [ ] Simpan Client ID dan Client Secret.
-- [ ] Isi `.env` lokal dan production nanti.
+- [x] Simpan Client ID dan Client Secret.
+- [x] Isi `.env` lokal (production nanti).
 
 ### File
 
@@ -436,19 +436,19 @@ Google OAuth aktif di halaman login. Tombol Google di halaman register dihapus u
   - `database/migrations/xxxx_xx_xx_xxxxxx_add_google_id_to_users_table.php`
 - `app/Models/User.php`
 - `app/Http/Controllers/Auth/GoogleController.php` (baru)
-- `app/Support/PostLogin.php` (baru)
+- `app/Support/PostLoginRedirector.php` (baru)
 - `app/Http/Controllers/Auth/LoginController.php`
 - `routes/web.php`
 - `resources/views/customer/auth/login.blade.php`
 - `resources/views/customer/auth/register.blade.php`
 - `lang/id.json`
 - `lang/en.json`
-- `tests/Feature/GoogleLoginTest.php`
+- `tests/Feature/GoogleAuthTest.php`
 
 ### Dependency
 
 ```bash
-composer require laravel/socialite
+composer require laravel/socialite:^5.31
 ```
 
 ### Config
@@ -525,23 +525,23 @@ Jangan tampilkan detail exception ke user. Log detail ke `storage/logs/laravel.l
 
 ### Test
 
-- [ ] User dengan `google_id` bisa login.
-- [ ] User lama dengan email sama otomatis di-link.
-- [ ] Email baru otomatis dibuat sebagai Customer.
-- [ ] User nonaktif ditolak.
-- [ ] Email Google belum verified ditolak.
-- [ ] `google_id` berbeda ditolak.
-- [ ] User soft-deleted ditolak.
-- [ ] Callback error kembali ke login dengan pesan.
-- [ ] Tombol Google hidden jika env kosong.
-- [ ] Redirect Owner tanpa toko benar.
-- [ ] Session regenerate dan area session benar.
+- [x] User dengan `google_id` bisa login.
+- [x] User lama dengan email sama otomatis di-link.
+- [x] Email baru otomatis dibuat sebagai Customer.
+- [x] User nonaktif ditolak.
+- [x] Email Google belum verified ditolak.
+- [x] `google_id` berbeda ditolak.
+- [x] User soft-deleted ditolak.
+- [x] Callback error kembali ke login dengan pesan.
+- [x] Tombol Google hidden jika env kosong.
+- [x] Redirect Owner tanpa toko benar.
+- [x] Session regenerate dan area session benar (helper bersama `LoginController`).
 
 ### Manual test
 
-- [ ] Isi `.env` dengan credentials asli.
-- [ ] Jalankan `php artisan config:clear`.
-- [ ] Buka `/login`.
+- [x] Isi `.env` dengan credentials asli.
+- [x] Jalankan `php artisan config:clear`.
+- [x] Buka `/login` dan pastikan tombol Google tampil (HTTP check).
 - [ ] Klik tombol Google.
 - [ ] Pilih akun.
 - [ ] Pastikan masuk ke dashboard.
