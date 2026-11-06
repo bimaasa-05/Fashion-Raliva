@@ -174,6 +174,10 @@
             inset 0 0 26px var(--gold-inner),
             0 12px 24px -8px rgba(0, 0, 0, .18);
     }
+    /* Light mode: card auth tanpa shadow; border tetap menjadi aksen utama. */
+    html:not(.theme-dark) .auth-card {
+        box-shadow: none;
+    }
     :root { --gold-inner: rgba(139, 30, 30, .30); }
     html.theme-dark { --gold-inner: rgba(139, 30, 30, .25); }
     /* ============ RALIVA FASHION ATELIER BACKGROUND ============ */
@@ -364,7 +368,7 @@
 </button>
 </div>
 <div class="flex-grow flex flex-col justify-center w-full max-w-md mx-auto py-xl relative z-10">
-<div class="border-2 border-secondary rounded-lg p-lg lg:p-xl frame-gold">
+<div class="border-2 border-secondary rounded-lg p-lg lg:p-xl frame-gold auth-card">
 <!-- Form Section -->
 @if (session('status'))
 <!-- Success State -->
