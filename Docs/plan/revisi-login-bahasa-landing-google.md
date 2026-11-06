@@ -1,13 +1,22 @@
 # Revisi Login, Bahasa, Landing Penawaran, dan Google Login
 
 Tanggal dibuat: 2026-11-06  
-Status: draft plan, belum dieksekusi  
+Status: Fase 0-3 selesai; Fase 4-5 pending  
 Repo: `C:\laragon\www\Raliva-Fashion`  
 Branch: `main`  
 Baseline commit: `a1726835`  
 Working tree saat plan dibuat: clean
 
 Dokumen ini adalah **satu file plan** untuk seluruh pekerjaan. Semua fase, file, test, dan acceptance criteria ada di sini. Jangan dipecah menjadi file plan terpisah.
+
+## Status eksekusi
+
+- [x] Fase 0 — baseline
+- [x] Fase 1 — shadow login light mode
+- [x] Fase 2 — Bahasa Indonesia default
+- [x] Fase 3 — penawaran landing editable di Superadmin
+- [ ] Fase 4 — Google Login (menunggu Google Cloud credentials)
+- [ ] Fase 5 — regression penuh
 
 ---
 
