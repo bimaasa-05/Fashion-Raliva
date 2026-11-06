@@ -216,6 +216,31 @@ class GoogleAuthTest extends TestCase
         $this->assertAuthenticatedAs($owner);
     }
 
+    public function test_login_google_memakai_cookie_area_saat_multi_role_aktif(): void
+    {
+        config(['session.multi_role' => true]);
+
+        $googleId = 'google-'.Str::random(12);
+        $admin = $this->makeUser([
+            'role_id' => $this->roleId(Role::ADMIN),
+            'google_id' => $googleId,
+        ]);
+
+        $this->mockGoogleUser([
+            'id' => $googleId,
+            'email' => $admin->email,
+        ]);
+
+        $oldSessionId = session()->getId();
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect(route('admin.dashboard'))
+            ->assertCookie('raliva_admin_session');
+
+        $this->assertNotSame($oldSessionId, session()->getId());
+        $this->assertAuthenticatedAs($admin);
+    }
+
     public function test_login_google_mempertahankan_tujuan_redirect(): void
     {
         $email = 'google-redirect-'.Str::random(8).'@example.com';
