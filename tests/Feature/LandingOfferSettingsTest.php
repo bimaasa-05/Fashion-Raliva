@@ -132,6 +132,41 @@ class LandingOfferSettingsTest extends TestCase
             ->assertSee('Judul ID Fallback');
     }
 
+    public function test_form_penawaran_landing_terisi_konten_yang_tampil(): void
+    {
+        Setting::where('kunci', 'like', 'landing_offer_%')->delete();
+
+        $this->actingAs($this->superAdmin())
+            ->get(route('superadmin.pengaturan-sistem'))
+            ->assertOk()
+            ->assertSee('value="'.e(__('landing.open_store.title', [], 'id')).'"', false)
+            ->assertSee('value="'.e(__('landing.open_store.title', [], 'en')).'"', false)
+            ->assertSee('>'.e(__('landing.open_store.description', [], 'id')).'</textarea>', false);
+    }
+
+    public function test_form_penawaran_landing_menampilkan_setting_tersimpan(): void
+    {
+        Setting::set('landing_offer_title_id', 'Judul Tersimpan');
+        Setting::set('landing_offer_title_en', 'Saved Title');
+
+        $this->actingAs($this->superAdmin())
+            ->get(route('superadmin.pengaturan-sistem'))
+            ->assertOk()
+            ->assertSee('value="Judul Tersimpan"', false)
+            ->assertSee('value="Saved Title"', false);
+    }
+
+    public function test_form_penawaran_landing_en_mengikuti_id_saat_en_kosong(): void
+    {
+        Setting::set('landing_offer_title_id', 'Judul ID Saja');
+        Setting::set('landing_offer_title_en', '');
+
+        $this->actingAs($this->superAdmin())
+            ->get(route('superadmin.pengaturan-sistem'))
+            ->assertOk()
+            ->assertSee('value="Judul ID Saja"', false);
+    }
+
     public function test_validasi_menolak_judul_dan_deskripsi_id_kosong(): void
     {
         $response = $this->actingAs($this->superAdmin())
