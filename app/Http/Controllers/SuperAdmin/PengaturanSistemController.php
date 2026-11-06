@@ -15,6 +15,23 @@ use Illuminate\Support\Facades\Storage;
 
 class PengaturanSistemController extends Controller
 {
+    private const LANDING_OFFER_FIELDS = [
+        'eyebrow' => ['label' => 'Eyebrow', 'max' => 100, 'translation' => 'landing.open_store.eyebrow'],
+        'title' => ['label' => 'Judul', 'max' => 150, 'required' => true, 'translation' => 'landing.open_store.title'],
+        'description' => ['label' => 'Deskripsi', 'max' => 500, 'required' => true, 'type' => 'textarea', 'rows' => 3, 'translation' => 'landing.open_store.description'],
+        'benefit_1' => ['label' => 'Benefit 1', 'max' => 150, 'translation' => 'landing.common.free_registration'],
+        'benefit_2' => ['label' => 'Benefit 2', 'max' => 150, 'translation' => 'landing.common.verified_store'],
+        'benefit_3' => ['label' => 'Benefit 3', 'max' => 150, 'translation' => 'landing.common.owner_dashboard'],
+        'requirements_title' => ['label' => 'Judul Kebutuhan', 'max' => 100, 'translation' => 'landing.open_store.requirements_title'],
+        'requirement_1' => ['label' => 'Kebutuhan 1', 'max' => 200, 'translation' => 'landing.open_store.requirement_1'],
+        'requirement_2' => ['label' => 'Kebutuhan 2', 'max' => 200, 'translation' => 'landing.open_store.requirement_2'],
+        'requirement_3' => ['label' => 'Kebutuhan 3', 'max' => 200, 'translation' => 'landing.open_store.requirement_3'],
+        'requirement_note' => ['label' => 'Catatan Kebutuhan', 'max' => 255, 'type' => 'textarea', 'rows' => 2, 'translation' => 'landing.open_store.requirement_note'],
+        'cta_primary' => ['label' => 'CTA Utama', 'max' => 100, 'translation' => 'landing.open_store.cta_primary'],
+        'cta_secondary' => ['label' => 'CTA Sekunder', 'max' => 100, 'translation' => 'landing.open_store.cta_secondary'],
+        'commission_note' => ['label' => 'Catatan Komisi', 'max' => 255, 'type' => 'textarea', 'rows' => 2, 'translation' => 'landing.open_store.commission_note'],
+    ];
+
     public function index()
     {
         foreach (['TikTok', 'Instagram', 'YouTube'] as $nama) {
@@ -46,6 +63,7 @@ class PengaturanSistemController extends Controller
             'helpCategories' => HelpCategory::terurut()->get(),
             'helpFaqs' => HelpFaq::with('category')->terurut()->get(),
             'landingFaqs' => LandingFaq::terurut()->get(),
+            'landingOffer' => $this->landingOfferFormData(),
             'helpHero' => [
                 'title' => Setting::get(Setting::HELP_HERO_TITLE, 'How can we help?'),
                 'subtitle' => Setting::get(Setting::HELP_HERO_SUBTITLE, 'Search our help center or browse popular topics below.'),
@@ -460,6 +478,90 @@ class PengaturanSistemController extends Controller
         Notification::fireSelf(Notification::TIPE_SISTEM, 'FAQ Landing Dihapus', "FAQ landing \"{$pertanyaan}\" dihapus.", route('superadmin.pengaturan-sistem').'#kartu-landing-faq');
 
         return back()->with('toast', ['message' => __('FAQ landing berhasil dihapus.'), 'icon' => 'delete']);
+    }
+
+    public function updateLandingOffer(Request $request)
+    {
+        $rules = [];
+        $attributes = [];
+
+        foreach (self::LANDING_OFFER_FIELDS as $field => $config) {
+            $rules["landing_offer_{$field}_id"] = [
+                ($config['required'] ?? false) ? 'required' : 'nullable',
+                'string',
+                'max:'.$config['max'],
+            ];
+            $rules["landing_offer_{$field}_en"] = ['nullable', 'string', 'max:'.$config['max']];
+            $attributes["landing_offer_{$field}_id"] = $config['label'].' (ID)';
+            $attributes["landing_offer_{$field}_en"] = $config['label'].' (EN)';
+        }
+
+        $data = $request->validate($rules, [], $attributes);
+
+        $lama = [];
+        $baru = [];
+        DB::transaction(function () use ($data, &$lama, &$baru) {
+            foreach (array_keys(self::LANDING_OFFER_FIELDS) as $field) {
+                foreach (['id', 'en'] as $locale) {
+                    $key = "landing_offer_{$field}_{$locale}";
+                    $value = trim((string) ($data[$key] ?? ''));
+
+                    Setting::where('kunci', $key)->lockForUpdate()->get();
+
+                    $lama[$key] = Setting::get($key);
+                    Setting::set($key, $value !== '' ? $value : null);
+                    $baru[$key] = $value;
+                }
+            }
+
+            ActivityLogger::log(
+                'landing.offer.update',
+                Setting::class,
+                null,
+                ['nilai_lama' => $lama],
+                ['nilai_baru' => $baru],
+                'Memperbarui konten penawaran landing.'
+            );
+
+            Notification::fireSelf(
+                Notification::TIPE_SISTEM,
+                'Penawaran Landing Diperbarui',
+                'Konten penawaran landing berhasil disimpan.',
+                route('superadmin.pengaturan-sistem').'#kartu-landing-penawaran'
+            );
+        });
+
+        return back()
+            ->with('toast', [
+                'message' => __('Konten penawaran landing berhasil disimpan.'),
+                'icon' => 'task_alt',
+            ])
+            ->withFragment('kartu-landing-penawaran');
+    }
+
+    private function landingOfferFormData(): array
+    {
+        $settings = Setting::query()
+            ->where('kunci', 'like', 'landing_offer_%')
+            ->pluck('nilai', 'kunci');
+
+        $data = [];
+
+        foreach (self::LANDING_OFFER_FIELDS as $field => $config) {
+            $data[$field] = [
+                'label' => $config['label'],
+                'max' => $config['max'],
+                'required' => $config['required'] ?? false,
+                'type' => $config['type'] ?? 'text',
+                'rows' => $config['rows'] ?? 2,
+                'id' => (string) $settings->get("landing_offer_{$field}_id", ''),
+                'en' => (string) $settings->get("landing_offer_{$field}_en", ''),
+                'fallback_id' => __($config['translation'], [], 'id'),
+                'fallback_en' => __($config['translation'], [], 'en'),
+            ];
+        }
+
+        return $data;
     }
 
     private function validateHelpCategory(Request $request): array
