@@ -174,6 +174,10 @@
             inset 0 0 26px var(--gold-inner),
             0 12px 24px -8px rgba(0, 0, 0, .18);
     }
+    /* Light mode: card auth tanpa shadow; border tetap menjadi aksen utama. */
+    html:not(.theme-dark) .auth-card {
+        box-shadow: none;
+    }
     :root { --gold-inner: rgba(139, 30, 30, .30); }
     html.theme-dark { --gold-inner: rgba(139, 30, 30, .25); }
     /* ============ ACCOUNT TYPE PILL ============ */
@@ -383,7 +387,7 @@
 </button>
 </div>
 <div class="flex-grow flex flex-col justify-center w-full max-w-md mx-auto py-xl relative z-10">
-<div id="register-section" class="border-2 border-secondary rounded-lg p-lg lg:p-xl frame-gold">
+<div id="register-section" class="border-2 border-secondary rounded-lg p-lg lg:p-xl frame-gold auth-card">
 <!-- Heading -->
 <div class="mb-sm">
 <div class="flex items-center justify-between gap-sm mb-xs">
@@ -554,7 +558,7 @@
 </div>
 </div>
 <!-- Success State -->
-<div class="hidden text-center py-xl relative z-10 border-2 border-secondary rounded-lg p-lg lg:p-xl frame-gold" id="register-success">
+<div class="hidden text-center py-xl relative z-10 border-2 border-secondary rounded-lg p-lg lg:p-xl frame-gold auth-card" id="register-success">
 <span class="material-symbols-outlined text-secondary text-[64px]">check_circle</span>
 <h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-md mb-sm">{{ __('Account Created') }}</h2>
 <p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-xs mx-auto">{{ __('Your :brand account has been created successfully. Please sign in to continue.', ['brand' => brand()]) }}</p>
