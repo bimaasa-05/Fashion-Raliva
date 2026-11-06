@@ -548,16 +548,21 @@ class PengaturanSistemController extends Controller
         $data = [];
 
         foreach (self::LANDING_OFFER_FIELDS as $field => $config) {
+            $savedId = trim((string) $settings->get("landing_offer_{$field}_id", ''));
+            $savedEn = trim((string) $settings->get("landing_offer_{$field}_en", ''));
+            $fallbackId = __($config['translation'], [], 'id');
+            $fallbackEn = __($config['translation'], [], 'en');
+
             $data[$field] = [
                 'label' => $config['label'],
                 'max' => $config['max'],
                 'required' => $config['required'] ?? false,
                 'type' => $config['type'] ?? 'text',
                 'rows' => $config['rows'] ?? 2,
-                'id' => (string) $settings->get("landing_offer_{$field}_id", ''),
-                'en' => (string) $settings->get("landing_offer_{$field}_en", ''),
-                'fallback_id' => __($config['translation'], [], 'id'),
-                'fallback_en' => __($config['translation'], [], 'en'),
+                'id' => $savedId !== '' ? $savedId : $fallbackId,
+                'en' => $savedEn !== '' ? $savedEn : ($savedId !== '' ? $savedId : $fallbackEn),
+                'fallback_id' => $fallbackId,
+                'fallback_en' => $fallbackEn,
             ];
         }
 
