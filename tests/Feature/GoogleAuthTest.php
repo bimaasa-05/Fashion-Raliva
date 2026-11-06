@@ -1,0 +1,306 @@
+<?php
+
+namespace Tests\Feature;
+
+use App\Models\Role;
+use App\Models\User;
+use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Str;
+use Laravel\Socialite\Contracts\Provider;
+use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\User as SocialiteUser;
+use Mockery;
+use Tests\TestCase;
+
+class GoogleAuthTest extends TestCase
+{
+    use DatabaseTransactions;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        app()->setLocale('id');
+
+        config([
+            'services.google.client_id' => 'test-client-id',
+            'services.google.client_secret' => 'test-client-secret',
+            'services.google.redirect' => 'http://localhost:8000/auth/google/callback',
+        ]);
+    }
+
+    public function test_route_redirect_google_memakai_redirect_uri_yang_dikonfigurasi(): void
+    {
+        $response = $this->get(route('auth.google.redirect'));
+
+        $response->assertRedirect();
+
+        $location = (string) $response->headers->get('Location');
+
+        $this->assertStringContainsString('accounts.google.com', $location);
+        $this->assertStringContainsString('client_id=test-client-id', $location);
+        $this->assertStringContainsString(
+            urlencode('http://localhost:8000/auth/google/callback'),
+            $location
+        );
+    }
+
+    public function test_route_redirect_google_ditolak_saat_konfigurasi_kosong(): void
+    {
+        config(['services.google.client_id' => null]);
+
+        $this->get(route('auth.google.redirect'))
+            ->assertRedirect(route('login'))
+            ->assertSessionHasErrors('email');
+    }
+
+    public function test_login_google_membuat_customer_baru(): void
+    {
+        $email = 'google-baru-'.Str::random(8).'@example.com';
+
+        $this->mockGoogleUser([
+            'id' => 'google-'.Str::random(12),
+            'name' => 'Google Baru',
+            'email' => $email,
+        ]);
+
+        $response = $this->get(route('auth.google.callback'));
+
+        $response->assertRedirect(route('customer.home'));
+
+        $user = User::where('email', $email)->firstOrFail();
+
+        $this->assertAuthenticatedAs($user);
+        $this->assertSame(Role::CUSTOMER, $user->role->nama_role);
+        $this->assertSame(User::STATUS_AKTIF, $user->status);
+        $this->assertNotNull($user->google_id);
+        $this->assertNotNull($user->email_verified_at);
+    }
+
+    public function test_login_google_menghubungkan_email_yang_sudah_ada(): void
+    {
+        $googleId = 'google-'.Str::random(12);
+        $user = $this->makeUser();
+
+        $this->mockGoogleUser([
+            'id' => $googleId,
+            'email' => $user->email,
+        ]);
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect(route('customer.home'));
+
+        $this->assertAuthenticatedAs($user);
+        $this->assertSame($googleId, $user->fresh()->google_id);
+    }
+
+    public function test_login_google_dengan_google_id_terhubung_langsung_masuk(): void
+    {
+        $googleId = 'google-'.Str::random(12);
+        $user = $this->makeUser(['google_id' => $googleId]);
+
+        $this->mockGoogleUser([
+            'id' => $googleId,
+            'email' => $user->email,
+        ]);
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect(route('customer.home'));
+
+        $this->assertAuthenticatedAs($user);
+    }
+
+    public function test_login_google_menolak_akun_nonaktif(): void
+    {
+        $user = $this->makeUser(['status' => User::STATUS_NONAKTIF]);
+
+        $this->mockGoogleUser([
+            'id' => 'google-'.Str::random(12),
+            'email' => $user->email,
+        ]);
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect(route('login'))
+            ->assertSessionHasErrors('email');
+
+        $this->assertGuest();
+        $this->assertNull($user->fresh()->google_id);
+    }
+
+    public function test_login_google_menolak_email_lokal_yang_belum_terverifikasi(): void
+    {
+        $user = $this->makeUser(['email_verified_at' => null]);
+
+        $this->mockGoogleUser([
+            'id' => 'google-'.Str::random(12),
+            'email' => $user->email,
+        ]);
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect(route('login'))
+            ->assertSessionHasErrors('email');
+
+        $this->assertGuest();
+        $this->assertNull($user->fresh()->google_id);
+    }
+
+    public function test_login_google_menolak_akun_soft_deleted(): void
+    {
+        $user = $this->makeUser();
+        $user->delete();
+
+        $this->mockGoogleUser([
+            'id' => 'google-'.Str::random(12),
+            'email' => $user->email,
+        ]);
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect(route('login'))
+            ->assertSessionHasErrors('email');
+
+        $this->assertGuest();
+        $this->assertNull(User::withTrashed()->find($user->user_id)->google_id);
+    }
+
+    public function test_login_google_menolak_google_id_yang_bentrok(): void
+    {
+        $user = $this->makeUser(['google_id' => 'google-lama']);
+
+        $this->mockGoogleUser([
+            'id' => 'google-baru',
+            'email' => $user->email,
+        ]);
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect(route('login'))
+            ->assertSessionHasErrors('email');
+
+        $this->assertGuest();
+        $this->assertSame('google-lama', $user->fresh()->google_id);
+    }
+
+    public function test_login_google_menolak_email_google_yang_belum_terverifikasi(): void
+    {
+        $email = 'google-belum-verifikasi-'.Str::random(8).'@example.com';
+
+        $this->mockGoogleUser([
+            'id' => 'google-'.Str::random(12),
+            'email' => $email,
+            'email_verified' => false,
+        ]);
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect(route('login'))
+            ->assertSessionHasErrors('email');
+
+        $this->assertGuest();
+        $this->assertDatabaseMissing('users', ['email' => $email]);
+    }
+
+    public function test_login_google_owner_tanpa_toko_diarahkan_ke_pengajuan_toko(): void
+    {
+        $googleId = 'google-'.Str::random(12);
+        $owner = $this->makeUser([
+            'role_id' => $this->roleId(Role::OWNER),
+            'google_id' => $googleId,
+        ]);
+
+        $this->mockGoogleUser([
+            'id' => $googleId,
+            'email' => $owner->email,
+        ]);
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect(route('owner.pengajuan-toko'));
+
+        $this->assertAuthenticatedAs($owner);
+    }
+
+    public function test_login_google_mempertahankan_tujuan_redirect(): void
+    {
+        $email = 'google-redirect-'.Str::random(8).'@example.com';
+
+        $this->get(route('auth.google.redirect', ['redirect' => '/customer/chart']))
+            ->assertRedirect();
+
+        $this->mockGoogleUser([
+            'id' => 'google-'.Str::random(12),
+            'email' => $email,
+        ]);
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect('/customer/chart');
+
+        $this->assertAuthenticated();
+    }
+
+    public function test_callback_google_menangani_penolakan_akses(): void
+    {
+        $this->get(route('auth.google.callback', ['error' => 'access_denied']))
+            ->assertRedirect(route('login'))
+            ->assertSessionHasErrors('email');
+
+        $this->assertGuest();
+    }
+
+    public function test_tombol_google_hanya_muncul_di_halaman_login(): void
+    {
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertSee(__('SIGN IN WITH GOOGLE'))
+            ->assertSee(route('auth.google.redirect'), false);
+
+        $this->get(route('register'))
+            ->assertOk()
+            ->assertDontSee(__('SIGN UP WITH GOOGLE'))
+            ->assertDontSee(__('Sign up with Google'));
+    }
+
+    public function test_tombol_google_tersembunyi_saat_konfigurasi_kosong(): void
+    {
+        config(['services.google.client_id' => null]);
+
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertDontSee(__('SIGN IN WITH GOOGLE'))
+            ->assertDontSee(route('auth.google.redirect'), false);
+    }
+
+    private function mockGoogleUser(array $attributes = []): void
+    {
+        $googleUser = SocialiteUser::fake(array_merge([
+            'id' => 'google-'.Str::random(12),
+            'name' => 'Google User',
+            'email' => 'google-'.Str::random(12).'@example.com',
+            'email_verified' => true,
+        ], $attributes));
+
+        $provider = Mockery::mock(Provider::class);
+        $provider->shouldReceive('user')->once()->andReturn($googleUser);
+
+        Socialite::shouldReceive('driver')
+            ->once()
+            ->with('google')
+            ->andReturn($provider);
+    }
+
+    private function makeUser(array $overrides = []): User
+    {
+        return User::create(array_merge([
+            'nama_lengkap' => 'User Google '.Str::random(6),
+            'email' => 'user-google-'.Str::random(10).'@example.com',
+            'password' => 'Raliva2026!',
+            'role_id' => $this->roleId(Role::CUSTOMER),
+            'status' => User::STATUS_AKTIF,
+            'email_verified_at' => now(),
+        ], $overrides));
+    }
+
+    private function roleId(string $role): int
+    {
+        return (int) Role::query()->firstOrCreate(
+            ['nama_role' => $role],
+            ['deskripsi' => $role, 'status' => 'aktif']
+        )->role_id;
+    }
+}
