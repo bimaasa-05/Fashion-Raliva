@@ -3965,5 +3965,14 @@
     "Dipakai sebagai username akun. Password acak ditampilkan setelah checkout.": "Used as the account username. Random password shown after checkout.",
     "User harus staff Gudang aktif toko Anda.": "User must be an active Warehouse staff member of your store.",
     "Pilih produk untuk dinilai": "Choose a product to rate",
-    "Sudah dinilai": "Rated"
+    "Sudah dinilai": "Rated",
+    "Login Google belum dikonfigurasi.": "Google login is not configured.",
+    "Login Google dibatalkan.": "Google login was cancelled.",
+    "Login Google gagal. Silakan coba lagi.": "Google login failed. Please try again.",
+    "Data akun Google tidak lengkap.": "Google account data is incomplete.",
+    "Email Google belum terverifikasi.": "Google email is not verified.",
+    "Akun ini sudah dihapus.": "This account has been deleted.",
+    "Verifikasi email akun ini terlebih dahulu sebelum login dengan Google.": "Verify this account's email before signing in with Google.",
+    "Akun ini sudah terhubung dengan akun Google lain.": "This account is already linked to another Google account.",
+    "Akun Customer belum tersedia. Hubungi administrator.": "The Customer role is unavailable. Contact the administrator."
 }
