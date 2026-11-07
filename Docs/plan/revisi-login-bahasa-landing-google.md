@@ -1,7 +1,7 @@
 # Revisi Login, Bahasa, Landing Penawaran, dan Google Login
 
 Tanggal dibuat: 2026-11-06  
-Status: Fase 0-4 dan Fase 4b terimplementasi; Fase 5 pending; verifikasi browser Google role modal + OTP pending
+Status: Fase 0-4, Fase 4b, dan Fase 4c terimplementasi; Fase 5 pending; verifikasi browser Google role modal + OTP pending
 Repo: `C:\laragon\www\Raliva-Fashion`  
 Branch: `main`  
 Baseline commit: `a1726835`  
@@ -17,6 +17,7 @@ Dokumen ini adalah **satu file plan** untuk seluruh pekerjaan. Semua fase, file,
 - [x] Fase 3 — penawaran landing editable di Superadmin
 - [x] Fase 4 — Google Login (implementasi + automated test; verifikasi browser pending)
 - [x] Fase 4b — Google role modal + OTP reset password (implementasi + automated test; verifikasi browser pending)
+- [x] Fase 4c — perbaikan state OAuth Google (host mismatch)
 - [ ] Fase 5 — regression penuh
 
 ---
@@ -675,6 +676,55 @@ Ini menghapus data lokal dan membuat ulang role, Superadmin, serta akun demo. Ja
 - Akun lama tidak berubah role.
 - Lupa password memakai OTP dan link reset lama tidak tersedia.
 - Semua test targeted pass.
+
+---
+
+## 9c. Fase 4c — Perbaikan State OAuth Google (host mismatch)
+
+### Masalah
+
+Login Google dari `http://127.0.0.1:8000` gagal dengan pesan **"Login Google gagal. Silakan coba lagi."** karena `GOOGLE_REDIRECT_URI` mengarah ke `http://localhost:8000/auth/google/callback`.
+
+Cookie sesi terikat ke host. `state` OAuth yang disimpan di sesi `127.0.0.1` tidak terbaca oleh callback di `localhost`, sehingga Socialite melempar `InvalidStateException`. Percobaan kedua tampak berhasil karena redirect error membawa browser ke `localhost`.
+
+### Perbaikan
+
+- `GoogleController@redirect` mengarahkan request dari host yang berbeda ke origin `GOOGLE_REDIRECT_URI` **sebelum** menyimpan intent/state.
+- Parameter `redirect` absolut ditulis ulang ke origin callback agar tujuan login tetap terjaga.
+- `AreaSession` tidak memilih cookie area untuk path `auth/google/*`, sehingga handshake OAuth selalu memakai cookie sesi default yang sama dengan callback.
+- `InvalidStateException` ditangani khusus dengan pesan **"Sesi login Google kedaluwarsa. Silakan coba lagi."**
+- Log OAuth mencatat class exception, host, dan status `state` di session.
+- `.env.example` mendokumentasikan aturan satu origin kanonik.
+
+### File
+
+- `app/Http/Controllers/Auth/GoogleController.php`
+- `app/Http/Middleware/AreaSession.php`
+- `lang/en.json`
+- `.env.example`
+- `tests/Feature/GoogleAuthTest.php`
+
+### Test
+
+- [x] Request OAuth dari host berbeda diarahkan ke origin callback.
+- [x] Parameter redirect absolut ditulis ulang ke origin callback.
+- [x] OAuth tidak memakai cookie area saat multi-role aktif.
+- [x] `InvalidStateException` menghasilkan pesan sesi kedaluwarsa.
+
+### Verifikasi targeted
+
+```bash
+php artisan test --filter=GoogleAuthTest
+```
+
+Hasil: 29 passed (198 assertions).
+
+### Catatan produksi
+
+- `APP_URL` dan `GOOGLE_REDIRECT_URI` harus sama-sama memakai `https://nexprint.my.id/...`.
+- Daftarkan `https://nexprint.my.id/auth/google/callback` di Google Cloud Console.
+- Paksa redirect `www.nexprint.my.id` dan `http://` ke `https://nexprint.my.id` di web server.
+- Aktifkan trusted proxies jika aplikasi berada di belakang reverse proxy agar skema/host terdeteksi benar.
 
 ---
 
