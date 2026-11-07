@@ -837,9 +837,9 @@
                         <span class="h-px flex-grow bg-outline-variant"></span>
                     </div>
                     <!-- Sign In with Google -->
-                    <a href="{{ route('auth.google.redirect', request()->filled('redirect') ? ['redirect' => request()->query('redirect')] : []) }}"
-                        aria-label="{{ __('Sign in with Google') }}"
-                        class="w-full h-14 border border-outline-variant rounded-xl bg-surface-container-lowest shadow-sm hover:border-secondary font-label-caps text-label-caps uppercase tracking-widest text-on-surface transition-colors flex items-center justify-center gap-sm">
+                    <button id="google-login-trigger" type="button" aria-haspopup="dialog"
+                        aria-controls="google-role-modal" aria-label="{{ __('Sign in with Google') }}"
+                        class="w-full h-14 border border-outline-variant rounded-xl bg-surface-container-lowest shadow-sm hover:border-secondary font-label-caps text-label-caps uppercase tracking-widest text-on-surface transition-colors flex items-center justify-center gap-sm cursor-pointer">
                         <svg class="h-5 w-5 shrink-0" viewBox="0 0 24 24" aria-hidden="true">
                             <path fill="#4285F4"
                                 d="M23.49 12.27c0-.79-.07-1.54-.19-2.27H12v4.51h6.47c-.29 1.48-1.14 2.73-2.4 3.58v3h3.86c2.26-2.09 3.56-5.17 3.56-8.82z" />
@@ -851,7 +851,7 @@
                                 d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.31 0 3.26 2.7 1.29 6.62l3.98 3.09c.95-2.85 3.6-4.96 6.73-4.96z" />
                         </svg>
                         {{ __('SIGN IN WITH GOOGLE') }}
-                    </a>
+                    </button>
                 @endif
                 <!-- Register Link -->
                 <p class="text-center font-body-sm text-body-sm text-on-surface-variant mt-lg">
@@ -862,6 +862,111 @@
             </div>
         </div>
     </main>
+    @if (filled(config('services.google.client_id')) && filled(config('services.google.client_secret')) && filled(config('services.google.redirect')))
+        <div id="google-role-modal" role="dialog" aria-modal="true" aria-labelledby="google-role-modal-title"
+            aria-hidden="true"
+            class="fixed inset-0 z-[100] hidden items-center justify-center p-md">
+            <div id="google-role-modal-backdrop" class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+            <div
+                class="relative w-full max-w-lg rounded-2xl border border-outline-variant bg-surface-container-lowest p-lg lg:p-xl shadow-2xl">
+                <div class="flex items-start justify-between gap-md">
+                    <div>
+                        <p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">
+                            {{ __('MASUK DENGAN GOOGLE') }}</p>
+                        <h2 id="google-role-modal-title"
+                            class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">
+                            {{ __('Pilih tipe akun') }}</h2>
+                        <p class="font-body-sm text-body-sm text-on-surface-variant">
+                            {{ __('Pilih cara Anda menggunakan :brand. Pilihan ini berlaku untuk akun Google baru.', ['brand' => brand()]) }}
+                        </p>
+                    </div>
+                    <button id="google-role-modal-close" type="button" aria-label="{{ __('Tutup') }}"
+                        class="atl-chip w-10 h-10 shrink-0 rounded-full border border-outline bg-surface-container-lowest hover:border-secondary hover:text-secondary flex items-center justify-center">
+                        <span class="material-symbols-outlined text-[20px]">close</span>
+                    </button>
+                </div>
+
+                <div class="mt-lg grid gap-sm">
+                    <a href="{{ route('auth.google.redirect', array_filter(['intent' => 'owner', 'redirect' => request()->query('redirect')])) }}"
+                        class="group flex items-center gap-md rounded-xl border border-outline-variant bg-surface-container-low px-md py-sm hover:border-secondary hover:bg-surface-container transition-colors">
+                        <span
+                            class="w-11 h-11 shrink-0 rounded-full border border-outline-variant bg-surface-container-lowest text-secondary flex items-center justify-center">
+                            <span class="material-symbols-outlined text-[22px]">storefront</span>
+                        </span>
+                        <span class="flex-grow">
+                            <span
+                                class="block font-label-caps text-label-caps uppercase tracking-widest text-on-surface">{{ __('Pemilik Bisnis') }}</span>
+                            <span
+                                class="block font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('Kelola toko dan bisnis Anda di :brand.', ['brand' => brand()]) }}</span>
+                        </span>
+                        <span
+                            class="material-symbols-outlined text-[20px] text-on-surface-variant group-hover:text-secondary transition-colors">arrow_forward</span>
+                    </a>
+
+                    <a href="{{ route('auth.google.redirect', array_filter(['intent' => 'customer', 'redirect' => request()->query('redirect')])) }}"
+                        class="group flex items-center gap-md rounded-xl border border-outline-variant bg-surface-container-low px-md py-sm hover:border-secondary hover:bg-surface-container transition-colors">
+                        <span
+                            class="w-11 h-11 shrink-0 rounded-full border border-outline-variant bg-surface-container-lowest text-secondary flex items-center justify-center">
+                            <span class="material-symbols-outlined text-[22px]">shopping_bag</span>
+                        </span>
+                        <span class="flex-grow">
+                            <span
+                                class="block font-label-caps text-label-caps uppercase tracking-widest text-on-surface">{{ __('Pelanggan') }}</span>
+                            <span
+                                class="block font-body-sm text-body-sm text-on-surface-variant mt-xs">{{ __('Belanja, lacak pesanan, dan simpan favorit Anda.') }}</span>
+                        </span>
+                        <span
+                            class="material-symbols-outlined text-[20px] text-on-surface-variant group-hover:text-secondary transition-colors">arrow_forward</span>
+                    </a>
+                </div>
+
+                <p class="mt-md text-center font-body-sm text-body-sm text-on-surface-variant">
+                    {{ __('Akun yang sudah terdaftar tetap memakai tipe akun yang tersimpan.') }}
+                </p>
+            </div>
+        </div>
+    @endif
+    <script>
+        (function() {
+            var modal = document.getElementById('google-role-modal');
+            var trigger = document.getElementById('google-login-trigger');
+            var close = document.getElementById('google-role-modal-close');
+            var backdrop = document.getElementById('google-role-modal-backdrop');
+            var lastFocused = null;
+
+            if (!modal || !trigger) return;
+
+            function openModal() {
+                lastFocused = document.activeElement;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                modal.setAttribute('aria-hidden', 'false');
+                document.body.classList.add('overflow-hidden');
+
+                var firstChoice = modal.querySelector('a[href]');
+                if (firstChoice) firstChoice.focus();
+            }
+
+            function closeModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                modal.setAttribute('aria-hidden', 'true');
+                document.body.classList.remove('overflow-hidden');
+
+                if (lastFocused) lastFocused.focus();
+            }
+
+            trigger.addEventListener('click', openModal);
+            if (close) close.addEventListener('click', closeModal);
+            if (backdrop) backdrop.addEventListener('click', closeModal);
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            });
+        })();
+    </script>
     <script>
         var redirectParam = new URLSearchParams(window.location.search).get('redirect');
 
