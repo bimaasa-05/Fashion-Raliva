@@ -3969,6 +3969,7 @@
     "Login Google belum dikonfigurasi.": "Google login is not configured.",
     "Login Google dibatalkan.": "Google login was cancelled.",
     "Login Google gagal. Silakan coba lagi.": "Google login failed. Please try again.",
+    "Sesi login Google kedaluwarsa. Silakan coba lagi.": "Your Google login session has expired. Please try again.",
     "Data akun Google tidak lengkap.": "Google account data is incomplete.",
     "Email Google belum terverifikasi.": "Google email is not verified.",
     "Akun ini sudah dihapus.": "This account has been deleted.",
