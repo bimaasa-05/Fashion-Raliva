@@ -352,5 +352,6 @@ class PasswordResetTest extends TestCase
 
         $mailable->assertSeeInHtml('654321');
         $mailable->assertSeeInHtml(__('Kode OTP Reset Password'));
+        $mailable->assertSeeInHtml('NEXPRINT');
     }
 }
