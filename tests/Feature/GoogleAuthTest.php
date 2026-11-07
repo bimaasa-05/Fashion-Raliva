@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Contracts\Provider;
 use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\InvalidStateException;
 use Laravel\Socialite\Two\User as SocialiteUser;
 use Mockery;
 use Tests\TestCase;
@@ -61,6 +62,77 @@ class GoogleAuthTest extends TestCase
 
         $this->get(route('auth.google.redirect', ['intent' => 'customer']))
             ->assertSessionHas('oauth_role_intent', 'customer');
+    }
+
+    public function test_route_redirect_google_memindahkan_ke_origin_callback(): void
+    {
+        $response = $this->get('http://127.0.0.1:8000/auth/google/redirect?intent=owner&redirect=%2Fcustomer%2Fchart');
+
+        $response->assertRedirect();
+
+        $location = (string) $response->headers->get('Location');
+        $parts = parse_url($location);
+        $query = [];
+        parse_str($parts['query'] ?? '', $query);
+
+        $this->assertSame('http', $parts['scheme'] ?? null);
+        $this->assertSame('localhost', $parts['host'] ?? null);
+        $this->assertSame(8000, $parts['port'] ?? null);
+        $this->assertSame('/auth/google/redirect', $parts['path'] ?? null);
+        $this->assertSame('owner', $query['intent'] ?? null);
+        $this->assertSame('/customer/chart', $query['redirect'] ?? null);
+        $response->assertSessionMissing('oauth_role_intent');
+    }
+
+    public function test_route_redirect_google_menulis_ulang_tujuan_absolute_ke_origin_callback(): void
+    {
+        $response = $this->get(
+            'http://127.0.0.1:8000/auth/google/redirect?intent=owner&redirect='.
+            urlencode('http://127.0.0.1:8000/customer/chart')
+        );
+
+        $response->assertRedirect();
+
+        $location = (string) $response->headers->get('Location');
+        $query = [];
+        parse_str((string) parse_url($location, PHP_URL_QUERY), $query);
+
+        $this->assertSame('http://localhost:8000/customer/chart', $query['redirect'] ?? null);
+    }
+
+    public function test_route_redirect_google_tidak_memakai_cookie_area(): void
+    {
+        config(['session.multi_role' => true]);
+
+        $response = $this->get(route('auth.google.redirect', [
+            'intent' => 'owner',
+            'redirect' => '/owner/dashboard',
+        ]));
+
+        $response->assertRedirect();
+
+        $cookieNames = array_map(
+            static fn ($cookie) => $cookie->getName(),
+            $response->headers->getCookies()
+        );
+
+        $this->assertContains(config('session.cookie'), $cookieNames);
+        $this->assertNotContains('raliva_owner_session', $cookieNames);
+    }
+
+    public function test_callback_google_menangani_state_tidak_cocok(): void
+    {
+        $provider = Mockery::mock(Provider::class);
+        $provider->shouldReceive('user')->once()->andThrow(new InvalidStateException);
+        Socialite::shouldReceive('driver')->once()->with('google')->andReturn($provider);
+
+        $this->get(route('auth.google.callback', ['state' => 'state-palsu']))
+            ->assertRedirect(route('login'))
+            ->assertSessionHasErrors([
+                'email' => __('Sesi login Google kedaluwarsa. Silakan coba lagi.'),
+            ]);
+
+        $this->assertGuest();
     }
 
     public function test_login_google_membuat_customer_baru(): void
