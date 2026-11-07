@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
+use Laravel\Socialite\Two\InvalidStateException;
 use Throwable;
 
 class GoogleController extends Controller
@@ -27,6 +28,13 @@ class GoogleController extends Controller
     {
         if (! $this->isConfigured()) {
             return $this->reject(__('Login Google belum dikonfigurasi.'));
+        }
+
+        // Cookie sesi terikat ke host. Jika user membuka 127.0.0.1 sementara
+        // callback Google di localhost, state OAuth akan hilang. Pindahkan
+        // ke origin callback sebelum menyimpan intent/state.
+        if ($redirect = $this->redirectToCallbackOrigin($request)) {
+            return $redirect;
         }
 
         $intent = $request->query('intent');
@@ -58,12 +66,24 @@ class GoogleController extends Controller
 
         $intent = $request->session()->pull(self::INTENT_SESSION_KEY);
         $intent = in_array($intent, [self::INTENT_OWNER, self::INTENT_CUSTOMER], true) ? $intent : null;
+        $hadState = $request->session()->has('state');
 
         try {
             $googleUser = Socialite::driver('google')->user();
+        } catch (InvalidStateException $exception) {
+            Log::warning('Google OAuth state tidak cocok.', [
+                'exception' => $exception::class,
+                'host' => $request->getHost(),
+                'had_state' => $hadState,
+            ]);
+
+            return $this->reject(__('Sesi login Google kedaluwarsa. Silakan coba lagi.'));
         } catch (Throwable $exception) {
             Log::warning('Google OAuth callback gagal.', [
+                'exception' => $exception::class,
                 'message' => $exception->getMessage(),
+                'host' => $request->getHost(),
+                'had_state' => $hadState,
             ]);
 
             return $this->reject(__('Login Google gagal. Silakan coba lagi.'));
@@ -179,6 +199,69 @@ class GoogleController extends Controller
     private function reject(string $message): RedirectResponse
     {
         return redirect()->route('login')->withErrors(['email' => $message]);
+    }
+
+    private function redirectToCallbackOrigin(Request $request): ?RedirectResponse
+    {
+        $callback = parse_url((string) config('services.google.redirect'));
+
+        if (! is_array($callback) || empty($callback['scheme']) || empty($callback['host'])) {
+            return null;
+        }
+
+        if (Str::lower($request->getHost()) === Str::lower($callback['host'])) {
+            return null;
+        }
+
+        $origin = $callback['scheme'].'://'.$callback['host'];
+
+        if (isset($callback['port'])) {
+            $origin .= ':'.$callback['port'];
+        }
+
+        $query = $request->query();
+
+        if (isset($query['redirect'])) {
+            $query['redirect'] = $this->rewriteRedirectOrigin(
+                $query['redirect'],
+                $origin,
+                $request->getSchemeAndHttpHost()
+            );
+        }
+
+        $path = $request->getBaseUrl().$request->getPathInfo();
+
+        return redirect()->away($origin.$path.($query !== [] ? '?'.http_build_query($query) : ''));
+    }
+
+    private function rewriteRedirectOrigin(mixed $redirect, string $canonicalOrigin, string $currentOrigin): mixed
+    {
+        if (! is_string($redirect) || $redirect === '') {
+            return $redirect;
+        }
+
+        $parts = parse_url($redirect);
+
+        if (! is_array($parts) || empty($parts['host'])) {
+            return $redirect;
+        }
+
+        $canonicalHost = parse_url($canonicalOrigin, PHP_URL_HOST);
+        $currentHost = parse_url($currentOrigin, PHP_URL_HOST);
+
+        if (! is_string($canonicalHost) || ! is_string($currentHost)) {
+            return $redirect;
+        }
+
+        if (! in_array(Str::lower($parts['host']), [Str::lower($canonicalHost), Str::lower($currentHost)], true)) {
+            return $redirect;
+        }
+
+        $path = $parts['path'] ?? '/';
+        $query = isset($parts['query']) ? '?'.$parts['query'] : '';
+        $fragment = isset($parts['fragment']) ? '#'.$parts['fragment'] : '';
+
+        return rtrim($canonicalOrigin, '/').$path.$query.$fragment;
     }
 
     private function isConfigured(): bool
