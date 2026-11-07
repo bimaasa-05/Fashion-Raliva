@@ -17,10 +17,24 @@ use Throwable;
 
 class GoogleController extends Controller
 {
+    private const INTENT_OWNER = 'owner';
+
+    private const INTENT_CUSTOMER = 'customer';
+
+    private const INTENT_SESSION_KEY = 'oauth_role_intent';
+
     public function redirect(Request $request): RedirectResponse
     {
         if (! $this->isConfigured()) {
             return $this->reject(__('Login Google belum dikonfigurasi.'));
+        }
+
+        $intent = $request->query('intent');
+
+        if (in_array($intent, [self::INTENT_OWNER, self::INTENT_CUSTOMER], true)) {
+            $request->session()->put(self::INTENT_SESSION_KEY, $intent);
+        } else {
+            $request->session()->forget(self::INTENT_SESSION_KEY);
         }
 
         $intended = $request->query('redirect');
@@ -41,6 +55,9 @@ class GoogleController extends Controller
         if (! $this->isConfigured()) {
             return $this->reject(__('Login Google belum dikonfigurasi.'));
         }
+
+        $intent = $request->session()->pull(self::INTENT_SESSION_KEY);
+        $intent = in_array($intent, [self::INTENT_OWNER, self::INTENT_CUSTOMER], true) ? $intent : null;
 
         try {
             $googleUser = Socialite::driver('google')->user();
@@ -71,42 +88,25 @@ class GoogleController extends Controller
         $user = User::withTrashed()->where('google_id', $googleId)->first();
 
         if ($user) {
-            return $this->loginExistingGoogleUser($request, $user);
+            return $this->loginExistingUser($request, $user, $googleId, $intent);
         }
 
         $user = User::withTrashed()->where('email', $email)->first();
 
         if ($user) {
-            return $this->linkExistingEmailUser($request, $user, $googleId);
+            return $this->loginExistingUser($request, $user, $googleId, $intent);
         }
 
-        $user = $this->createCustomer($email, $name, $googleId);
+        $user = $this->createUser($email, $name, $googleId, $intent ?? self::INTENT_CUSTOMER);
 
         if (! $user) {
-            return $this->reject(__('Akun Customer belum tersedia. Hubungi administrator.'));
+            return $this->reject(__('Akun belum dapat dibuat. Hubungi administrator.'));
         }
 
         return $this->login($request, $user);
     }
 
-    private function loginExistingGoogleUser(Request $request, User $user): RedirectResponse
-    {
-        if ($user->trashed()) {
-            return $this->reject(__('Akun ini sudah dihapus.'));
-        }
-
-        if ($user->status !== User::STATUS_AKTIF) {
-            return $this->reject(__('Akun tidak aktif. Hubungi administrator.'));
-        }
-
-        if ($user->email_verified_at === null) {
-            return $this->reject(__('Verifikasi email akun ini terlebih dahulu sebelum login dengan Google.'));
-        }
-
-        return $this->login($request, $user);
-    }
-
-    private function linkExistingEmailUser(Request $request, User $user, string $googleId): RedirectResponse
+    private function loginExistingUser(Request $request, User $user, string $googleId, ?string $intent): RedirectResponse
     {
         if ($user->trashed()) {
             return $this->reject(__('Akun ini sudah dihapus.'));
@@ -124,20 +124,36 @@ class GoogleController extends Controller
             return $this->reject(__('Akun ini sudah terhubung dengan akun Google lain.'));
         }
 
-        $user->forceFill(['google_id' => $googleId])->save();
+        $roleName = $user->role?->nama_role;
+
+        if ($intent !== null && in_array($roleName, [Role::OWNER, Role::CUSTOMER], true)) {
+            $actualIntent = $roleName === Role::OWNER ? self::INTENT_OWNER : self::INTENT_CUSTOMER;
+
+            if ($intent !== $actualIntent) {
+                return $this->reject($roleName === Role::OWNER
+                    ? __('Akun ini terdaftar sebagai Pemilik Bisnis. Silakan pilih Pemilik Bisnis untuk masuk.')
+                    : __('Akun ini terdaftar sebagai Pelanggan. Silakan pilih Pelanggan untuk masuk.'));
+            }
+        }
+
+        if ($user->google_id === null) {
+            $user->forceFill(['google_id' => $googleId])->save();
+        }
 
         return $this->login($request, $user);
     }
 
-    private function createCustomer(string $email, string $name, string $googleId): ?User
+    private function createUser(string $email, string $name, string $googleId, string $intent): ?User
     {
+        $roleName = $intent === self::INTENT_OWNER ? Role::OWNER : Role::CUSTOMER;
+
         $roleId = Role::query()
-            ->where('nama_role', Role::CUSTOMER)
+            ->where('nama_role', $roleName)
             ->where('status', 'aktif')
             ->value('role_id');
 
         if (! $roleId) {
-            Log::error('Role Customer tidak ditemukan untuk login Google.');
+            Log::error('Role untuk login Google tidak ditemukan.', ['role' => $roleName]);
 
             return null;
         }
