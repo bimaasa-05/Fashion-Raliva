@@ -371,26 +371,6 @@
 @push('scripts')
 @include('partials.form-submit-guard')
 <script>
-document.addEventListener('DOMContentLoaded', function(){
-  if (!document.querySelector('[data-real]')) return;
-  const noStore = document.querySelector('[data-no-store-banner]');
-  if (!noStore) return;
-  document.querySelectorAll('[data-modal-open], button[type="submit"], a[href*="pengajuan-toko"]:not([href*="ajukan"])').forEach(el=>{
-    if (el.textContent.includes('Ajukan Toko') || el.getAttribute('data-modal-open')?.includes('modal-tambah')) {
-      el.setAttribute('disabled','');
-      el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
-      el.title = '{{ __('Ajukan toko dulu') }}';
-    }
-  });
-  document.querySelectorAll('[data-real] button, [data-real] a.btn-premium').forEach(el=>{
-    if (el.closest('[data-modal]')) return;
-    if (el.textContent.trim().includes('Ajukan')) return;
-    el.setAttribute('disabled','');
-    el.classList.add('opacity-60','cursor-not-allowed','pointer-events-none');
-  });
-});
-</script>
-<script>
 function previewPhoto(input) {
     if (input.files && input.files[0]) {
         const reader = new FileReader();
