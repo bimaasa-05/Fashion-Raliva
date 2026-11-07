@@ -6,13 +6,14 @@ use App\Models\Role;
 use App\Models\Store;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class OwnerLoginRedirectTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function test_owner_tanpa_toko_diarahkan_ke_pengajuan_toko(): void
+    public function test_owner_tanpa_toko_diarahkan_ke_dashboard(): void
     {
         $owner = $this->makeOwner();
 
@@ -21,11 +22,11 @@ class OwnerLoginRedirectTest extends TestCase
             'password' => 'Owner2026!',
         ]);
 
-        $response->assertRedirect(route('owner.pengajuan-toko'));
+        $response->assertRedirect(route('owner.dashboard'));
         $this->assertAuthenticatedAs($owner);
     }
 
-    public function test_owner_dengan_toko_pending_diarahkan_ke_pengajuan_toko(): void
+    public function test_owner_dengan_toko_pending_diarahkan_ke_dashboard(): void
     {
         $owner = $this->makeOwner();
         $this->makeStore($owner, Store::STATUS_PENDING);
@@ -33,10 +34,10 @@ class OwnerLoginRedirectTest extends TestCase
         $this->post(route('login'), [
             'email' => $owner->email,
             'password' => 'Owner2026!',
-        ])->assertRedirect(route('owner.pengajuan-toko'));
+        ])->assertRedirect(route('owner.dashboard'));
     }
 
-    public function test_owner_dengan_toko_ditolak_diarahkan_ke_pengajuan_toko(): void
+    public function test_owner_dengan_toko_ditolak_diarahkan_ke_dashboard(): void
     {
         $owner = $this->makeOwner();
         $this->makeStore($owner, Store::STATUS_DITOLAK);
@@ -44,7 +45,7 @@ class OwnerLoginRedirectTest extends TestCase
         $this->post(route('login'), [
             'email' => $owner->email,
             'password' => 'Owner2026!',
-        ])->assertRedirect(route('owner.pengajuan-toko'));
+        ])->assertRedirect(route('owner.dashboard'));
     }
 
     public function test_owner_dengan_toko_aktif_diarahkan_ke_dashboard(): void
@@ -67,6 +68,31 @@ class OwnerLoginRedirectTest extends TestCase
             'email' => $owner->email,
             'password' => 'Owner2026!',
         ])->assertRedirect(route('owner.dashboard'));
+    }
+
+    public function test_owner_tanpa_toko_dapat_membuka_halaman_profil(): void
+    {
+        $owner = $this->makeOwner();
+
+        $this->actingAs($owner)
+            ->get(route('owner.profil'))
+            ->assertOk()
+            ->assertSee(route('owner.profil.password'), false)
+            ->assertSee(__('Ubah Password'));
+    }
+
+    public function test_owner_tanpa_toko_bisa_mengubah_password_dari_profil(): void
+    {
+        $owner = $this->makeOwner();
+
+        $response = $this->actingAs($owner)->put(route('owner.profil.password'), [
+            'password_lama' => 'Owner2026!',
+            'password_baru' => 'OwnerBaru2026!',
+            'password_baru_confirmation' => 'OwnerBaru2026!',
+        ]);
+
+        $response->assertRedirect(route('owner.profil'));
+        $this->assertTrue(Hash::check('OwnerBaru2026!', $owner->fresh()->password));
     }
 
     private function makeOwner(): User
