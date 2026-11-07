@@ -8,6 +8,7 @@ if (! function_exists('brand')) {
      *
      * Sumber utama: Setting "nama_platform" yang diatur Super Admin di
      * halaman Pengaturan Sistem. Fallback: config('app.name') (APP_NAME di .env).
+     * Nama selalu ditampilkan kapital agar konsisten dengan identitas brand.
      * Hasil di-cache per request; saat unit test cache dilewati agar perubahan
      * setting antar-tes langsung terbaca.
      */
@@ -21,11 +22,14 @@ if (! function_exists('brand')) {
 
         try {
             $nama = trim((string) Setting::get(Setting::NAMA_PLATFORM));
-        } catch (\Throwable) {
+        } catch (Throwable) {
             $nama = '';
         }
 
-        return $cached = $nama !== '' ? $nama : (string) config('app.name', 'Raliva');
+        return $cached = mb_strtoupper(
+            $nama !== '' ? $nama : (string) config('app.name', 'Raliva'),
+            'UTF-8'
+        );
     }
 }
 
@@ -40,7 +44,7 @@ if (! function_exists('brand_favicon_url')) {
     {
         try {
             $file = trim((string) Setting::get(Setting::FAVICON_PLATFORM));
-        } catch (\Throwable) {
+        } catch (Throwable) {
             $file = '';
         }
 
@@ -71,7 +75,7 @@ if (! function_exists('brand_logo_url')) {
     {
         try {
             $file = trim((string) Setting::get(Setting::LOGO_PLATFORM));
-        } catch (\Throwable) {
+        } catch (Throwable) {
             $file = '';
         }
 
