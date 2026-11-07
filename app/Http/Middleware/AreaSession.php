@@ -28,6 +28,12 @@ class AreaSession
 
     private function resolveArea(Request $request): ?string
     {
+        // Handshake OAuth harus memakai cookie sesi default yang sama dengan
+        // callback. Jangan pindah ke cookie area berdasarkan parameter redirect.
+        if ($request->is('auth/google/*')) {
+            return null;
+        }
+
         // (a) Prefix path area (mis. /owner/...).
         $area = SessionArea::areaForPath($request->path());
         if ($area !== null) {
