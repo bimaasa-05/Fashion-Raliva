@@ -1,7 +1,7 @@
 # Revisi Login, Bahasa, Landing Penawaran, dan Google Login
 
 Tanggal dibuat: 2026-11-06  
-Status: Fase 0-4 terimplementasi; Fase 5 pending; verifikasi browser Google OAuth pending  
+Status: Fase 0-4 dan Fase 4b terimplementasi; Fase 5 pending; verifikasi browser Google role modal + OTP pending
 Repo: `C:\laragon\www\Raliva-Fashion`  
 Branch: `main`  
 Baseline commit: `a1726835`  
@@ -16,6 +16,7 @@ Dokumen ini adalah **satu file plan** untuk seluruh pekerjaan. Semua fase, file,
 - [x] Fase 2 — Bahasa Indonesia default
 - [x] Fase 3 — penawaran landing editable di Superadmin
 - [x] Fase 4 — Google Login (implementasi + automated test; verifikasi browser pending)
+- [x] Fase 4b — Google role modal + OTP reset password (implementasi + automated test; verifikasi browser pending)
 - [ ] Fase 5 — regression penuh
 
 ---
@@ -28,6 +29,7 @@ Menyelesaikan empat revisi sebelum kembali ke rencana deployment hosting:
 2. Menjadikan Bahasa Indonesia sebagai bahasa default website.
 3. Membuat konten section penawaran di landing page `/join#daftar` bisa diedit dari dashboard Superadmin.
 4. Mengaktifkan Google Login yang benar-benar berfungsi.
+5. Menambahkan pilihan role Owner/Customer pada Google Login dan mengganti reset password link dengan OTP.
 
 Prinsip kerja:
 
@@ -50,9 +52,14 @@ Prinsip kerja:
 | Landing penawaran | Tetap di `/join#daftar`, konten editable dari Superadmin |
 | Google Login | Diaktifkan, bukan disembunyikan |
 | Google button | Hanya di halaman login; tombol di register dihapus |
-| Akun Google baru | Otomatis dibuat sebagai Customer |
-| Owner via Google | Tidak otomatis; Owner tetap daftar manual |
+| Google role modal | Klik Google membuka pilihan **Pemilik Bisnis** atau **Pelanggan** |
+| Akun Google baru | Dibuat langsung sesuai pilihan modal; tanpa intent default Customer |
+| Owner via Google | Langsung dibuat Owner tanpa toko, login, lalu diarahkan ke `owner.pengajuan-toko` |
+| Akun Google lama | Role tersimpan menang; pilihan modal yang berbeda ditolak dengan pesan |
+| Upgrade Customer → Owner | Tidak dibuat |
+| Lupa password | OTP 6 digit; link reset lama dihapus |
 | Eksekusi | Satu fase per checkpoint, tidak sekaligus |
+| Reset data dev | `php artisan migrate:fresh --seed` disetujui untuk dev |
 | Deployment | Ditunda sampai revisi selesai dan test pass |
 
 ---
@@ -569,6 +576,108 @@ Google Login berfungsi end-to-end dengan credentials Google Cloud yang valid.
 
 ---
 
+## 9b. Fase 4b — Google Role Modal dan OTP Reset Password
+
+### Scope
+
+- Modal Google Login dengan dua pilihan: **Pemilik Bisnis** dan **Pelanggan**.
+- Google baru + Owner dibuat langsung sebagai Owner tanpa toko, login, lalu diarahkan ke `owner.pengajuan-toko`.
+- Google baru + Customer dibuat langsung sebagai Customer.
+- Akun Google lama tetap memakai role tersimpan. Jika pilihan modal berbeda, login ditolak dengan pesan agar memilih role yang benar.
+- Role internal (Admin/Gudang/Produksi/Superadmin) tidak diubah oleh intent modal.
+- Lupa password memakai OTP 6 digit; link reset lama dihapus.
+- OTP berlaku 10 menit, maksimal 5 percobaan, cooldown kirim ulang 60 detik, dan rate limit per email + IP.
+- Komentar konfigurasi email dev/production ditambahkan di `config/mail.php` dan `.env.example`.
+
+### Alur Google
+
+1. User klik **Masuk dengan Google**.
+2. Modal tampil; user memilih **Pemilik Bisnis** atau **Pelanggan**.
+3. Intent disimpan di session (`oauth_role_intent`) saat redirect ke Google.
+4. Callback:
+   - Akun baru + Owner → buat Owner, login, redirect pengajuan toko.
+   - Akun baru + Customer → buat Customer, login, redirect customer home.
+   - Akun lama + intent cocok → login.
+   - Akun lama + intent berbeda → tolak, kembali ke login dengan pesan.
+   - Role internal → tetap login sesuai role tersimpan.
+5. Tidak ada fitur upgrade Customer → Owner.
+
+### Alur OTP
+
+1. `GET /forgot-password` menampilkan form email.
+2. `POST /forgot-password` mengirim OTP ke email terdaftar dan redirect ke `GET /forgot-password/otp`.
+3. `GET /forgot-password/otp` menampilkan input OTP, password baru, konfirmasi, dan tombol kirim ulang.
+4. `POST /forgot-password/otp` memverifikasi OTP lalu menyimpan password baru.
+5. OTP disimpan sebagai hash di tabel `password_reset_otps`; OTP dihapus setelah reset berhasil.
+6. Route `/reset-password/{token}` dan `/reset-password` dihapus.
+
+### File
+
+- `app/Http/Controllers/Auth/GoogleController.php`
+- `app/Http/Controllers/Auth/ForgotPasswordController.php`
+- `app/Http/Controllers/Auth/ResetPasswordController.php` (dihapus)
+- `app/Mail/ResetPasswordOtpMail.php` (baru)
+- `app/Models/PasswordResetOtp.php` (baru)
+- `database/migrations/2026_11_07_020000_create_password_reset_otps_table.php` (baru)
+- `resources/views/customer/auth/login.blade.php`
+- `resources/views/customer/auth/forgot-password.blade.php`
+- `resources/views/customer/auth/reset-password.blade.php` (dihapus)
+- `resources/views/emails/reset-password-otp.blade.php` (baru)
+- `routes/web.php`
+- `config/mail.php`
+- `.env.example`
+- `lang/en.json`
+- `tests/Feature/GoogleAuthTest.php`
+- `tests/Feature/PasswordResetTest.php`
+
+### Test
+
+- [x] Modal Google menampilkan pilihan Owner dan Customer.
+- [x] Modal mempertahankan parameter `redirect`.
+- [x] Google baru + Owner langsung dibuat Owner dan diarahkan ke pengajuan toko.
+- [x] Google baru + Customer dibuat Customer.
+- [x] Customer lama yang memilih Owner ditolak.
+- [x] Owner lama yang memilih Customer ditolak.
+- [x] Role internal tidak berubah oleh intent.
+- [x] OTP dikirim dan disimpan sebagai hash.
+- [x] Email tidak dikenal tetap memakai alur generik tanpa mengirim OTP.
+- [x] OTP benar mengganti password dan menghapus record OTP.
+- [x] OTP salah menambah attempts dan menolak reset.
+- [x] OTP kedaluwarsa dan max attempts ditolak.
+- [x] Password policy OTP diuji.
+- [x] Cooldown kirim ulang OTP diuji.
+- [x] Route reset link lama 404.
+
+### Verifikasi targeted
+
+```bash
+php artisan test --filter=GoogleAuthTest
+php artisan test --filter=PasswordResetTest
+php artisan view:cache
+```
+
+Hasil: GoogleAuthTest 25 passed (178 assertions), PasswordResetTest 13 passed (63 assertions), Blade cache berhasil.
+
+### Reset data dev
+
+Setelah implementasi disetujui, jalankan di lokal:
+
+```bash
+php artisan migrate:fresh --seed
+```
+
+Ini menghapus data lokal dan membuat ulang role, Superadmin, serta akun demo. Jangan dijalankan di production.
+
+### Acceptance
+
+- Google Login menampilkan modal role dan membuat akun baru sesuai pilihan.
+- Owner baru via Google langsung masuk ke pengajuan toko.
+- Akun lama tidak berubah role.
+- Lupa password memakai OTP dan link reset lama tidak tersedia.
+- Semua test targeted pass.
+
+---
+
 ## 10. Fase 5 — Regression dan penutupan
 
 ### Test
@@ -577,7 +686,8 @@ Google Login berfungsi end-to-end dengan credentials Google Cloud yang valid.
 php artisan test --filter=LandingPageTest
 php artisan test --filter=LandingOfferSettingsTest
 php artisan test --filter=LocaleSwitcherTest
-php artisan test --filter=GoogleLoginTest
+php artisan test --filter=GoogleAuthTest
+php artisan test --filter=PasswordResetTest
 php artisan test
 ```
 
@@ -591,9 +701,13 @@ php artisan test
 - [ ] `/join#daftar` menampilkan perubahan.
 - [ ] Landing fallback saat setting kosong.
 - [ ] Google login existing user.
-- [ ] Google login new Customer.
-- [ ] Google login Owner existing.
+- [ ] Google new Customer via modal.
+- [ ] Google new Owner via modal langsung ke pengajuan toko.
+- [ ] Google existing Owner memilih Customer ditolak dengan pesan.
+- [ ] Google existing Customer memilih Owner ditolak dengan pesan.
 - [ ] Google login inactive user ditolak.
+- [ ] Lupa password mengirim OTP dan reset berhasil.
+- [ ] OTP salah/kedaluwarsa/max attempts ditolak.
 - [ ] Tidak ada error di `storage/logs/laravel.log`.
 
 ### Commit
@@ -659,22 +773,30 @@ Semua test pass dan manual checklist selesai.
 | Landing percent | `{percent}` diganti komisi |
 | Google existing | Login via google_id |
 | Google link | Email lama otomatis ter-link |
-| Google new | Email baru jadi Customer |
+| Google new Customer | Email baru + intent Customer jadi Customer |
+| Google new Owner | Email baru + intent Owner jadi Owner dan diarahkan ke pengajuan |
+| Google role mismatch | Akun lama dengan intent berbeda ditolak |
 | Google inactive | Ditolak |
 | Google unverified | Ditolak |
 | Google mismatch | Ditolak |
 | Google hidden | Env kosong, tombol tidak tampil |
 | Auth redirect | Owner tanpa toko diarahkan ke pengajuan |
+| OTP send | OTP dikirim dan disimpan sebagai hash |
+| OTP reset | OTP benar mengganti password dan menghapus record |
+| OTP invalid | OTP salah/kedaluwarsa/max attempts ditolak |
+| Reset link lama | Route lama 404 |
 
 ---
 
 ## 13. Open items / yang perlu disiapkan
 
-- [ ] Google Cloud OAuth Client ID dan Secret.
-- [ ] Authorized redirect URI lokal dan production.
-- [ ] Konfirmasi bahwa akun Google baru otomatis menjadi Customer.
-- [ ] Konfirmasi bahwa tombol Google di register dihapus.
-- [ ] Konfirmasi shadow login dihapus total, bukan hanya outer shadow.
+- [x] Google Cloud OAuth Client ID dan Secret.
+- [ ] Authorized redirect URI production `https://nexprint.my.id/auth/google/callback` saat deploy.
+- [x] Konfirmasi bahwa akun Google baru memakai pilihan modal Owner/Customer.
+- [x] Konfirmasi bahwa tombol Google di register dihapus.
+- [x] Konfirmasi shadow login dihapus total, bukan hanya outer shadow.
+- [ ] Konfigurasi provider email production agar OTP benar-benar terkirim.
+- [ ] Verifikasi browser: modal Google, akun Owner baru, dan alur OTP.
 
 ---
 
@@ -699,8 +821,9 @@ Setelah revisi selesai:
 
 - Build ulang paket deploy.
 - Pastikan vendor lengkap.
-- Update `.env` production (`APP_LOCALE=id`, Google credentials).
-- Jalankan migration `google_id` di production.
+- Update `.env` production (`APP_LOCALE=id`, Google credentials, SMTP/Resend OTP).
+- Jalankan migration `google_id` dan `password_reset_otps` di production.
+- Jangan jalankan `migrate:fresh` di production.
 - Import/export DB sesuai rencana deployment terpisah.
 - Verifikasi upload dan storage.
 
