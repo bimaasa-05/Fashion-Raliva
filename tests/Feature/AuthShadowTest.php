@@ -27,4 +27,11 @@ class AuthShadowTest extends TestCase
             ->assertOk()
             ->assertSee('auth-card', false);
     }
+
+    public function test_judul_tab_login_memakai_nama_brand_kapital(): void
+    {
+        $this->get(route('login'))
+            ->assertOk()
+            ->assertSee('<title>NEXPRINT - ', false);
+    }
 }
