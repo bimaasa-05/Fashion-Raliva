@@ -4,6 +4,23 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Email: Development vs Production
+    |--------------------------------------------------------------------------
+    |
+    | Development (local):
+    | - MAIL_MAILER=log       -> email ditulis ke storage/logs/laravel.log.
+    | - MAIL_MAILER=array     -> email ditangkap di memori (dipakai saat test).
+    | - MAIL_MAILER=smtp      -> gunakan Mailtrap atau SMTP sandbox.
+    |
+    | Production:
+    | - Gunakan provider transaksional (SMTP/Resend) dengan kredensial asli.
+    | - Jangan pernah memakai MAIL_MAILER=log di production.
+    | - Pastikan MAIL_FROM_ADDRESS memakai domain yang sudah diverifikasi.
+    |
+    */
+
+    /*
+    |--------------------------------------------------------------------------
     | Default Mailer
     |--------------------------------------------------------------------------
     |
