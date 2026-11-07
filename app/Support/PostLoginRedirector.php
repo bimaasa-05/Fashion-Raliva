@@ -3,8 +3,6 @@
 namespace App\Support;
 
 use App\Http\Middleware\EnsureRole;
-use App\Models\Role;
-use App\Models\Store;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -34,16 +32,6 @@ class PostLoginRedirector
 
         if (self::isSafeRedirect($intended)) {
             return redirect($intended);
-        }
-
-        if ($user->role?->nama_role === Role::OWNER) {
-            $hasOperationalStore = $user->ownedStores()
-                ->whereIn('status', [Store::STATUS_AKTIF, Store::STATUS_NONAKTIF])
-                ->exists();
-
-            if (! $hasOperationalStore) {
-                return redirect()->route('owner.pengajuan-toko');
-            }
         }
 
         return redirect()->intended(route(EnsureRole::homeRouteFor($user->role?->nama_role)));
