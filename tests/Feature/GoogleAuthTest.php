@@ -172,7 +172,7 @@ class GoogleAuthTest extends TestCase
         ]);
 
         $this->get(route('auth.google.callback'))
-            ->assertRedirect(route('owner.pengajuan-toko'));
+            ->assertRedirect(route('owner.dashboard'));
 
         $user = User::where('email', $email)->firstOrFail();
 
@@ -324,7 +324,7 @@ class GoogleAuthTest extends TestCase
         $this->assertDatabaseMissing('users', ['email' => $email]);
     }
 
-    public function test_login_google_owner_tanpa_toko_diarahkan_ke_pengajuan_toko(): void
+    public function test_login_google_owner_tanpa_toko_diarahkan_ke_dashboard(): void
     {
         $googleId = 'google-'.Str::random(12);
         $owner = $this->makeUser([
@@ -338,7 +338,7 @@ class GoogleAuthTest extends TestCase
         ]);
 
         $this->get(route('auth.google.callback'))
-            ->assertRedirect(route('owner.pengajuan-toko'));
+            ->assertRedirect(route('owner.dashboard'));
 
         $this->assertAuthenticatedAs($owner);
     }
@@ -359,7 +359,7 @@ class GoogleAuthTest extends TestCase
         ]);
 
         $this->get(route('auth.google.callback'))
-            ->assertRedirect(route('owner.pengajuan-toko'));
+            ->assertRedirect(route('owner.dashboard'));
 
         $this->assertAuthenticatedAs($owner);
     }
