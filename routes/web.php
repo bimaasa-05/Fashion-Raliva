@@ -146,7 +146,9 @@ Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->mid
 Route::get('/forgot-password', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendOtp'])->middleware('throttle:6,1')->name('password.email');
 Route::get('/forgot-password/otp', [ForgotPasswordController::class, 'showOtpForm'])->name('password.otp.form');
-Route::post('/forgot-password/otp', [ForgotPasswordController::class, 'resetWithOtp'])->middleware('throttle:10,1')->name('password.otp.reset');
+Route::post('/forgot-password/otp', [ForgotPasswordController::class, 'verifyOtp'])->middleware('throttle:10,1')->name('password.otp.verify');
+Route::get('/forgot-password/reset', [ForgotPasswordController::class, 'showResetForm'])->name('password.reset.form');
+Route::post('/forgot-password/reset', [ForgotPasswordController::class, 'resetPassword'])->middleware('throttle:10,1')->name('password.reset.update');
 
 // customer
 Route::prefix('customer')->name('customer.')->group(function () {
