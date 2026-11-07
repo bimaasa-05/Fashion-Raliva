@@ -370,17 +370,72 @@
 <div class="flex-grow flex flex-col justify-center w-full max-w-md mx-auto py-xl relative z-10">
 <div class="border-2 border-secondary rounded-lg p-lg lg:p-xl frame-gold auth-card">
 <!-- Form Section -->
-@if (session('status'))
-<!-- Success State -->
-<div class="text-center" id="forgot-success">
-<span class="material-symbols-outlined text-secondary text-[64px]">mark_email_read</span>
-<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mt-md mb-sm">{{ __('Check Your Email') }}</h2>
-<p class="font-body-lg text-body-lg text-on-surface-variant mb-xl max-w-xs mx-auto">
-            {{ session('status') }}
+@if (($step ?? 'email') === 'otp')
+<div id="otp-section">
+<div class="mb-md">
+<p class="font-label-caps text-label-caps uppercase tracking-widest text-secondary mb-xs">{{ __(':brand Account', ['brand' => brand()]) }}</p>
+<h2 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface mb-xs">{{ __('Verifikasi Kode OTP') }}</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+            {{ __('Kami telah mengirim kode OTP 6 digit ke') }}
+            <span class="font-semibold text-on-surface">{{ $email }}</span>.
+            {{ __('Kode berlaku :minutes menit.', ['minutes' => 10]) }}
         </p>
-<a class="w-full h-14 btn-gold rounded-xl font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center inline-flex" href="{{ route('login') }}">
-            {{ __('BACK TO LOGIN') }}
+</div>
+<form id="otp-form" method="POST" action="{{ route('password.otp.reset') }}">
+@csrf
+<input type="hidden" name="email" value="{{ old('email', $email) }}"/>
+<!-- OTP -->
+<div class="mb-sm">
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="otp">{{ __('Kode OTP') }}</label>
+<input autocomplete="one-time-code" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-headline-lg-mobile text-headline-lg-mobile text-center tracking-[0.45em] text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors @error('otp') border-error @enderror" id="otp" name="otp" value="{{ old('otp') }}" placeholder="000000" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" required autofocus/>
+@error('otp')
+<p class="font-label-sm text-label-sm text-error mt-xs">{{ $message }}</p>
+@enderror
+@error('email')
+<p class="font-label-sm text-label-sm text-error mt-xs">{{ $message }}</p>
+@enderror
+</div>
+<!-- New Password -->
+<div class="mb-sm">
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password">{{ __('Password Baru') }}</label>
+<div class="relative">
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-xl pl-md pr-xl py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors @error('password') border-error @enderror" id="password" name="password" placeholder="{{ __('Masukkan password baru') }}" type="password" required/>
+<button aria-label="{{ __('Show password') }}" class="absolute right-md top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors flex" id="otp-password-toggle" type="button">
+<span class="material-symbols-outlined text-[20px]">visibility</span>
+</button>
+</div>
+@error('password')
+<p class="font-label-sm text-label-sm text-error mt-xs">{{ $message }}</p>
+@enderror
+</div>
+<!-- Confirm Password -->
+<div class="mb-md">
+<label class="font-label-sm text-label-sm text-on-surface block mb-xs" for="password_confirmation">{{ __('Konfirmasi Password Baru') }}</label>
+<input autocomplete="new-password" class="w-full bg-surface border border-outline-variant rounded-xl px-md py-sm font-body-lg text-body-lg text-on-surface placeholder-on-surface-variant focus:outline-none focus:border-secondary transition-colors" id="password_confirmation" name="password_confirmation" placeholder="{{ __('Ulangi password baru') }}" type="password" required/>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-md">{{ __('Password minimal 8 karakter, mengandung minimal 1 huruf kapital dan 1 angka.') }}</p>
+<!-- Submit -->
+<button class="w-full h-14 btn-gold rounded-xl font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="otp-btn" type="submit">
+<span id="otp-btn-text">{{ __('SIMPAN PASSWORD BARU') }}</span>
+<span class="material-symbols-outlined text-[20px] animate-spin hidden" id="otp-spinner">progress_activity</span>
+</button>
+</form>
+<!-- Resend -->
+<form id="resend-otp-form" method="POST" action="{{ route('password.email') }}" class="mt-md">
+@csrf
+<input type="hidden" name="email" value="{{ old('email', $email) }}"/>
+<p class="text-center font-body-sm text-body-sm text-on-surface-variant">
+                {{ __('Tidak menerima kode?') }}
+                <button class="text-secondary font-semibold hover:opacity-80 transition-opacity ml-1 disabled:opacity-60 disabled:pointer-events-none" id="resend-otp-btn" type="submit">{{ __('Kirim ulang kode') }}</button>
+            </p>
+</form>
+<!-- Back -->
+<p class="text-center mt-lg">
+<a class="font-label-caps text-label-caps text-secondary uppercase tracking-widest hover:opacity-80 transition-opacity inline-flex items-center gap-xs" href="{{ route('password.request') }}">
+<span class="material-symbols-outlined text-[16px]">arrow_back</span>
+            {{ __('Ganti email') }}
         </a>
+</p>
 </div>
 @else
 <div id="forgot-section">
@@ -401,7 +456,7 @@
 </div>
 <!-- Submit -->
 <button class="w-full h-14 btn-gold rounded-xl font-label-caps text-label-caps uppercase tracking-widest hover:opacity-90 transition-opacity flex items-center justify-center gap-sm disabled:opacity-60 disabled:pointer-events-none" id="forgot-btn" type="submit">
-<span id="forgot-btn-text">{{ __('SEND RESET LINK') }}</span>
+<span id="forgot-btn-text">{{ __('KIRIM KODE OTP') }}</span>
 <span class="material-symbols-outlined text-[20px] animate-spin hidden" id="forgot-spinner">progress_activity</span>
 </button>
 </form>
@@ -423,6 +478,39 @@
             forgotForm.addEventListener('submit', function () {
                 document.getElementById('forgot-btn').disabled = true;
                 document.getElementById('forgot-spinner').classList.remove('hidden');
+            });
+        }
+
+        var otpInput = document.getElementById('otp');
+        if (otpInput) {
+            otpInput.addEventListener('input', function () {
+                this.value = this.value.replace(/\D/g, '').slice(0, 6);
+            });
+        }
+
+        var otpPasswordToggle = document.getElementById('otp-password-toggle');
+        if (otpPasswordToggle) {
+            otpPasswordToggle.addEventListener('click', function () {
+                var input = document.getElementById('password');
+                var icon = this.querySelector('.material-symbols-outlined');
+                var show = input.type === 'password';
+                input.type = show ? 'text' : 'password';
+                icon.textContent = show ? 'visibility_off' : 'visibility';
+            });
+        }
+
+        var otpForm = document.getElementById('otp-form');
+        if (otpForm) {
+            otpForm.addEventListener('submit', function () {
+                document.getElementById('otp-btn').disabled = true;
+                document.getElementById('otp-spinner').classList.remove('hidden');
+            });
+        }
+
+        var resendOtpForm = document.getElementById('resend-otp-form');
+        if (resendOtpForm) {
+            resendOtpForm.addEventListener('submit', function () {
+                document.getElementById('resend-otp-btn').disabled = true;
             });
         }
     </script>
