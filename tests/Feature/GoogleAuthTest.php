@@ -54,6 +54,15 @@ class GoogleAuthTest extends TestCase
             ->assertSessionHasErrors('email');
     }
 
+    public function test_route_redirect_google_menyimpan_intent_role(): void
+    {
+        $this->get(route('auth.google.redirect', ['intent' => 'owner']))
+            ->assertSessionHas('oauth_role_intent', 'owner');
+
+        $this->get(route('auth.google.redirect', ['intent' => 'customer']))
+            ->assertSessionHas('oauth_role_intent', 'customer');
+    }
+
     public function test_login_google_membuat_customer_baru(): void
     {
         $email = 'google-baru-'.Str::random(8).'@example.com';
@@ -75,6 +84,52 @@ class GoogleAuthTest extends TestCase
         $this->assertSame(User::STATUS_AKTIF, $user->status);
         $this->assertNotNull($user->google_id);
         $this->assertNotNull($user->email_verified_at);
+    }
+
+    public function test_login_google_intent_owner_membuat_owner_baru_langsung(): void
+    {
+        $email = 'google-owner-'.Str::random(8).'@example.com';
+        $googleId = 'google-'.Str::random(12);
+
+        $this->withSession(['oauth_role_intent' => 'owner']);
+
+        $this->mockGoogleUser([
+            'id' => $googleId,
+            'name' => 'Google Owner',
+            'email' => $email,
+        ]);
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect(route('owner.pengajuan-toko'));
+
+        $user = User::where('email', $email)->firstOrFail();
+
+        $this->assertAuthenticatedAs($user);
+        $this->assertSame(Role::OWNER, $user->role->nama_role);
+        $this->assertSame($googleId, $user->google_id);
+        $this->assertSame(User::STATUS_AKTIF, $user->status);
+        $this->assertNotNull($user->email_verified_at);
+    }
+
+    public function test_login_google_intent_customer_membuat_customer_baru(): void
+    {
+        $email = 'google-customer-'.Str::random(8).'@example.com';
+
+        $this->withSession(['oauth_role_intent' => 'customer']);
+
+        $this->mockGoogleUser([
+            'id' => 'google-'.Str::random(12),
+            'name' => 'Google Customer',
+            'email' => $email,
+        ]);
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect(route('customer.home'));
+
+        $user = User::where('email', $email)->firstOrFail();
+
+        $this->assertAuthenticatedAs($user);
+        $this->assertSame(Role::CUSTOMER, $user->role->nama_role);
     }
 
     public function test_login_google_menghubungkan_email_yang_sudah_ada(): void
@@ -216,6 +271,110 @@ class GoogleAuthTest extends TestCase
         $this->assertAuthenticatedAs($owner);
     }
 
+    public function test_login_google_intent_owner_pada_akun_owner_lama_tetap_masuk(): void
+    {
+        $googleId = 'google-'.Str::random(12);
+        $owner = $this->makeUser([
+            'role_id' => $this->roleId(Role::OWNER),
+            'google_id' => $googleId,
+        ]);
+
+        $this->withSession(['oauth_role_intent' => 'owner']);
+
+        $this->mockGoogleUser([
+            'id' => $googleId,
+            'email' => $owner->email,
+        ]);
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect(route('owner.pengajuan-toko'));
+
+        $this->assertAuthenticatedAs($owner);
+    }
+
+    public function test_login_google_intent_customer_pada_akun_customer_lama_tetap_masuk(): void
+    {
+        $googleId = 'google-'.Str::random(12);
+        $customer = $this->makeUser(['google_id' => $googleId]);
+
+        $this->withSession(['oauth_role_intent' => 'customer']);
+
+        $this->mockGoogleUser([
+            'id' => $googleId,
+            'email' => $customer->email,
+        ]);
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect(route('customer.home'));
+
+        $this->assertAuthenticatedAs($customer);
+    }
+
+    public function test_login_google_intent_owner_pada_akun_customer_lama_ditolak(): void
+    {
+        $googleId = 'google-'.Str::random(12);
+        $customer = $this->makeUser(['google_id' => $googleId]);
+
+        $this->withSession(['oauth_role_intent' => 'owner']);
+
+        $this->mockGoogleUser([
+            'id' => $googleId,
+            'email' => $customer->email,
+        ]);
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect(route('login'))
+            ->assertSessionHasErrors('email');
+
+        $this->assertGuest();
+        $this->assertSame(Role::CUSTOMER, $customer->fresh()->role->nama_role);
+    }
+
+    public function test_login_google_intent_customer_pada_akun_owner_lama_ditolak(): void
+    {
+        $googleId = 'google-'.Str::random(12);
+        $owner = $this->makeUser([
+            'role_id' => $this->roleId(Role::OWNER),
+            'google_id' => $googleId,
+        ]);
+
+        $this->withSession(['oauth_role_intent' => 'customer']);
+
+        $this->mockGoogleUser([
+            'id' => $googleId,
+            'email' => $owner->email,
+        ]);
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect(route('login'))
+            ->assertSessionHasErrors('email');
+
+        $this->assertGuest();
+        $this->assertSame(Role::OWNER, $owner->fresh()->role->nama_role);
+    }
+
+    public function test_login_google_intent_tidak_mengubah_role_internal(): void
+    {
+        $googleId = 'google-'.Str::random(12);
+        $admin = $this->makeUser([
+            'role_id' => $this->roleId(Role::ADMIN),
+            'google_id' => $googleId,
+        ]);
+
+        $this->withSession(['oauth_role_intent' => 'customer']);
+
+        $this->mockGoogleUser([
+            'id' => $googleId,
+            'email' => $admin->email,
+        ]);
+
+        $this->get(route('auth.google.callback'))
+            ->assertRedirect(route('admin.dashboard'));
+
+        $this->assertAuthenticatedAs($admin);
+        $this->assertSame(Role::ADMIN, $admin->fresh()->role->nama_role);
+    }
+
     public function test_login_google_memakai_cookie_area_saat_multi_role_aktif(): void
     {
         config(['session.multi_role' => true]);
@@ -273,12 +432,24 @@ class GoogleAuthTest extends TestCase
         $this->get(route('login'))
             ->assertOk()
             ->assertSee(__('SIGN IN WITH GOOGLE'))
-            ->assertSee(route('auth.google.redirect'), false);
+            ->assertSee('id="google-login-trigger"', false)
+            ->assertSee('id="google-role-modal"', false)
+            ->assertSee(route('auth.google.redirect', ['intent' => 'owner']), false)
+            ->assertSee(route('auth.google.redirect', ['intent' => 'customer']), false)
+            ->assertSee(__('Pemilik Bisnis'));
 
         $this->get(route('register'))
             ->assertOk()
             ->assertDontSee(__('SIGN UP WITH GOOGLE'))
             ->assertDontSee(__('Sign up with Google'));
+    }
+
+    public function test_modal_google_mempertahankan_tujuan_redirect(): void
+    {
+        $this->get(route('login', ['redirect' => '/customer/chart']))
+            ->assertOk()
+            ->assertSee(route('auth.google.redirect', ['intent' => 'owner', 'redirect' => '/customer/chart']))
+            ->assertSee(route('auth.google.redirect', ['intent' => 'customer', 'redirect' => '/customer/chart']));
     }
 
     public function test_tombol_google_tersembunyi_saat_konfigurasi_kosong(): void
@@ -288,7 +459,9 @@ class GoogleAuthTest extends TestCase
         $this->get(route('login'))
             ->assertOk()
             ->assertDontSee(__('SIGN IN WITH GOOGLE'))
-            ->assertDontSee(route('auth.google.redirect'), false);
+            ->assertDontSee('id="google-login-trigger"', false)
+            ->assertDontSee('id="google-role-modal"', false)
+            ->assertDontSee(route('auth.google.redirect', ['intent' => 'owner']), false);
     }
 
     private function mockGoogleUser(array $attributes = []): void
