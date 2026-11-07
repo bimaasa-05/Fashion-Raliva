@@ -23,10 +23,15 @@
         from { opacity: 0; transform: translateY(16px); }
         to { opacity: 1; transform: translateY(0); }
     }
-    .rise { opacity: 0; animation: riseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-    .rise-d1 { animation-delay: 0.1s; }
-    .rise-d2 { animation-delay: 0.2s; }
-    .rise-d3 { animation-delay: 0.3s; }
+    /* Only hide sections while the entrance animation is actually allowed.
+       Without this guard, users with "reduce motion" enabled see opacity:0
+       forever because the animation is disabled but the initial state is not. */
+    @media (prefers-reduced-motion: no-preference) {
+        .rise { opacity: 0; animation: riseIn 0.7s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+        .rise-d1 { animation-delay: 0.1s; }
+        .rise-d2 { animation-delay: 0.2s; }
+        .rise-d3 { animation-delay: 0.3s; }
+    }
 
     .photo-upload-wrapper { position: relative; }
     .photo-upload-wrapper input[type="file"] { display: none; }
@@ -261,7 +266,8 @@
 
     /* ============ MOTION GUARDS ============ */
     @media (prefers-reduced-motion: reduce) {
-        .rise, .name-shimmer, .gold-dust i, .status-dot::after { animation: none !important; }
+        .rise { animation: none !important; opacity: 1 !important; transform: none !important; }
+        .name-shimmer, .gold-dust i, .status-dot::after { animation: none !important; }
         .name-shimmer { background-image: linear-gradient(115deg, #6D1428, #8B1E3F, #c03a5a, #8B1E3F, #6D1428) !important; background-size: 100% auto !important; }
         .gold-dust i { opacity: 0.4 !important; }
         .photo-preview:hover, .avatar-ring, .profil-stat:hover, .chip-premium:hover, .store-row:hover, .mini-stat:hover { transform: none !important; }
