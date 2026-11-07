@@ -52,6 +52,17 @@ class PasswordResetTest extends TestCase
         ], $overrides));
     }
 
+    private function verifiedSession(User $user): array
+    {
+        return [
+            'password_otp_email' => $user->email,
+            'password_otp_verified' => [
+                'email' => $user->email,
+                'expires_at' => now()->addMinutes(10)->timestamp,
+            ],
+        ];
+    }
+
     public function test_forgot_password_page_renders(): void
     {
         $this->get(route('password.request'))
@@ -65,7 +76,8 @@ class PasswordResetTest extends TestCase
         $this->withSession(['password_otp_email' => 'someone@raliva.test'])
             ->get(route('password.otp.form'))
             ->assertOk()
-            ->assertSee(route('password.otp.reset'), false)
+            ->assertSee(route('password.otp.verify'), false)
+            ->assertDontSee('name="password"', false)
             ->assertSee('someone@raliva.test')
             ->assertSee(__('Verifikasi Kode OTP'));
     }
@@ -121,27 +133,95 @@ class PasswordResetTest extends TestCase
         $this->assertDatabaseMissing('password_reset_otps', ['email' => $email]);
     }
 
-    public function test_correct_otp_resets_password_and_consumes_code(): void
+    public function test_correct_otp_verifies_and_opens_reset_form(): void
+    {
+        $user = $this->makeUser();
+        $record = $this->makeOtp($user, '123456');
+
+        $response = $this->post(route('password.otp.verify'), [
+            'email' => $user->email,
+            'otp' => '123456',
+        ]);
+
+        $response->assertRedirect(route('password.reset.form'));
+        $response->assertSessionHas('password_otp_verified');
+
+        $this->assertTrue(Hash::check('OldPassword1', $user->fresh()->password));
+        $this->assertDatabaseMissing('password_reset_otps', ['id' => $record->id]);
+    }
+
+    public function test_reset_form_renders_after_verification(): void
+    {
+        $user = $this->makeUser();
+
+        $this->withSession($this->verifiedSession($user))
+            ->get(route('password.reset.form'))
+            ->assertOk()
+            ->assertSee(route('password.reset.update'), false)
+            ->assertSee(__('Buat Password Baru'))
+            ->assertSee('name="password"', false)
+            ->assertSee('name="password_confirmation"', false);
+    }
+
+    public function test_correct_password_after_verification_resets_password(): void
     {
         Event::fake([PasswordReset::class]);
 
         $user = $this->makeUser();
-        $record = $this->makeOtp($user, '123456');
 
-        $response = $this->post(route('password.otp.reset'), [
-            'email' => $user->email,
-            'otp' => '123456',
-            'password' => 'Raliva2026!',
-            'password_confirmation' => 'Raliva2026!',
-        ]);
+        $response = $this->withSession($this->verifiedSession($user))
+            ->post(route('password.reset.update'), [
+                'password' => 'Raliva2026!',
+                'password_confirmation' => 'Raliva2026!',
+            ]);
 
         $response->assertRedirect(route('login'));
         $response->assertSessionHas('success');
         $response->assertSessionMissing('password_otp_email');
+        $response->assertSessionMissing('password_otp_verified');
 
         $this->assertTrue(Hash::check('Raliva2026!', $user->fresh()->password));
-        $this->assertDatabaseMissing('password_reset_otps', ['id' => $record->id]);
         Event::assertDispatched(PasswordReset::class);
+    }
+
+    public function test_reset_form_cannot_be_opened_without_verification(): void
+    {
+        $user = $this->makeUser();
+
+        $this->withSession(['password_otp_email' => $user->email])
+            ->get(route('password.reset.form'))
+            ->assertRedirect(route('password.otp.form'))
+            ->assertSessionHasErrors('otp');
+    }
+
+    public function test_expired_verification_session_is_rejected(): void
+    {
+        $user = $this->makeUser();
+
+        $this->withSession([
+            'password_otp_email' => $user->email,
+            'password_otp_verified' => [
+                'email' => $user->email,
+                'expires_at' => now()->subMinute()->timestamp,
+            ],
+        ])->get(route('password.reset.form'))
+            ->assertRedirect(route('password.otp.form'))
+            ->assertSessionHasErrors('otp');
+    }
+
+    public function test_direct_password_reset_without_verification_is_rejected(): void
+    {
+        $user = $this->makeUser();
+
+        $response = $this->post(route('password.reset.update'), [
+            'password' => 'Raliva2026!',
+            'password_confirmation' => 'Raliva2026!',
+        ]);
+
+        $response->assertRedirect(route('password.otp.form'));
+        $response->assertSessionHasErrors('otp');
+
+        $this->assertTrue(Hash::check('OldPassword1', $user->fresh()->password));
     }
 
     public function test_wrong_otp_is_rejected_and_increments_attempts(): void
@@ -149,11 +229,9 @@ class PasswordResetTest extends TestCase
         $user = $this->makeUser();
         $record = $this->makeOtp($user, '123456');
 
-        $response = $this->post(route('password.otp.reset'), [
+        $response = $this->post(route('password.otp.verify'), [
             'email' => $user->email,
             'otp' => '000000',
-            'password' => 'Raliva2026!',
-            'password_confirmation' => 'Raliva2026!',
         ]);
 
         $response->assertRedirect(route('password.otp.form'));
@@ -168,11 +246,9 @@ class PasswordResetTest extends TestCase
         $user = $this->makeUser();
         $record = $this->makeOtp($user, '123456', ['expires_at' => now()->subMinute()]);
 
-        $response = $this->post(route('password.otp.reset'), [
+        $response = $this->post(route('password.otp.verify'), [
             'email' => $user->email,
             'otp' => '123456',
-            'password' => 'Raliva2026!',
-            'password_confirmation' => 'Raliva2026!',
         ]);
 
         $response->assertRedirect(route('password.otp.form'));
@@ -187,11 +263,9 @@ class PasswordResetTest extends TestCase
         $user = $this->makeUser();
         $this->makeOtp($user, '123456', ['attempts' => 5]);
 
-        $response = $this->post(route('password.otp.reset'), [
+        $response = $this->post(route('password.otp.verify'), [
             'email' => $user->email,
             'otp' => '123456',
-            'password' => 'Raliva2026!',
-            'password_confirmation' => 'Raliva2026!',
         ]);
 
         $response->assertRedirect(route('password.otp.form'));
@@ -200,17 +274,15 @@ class PasswordResetTest extends TestCase
         $this->assertTrue(Hash::check('OldPassword1', $user->fresh()->password));
     }
 
-    public function test_password_policy_is_enforced(): void
+    public function test_password_policy_is_enforced_on_reset_step(): void
     {
         $user = $this->makeUser();
-        $this->makeOtp($user, '123456');
 
-        $response = $this->post(route('password.otp.reset'), [
-            'email' => $user->email,
-            'otp' => '123456',
-            'password' => 'weakpassword',
-            'password_confirmation' => 'weakpassword',
-        ]);
+        $response = $this->withSession($this->verifiedSession($user))
+            ->post(route('password.reset.update'), [
+                'password' => 'weakpassword',
+                'password_confirmation' => 'weakpassword',
+            ]);
 
         $response->assertSessionHasErrors('password');
 
@@ -233,6 +305,38 @@ class PasswordResetTest extends TestCase
             ->assertSessionHasErrors('email');
 
         Mail::assertSentTimes(ResetPasswordOtpMail::class, 1);
+    }
+
+    public function test_full_otp_flow_verifies_then_resets_password(): void
+    {
+        Mail::fake();
+        Event::fake([PasswordReset::class]);
+
+        $user = $this->makeUser();
+
+        $this->post(route('password.email'), ['email' => $user->email])
+            ->assertRedirect(route('password.otp.form'));
+
+        $otp = null;
+
+        Mail::assertSent(ResetPasswordOtpMail::class, function (ResetPasswordOtpMail $mail) use (&$otp) {
+            $otp = $mail->otp;
+
+            return true;
+        });
+
+        $this->post(route('password.otp.verify'), [
+            'email' => $user->email,
+            'otp' => $otp,
+        ])->assertRedirect(route('password.reset.form'));
+
+        $this->post(route('password.reset.update'), [
+            'password' => 'Raliva2026!',
+            'password_confirmation' => 'Raliva2026!',
+        ])->assertRedirect(route('login'));
+
+        $this->assertTrue(Hash::check('Raliva2026!', $user->fresh()->password));
+        Event::assertDispatched(PasswordReset::class);
     }
 
     public function test_old_reset_link_routes_are_removed(): void
