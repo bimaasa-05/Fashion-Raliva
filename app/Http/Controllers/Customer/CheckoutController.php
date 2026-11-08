@@ -501,16 +501,7 @@ class CheckoutController extends Controller
             return [$checkout, $orders];
         });
 
-        // Notifikasi personal (owner tetap dapat notif pesanan baru)
-        if ($actor) {
-            Notification::create([
-                'user_id' => $actor->user_id,
-                'tipe' => Notification::TIPE_ORDER,
-                'judul' => 'Pesanan Dibuat',
-                'pesan' => sprintf('Pesanan %s berhasil dibuat. Silakan selesaikan pembayaran.', $orders[0]->nomor_order),
-            ]);
-        }
-
+        // Notifikasi internal: owner tetap dapat notif pesanan baru.
         $seenOwners = [];
         foreach ($orders as $order) {
             $ownerId = $order->store?->owner_id;
@@ -766,22 +757,6 @@ return view('customer.checkout.selesai', [
             $payment->update(['status' => Payment::STATUS_MENUNGGU_VERIFIKASI]);
         });
 
-        $pesanBukti = $jumlahSaldo > 0
-            ? sprintf(
-                'Bukti pembayaran campuran Anda sedang diverifikasi oleh admin. Saldo Rp %s akan dipotong, sisa Rp %s lewat %s.',
-                number_format($jumlahSaldo, 0, ',', '.'),
-                number_format((float) $payment->jumlah - $jumlahSaldo, 0, ',', '.'),
-                $paymentMethod->nama_metode
-            )
-            : 'Bukti pembayaran Anda sedang diverifikasi oleh admin.';
-
-        Notification::create([
-            'user_id' => Auth::id(),
-            'tipe' => Notification::TIPE_PEMBAYARAN,
-            'judul' => 'Bukti Pembayaran Diunggah',
-            'pesan' => $pesanBukti,
-        ]);
-
         $pesanAdmin = $jumlahSaldo > 0
             ? sprintf(
                 'Customer mengunggah bukti pembayaran campuran untuk checkout #%d — saldo Rp %s + transfer Rp %s. Segera verifikasi.',
@@ -888,13 +863,6 @@ return view('customer.checkout.selesai', [
             ['status' => Payment::STATUS_TERVERIFIKASI],
             sprintf('Checkout #%d dibayar pakai saldo akun sebesar Rp %s.', $checkoutModel->checkout_id, number_format($jumlah, 0, ',', '.'))
         );
-
-        Notification::create([
-            'user_id' => Auth::id(),
-            'tipe' => Notification::TIPE_WALLET,
-            'judul' => 'Pembayaran dengan Saldo',
-            'pesan' => sprintf('Checkout #%d dibayar sebesar Rp %s dari saldo akun.', $checkoutModel->checkout_id, number_format($jumlah, 0, ',', '.')),
-        ]);
 
         NotificationService::sendToRole(
             Role::PRODUKSI,
