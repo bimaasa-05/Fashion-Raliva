@@ -40,9 +40,14 @@ class AdminFulfillmentSwitchTest extends TestCase
         $this->assertSame((int) ($oldGrand - $ongkir), (int) $order->grand_total);
         $this->assertSame(0, (int) $checkout->total_ongkir);
         $this->assertSame((int) $checkout->grand_total, (int) $order->grand_total);
-        $this->assertTrue(
+        $this->assertFalse(
             Notification::where('user_id', $checkout->user_id)
                 ->where('judul', 'Pesanan Diambil di Toko')
+                ->exists()
+        );
+        $this->assertTrue(
+            Notification::where('user_id', $admin->user_id)
+                ->where('judul', 'Fulfillment Diubah')
                 ->exists()
         );
     }
