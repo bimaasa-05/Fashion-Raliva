@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Owner;
 use App\Http\Controllers\Controller;
 use App\Models\Complaint;
 use App\Models\ComplaintMessage;
-use App\Models\Notification;
 use App\Support\OwnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -77,15 +76,6 @@ class KomplainController extends Controller
 
         if ($komplain->status === Complaint::STATUS_OPEN) {
             $komplain->update(['status' => Complaint::STATUS_DIPROSES]);
-        }
-
-        if ($komplain->user_id) {
-            Notification::create([
-                'user_id' => $komplain->user_id,
-                'tipe' => Notification::TIPE_KOMPLAIN,
-                'judul' => 'Balasan Komplain',
-                'pesan' => sprintf('Toko membalas komplain #%d.', $komplain->complaint_id),
-            ]);
         }
 
         return response()->json($pesan->load('sender'), 201);
