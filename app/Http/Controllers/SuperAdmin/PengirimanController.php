@@ -104,17 +104,6 @@ class PengirimanController extends Controller
 
         $pengiriman->refresh();
 
-        if ($pengiriman->order?->checkout?->user_id) {
-            Notification::create([
-                'user_id' => $pengiriman->order->checkout->user_id,
-                'aktor_id' => ActivityLogger::resolveActorId(),
-                'tipe' => Notification::TIPE_PENGIRIMAN,
-                'judul' => 'Status Pengiriman Diperbarui',
-                'pesan' => sprintf('Pengiriman pesanan %s kini berstatus "%s".', $pengiriman->order->nomor_order, ucfirst($newStatus)),
-                'url' => route('customer.order-tracking'),
-            ]);
-        }
-
         Notification::fireSelf(Notification::TIPE_PENGIRIMAN, 'Status Pengiriman Diperbarui', sprintf('Status pengiriman pesanan %s diubah ke "%s".', $pengiriman->order->nomor_order ?? '-', ucfirst($newStatus)), route('superadmin.pengiriman'));
 
         return back()->with('toast', [
