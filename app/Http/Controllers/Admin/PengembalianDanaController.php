@@ -46,16 +46,6 @@ class PengembalianDanaController extends Controller
             'disetujui_pada' => now(),
         ]);
 
-        if ($refund->requested_by) {
-            Notification::create([
-                'user_id' => $refund->requested_by,
-                'aktor_id' => Auth::id(),
-                'tipe' => Notification::TIPE_KOMPLAIN,
-                'judul' => 'Refund Disetujui',
-                'pesan' => sprintf('Pengajuan refund %s disetujui: dana dikembalikan ke saldo Anda.', $refund->kode),
-                'url' => route('customer.order-tracking'),
-            ]);
-        }
         Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Refund Disetujui', sprintf('Refund %s telah disetujui.', $refund->kode), route('admin.pengembalian-dana'));
 
         return back()->with('success',__('Refund :ph1 disetujui.', ['ph1' => $refund->refund_id]));
@@ -76,16 +66,6 @@ class PengembalianDanaController extends Controller
             'selesai_pada' => now(),
         ]);
 
-        if ($refund->requested_by) {
-            Notification::create([
-                'user_id' => $refund->requested_by,
-                'aktor_id' => Auth::id(),
-                'tipe' => Notification::TIPE_KOMPLAIN,
-                'judul' => 'Refund Ditolak',
-                'pesan' => sprintf('Pengajuan refund %s ditolak. Alasan: %s', $refund->kode, $request->input('alasan_penolakan') ?: '-'),
-                'url' => route('customer.order-tracking'),
-            ]);
-        }
         Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Refund Ditolak', sprintf('Refund %s telah ditolak.', $refund->kode), route('admin.pengembalian-dana'));
 
         return back()->with('success',__('Refund :ph1 ditolak.', ['ph1' => $refund->refund_id]));
