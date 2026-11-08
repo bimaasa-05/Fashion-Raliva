@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
+use App\Services\NotificationService;
 use App\Support\PostLoginRedirector;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -178,7 +179,7 @@ class GoogleController extends Controller
             return null;
         }
 
-        return User::create([
+        $user = User::create([
             'nama_lengkap' => $name !== '' ? $name : Str::before($email, '@'),
             'email' => $email,
             'google_id' => $googleId,
@@ -187,6 +188,10 @@ class GoogleController extends Controller
             'email_verified_at' => now(),
             'status' => User::STATUS_AKTIF,
         ]);
+
+        NotificationService::sendWelcome($user);
+
+        return $user;
     }
 
     private function login(Request $request, User $user): RedirectResponse
