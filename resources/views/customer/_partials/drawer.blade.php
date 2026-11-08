@@ -164,6 +164,7 @@
             'label' => 'Akun',
             'items' => [
                 ['route' => 'customer.account', 'aliases' => ['customer.account.edit', 'customer.account.password', 'customer.address.index', 'customer.address.create', 'customer.address.edit'], 'icon' => 'person', 'text' => 'My Account'],
+                ['route' => 'customer.notifications', 'icon' => 'notifications', 'text' => 'Notifications', 'auth' => true, 'badge' => true],
             ],
         ],
         [
@@ -183,10 +184,14 @@
     @php
         $itemActive = request()->routeIs($item['route'], ...($item['aliases'] ?? []));
         $itemHref = (! empty($item['auth']) && ! auth()->check()) ? route('customer.account', ['notice' => 'login']) : route($item['route']);
+        $itemUnread = ! empty($item['badge']) ? (int) ($sidebarNotificationsUnread ?? 0) : 0;
     @endphp
     <a href="{{ $itemHref }}" class="drawer-link flex items-center gap-2.5 py-2.5 px-3 rounded-lg border-l-[3px] border-transparent text-[var(--chrome-text)] hover:bg-[var(--chrome-hover)] transition-all duration-200 {{ $itemActive ? 'drawer-link-active' : '' }}">
         <span class="material-symbols-outlined text-[20px] text-[var(--chrome-text-dim)] transition-colors">{{ $item['icon'] }}</span>
         <span data-menu-label class="text-[13.5px] leading-snug flex-1 min-w-0 truncate">{{ __($item['text']) }}</span>
+        @if ($itemUnread > 0)
+            <span data-sidebar-text class="min-w-[18px] h-[18px] px-1 inline-flex items-center justify-center rounded-full bg-[var(--chrome-accent)] text-white text-[10px] font-bold leading-none">{{ $itemUnread > 99 ? '99+' : $itemUnread }}</span>
+        @endif
     </a>
 @endforeach
 </div>
@@ -327,3 +332,5 @@
     </script>
 @include('customer._partials.wishlist-script')
 @include('customer._partials.cart-script')
+@include('partials.notification-popup')
+@include('customer._partials.notification-script')
