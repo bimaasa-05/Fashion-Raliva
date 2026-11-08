@@ -7,6 +7,7 @@ use App\Models\Role;
 use App\Models\Store;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Contracts\Provider;
 use Laravel\Socialite\Facades\Socialite;
@@ -35,7 +36,7 @@ class WelcomeNotificationTest extends TestCase
         }
     }
 
-    public function test_register_customer_membuat_welcome_notification(): void
+    public function test_register_customer_tidak_membuat_welcome_notification(): void
     {
         $email = 'welcome-customer-'.Str::random(8).'@example.com';
 
@@ -49,12 +50,8 @@ class WelcomeNotificationTest extends TestCase
         ])->assertRedirect(route('login'));
 
         $user = User::where('email', $email)->firstOrFail();
-        $notification = $this->welcomeFor($user);
 
-        $this->assertSame(route('customer.home'), $notification->url);
-        $this->assertSame(__('Welcome to :brand!', ['brand' => brand()]), $notification->judul);
-        $this->assertSame(__('Your account is ready. Start exploring the latest collection from our ateliers.'), $notification->pesan);
-        $this->assertNull($notification->dibaca_pada);
+        $this->assertSame(0, Notification::where('user_id', $user->user_id)->count());
     }
 
     public function test_register_owner_membuat_welcome_notification_ke_dashboard(): void
@@ -77,7 +74,7 @@ class WelcomeNotificationTest extends TestCase
         $this->assertSame(__('Your business owner account is ready. Complete your store application from the dashboard.'), $notification->pesan);
     }
 
-    public function test_google_user_baru_membuat_welcome_notification(): void
+    public function test_google_user_baru_tidak_membuat_welcome_notification(): void
     {
         $email = 'google-welcome-'.Str::random(8).'@example.com';
 
@@ -91,10 +88,8 @@ class WelcomeNotificationTest extends TestCase
             ->assertRedirect(route('customer.home'));
 
         $user = User::where('email', $email)->firstOrFail();
-        $notification = $this->welcomeFor($user);
 
-        $this->assertSame(route('customer.home'), $notification->url);
-        $this->assertSame(__('Your account is ready. Start exploring the latest collection from our ateliers.'), $notification->pesan);
+        $this->assertSame(0, Notification::where('user_id', $user->user_id)->count());
     }
 
     public function test_google_user_lama_tidak_mendapat_welcome_baru(): void
@@ -163,7 +158,7 @@ class WelcomeNotificationTest extends TestCase
         $this->assertStringContainsString('Admin', $notification->pesan);
     }
 
-    public function test_admin_membuat_customer_tanpa_password_di_notifikasi(): void
+    public function test_admin_membuat_customer_tidak_membuat_notifikasi(): void
     {
         $admin = $this->makeUser(Role::ADMIN);
         $email = 'customer-admin-'.Str::random(8).'@example.com';
@@ -175,50 +170,21 @@ class WelcomeNotificationTest extends TestCase
         ])->assertStatus(302);
 
         $customer = User::where('email', $email)->firstOrFail();
-        $notification = $this->welcomeFor($customer);
 
-        $this->assertSame(route('customer.home'), $notification->url);
-        $this->assertSame($admin->user_id, $notification->aktor_id);
-        $this->assertStringContainsString($admin->nama_lengkap, $notification->pesan);
-        $this->assertStringNotContainsString('Raliva123', $notification->pesan);
+        $this->assertSame(0, Notification::where('user_id', $customer->user_id)->count());
     }
 
-    public function test_halaman_notifikasi_customer_memakai_url_notifikasi(): void
+    public function test_fitur_notifikasi_customer_tidak_tersedia(): void
     {
+        $this->assertFalse(Route::has('customer.notifications'));
+
         $customer = $this->makeUser(Role::CUSTOMER);
 
-        $notification = Notification::create([
-            'user_id' => $customer->user_id,
-            'tipe' => Notification::TIPE_SISTEM,
-            'judul' => 'Info',
-            'pesan' => 'Info',
-            'url' => route('customer.home'),
-        ]);
-
         $this->actingAs($customer)
-            ->get(route('customer.notifications'))
+            ->get(route('customer.home'))
             ->assertOk()
-            ->assertSee("handleNotif(this, {$notification->notification_id}, '".route('customer.home')."')", false);
-    }
-
-    public function test_drawer_customer_menampilkan_welcome_toast_dan_item_notifikasi(): void
-    {
-        $customer = $this->makeUser(Role::CUSTOMER);
-
-        $notification = Notification::create([
-            'user_id' => $customer->user_id,
-            'tipe' => Notification::TIPE_SISTEM,
-            'judul' => __('Welcome to :brand!', ['brand' => brand()]),
-            'pesan' => __('Your account is ready. Start exploring the latest collection from our ateliers.'),
-            'url' => route('customer.home'),
-        ]);
-
-        $this->actingAs($customer)
-            ->get(route('customer.notifications'))
-            ->assertOk()
-            ->assertSee(route('customer.notifications'), false)
-            ->assertSee('ralivaWelcomeShown_'.$notification->notification_id, false)
-            ->assertSee(__('Welcome to :brand!', ['brand' => brand()]));
+            ->assertDontSee('ralivaWelcomeShown_', false)
+            ->assertDontSee('notif-toast-container', false);
     }
 
     private function makeUser(string $role, array $overrides = []): User
