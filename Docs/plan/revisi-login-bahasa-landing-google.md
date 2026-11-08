@@ -1,7 +1,7 @@
 # Revisi Login, Bahasa, Landing Penawaran, dan Google Login
 
 Tanggal dibuat: 2026-11-06  
-Status: Fase 0-4d terimplementasi (automated test pass; browser QA Fase 4d pending); Fase 5 pending; verifikasi browser Google role modal + OTP pending
+Status: Fase 0-5 automated regression pass (339 passed, 4 skipped, 0 failed); browser manual QA dan deployment pending
 Repo: `C:\laragon\www\Raliva-Fashion`  
 Branch: `main`  
 Baseline commit: `a1726835`  
@@ -19,7 +19,7 @@ Dokumen ini adalah **satu file plan** untuk seluruh pekerjaan. Semua fase, file,
 - [x] Fase 4b — Google role modal + OTP reset password (implementasi + automated test; verifikasi browser pending)
 - [x] Fase 4c — perbaikan state OAuth Google (host mismatch)
 - [x] Fase 4d — welcome notification MVP (in-app; automated test pass, browser QA pending)
-- [ ] Fase 5 — regression penuh
+- [x] Fase 5 — regression penuh (automated pass; 4 skip data-dependent; browser manual QA pending)
 
 ---
 
@@ -918,6 +918,31 @@ Hasil targeted:
 
 ## 10. Fase 5 — Regression dan penutupan
 
+### Test environment
+
+Test suite project ini memakai database lokal dan beberapa test bergantung pada
+fixture demo (`admin@raliva.test`, `customer@raliva.test`, dst). DB lokal saat
+regression hanya punya 1 Super Admin, 4 Owner, 1 Gudang, 0 Admin, 0 Customer,
+sehingga 148 test gagal `ModelNotFoundException` sebelum fixture disiapkan.
+
+Solusi yang dipakai: database test terpisah, **bukan** database produksi.
+
+```powershell
+# Hanya untuk database test, jangan pernah untuk production.
+$env:DB_DATABASE='Raliva_Fashion_Testing'
+php artisan migrate:fresh --seed --force
+php artisan db:seed --class=RalivaDemoSeeder --force
+php artisan test
+```
+
+Catatan:
+
+- `migrate:fresh` hanya dijalankan pada `Raliva_Fashion_Testing`.
+- Database produksi tetap wajib `php artisan migrate --force`.
+- `RalivaDemoSeeder` membuat fixture aktif Admin, Produksi, Gudang, Customer,
+  store, produk, dan transaksi demo.
+- DB lokal `Raliva_Fashion` tidak diubah oleh regression ini.
+
 ### Test
 
 ```bash
@@ -929,7 +954,34 @@ php artisan test --filter=PasswordResetTest
 php artisan test
 ```
 
+Hasil full suite (database test terpisah, `RalivaDemoSeeder`):
+
+- **339 passed, 4 skipped, 0 failed, 0 risky (1.615 assertions)**.
+- Durasi: 206,72 detik.
+- 4 skip adalah test scope yang butuh toko kedua:
+  - `AdminQcTanggapanTest`
+  - `GudangBahanTest`
+  - `QcTabRincianGudangTest`
+  - `ProduksiQcGudangTest`
+- Perbaikan test pada Fase 5:
+  - `BrandNameTest` — ekspektasi brand kapital dan favicon fallback
+    `images/logo.svg`.
+  - `OwnerKomplainTest` — tambah assertion agar tidak risky.
+
+Hasil targeted:
+
+- `WelcomeNotificationTest`: 9 passed (43 assertions).
+- `GoogleAuthTest`: 29 passed (198 assertions).
+- `PasswordResetTest`: 19 passed (97 assertions).
+- `OwnerLoginRedirectTest`: 7 passed (19 assertions).
+- `ManajemenPenggunaDeleteTest`: 4 passed (18 assertions).
+- `LocaleSwitcherTest`: 5 passed (21 assertions).
+- `BrandNameTest`: 7 passed (7 assertions).
+
 ### Manual checklist
+
+Status: automated regression selesai; browser manual QA **belum** dijalankan.
+Jangan deploy sebelum checklist ini selesai.
 
 - [ ] Login white mode tanpa shadow.
 - [ ] Landing default Indonesia.
@@ -952,11 +1004,16 @@ php artisan test
 
 ```text
 test: regression revisi login bahasa landing google
+test: sesuaikan ekspektasi brand kapital dan favicon
+test: beri assertion pada smoke test komplain owner
 ```
 
 ### Acceptance
 
-Semua test pass dan manual checklist selesai.
+- [x] Full automated suite: 339 passed, 4 skipped data-dependent, 0 failed.
+- [x] Targeted auth/brand/welcome tests pass.
+- [ ] Browser manual checklist selesai.
+- [ ] Deploy production setelah manual QA dan approval.
 
 ---
 
@@ -1058,19 +1115,21 @@ Semua test pass dan manual checklist selesai.
 - [ ] Konfigurasi provider email production agar OTP benar-benar terkirim.
 - [ ] Verifikasi browser: modal Google, akun Owner baru, dan alur OTP.
 - [ ] Verifikasi browser Fase 4d: badge + welcome toast customer, welcome karyawan, dan URL notifikasi.
+- [x] Database test terpisah `Raliva_Fashion_Testing` disiapkan dan di-seed untuk regression.
+- [ ] Browser manual QA Fase 5 (login, landing, Google, OTP, welcome).
 
 ---
 
 ## 14. Definition of done
 
-- [ ] Empat revisi selesai.
-- [ ] Semua test targeted pass.
-- [ ] Full test pass.
+- [x] Empat revisi selesai di kode dan automated test.
+- [x] Semua test targeted pass.
+- [x] Full test pass (339 passed, 4 skipped data-dependent, 0 failed).
 - [ ] Manual checklist selesai.
-- [ ] Commit rapi, satu file per commit.
-- [ ] Tidak push.
-- [ ] Tidak menyentuh hosting.
-- [ ] Rencana deployment diperbarui setelah revisi selesai.
+- [x] Commit rapi, satu file per commit.
+- [x] Tidak push.
+- [x] Tidak menyentuh hosting.
+- [x] Rencana deployment diperbarui setelah revisi selesai.
 
 ---
 
@@ -1078,24 +1137,34 @@ Semua test pass dan manual checklist selesai.
 
 Ditunda. Jangan mengerjakan deploy di fase ini.
 
-Setelah revisi selesai:
+Setelah revisi selesai dan manual QA disetujui:
 
+- Backup database production terlebih dahulu.
 - Build ulang paket deploy.
 - Pastikan vendor lengkap.
 - Update `.env` production (`APP_LOCALE=id`, Google credentials, SMTP/Resend OTP).
-- Jalankan migration `google_id` dan `password_reset_otps` di production.
-- Jangan jalankan `migrate:fresh` di production.
-- Import/export DB sesuai rencana deployment terpisah.
+- Jalankan `php artisan migrate --force` di production.
+- **Jangan pernah** menjalankan `migrate:fresh` di production.
+- Fase 4d welcome notification tidak menambah migration baru.
+- Bersihkan cache yang relevan (`config:clear`, `route:clear`, `view:clear`).
 - Verifikasi upload dan storage.
+- Verifikasi Google callback persis `https://nexprint.my.id/auth/google/callback`.
+- Verifikasi SMTP port 465 memakai `MAIL_SCHEME=smtps`.
+- Verifikasi brand `NEXPRINT` di tab/browser dan UI.
+- Verifikasi welcome notification customer/owner/karyawan setelah deploy.
 
 ---
 
 ## 16. Catatan eksekusi
 
-Plan ini dibuat sebagai draft. Belum ada file aplikasi yang diubah.
+Plan ini sudah dieksekusi sampai Fase 5 automated regression.
 
-Saat masuk mode implementasi:
+Status terakhir:
 
-1. Mulai dari Fase 0.
-2. Berhenti setelah setiap fase.
-3. Jangan lanjut tanpa konfirmasi.
+1. Fase 0-4d selesai di kode dan automated test.
+2. Fase 5 automated regression: 339 passed, 4 skipped data-dependent, 0 failed.
+3. Browser manual QA dan deployment production masih pending.
+4. Semua commit belum di-push.
+5. Working tree masih menyisakan dua file pre-existing yang tidak terkait:
+   - `database/migrations/2026_10_23_000001_seed_pengaturan_umum_defaults.php`
+   - `tests/Feature/LandingPageTest.php`
