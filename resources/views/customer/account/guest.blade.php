@@ -47,7 +47,7 @@
 </div>
 <p class="atl-eyebrow font-label-caps text-label-caps uppercase tracking-widest text-secondary justify-center mb-xs">{{ __('AKUN :brand', ['brand' => brand()]) }}</p>
 <h2 class="font-headline-md text-headline-md text-on-surface">{{ __('Akun :brand Anda', ['brand' => brand()]) }}</h2>
-<p class="font-body-sm text-body-sm text-on-surface-variant mt-sm max-w-xl mx-auto">{{ __('Masuk untuk mengakses pesanan, alamat, wishlist, ulasan, notifikasi, dan pengaturan akun Anda. Belum punya akun? Daftar sekarang.') }}</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-sm max-w-xl mx-auto">{{ __('Masuk untuk mengakses pesanan, alamat, wishlist, ulasan, dan pengaturan akun Anda. Belum punya akun? Daftar sekarang.') }}</p>
 <div class="flex flex-col sm:flex-row gap-sm justify-center mt-lg max-w-md mx-auto">
 <a href="{{ route('login', ['redirect' => route('customer.account')]) }}" class="btn-gold flex-1 inline-flex items-center justify-center gap-2 px-xl py-3 rounded-full font-label-caps text-label-caps uppercase tracking-widest">
 <span class="material-symbols-outlined text-[18px]">login</span> {{ __('Masuk') }}
@@ -76,10 +76,6 @@
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-md card-premium flex gap-sm">
 <span class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0 border border-outline-variant/30"><span class="material-symbols-outlined text-secondary text-[20px]">star</span></span>
 <div class="min-w-0"><h3 class="font-title-md text-title-md text-on-surface">{{ __('Ulasan') }}</h3><p class="font-body-sm text-body-sm text-on-surface-variant mt-1">{{ __('Tulis ulasan setelah pesanan selesai untuk membantu pembeli lain.') }}</p></div>
-</div>
-<div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-md card-premium flex gap-sm">
-<span class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0 border border-outline-variant/30"><span class="material-symbols-outlined text-secondary text-[20px]">notifications</span></span>
-<div class="min-w-0"><h3 class="font-title-md text-title-md text-on-surface">{{ __('Notifikasi') }}</h3><p class="font-body-sm text-body-sm text-on-surface-variant mt-1">{{ __('Dapatkan update pesanan, promo, dan info penting lainnya.') }}</p></div>
 </div>
 <div class="bg-surface-container-lowest border border-[var(--border-soft)] rounded-xl p-md card-premium flex gap-sm">
 <span class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center shrink-0 border border-outline-variant/30"><span class="material-symbols-outlined text-secondary text-[20px]">settings</span></span>
