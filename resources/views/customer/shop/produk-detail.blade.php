@@ -431,7 +431,7 @@
                         </div>
 @empty
                     <div class="min-w-full snap-start relative">
-                        <img class="w-full h-full object-cover" alt="{{ $product->nama_produk }}" src="https://picsum.photos/seed/product/900/1200"/>
+                        <img class="w-full h-full object-cover" alt="{{ $product->nama_produk }}" src="{{ product_photo_url(null, $product->product_id) }}"/>
                         </div>
 @endforelse
                     </div>
@@ -682,7 +682,7 @@
                         <!-- Related -->
                         <a href="{{ route('customer.shop.produk-detail', $rp->product_id) }}" class="block group cursor-pointer">
                             <div class="relative w-full aspect-[3/4] mb-sm bg-surface-variant overflow-hidden">
-                                <img class="w-full h-full object-cover " alt="{{ $rp->nama_produk }}" src="{{ $rpImage ? (photo_url($rpImage)) : 'https://picsum.photos/seed/related/900/1200' }}"/>
+                                <img class="w-full h-full object-cover " alt="{{ $rp->nama_produk }}" src="{{ product_photo_url($rpImage, $rp->product_id) }}"/>
 @php $rpWl = in_array($rp->product_id, $wishlistedIds, true); @endphp
 <button type="button" data-wishlist-toggle data-product-id="{{ $rp->product_id }}" aria-label="{{ __('Add to wishlist') }}" class="absolute top-2 right-2 p-2 text-on-surface hover:text-secondary transition-colors flex items-center{{ $rpWl ? ' wishlisted-active' : '' }}">
 <span class="material-symbols-outlined" data-icon="favorite{{ $rpWl ? '' : '_border' }}"@if($rpWl) data-weight="fill"@endif>favorite{{ $rpWl ? '' : '_border' }}</span>
