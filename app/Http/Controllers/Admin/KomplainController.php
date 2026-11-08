@@ -91,17 +91,7 @@ class KomplainController extends Controller
             $komplain->update(['status' => Complaint::STATUS_DIPROSES]);
         }
 
-        if ($komplain->user_id) {
-            Notification::create([
-                'user_id' => $komplain->user_id,
-                'aktor_id' => Auth::id(),
-                'tipe' => Notification::TIPE_KOMPLAIN,
-                'judul' => 'Balasan Komplain',
-                'pesan' => sprintf('Toko membalas komplain #%s.', $komplain->kode ?? $komplain->complaint_id),
-                'url' => route('customer.order-tracking'),
-            ]);
-        }
-        Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Komplain Dibalas', sprintf('Balasan komplain #%s terkirim ke customer.', $komplain->kode ?? $komplain->complaint_id), route('admin.komplain', ['open' => $komplain->complaint_id]));
+        Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Komplain Dibalas', sprintf('Balasan komplain #%s tersimpan.', $komplain->kode ?? $komplain->complaint_id), route('admin.komplain', ['open' => $komplain->complaint_id]));
 
         return response()->json($pesan->load('sender'), 201);
     }
