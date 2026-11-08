@@ -7,6 +7,7 @@ use App\Http\Middleware\EnsureRole;
 use App\Models\Role;
 use App\Models\Setting;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -54,6 +55,8 @@ class RegisterController extends Controller
             'email_verified_at' => now(),
             'status' => User::STATUS_AKTIF,
         ]);
+
+        NotificationService::sendWelcome($user);
 
         if ($roleName === Role::OWNER) {
             return redirect()->route('login')
