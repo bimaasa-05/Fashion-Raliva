@@ -3,7 +3,6 @@
 namespace App\Support;
 
 use App\Models\Checkout;
-use App\Models\Notification;
 use App\Models\Order;
 use App\Models\Payment;
 use Illuminate\Support\Facades\DB;
@@ -55,16 +54,6 @@ class PaymentExpiry
                 Order::where('checkout_id', $checkout->checkout_id)
                     ->where('status', Order::STATUS_PENDING_PAYMENT)
                     ->update(['status' => Order::STATUS_DIBATALKAN]);
-
-                if ($checkout->user_id) {
-                    Notification::create([
-                        'user_id' => $checkout->user_id,
-                        'tipe' => Notification::TIPE_PEMBAYARAN,
-                        'judul' => __('Pembayaran Kedaluwarsa'),
-                        'pesan' => __('Pembayaran telah melewati batas waktu dan pesanan dibatalkan otomatis. Silakan lakukan pemesanan ulang bila masih ingin berbelanja.'),
-                        'url' => route('customer.order-tracking'),
-                    ]);
-                }
             });
 
             $expired++;
