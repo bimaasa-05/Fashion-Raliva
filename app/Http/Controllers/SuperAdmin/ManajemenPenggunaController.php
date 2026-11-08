@@ -10,6 +10,7 @@ use App\Models\Store;
 use App\Models\StoreStaff;
 use App\Models\User;
 use App\Models\WarehouseStaff;
+use App\Services\NotificationService;
 use App\Support\ActivityLogger;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -110,14 +111,7 @@ class ManajemenPenggunaController extends Controller
         );
 
         if ($user->user_id !== auth()->id()) {
-            Notification::create([
-                'user_id' => $user->user_id,
-                'aktor_id' => ActivityLogger::resolveActorId(),
-                'tipe' => Notification::TIPE_SISTEM,
-                'judul' => 'Akun Dibuat',
-                'pesan' => sprintf('Akun Anda "%s" telah dibuat dengan peran "%s".', $user->nama_lengkap, $roleName),
-                'url' => $this->routeForRole($roleName),
-            ]);
+            NotificationService::sendWelcome($user, auth()->user());
         }
 
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Pengguna Ditambahkan', sprintf('Pengguna "%s" (peran %s) ditambahkan.', $user->nama_lengkap, $roleName), route('superadmin.manajemen-pengguna'));
