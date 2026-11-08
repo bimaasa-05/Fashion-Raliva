@@ -329,7 +329,7 @@
 @php
     $v = $item->productVariant;
     $img = $v?->product?->images->first()?->file_gambar ?? '';
-    $imgUrl = $img ? (photo_url($img)) : 'https://picsum.photos/seed/order-' . $item->order_item_id . '/900/1200';
+    $imgUrl = product_photo_url($img, $item->order_item_id);
     $warna = $v?->warna;
     $ukuran = $v?->ukuran;
 @endphp
@@ -357,6 +357,7 @@
 </div>
 
 @if($shipment)
+
 <p class="font-body-sm text-body-sm text-on-surface-variant mt-md">
 @if($shipment->nomor_resi)
 {{ __('Resi') }}: <strong class="text-on-surface">{{ $shipment->nomor_resi }}</strong> @if($shipment->courier) • {{ $shipment->courier->nama_kurir }}@endif @if($shipment->shippingService) • {{ $shipment->shippingService->nama_layanan }}@endif
