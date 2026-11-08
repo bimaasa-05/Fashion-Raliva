@@ -272,7 +272,7 @@ $icons = [
     \App\Models\Notification::TIPE_PROMO => 'sell',
     \App\Models\Notification::TIPE_SISTEM => 'info',
 ];
-$notifHref = route('customer.order-tracking');
+$notifHref = $n->url ?: route('customer.order-tracking');
 if ($n->tipe === \App\Models\Notification::TIPE_KOMPLAIN) {
     preg_match('/#(\d+)/', (string) $n->pesan, $m);
     $notifHref = isset($m[1]) ? route('customer.komplain', ['open' => (int) $m[1]]) : route('customer.komplain');
