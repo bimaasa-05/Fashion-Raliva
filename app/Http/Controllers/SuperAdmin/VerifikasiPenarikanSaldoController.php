@@ -104,14 +104,6 @@ class VerifikasiPenarikanSaldoController extends Controller
             sprintf('Menyetujui penarikan saldo Rp %s (bersih Rp %s) milik %s; menunggu pembayaran.', number_format((float) $penarikan->jumlah, 0, ',', '.'), number_format((float) $penarikan->jumlah_bersih, 0, ',', '.'), $penarikan->user?->nama_lengkap ?? '-')
         );
 
-        Notification::create([
-            'user_id' => $penarikan->user_id,
-            'aktor_id' => ActivityLogger::resolveActorId(),
-            'tipe' => Notification::TIPE_WALLET,
-            'judul' => __('Penarikan Disetujui'),
-            'pesan' => sprintf(__('Dana penarikan sebesar Rp %s telah disetujui. Pembayaran segera ditransfer ke tujuan Anda.'), number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')),
-            'url' => route('customer.saldo.tarik.show', $penarikan->customer_withdrawal_id),
-        ]);
         Notification::fireSelf(Notification::TIPE_WALLET, __('Penarikan Saldo Disetujui'), sprintf(__('Penarikan saldo Rp %s disetujui; menunggu pembayaran.'), number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')), route('superadmin.verifikasi-penarikan-saldo'));
 
         return back()->with('toast', [
@@ -161,14 +153,6 @@ class VerifikasiPenarikanSaldoController extends Controller
             sprintf('Menolak penarikan saldo %s dengan alasan: %s', $penarikan->user?->nama_lengkap ?? '-', $data['alasan'])
         );
 
-        Notification::create([
-            'user_id' => $penarikan->user_id,
-            'aktor_id' => ActivityLogger::resolveActorId(),
-            'tipe' => Notification::TIPE_WALLET,
-            'judul' => __('Penarikan Ditolak'),
-            'pesan' => sprintf(__('Pengajuan penarikan Rp %s ditolak dan saldo dikembalikan. Alasan: %s'), number_format((float) $penarikan->jumlah, 0, ',', '.'), $data['alasan']),
-            'url' => route('customer.saldo.tarik.show', $penarikan->customer_withdrawal_id),
-        ]);
         Notification::fireSelf(Notification::TIPE_WALLET, __('Penarikan Saldo Ditolak'), sprintf(__('Penarikan saldo Rp %s ditolak.'), number_format((float) $penarikan->jumlah, 0, ',', '.')), route('superadmin.verifikasi-penarikan-saldo'));
 
         return back()->with('toast', [
@@ -216,14 +200,6 @@ class VerifikasiPenarikanSaldoController extends Controller
             sprintf('Menandai penarikan saldo Rp %s milik %s sebagai dibayar.', number_format((float) $penarikan->jumlah_bersih, 0, ',', '.'), $penarikan->user?->nama_lengkap ?? '-')
         );
 
-        Notification::create([
-            'user_id' => $penarikan->user_id,
-            'aktor_id' => ActivityLogger::resolveActorId(),
-            'tipe' => Notification::TIPE_WALLET,
-            'judul' => __('Penarikan Dibayar'),
-            'pesan' => sprintf(__('Dana penarikan sebesar Rp %s telah ditransfer ke tujuan Anda.'), number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')),
-            'url' => route('customer.saldo.tarik.show', $penarikan->customer_withdrawal_id),
-        ]);
         Notification::fireSelf(Notification::TIPE_WALLET, __('Penarikan Saldo Dibayar'), sprintf(__('Penarikan saldo Rp %s ditandai dibayar.'), number_format((float) $penarikan->jumlah_bersih, 0, ',', '.')), route('superadmin.verifikasi-penarikan-saldo'));
 
         return back()->with('toast', [
