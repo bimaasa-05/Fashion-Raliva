@@ -22,3 +22,28 @@ if (! function_exists('photo_url')) {
         return asset('storage/'.$path);
     }
 }
+
+if (! function_exists('product_photo_url')) {
+    /**
+     * URL foto produk dengan fallback aset lokal.
+     *
+     * Path kosong atau URL picsum lama tidak lagi dipakai agar halaman tidak
+     * bergantung pada layanan gambar eksternal.
+     */
+    function product_photo_url($path = null, $seed = null): string
+    {
+        if ($path && ! str_contains((string) $path, 'picsum.photos')) {
+            return photo_url($path);
+        }
+
+        if ($seed !== null && $seed !== '') {
+            $index = is_numeric($seed)
+                ? ((abs((int) $seed) - 1) % 16 + 16) % 16 + 1
+                : abs(crc32((string) $seed)) % 16 + 1;
+        } else {
+            $index = 1;
+        }
+
+        return asset('assets/seeders/'.$index.'.jfif');
+    }
+}
