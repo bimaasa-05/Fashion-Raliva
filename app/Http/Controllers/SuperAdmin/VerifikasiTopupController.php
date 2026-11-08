@@ -4,9 +4,7 @@ namespace App\Http\Controllers\SuperAdmin;
 
 use App\Http\Controllers\Controller;
 use App\Models\CustomerTopup;
-use App\Models\Notification;
 use App\Models\Payment;
-use App\Services\NotificationService;
 use App\Support\ActivityLogger;
 use App\Support\CustomerWalletService;
 use Illuminate\Http\Request;
@@ -84,15 +82,6 @@ class VerifikasiTopupController extends Controller
             'Topup saldo disetujui: Rp '.number_format((float) $topup->jumlah, 0, ',', '.').' (#'.$topup->customer_topup_id.')',
         );
 
-        NotificationService::fire(
-            $topup->user_id,
-            Notification::TIPE_WALLET,
-            __('Topup Saldo Disetujui'),
-            sprintf(__('Saldo Anda bertambah Rp %s.'), number_format((float) $topup->jumlah, 0, ',', '.')),
-            null,
-            route('customer.saldo')
-        );
-
         return back()->with('toast', [
             'message' => __('Topup disetujui, saldo customer bertambah.'),
             'icon' => 'task_alt',
@@ -127,15 +116,6 @@ class VerifikasiTopupController extends Controller
             ['status' => $topup->status],
             ['status' => CustomerTopup::STATUS_DITOLAK],
             'Topup saldo ditolak: '.$validated['alasan'].' (#'.$topup->customer_topup_id.')',
-        );
-
-        NotificationService::fire(
-            $topup->user_id,
-            Notification::TIPE_WALLET,
-            __('Topup Saldo Ditolak'),
-            sprintf(__('Topup Anda ditolak: %s. Silakan upload ulang bukti pembayaran.'), $validated['alasan']),
-            null,
-            route('customer.saldo')
         );
 
         return back()->with('toast', [
