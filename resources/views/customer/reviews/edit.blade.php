@@ -252,7 +252,7 @@
 @php
 $prod = $review->product;
 $img = $prod?->images->first()?->file_gambar ?? '';
-$imgUrl = $img ? (photo_url($img)) : 'https://picsum.photos/seed/edit-'.$review->review_id.'/900/1200';
+$imgUrl = product_photo_url($img, $prod?->product_id);
 $link = $prod ? route('customer.shop.produk-detail', $prod->product_id) : '#';
 @endphp
 <a href="{{ $link }}" class="w-20 md:w-24 h-24 md:h-28 bg-surface-container shrink-0 overflow-hidden block rounded-xl">
