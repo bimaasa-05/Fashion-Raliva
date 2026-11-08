@@ -677,7 +677,7 @@
                         $pv = $i->productVariant;
                         $pr = $pv?->product;
                         $img = $pr?->images->first()?->file_gambar ?? '';
-                        $imgUrl = $img ? photo_url($img) : 'https://picsum.photos/seed/checkout/600/800';
+                        $imgUrl = product_photo_url($img, $i->product_variant_id);
                         $isWrapped = $idx >= 2;
                         $isThird = $idx === 2;
                         $stok = (int) ($pv?->warehouseStocks->sum('jumlah_stok') ?? 0);
