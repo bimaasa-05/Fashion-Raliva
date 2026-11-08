@@ -2,9 +2,14 @@
 
 namespace App\Services;
 
+use App\Http\Middleware\EnsureRole;
 use App\Models\Notification;
+use App\Models\Role;
+use App\Models\Store;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Throwable;
 
 class NotificationService
 {
@@ -24,6 +29,64 @@ class NotificationService
             'pesan' => $pesan,
             'url' => $url,
         ]);
+    }
+
+    /**
+     * Notifikasi selamat datang untuk akun yang baru dibuat.
+     *
+     * Kegagalan membuat notifikasi tidak boleh menggagalkan pembuatan akun,
+     * jadi seluruh proses dibungkus dan hanya dicatat sebagai warning.
+     */
+    public static function sendWelcome(User $user, ?User $actor = null, ?Store $store = null): ?Notification
+    {
+        try {
+            $roleName = $user->role?->nama_role;
+
+            $judul = __('Welcome to :brand!', ['brand' => brand()]);
+
+            $pesan = match ($roleName) {
+                Role::OWNER => __('Your business owner account is ready. Complete your store application from the dashboard.'),
+                Role::CUSTOMER => $actor
+                    ? __('Your account has been created by :actor. Please change your password from Account Settings.', ['actor' => $actor->nama_lengkap])
+                    : __('Your account is ready. Start exploring the latest collection from our ateliers.'),
+                Role::ADMIN, Role::PRODUKSI, Role::GUDANG => $store
+                    ? __('You have been added as :role at :store. Open your dashboard to get started.', ['role' => $roleName, 'store' => $store->nama_toko])
+                    : __('Your account has been created with the :role role. Open your dashboard to get started.', ['role' => $roleName]),
+                default => __('Your account is ready. Open your dashboard to get started.'),
+            };
+
+            return static::fire(
+                $user->user_id,
+                Notification::TIPE_SISTEM,
+                $judul,
+                $pesan,
+                $actor?->user_id,
+                route(EnsureRole::homeRouteFor($roleName)),
+            );
+        } catch (Throwable $exception) {
+            Log::warning('Gagal membuat welcome notification.', [
+                'user_id' => $user->user_id,
+                'exception' => $exception::class,
+                'message' => $exception->getMessage(),
+            ]);
+
+            return null;
+        }
+    }
+
+    /**
+     * Deteksi welcome notification tanpa menambah tipe notifikasi baru.
+     */
+    public static function isWelcome(Notification $notification): bool
+    {
+        $brand = brand();
+        $titles = array_unique([
+            __('Welcome to :brand!', ['brand' => $brand]),
+            __('Welcome to :brand!', ['brand' => $brand], 'en'),
+            __('Welcome to :brand!', ['brand' => $brand], 'id'),
+        ]);
+
+        return in_array($notification->judul, $titles, true);
     }
 
     public static function sendToRole(
