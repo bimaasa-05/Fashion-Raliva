@@ -1,7 +1,8 @@
 # Revisi Login, Bahasa, Landing Penawaran, dan Google Login
 
 Tanggal dibuat: 2026-11-06  
-Status: Fase 0-5 automated regression pass (339 passed, 4 skipped, 0 failed); browser manual QA dan deployment pending
+Terakhir diperbarui: 2026-11-09
+Status: Fase 0-8 automated regression pass (338 passed, 4 skipped, 0 failed); notifikasi customer dihapus; browser manual QA dan deployment production pending
 Repo: `C:\laragon\www\Raliva-Fashion`  
 Branch: `main`  
 Baseline commit: `a1726835`  
@@ -20,6 +21,9 @@ Dokumen ini adalah **satu file plan** untuk seluruh pekerjaan. Semua fase, file,
 - [x] Fase 4c — perbaikan state OAuth Google (host mismatch)
 - [x] Fase 4d — welcome notification MVP (in-app; automated test pass, browser QA pending)
 - [x] Fase 5 — regression penuh (automated pass; 4 skip data-dependent; browser manual QA pending)
+- [x] Fase 6 — hapus fitur notifikasi customer (UI, route, dan pembuatan notifikasi)
+- [x] Fase 7 — foto produk lokal, stok varian aktif, dan normalisasi warna
+- [x] Fase 8 — command repair idempotent, regression ulang, dan dokumentasi (automated pass; browser QA pending)
 
 ---
 
@@ -731,18 +735,23 @@ Hasil: 29 passed (198 assertions).
 
 ## 9d. Fase 4d — Welcome Notification MVP (In-App)
 
+> **Diperbarui oleh Fase 6:** fitur notifikasi customer dihapus seluruhnya.
+> Welcome notification sekarang hanya untuk Owner dan karyawan internal
+> (Admin, Produksi, Gudang, SuperAdmin). Customer tidak menerima welcome
+> notification dan tidak memiliki halaman/route notifikasi.
+
 ### Scope
 
-Notifikasi selamat datang in-app untuk akun baru. Email undangan karyawan **tidak**
-termasuk fase ini.
+Notifikasi selamat datang in-app untuk akun baru internal. Email undangan
+karyawan **tidak** termasuk fase ini.
 
 Alur wajib:
 
-1. Register customer/owner.
-2. Google user baru.
+1. Register owner.
+2. Google user baru dengan intent Owner.
 3. Owner menambah karyawan.
-4. SuperAdmin membuat user.
-5. Admin membuat customer.
+4. SuperAdmin membuat user internal.
+5. Admin membuat user internal.
 
 Opsional/ditunda:
 
@@ -757,10 +766,10 @@ Opsional/ditunda:
 |---|---|
 | Tipe notifikasi | `Notification::TIPE_SISTEM` |
 | Channel | In-app saja |
-| Penerima | Akun yang baru dibuat |
+| Penerima | Owner dan karyawan internal; Customer **tidak** menerima |
 | Owner saat menambah karyawan | Tetap dapat notifikasi terpisah |
 | URL | `EnsureRole::homeRouteFor($user->role?->nama_role)` |
-| Customer UI | Item Notifikasi di drawer + badge + welcome toast sekali per sesi |
+| Customer UI | Dihapus pada Fase 6 (drawer, badge, halaman, route, toast) |
 | Duplikasi | Dicegah karena notifikasi dibuat hanya saat akun dibuat |
 | Password | Tidak boleh muncul di pesan notifikasi |
 | Kegagalan notifikasi | Tidak boleh menggagalkan pembuatan akun |
@@ -775,8 +784,8 @@ Opsional/ditunda:
 - [x] 4d.3 — Hook Google user baru
 - [x] 4d.4 — Hook owner tambah karyawan
 - [x] 4d.5 — Hook SuperAdmin/Admin user creation
-- [x] 4d.6 — Customer drawer badge + welcome toast
-- [x] 4d.7 — Fix URL notifikasi customer
+- [x] 4d.6 — Customer drawer badge + welcome toast (dihapus kembali di Fase 6)
+- [x] 4d.7 — Fix URL notifikasi customer (dihapus kembali di Fase 6)
 - [x] 4d.8 — Translation ID/EN
 - [x] 4d.9 — Feature tests
 - [ ] 4d.10 — Manual QA (automated smoke pass; browser QA digabung ke Fase 5)
@@ -1017,6 +1026,178 @@ test: beri assertion pada smoke test komplain owner
 
 ---
 
+## 10b. Fase 6 — Hapus Fitur Notifikasi Customer
+
+### Keputusan
+
+- Seluruh fitur notifikasi customer dihapus: welcome toast, drawer menu/badge,
+  halaman notifikasi, route, link akun, dan promo untuk guest.
+- Customer tidak lagi menjadi penerima notifikasi baru.
+- Notifikasi internal Owner, Admin, Produksi, Gudang, dan SuperAdmin tetap.
+- `NotificationService::sendWelcome()` melewati Customer.
+- Baris notifikasi customer lama **tidak** dihapus otomatis. Purge database
+  hanya boleh dijalankan setelah approval terpisah.
+
+### Implementasi
+
+UI dan route:
+
+- Hapus `app/Http/Controllers/Customer/NotificationController.php`.
+- Hapus `resources/views/customer/notifications/index.blade.php`.
+- Hapus `resources/views/customer/_partials/notification-script.blade.php`.
+- Hapus route `customer.notifications`, `customer.notifications.mark-all-read`,
+  dan `customer.notifications.read`.
+- Hapus item drawer, badge, include toast/popup customer, link akun, dan kartu
+  notifikasi di halaman guest.
+
+Pembuatan notifikasi customer dihapus dari:
+
+- `Admin/DataPesananController`, `Admin/KomplainController`,
+  `Admin/PengembalianDanaController`, `Admin/PengirimanController`,
+  `Admin/VerifikasiPembayaranController`.
+- `Customer/CheckoutController`, `Customer/SaldoController`.
+- `Owner/KomplainController`, `Owner/PengembalianDanaController`,
+  `Owner/PesananController`, `Owner/PromoController`.
+- `SuperAdmin/ManajemenPenggunaController`,
+  `SuperAdmin/ModerasiProdukController`,
+  `SuperAdmin/PengembalianDanaController`, `SuperAdmin/PengirimanController`,
+  `SuperAdmin/UlasanProdukTokoController`,
+  `SuperAdmin/VerifikasiPenarikanSaldoController`,
+  `SuperAdmin/VerifikasiTopupController`.
+- `Store::notifyFollowers()`, `PaymentExpiry`, `OrderAutoComplete`, dan promo.
+
+Notifikasi internal yang tersisa dipertahankan, termasuk notifikasi owner saat
+ada pesanan baru, notifikasi produksi, gudang, admin, dan superadmin.
+
+### Test
+
+- `WelcomeNotificationTest`:
+  - Customer register/Google tidak membuat welcome notification.
+  - Customer tidak punya route notifikasi.
+  - Owner/karyawan internal tetap mendapat welcome.
+  - Admin membuat customer tidak membuat notifikasi.
+- `AdminFulfillmentSwitchTest`:
+  - Tidak ada notifikasi customer.
+  - Notifikasi internal admin tetap dibuat.
+
+### Acceptance
+
+- [x] Tidak ada route/halaman/UI notifikasi customer.
+- [x] Tidak ada pembuatan notifikasi baru untuk customer.
+- [x] Notifikasi internal tetap berfungsi.
+- [x] Test terkait lulus.
+- [ ] Purge baris notifikasi customer lama (butuh approval).
+
+---
+
+## 10c. Fase 7 — Foto Produk Lokal, Stok, dan Warna
+
+### Keputusan
+
+- Foto produk memakai aset lokal `public/assets/seeders/*.jfif`, bukan
+  `picsum.photos`.
+- Path disimpan relatif (`assets/seeders/1.jfif`) agar production memakai
+  domain sendiri; tidak ada hardcode `http://localhost:8000`.
+- Setiap produk memakai pasangan foto yang relevan dan berbeda bila tersedia.
+- Tote Bag, Cap, dan rok memakai aset terdekat sementara dan ditandai untuk
+  penggantian nanti.
+- Stok awal: 20 pcs per varian aktif untuk repair data lama; fresh seed tetap
+  memakai kuantitas `OwnerSeeder` dan default 20 dari `ProductSeeder`.
+- Warna dinormalisasi ke nama Indonesia/fashion dan `warna_hex` diisi agar
+  semua swatch tampil.
+
+### Implementasi
+
+- `app/Support/DemoProductCatalog.php` menjadi sumber tunggal:
+  - `IMAGE_PAIRS` untuk 16 produk demo.
+  - `TEMPORARY_IMAGE_PRODUCTS` untuk aset sementara.
+  - `STOCK_PER_VARIANT = 20`, `STOCK_MINIMUM = 5`.
+  - Helper `imagePathsFor()`, `canonicalColor()`, `colorHex()`.
+- `app/Support/WarnaPalet.php`:
+  - Tambah `Khaki`, `Ivory`, `Sand`, `Charcoal`, `Blush`, `Taupe`,
+    `Muted Sand`, `Warm Sand`, `Indigo`, `Washed`.
+  - Alias `White/Black/Grey/Gray/Brown` ke nama Indonesia.
+- `app/Support/photo_url.php`:
+  - Tambah `product_photo_url($path, $seed)`.
+  - Path kosong/picsum lama diganti aset lokal deterministik.
+- Ganti semua fallback picsum di view customer dengan `product_photo_url()`.
+- `OwnerSeeder`, `ProductSeeder`, `RalivaDemoSeeder`, `GudangDemoSeeder`:
+  - Warna kanonik dan `warna_hex`.
+  - Foto lokal untuk produk demo.
+  - Stok gudang untuk varian aktif.
+
+### Acceptance
+
+- [x] Tidak ada fallback picsum di view customer.
+- [x] Foto produk tersimpan sebagai path relatif.
+- [x] Semua varian aktif punya stok di gudang aktif.
+- [x] Stok orphan dibersihkan.
+- [x] Semua varian punya `warna_hex`.
+- [x] Test `CheckoutPhotoTest` memakai fallback lokal.
+- [ ] Ganti aset sementara Tote Bag, Cap, dan rok dengan foto final.
+
+---
+
+## 10d. Fase 8 — Repair Idempotent dan Regression
+
+### Command
+
+```text
+php artisan raliva:repair-demo-products
+php artisan raliva:repair-demo-products --dry-run
+php artisan raliva:repair-demo-products --store=2
+```
+
+Command memperbaiki produk demo secara idempotent:
+
+- Foto: membuat/mengganti ke path lokal yang benar.
+- Warna: normalisasi nama dan isi `warna_hex`.
+- Stok: pastikan 20 pcs per varian aktif di gudang aktif pertama.
+- Orphan: hapus `warehouse_stocks` yang menunjuk varian/gudang tidak ada.
+- `--dry-run` hanya menampilkan rencana tanpa mengubah data.
+
+### Hasil repair lokal `Raliva_Fashion`
+
+Dry-run dan run pertama:
+
+- 16 produk demo.
+- 16 foto dibuat, 16 foto diperbarui.
+- 51 warna dinormalisasi, 108 hex diisi.
+- 108 stok dibuat, 202 stok orphan dihapus.
+
+Run kedua (idempotency): semua hitungan perubahan = 0.
+
+### Regression
+
+Database test khusus `Raliva_Fashion_Testing`:
+
+```powershell
+$env:DB_DATABASE='Raliva_Fashion_Testing'
+php artisan migrate:fresh --seed --force
+php artisan db:seed --class=RalivaDemoSeeder --force
+php artisan test
+```
+
+Hasil final:
+
+- **338 passed, 4 skipped, 0 failed (1.608 assertions)**.
+- 4 skip tetap data-dependent (butuh toko kedua).
+- Targeted Fase 6/7: 21 passed (92 assertions).
+- `php artisan view:cache` berhasil.
+- `php artisan route:list --path=customer` tidak memuat route notifikasi.
+
+### Acceptance
+
+- [x] Command repair terdaftar dan dry-run berjalan.
+- [x] Repair lokal berhasil dan idempotent.
+- [x] Database test di-seed ulang dengan seeder baru.
+- [x] Full regression lulus.
+- [x] Blade cache dan route customer valid.
+- [ ] Browser manual QA.
+- [ ] Deploy production setelah approval.
+
+---
+
 ## 11. File map ringkas
 
 ### Login shadow
@@ -1055,21 +1236,43 @@ test: beri assertion pada smoke test komplain owner
 - `lang/en.json`
 - `tests/Feature/GoogleLoginTest.php`
 
-### Welcome Notification (Fase 4d)
-- `app/Services/NotificationService.php`
+### Welcome Notification (Fase 4d, disesuaikan Fase 6)
+- `app/Services/NotificationService.php` (Customer dilewati)
 - `app/Http/Controllers/Auth/RegisterController.php`
 - `app/Http/Controllers/Auth/GoogleController.php`
 - `app/Http/Controllers/Owner/KaryawanController.php`
 - `app/Http/Controllers/SuperAdmin/ManajemenPenggunaController.php`
 - `app/Http/Controllers/Admin/DataCustomerController.php`
 - `app/Providers/AppServiceProvider.php`
-- `resources/views/customer/_partials/drawer.blade.php`
-- `resources/views/customer/_partials/notification-script.blade.php` (baru)
-- `resources/views/customer/notifications/index.blade.php`
+- `resources/views/customer/_partials/drawer.blade.php` (item notifikasi dihapus)
+- `resources/views/customer/_partials/notification-script.blade.php` (dihapus)
+- `resources/views/customer/notifications/index.blade.php` (dihapus)
 - `resources/views/Owner/karyawan/index.blade.php`
 - `lang/id.json`
 - `lang/en.json`
 - `tests/Feature/WelcomeNotificationTest.php` (baru)
+
+### Notifikasi customer dihapus (Fase 6)
+- `app/Http/Controllers/Customer/NotificationController.php` (dihapus)
+- `routes/web.php` (3 route dihapus)
+- `resources/views/customer/notifications/index.blade.php` (dihapus)
+- `resources/views/customer/_partials/notification-script.blade.php` (dihapus)
+- `resources/views/customer/_partials/drawer.blade.php`
+- `resources/views/customer/account/index.blade.php`
+- `resources/views/customer/account/guest.blade.php`
+- Controller Admin/Owner/SuperAdmin/Customer yang membuat notifikasi customer
+
+### Foto lokal, stok, warna (Fase 7-8)
+- `app/Support/DemoProductCatalog.php` (baru)
+- `app/Support/WarnaPalet.php`
+- `app/Support/photo_url.php`
+- `app/Console/Commands/RepairDemoProducts.php` (baru)
+- `database/seeders/OwnerSeeder.php`
+- `database/seeders/ProductSeeder.php`
+- `database/seeders/RalivaDemoSeeder.php`
+- `database/seeders/GudangDemoSeeder.php`
+- `resources/views/customer/**/*.blade.php` (fallback foto)
+- `tests/Feature/CheckoutPhotoTest.php`
 
 ---
 
@@ -1096,12 +1299,15 @@ test: beri assertion pada smoke test komplain owner
 | OTP reset | OTP benar mengganti password dan menghapus record |
 | OTP invalid | OTP salah/kedaluwarsa/max attempts ditolak |
 | Reset link lama | Route lama 404 |
-| Welcome register | Customer/Owner baru dapat welcome notification |
-| Welcome Google | User baru dapat welcome; user lama tidak |
+| Welcome register | Owner baru dapat welcome; Customer tidak |
+| Welcome Google | Owner baru dapat welcome; user lama/Customer tidak |
 | Welcome karyawan | Karyawan dapat welcome; owner dapat notifikasi terpisah |
-| Welcome SuperAdmin/Admin | User/customer baru dapat welcome tanpa password |
-| Welcome customer UI | Drawer item, badge, toast sekali per sesi |
-| Welcome URL | Halaman notifikasi customer memakai `$notification->url` |
+| Welcome SuperAdmin/Admin | User internal baru dapat welcome tanpa password |
+| Notifikasi customer | Route, halaman, drawer, badge, dan toast tidak tersedia |
+| Foto produk | Fallback memakai `assets/seeders/*.jfif`, bukan picsum |
+| Stok varian | Varian aktif punya stok di gudang aktif; orphan dibersihkan |
+| Warna | Nama kanonik dan `warna_hex` terisi |
+| Repair command | Dry-run dan run idempotent |
 
 ---
 
@@ -1114,19 +1320,23 @@ test: beri assertion pada smoke test komplain owner
 - [x] Konfirmasi shadow login dihapus total, bukan hanya outer shadow.
 - [ ] Konfigurasi provider email production agar OTP benar-benar terkirim.
 - [ ] Verifikasi browser: modal Google, akun Owner baru, dan alur OTP.
-- [ ] Verifikasi browser Fase 4d: badge + welcome toast customer, welcome karyawan, dan URL notifikasi.
+- [ ] Verifikasi browser Fase 6: tidak ada menu/halaman/route notifikasi customer.
+- [ ] Verifikasi browser Fase 7: foto lokal tampil, swatch warna muncul, stok terbaca.
 - [x] Database test terpisah `Raliva_Fashion_Testing` disiapkan dan di-seed untuk regression.
-- [ ] Browser manual QA Fase 5 (login, landing, Google, OTP, welcome).
+- [ ] Browser manual QA Fase 5-8 (login, landing, Google, OTP, welcome internal, foto/stok/warna).
+- [ ] Purge baris notifikasi customer lama (butuh approval terpisah).
+- [ ] Ganti aset sementara Tote Bag, Cap, dan rok.
 
 ---
 
 ## 14. Definition of done
 
-- [x] Empat revisi selesai di kode dan automated test.
+- [x] Empat revisi awal selesai di kode dan automated test.
+- [x] Fase 6-8 (hapus notifikasi customer, foto lokal/stok/warna, repair) selesai di kode dan automated test.
 - [x] Semua test targeted pass.
-- [x] Full test pass (339 passed, 4 skipped data-dependent, 0 failed).
+- [x] Full test pass (338 passed, 4 skipped data-dependent, 0 failed, 1.608 assertions).
 - [ ] Manual checklist selesai.
-- [x] Commit rapi, satu file per commit.
+- [x] Commit rapi, satu file per commit, `--no-verify`.
 - [x] Tidak push.
 - [x] Tidak menyentuh hosting.
 - [x] Rencana deployment diperbarui setelah revisi selesai.
@@ -1145,26 +1355,37 @@ Setelah revisi selesai dan manual QA disetujui:
 - Update `.env` production (`APP_LOCALE=id`, Google credentials, SMTP/Resend OTP).
 - Jalankan `php artisan migrate --force` di production.
 - **Jangan pernah** menjalankan `migrate:fresh` di production.
-- Fase 4d welcome notification tidak menambah migration baru.
+- **Jangan** menjalankan `RalivaDemoSeeder` di production karena menghapus data.
+- Fase 4d/6/7/8 tidak menambah migration baru.
+- Setelah backup, jalankan `php artisan raliva:repair-demo-products --dry-run`
+  lalu `php artisan raliva:repair-demo-products` untuk foto/stok/warna.
 - Bersihkan cache yang relevan (`config:clear`, `route:clear`, `view:clear`).
 - Verifikasi upload dan storage.
 - Verifikasi Google callback persis `https://nexprint.my.id/auth/google/callback`.
 - Verifikasi SMTP port 465 memakai `MAIL_SCHEME=smtps`.
 - Verifikasi brand `NEXPRINT` di tab/browser dan UI.
-- Verifikasi welcome notification customer/owner/karyawan setelah deploy.
+- Verifikasi welcome notification hanya untuk Owner/karyawan internal.
+- Verifikasi tidak ada menu/halaman/route notifikasi customer.
+- Verifikasi foto produk memakai domain production sendiri (path relatif).
 
 ---
 
 ## 16. Catatan eksekusi
 
-Plan ini sudah dieksekusi sampai Fase 5 automated regression.
+Plan ini sudah dieksekusi sampai Fase 8 automated regression.
 
 Status terakhir:
 
 1. Fase 0-4d selesai di kode dan automated test.
-2. Fase 5 automated regression: 339 passed, 4 skipped data-dependent, 0 failed.
-3. Browser manual QA dan deployment production masih pending.
-4. Semua commit belum di-push.
-5. Working tree masih menyisakan dua file pre-existing yang tidak terkait:
+2. Fase 5 automated regression awal: 339 passed, 4 skipped data-dependent, 0 failed.
+3. Fase 6 menghapus seluruh fitur notifikasi customer; notifikasi internal tetap.
+4. Fase 7 mengganti foto picsum dengan aset lokal, mengisi stok varian aktif,
+   membersihkan 202 stok orphan, dan mengisi 108 `warna_hex`.
+5. Fase 8 command `raliva:repair-demo-products` idempotent; run kedua 0 perubahan.
+6. Full regression final: 338 passed, 4 skipped, 0 failed (1.608 assertions).
+7. Browser manual QA dan deployment production masih pending.
+8. Semua commit belum di-push.
+9. Working tree masih menyisakan dua file pre-existing yang tidak terkait:
    - `database/migrations/2026_10_23_000001_seed_pengaturan_umum_defaults.php`
    - `tests/Feature/LandingPageTest.php`
+10. Baris notifikasi customer lama belum dihapus; purge butuh approval terpisah.
