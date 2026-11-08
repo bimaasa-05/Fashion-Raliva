@@ -136,14 +136,6 @@ class ModerasiProdukController extends Controller
                     'pesan' => __('Produk ":produk" telah disetujui moderasi dan kini dapat tampil di :brand.', ['produk' => $locked->nama_produk, 'brand' => brand()]),
                     'url' => route('owner.produk'),
                 ]);
-
-                // Kabar ke pengikut toko: produk baru tayang.
-                $locked->store->notifyFollowers(
-                    Notification::TIPE_SISTEM,
-                    'Produk Baru',
-                    sprintf('Toko %s menambahkan produk baru "%s".', $locked->store->nama_toko ?? '-', $locked->nama_produk),
-                    route('customer.shop.produk-detail', $locked->product_id)
-                );
             }
             Notification::fireSelf(Notification::TIPE_SISTEM, 'Produk Disetujui', sprintf('Produk "%s" disetujui.', $locked->nama_produk), route('superadmin.moderasi-produk'));
 
