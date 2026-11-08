@@ -79,10 +79,10 @@ class AppServiceProvider extends ServiceProvider
             return Auth::check() && Auth::user()->hasPermission($kode);
         });
 
-        // Sediakan notifikasi terbaru + jumlah belum dibaca untuk semua layout
-        // role lewat partial notification-panel, dan untuk drawer customer.
+        // Sediakan notifikasi terbaru + jumlah belum dibaca untuk layout
+        // internal lewat partial notification-panel.
         \Illuminate\Support\Facades\View::composer(
-            ['partials.notification-panel', 'customer._partials.drawer'],
+            ['partials.notification-panel'],
             \App\View\Composers\NotificationComposer::class
         );
     }
