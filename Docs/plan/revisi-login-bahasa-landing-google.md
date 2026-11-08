@@ -1,7 +1,7 @@
 # Revisi Login, Bahasa, Landing Penawaran, dan Google Login
 
 Tanggal dibuat: 2026-11-06  
-Status: Fase 0-4, Fase 4b, dan Fase 4c terimplementasi; Fase 5 pending; verifikasi browser Google role modal + OTP pending
+Status: Fase 0-4d terimplementasi (automated test pass; browser QA Fase 4d pending); Fase 5 pending; verifikasi browser Google role modal + OTP pending
 Repo: `C:\laragon\www\Raliva-Fashion`  
 Branch: `main`  
 Baseline commit: `a1726835`  
@@ -18,6 +18,7 @@ Dokumen ini adalah **satu file plan** untuk seluruh pekerjaan. Semua fase, file,
 - [x] Fase 4 — Google Login (implementasi + automated test; verifikasi browser pending)
 - [x] Fase 4b — Google role modal + OTP reset password (implementasi + automated test; verifikasi browser pending)
 - [x] Fase 4c — perbaikan state OAuth Google (host mismatch)
+- [x] Fase 4d — welcome notification MVP (in-app; automated test pass, browser QA pending)
 - [ ] Fase 5 — regression penuh
 
 ---
@@ -728,6 +729,193 @@ Hasil: 29 passed (198 assertions).
 
 ---
 
+## 9d. Fase 4d — Welcome Notification MVP (In-App)
+
+### Scope
+
+Notifikasi selamat datang in-app untuk akun baru. Email undangan karyawan **tidak**
+termasuk fase ini.
+
+Alur wajib:
+
+1. Register customer/owner.
+2. Google user baru.
+3. Owner menambah karyawan.
+4. SuperAdmin membuat user.
+5. Admin membuat customer.
+
+Opsional/ditunda:
+
+- Checkout guest auto-account (ditunda agar toast tidak mengganggu halaman pembayaran).
+- Admin manual order auto-create customer (ditunda).
+- Email undangan/aktivasi karyawan.
+- Migration `welcome_seen_at` / `first_login_at`.
+
+### Keputusan
+
+| Topik | Keputusan |
+|---|---|
+| Tipe notifikasi | `Notification::TIPE_SISTEM` |
+| Channel | In-app saja |
+| Penerima | Akun yang baru dibuat |
+| Owner saat menambah karyawan | Tetap dapat notifikasi terpisah |
+| URL | `EnsureRole::homeRouteFor($user->role?->nama_role)` |
+| Customer UI | Item Notifikasi di drawer + badge + welcome toast sekali per sesi |
+| Duplikasi | Dicegah karena notifikasi dibuat hanya saat akun dibuat |
+| Password | Tidak boleh muncul di pesan notifikasi |
+| Kegagalan notifikasi | Tidak boleh menggagalkan pembuatan akun |
+| Migration | Tidak ada migration baru |
+| Deploy | Ditunda sampai Fase 5 selesai |
+
+### Status
+
+- [x] 4d.0 — Audit baseline dan konfirmasi file
+- [x] 4d.1 — Service `sendWelcome`
+- [x] 4d.2 — Hook register customer/owner
+- [x] 4d.3 — Hook Google user baru
+- [x] 4d.4 — Hook owner tambah karyawan
+- [x] 4d.5 — Hook SuperAdmin/Admin user creation
+- [x] 4d.6 — Customer drawer badge + welcome toast
+- [x] 4d.7 — Fix URL notifikasi customer
+- [x] 4d.8 — Translation ID/EN
+- [x] 4d.9 — Feature tests
+- [ ] 4d.10 — Manual QA (automated smoke pass; browser QA digabung ke Fase 5)
+- [x] 4d.11 — Commit dan review
+
+### Implementasi
+
+#### Service
+
+File: `app/Services/NotificationService.php`
+
+- Tambah `sendWelcome(User $user, ?User $actor = null, ?Store $store = null): ?Notification`.
+- Judul: `__('Welcome to :brand!', ['brand' => brand()])`.
+- Pesan per role:
+  - Customer: akun siap / dibuat oleh Admin.
+  - Owner: akun siap, lengkapi pengajuan toko.
+  - Admin/Produksi/Gudang: ditambahkan sebagai role di toko.
+  - Super Admin: akun siap.
+- URL: `route(EnsureRole::homeRouteFor($user->role?->nama_role))`.
+- Bungkus `try/catch` + `Log::warning` agar akun tetap dibuat jika notifikasi gagal.
+- Tambah `isWelcome(Notification $notification): bool` untuk mendeteksi welcome
+  notification di customer drawer tanpa menambah tipe baru.
+
+#### Hook pembuatan akun
+
+- `app/Http/Controllers/Auth/RegisterController.php` — setelah `User::create`.
+- `app/Http/Controllers/Auth/GoogleController.php` — hanya di `createUser()`.
+- `app/Http/Controllers/Owner/KaryawanController.php` — ganti notifikasi karyawan
+  lama dengan `sendWelcome($user, auth()->user(), OwnerContext::currentStore())`;
+  notifikasi `fireSelf` owner tetap.
+- `app/Http/Controllers/SuperAdmin/ManajemenPenggunaController.php` — ganti
+  “Akun Dibuat” dengan `sendWelcome($user, auth()->user())`.
+- `app/Http/Controllers/Admin/DataCustomerController.php` — ganti notifikasi yang
+  memuat password default dengan `sendWelcome($customer, auth()->user())`.
+
+#### Customer UI
+
+- `app/Providers/AppServiceProvider.php` — daftarkan
+  `customer._partials.drawer` ke `NotificationComposer`.
+- `resources/views/customer/_partials/drawer.blade.php` — item Notifikasi di grup
+  Akun + badge unread + include `partials.notification-popup` dan script welcome.
+- `resources/views/customer/_partials/notification-script.blade.php` (baru) —
+  tampilkan welcome toast sekali per sesi via `sessionStorage`.
+- `resources/views/customer/notifications/index.blade.php` — gunakan
+  `$n->url ?: route('customer.order-tracking')`.
+
+#### Copy karyawan
+
+- `resources/views/Owner/karyawan/index.blade.php` — hapus janji email aktivasi;
+  jelaskan akun langsung aktif dan owner membagikan kredensial.
+
+#### Translation
+
+- `lang/id.json`
+- `lang/en.json`
+
+Key utama:
+
+- `Welcome to :brand!`
+- `Your account is ready. Start exploring the latest collection from our ateliers.`
+- `Your business owner account is ready. Complete your store application from the dashboard.`
+- `You have been added as :role at :store. Open your dashboard to get started.`
+- `Your account has been created with the :role role. Open your dashboard to get started.`
+- `Your account has been created by :actor. Please change your password from Account Settings.`
+- `Your account is ready. Open your dashboard to get started.`
+
+### Test
+
+File: `tests/Feature/WelcomeNotificationTest.php`
+
+Kasus:
+
+- Register customer/owner membuat welcome notification dengan URL yang benar.
+- Google user baru membuat welcome; Google existing tidak.
+- Owner menambah karyawan: karyawan dapat welcome, owner dapat notifikasi terpisah.
+- SuperAdmin membuat user: welcome dengan URL sesuai role.
+- Admin membuat customer: welcome tanpa password default.
+- Halaman notifikasi customer memakai `$notification->url`.
+- Drawer customer memuat item Notifikasi + welcome toast.
+
+Commands:
+
+```bash
+php artisan test --filter=WelcomeNotificationTest
+php artisan test --filter=GoogleAuthTest
+php artisan test --filter=PasswordResetTest
+php artisan test --filter=OwnerLoginRedirectTest
+```
+
+Hasil targeted:
+
+- `WelcomeNotificationTest`: 9 passed (43 assertions).
+- `GoogleAuthTest`: 29 passed (198 assertions).
+- `PasswordResetTest`: 19 passed (97 assertions).
+- `OwnerLoginRedirectTest`: 7 passed (19 assertions).
+- `ManajemenPenggunaDeleteTest`: 4 passed (18 assertions).
+- `CustomerLoginConsistencyTest`: 1 failed karena fixture admin seeded tidak ada
+  (`ModelNotFoundException`), bukan regresi welcome notification.
+
+### Manual QA
+
+- [ ] Register customer → login → badge notifikasi muncul.
+- [ ] Register customer → welcome toast muncul sekali.
+- [ ] Register owner → welcome muncul di dashboard Owner.
+- [ ] Owner tanpa toko → welcome mengarah ke dashboard.
+- [ ] Google new customer/owner → welcome muncul.
+- [ ] Google existing user → tidak ada welcome baru.
+- [ ] Owner tambah karyawan → karyawan dapat welcome; owner dapat notifikasi.
+- [ ] Admin buat customer → welcome tidak memuat password.
+- [ ] Customer drawer → item Notifikasi + badge benar.
+- [ ] Klik welcome di halaman notifikasi → URL benar.
+- [ ] Refresh/login ulang → tidak ada welcome baru.
+- [ ] Tidak ada error di `storage/logs/laravel.log`.
+
+### Commit
+
+- Satu file per commit.
+- `--no-verify`.
+- Tidak push.
+- Tidak commit `.env`.
+- Tidak commit dua file pre-existing yang tidak terkait:
+  - `database/migrations/2026_10_23_000001_seed_pengaturan_umum_defaults.php`
+  - `tests/Feature/LandingPageTest.php`
+
+### Acceptance
+
+- [x] Welcome notification dibuat untuk semua alur wajib.
+- [x] Tidak ada duplikasi saat login ulang.
+- [x] Tidak ada password di notifikasi.
+- [x] Customer melihat badge dan welcome toast.
+- [x] URL notifikasi customer benar.
+- [x] Translation ID/EN ditambahkan.
+- [x] Test targeted pass.
+- [ ] Manual QA selesai (browser QA digabung ke Fase 5).
+- [x] Tidak ada migration baru.
+- [x] Setelah selesai, lanjut **Fase 5 — Regression penuh**.
+
+---
+
 ## 10. Fase 5 — Regression dan penutupan
 
 ### Test
@@ -810,6 +998,22 @@ Semua test pass dan manual checklist selesai.
 - `lang/en.json`
 - `tests/Feature/GoogleLoginTest.php`
 
+### Welcome Notification (Fase 4d)
+- `app/Services/NotificationService.php`
+- `app/Http/Controllers/Auth/RegisterController.php`
+- `app/Http/Controllers/Auth/GoogleController.php`
+- `app/Http/Controllers/Owner/KaryawanController.php`
+- `app/Http/Controllers/SuperAdmin/ManajemenPenggunaController.php`
+- `app/Http/Controllers/Admin/DataCustomerController.php`
+- `app/Providers/AppServiceProvider.php`
+- `resources/views/customer/_partials/drawer.blade.php`
+- `resources/views/customer/_partials/notification-script.blade.php` (baru)
+- `resources/views/customer/notifications/index.blade.php`
+- `resources/views/Owner/karyawan/index.blade.php`
+- `lang/id.json`
+- `lang/en.json`
+- `tests/Feature/WelcomeNotificationTest.php` (baru)
+
 ---
 
 ## 12. Test matrix
@@ -835,6 +1039,12 @@ Semua test pass dan manual checklist selesai.
 | OTP reset | OTP benar mengganti password dan menghapus record |
 | OTP invalid | OTP salah/kedaluwarsa/max attempts ditolak |
 | Reset link lama | Route lama 404 |
+| Welcome register | Customer/Owner baru dapat welcome notification |
+| Welcome Google | User baru dapat welcome; user lama tidak |
+| Welcome karyawan | Karyawan dapat welcome; owner dapat notifikasi terpisah |
+| Welcome SuperAdmin/Admin | User/customer baru dapat welcome tanpa password |
+| Welcome customer UI | Drawer item, badge, toast sekali per sesi |
+| Welcome URL | Halaman notifikasi customer memakai `$notification->url` |
 
 ---
 
@@ -847,6 +1057,7 @@ Semua test pass dan manual checklist selesai.
 - [x] Konfirmasi shadow login dihapus total, bukan hanya outer shadow.
 - [ ] Konfigurasi provider email production agar OTP benar-benar terkirim.
 - [ ] Verifikasi browser: modal Google, akun Owner baru, dan alur OTP.
+- [ ] Verifikasi browser Fase 4d: badge + welcome toast customer, welcome karyawan, dan URL notifikasi.
 
 ---
 
