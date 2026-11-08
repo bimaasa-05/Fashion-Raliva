@@ -39,6 +39,12 @@ class NotificationService
      */
     public static function sendWelcome(User $user, ?User $actor = null, ?Store $store = null): ?Notification
     {
+        // Customer tidak lagi memiliki fitur notifikasi. Welcome hanya untuk
+        // Owner dan karyawan internal.
+        if ($user->role?->nama_role === Role::CUSTOMER) {
+            return null;
+        }
+
         try {
             $roleName = $user->role?->nama_role;
 
@@ -46,9 +52,6 @@ class NotificationService
 
             $pesan = match ($roleName) {
                 Role::OWNER => __('Your business owner account is ready. Complete your store application from the dashboard.'),
-                Role::CUSTOMER => $actor
-                    ? __('Your account has been created by :actor. Please change your password from Account Settings.', ['actor' => $actor->nama_lengkap])
-                    : __('Your account is ready. Start exploring the latest collection from our ateliers.'),
                 Role::ADMIN, Role::PRODUKSI, Role::GUDANG => $store
                     ? __('You have been added as :role at :store. Open your dashboard to get started.', ['role' => $roleName, 'store' => $store->nama_toko])
                     : __('Your account has been created with the :role role. Open your dashboard to get started.', ['role' => $roleName]),
@@ -72,21 +75,6 @@ class NotificationService
 
             return null;
         }
-    }
-
-    /**
-     * Deteksi welcome notification tanpa menambah tipe notifikasi baru.
-     */
-    public static function isWelcome(Notification $notification): bool
-    {
-        $brand = brand();
-        $titles = array_unique([
-            __('Welcome to :brand!', ['brand' => $brand]),
-            __('Welcome to :brand!', ['brand' => $brand], 'en'),
-            __('Welcome to :brand!', ['brand' => $brand], 'id'),
-        ]);
-
-        return in_array($notification->judul, $titles, true);
     }
 
     public static function sendToRole(
