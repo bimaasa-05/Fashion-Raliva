@@ -154,17 +154,6 @@ class PengirimanController extends Controller
 
         Notification::fireSelf(Notification::TIPE_PENGIRIMAN, 'Resi Tersimpan', sprintf('Resi %s untuk pesanan %s tersimpan.', $data['nomor_resi'], $pesanan->nomor_order), route('admin.pengiriman'));
 
-        if ($pesanan->checkout?->user_id) {
-            Notification::create([
-                'user_id' => $pesanan->checkout->user_id,
-                'aktor_id' => ActivityLogger::resolveActorId(),
-                'tipe' => Notification::TIPE_PENGIRIMAN,
-                'judul' => 'Resi Pesanan Tersedia',
-                'pesan' => sprintf('Pesanan %s akan dikirim via %s dengan resi %s.', $pesanan->nomor_order, $shipment->courier?->nama_kurir ?? 'kurir', $data['nomor_resi']),
-                'url' => route('customer.order-tracking'),
-            ]);
-        }
-
         return back()->with('toast', [
             'message' => __('Resi untuk pesanan :ph75718 tersimpan. Siap ditandai dikirim.', ['ph75718' => $pesanan->nomor_order]),
             'icon' => 'task_alt',
@@ -256,17 +245,6 @@ class PengirimanController extends Controller
         );
 
         Notification::fireSelf(Notification::TIPE_PENGIRIMAN, 'Pesanan Dikirim', sprintf('Pesanan %s ditandai dikirim (resi %s).', $pesanan->nomor_order, $pengiriman->nomor_resi), route('admin.pengiriman'));
-
-        if ($pesanan->checkout?->user_id) {
-            Notification::create([
-                'user_id' => $pesanan->checkout->user_id,
-                'aktor_id' => ActivityLogger::resolveActorId(),
-                'tipe' => Notification::TIPE_PENGIRIMAN,
-                'judul' => 'Pesanan Dikirim',
-                'pesan' => sprintf('Pesanan %s telah dikirim via %s dengan resi %s.', $pesanan->nomor_order, $pengiriman->courier?->nama_kurir ?? 'kurir', $pengiriman->nomor_resi),
-                'url' => route('customer.order-tracking'),
-            ]);
-        }
 
         return back()->with('toast', [
             'message' => __('Pesanan :ph75717 ditandai dikirim.', ['ph75717' => $pesanan->nomor_order]),
