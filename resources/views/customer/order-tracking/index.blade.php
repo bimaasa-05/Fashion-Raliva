@@ -738,7 +738,7 @@ $otHasUnrated = $otRateRows->contains(fn ($row) => ! $row['rated']);
 $otItem = $row['item'];
 $otVariant = $otItem->productVariant;
 $otImg = $otVariant?->product?->images->first()?->file_gambar ?? '';
-$otImgUrl = $otImg ? photo_url($otImg) : 'https://picsum.photos/seed/order-'.$otItem->order_item_id.'/900/1200';
+$otImgUrl = product_photo_url($otImg, $otItem->order_item_id);
 @endphp
 <div class="flex gap-sm md:gap-md">
 <div class="w-16 h-20 md:w-20 md:h-24 bg-surface-container-lowest rounded-lg overflow-hidden flex-shrink-0 border border-outline-variant/30">
@@ -897,7 +897,7 @@ document.addEventListener('DOMContentLoaded', function () {
 @php
 $v = $item->productVariant;
 $img = $v?->product?->images->first()?->file_gambar ?? '';
-$imgUrl = $img ? (photo_url($img)) : 'https://picsum.photos/seed/order-'.$item->order_item_id.'/900/1200';
+$imgUrl = product_photo_url($img, $item->order_item_id);
 $warna = $v?->warna;
 $ukuran = $v?->ukuran;
 @endphp
