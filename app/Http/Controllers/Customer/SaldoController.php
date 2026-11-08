@@ -296,13 +296,6 @@ class SaldoController extends Controller
             ]);
         });
 
-        NotificationService::fire(
-            Auth::id(),
-            Notification::TIPE_PEMBAYARAN,
-            'Bukti Topup Diunggah',
-            'Bukti topup saldo Rp '.number_format((float) $topup->jumlah, 0, ',', '.').' sedang diverifikasi.',
-        );
-
         NotificationService::sendToRole(
             Role::SUPER_ADMIN,
             Notification::TIPE_WALLET,
@@ -419,13 +412,6 @@ class SaldoController extends Controller
 
             return $penarikan;
         });
-
-        NotificationService::fire(
-            Auth::id(),
-            Notification::TIPE_PEMBAYARAN,
-            'Penarikan Saldo Diajukan',
-            'Pengajuan penarikan saldo Rp ' . number_format($jumlah, 0, ',', '.') . ' sedang diverifikasi.',
-        );
 
         NotificationService::sendToRole(
             Role::SUPER_ADMIN,
