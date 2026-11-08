@@ -10,6 +10,7 @@ use App\Models\OrderItem;
 use App\Models\Product;
 use App\Models\ProductionOrder;
 use App\Models\ProductionOrderItem;
+use App\Models\ProductImage;
 use App\Models\ProductVariant;
 use App\Models\Promotion;
 use App\Models\Review;
@@ -22,6 +23,8 @@ use App\Models\User;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Models\Warehouse;
+use App\Models\WarehouseStock;
+use App\Support\DemoProductCatalog;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -131,16 +134,16 @@ class OwnerSeeder extends Seeder
 
         // ---- PRODUK LENGKAP (25 produk, varian, status sebar untuk demo approval) ----
         $seed = [
-            ['Trench Coat Signature', 'Jaket & Hoodie', 'KEM', ['Khaki', 'Black', 'Navy'], [['S', 8], ['M', 12], ['L', 6]], 420000, 750000, Product::STATUS_AKTIF],
-            ['Oversized Linen Shirt', 'Kemeja', 'KMS', ['White', 'Black', 'Beige'], [['S', 20], ['M', 24], ['L', 14]], 180000, 289000, Product::STATUS_AKTIF],
-            ['Wide Leg Trousers', 'Celana', 'CLT', ['Ivory', 'Black', 'Olive'], [['28', 10], ['30', 14], ['32', 8]], 175000, 295000, Product::STATUS_AKTIF],
-            ['Midi Dress Linen', 'Dress', 'DRS', ['Sand', 'Black', 'Sage'], [['S', 16], ['M', 18], ['L', 12]], 220000, 389000, Product::STATUS_AKTIF],
-            ['Knit Cardigan Rajut', 'Jaket & Hoodie', 'RDG', ['Cream', 'Grey', 'Camel'], [['S', 10], ['M', 14], ['L', 9]], 185000, 299000, Product::STATUS_AKTIF],
-            ['Silk Scarf Premium', 'Aksesoris', 'SYL', ['Ivory', 'Blush', 'Black'], [['One Size', 30]], 95000, 185000, Product::STATUS_AKTIF],
-            ['Basic T-Shirt Cotton', 'Kaos', 'KSL', ['White', 'Black', 'Grey'], [['S', 40], ['M', 50], ['L', 30]], 55000, 99000, Product::STATUS_AKTIF],
+            ['Trench Coat Signature', 'Jaket & Hoodie', 'KEM', ['Khaki', 'Hitam', 'Navy'], [['S', 8], ['M', 12], ['L', 6]], 420000, 750000, Product::STATUS_AKTIF],
+            ['Oversized Linen Shirt', 'Kemeja', 'KMS', ['Putih', 'Hitam', 'Beige'], [['S', 20], ['M', 24], ['L', 14]], 180000, 289000, Product::STATUS_AKTIF],
+            ['Wide Leg Trousers', 'Celana', 'CLT', ['Ivory', 'Hitam', 'Olive'], [['28', 10], ['30', 14], ['32', 8]], 175000, 295000, Product::STATUS_AKTIF],
+            ['Midi Dress Linen', 'Dress', 'DRS', ['Sand', 'Hitam', 'Sage'], [['S', 16], ['M', 18], ['L', 12]], 220000, 389000, Product::STATUS_AKTIF],
+            ['Knit Cardigan Rajut', 'Jaket & Hoodie', 'RDG', ['Cream', 'Abu-abu', 'Camel'], [['S', 10], ['M', 14], ['L', 9]], 185000, 299000, Product::STATUS_AKTIF],
+            ['Silk Scarf Premium', 'Aksesoris', 'SYL', ['Ivory', 'Blush', 'Hitam'], [['One Size', 30]], 95000, 185000, Product::STATUS_AKTIF],
+            ['Basic T-Shirt Cotton', 'Kaos', 'KSL', ['Putih', 'Hitam', 'Abu-abu'], [['S', 40], ['M', 50], ['L', 30]], 55000, 99000, Product::STATUS_AKTIF],
             ['Relaxed Blazer', 'Jaket & Hoodie', 'BLZ', ['Charcoal', 'Khaki'], [['M', 12], ['L', 10]], 320000, 549000, Product::STATUS_AKTIF],
-            ['Pleated Skirt', 'Rok', 'RKT', ['Black', 'Beige', 'Navy'], [['S', 12], ['M', 10], ['L', 6]], 165000, 275000, Product::STATUS_AKTIF],
-            ['Leather Belt', 'Ikat Pinggang', 'IKT', ['Black', 'Brown'], [['85-105 cm', 25], ['90-110 cm', 22]], 110000, 199000, Product::STATUS_AKTIF],
+            ['Pleated Skirt', 'Rok', 'RKT', ['Hitam', 'Beige', 'Navy'], [['S', 12], ['M', 10], ['L', 6]], 165000, 275000, Product::STATUS_AKTIF],
+            ['Leather Belt', 'Ikat Pinggang', 'IKT', ['Hitam', 'Cokelat'], [['85-105 cm', 25], ['90-110 cm', 22]], 110000, 199000, Product::STATUS_AKTIF],
         ];
 
         $products = [];
@@ -159,12 +162,36 @@ class OwnerSeeder extends Seeder
                 ]
             );
             $vi = 0;
+            $imagePaths = DemoProductCatalog::imagePathsFor($nama);
+            foreach ($imagePaths ?? [] as $urutan => $path) {
+                ProductImage::updateOrCreate(
+                    ['product_id' => $product->product_id, 'urutan' => $urutan + 1],
+                    ['file_gambar' => $path]
+                );
+            }
+
             foreach ($warnas as $warna) {
                 foreach ($ukuranVariants as [$ukuran, $stok]) {
                     $vi++;
-                    ProductVariant::updateOrCreate(
+                    $canonical = DemoProductCatalog::canonicalColor($warna);
+                    $variant = ProductVariant::updateOrCreate(
                         ['product_id' => $product->product_id, 'sku' => $prefix . '-' . str_pad($idx + 1, 3, '0') . '-' . str_pad($vi, 2, '0', STR_PAD_LEFT)],
-                        ['warna' => $warna, 'ukuran' => $ukuran, 'harga' => $harga, 'status' => 'aktif']
+                        [
+                            'warna' => $canonical,
+                            'warna_hex' => DemoProductCatalog::colorHex($canonical),
+                            'ukuran' => $ukuran,
+                            'harga' => $harga,
+                            'status' => 'aktif',
+                        ]
+                    );
+
+                    WarehouseStock::updateOrCreate(
+                        ['warehouse_id' => $warehouse->warehouse_id, 'product_variant_id' => $variant->product_variant_id],
+                        [
+                            'jumlah_stok' => $stok,
+                            'jumlah_direservasi' => 0,
+                            'stok_minimum' => DemoProductCatalog::STOCK_MINIMUM,
+                        ]
                     );
                 }
             }
