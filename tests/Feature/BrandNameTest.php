@@ -9,6 +9,7 @@ use Tests\TestCase;
 /**
  * Regresi helper brand(): nama platform yang tampil di seluruh UI.
  * Sumber: Setting "nama_platform" (Super Admin), fallback config('app.name').
+ * Nama selalu ditampilkan kapital agar konsisten dengan identitas brand.
  */
 class BrandNameTest extends TestCase
 {
@@ -18,7 +19,7 @@ class BrandNameTest extends TestCase
     {
         Setting::set(Setting::NAMA_PLATFORM, 'Uji Brand');
 
-        $this->assertSame('Uji Brand', brand());
+        $this->assertSame('UJI BRAND', brand());
     }
 
     public function test_brand_falls_back_to_app_name_when_setting_missing(): void
@@ -26,7 +27,7 @@ class BrandNameTest extends TestCase
         Setting::query()->where('kunci', Setting::NAMA_PLATFORM)->delete();
         config(['app.name' => 'Nama Fallback']);
 
-        $this->assertSame('Nama Fallback', brand());
+        $this->assertSame('NAMA FALLBACK', brand());
     }
 
     public function test_brand_trims_and_falls_back_when_setting_blank(): void
@@ -34,7 +35,7 @@ class BrandNameTest extends TestCase
         Setting::set(Setting::NAMA_PLATFORM, '   ');
         config(['app.name' => 'Cadangan']);
 
-        $this->assertSame('Cadangan', brand());
+        $this->assertSame('CADANGAN', brand());
     }
 
     public function test_favicon_uses_favicon_platform_setting(): void
@@ -48,7 +49,7 @@ class BrandNameTest extends TestCase
     {
         Setting::query()->where('kunci', 'favicon_platform')->delete();
 
-        $this->assertSame(asset('favicon.ico'), brand_favicon_url());
+        $this->assertSame(asset('images/logo.svg'), brand_favicon_url());
     }
 
     public function test_logo_url_empty_when_setting_missing(): void
