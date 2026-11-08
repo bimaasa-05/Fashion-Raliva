@@ -503,7 +503,7 @@
 <!-- Product -->
 <a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col group cursor-pointer" data-ad="{{ $isAd ? 1 : 0 }}" data-bid="{{ (float) ($p->ad_bid ?? 0) }}" data-category="{{ $parentCat }}" data-size="{{ $sizes }}" data-color="{{ $colors }}" data-price="{{ $minPrice }}" data-created="{{ $p->created_at?->getTimestamp() ?? 0 }}" data-popular="{{ $p->popular_count ?? 0 }}">
 <div class="relative w-full aspect-[3/4] bg-surface-container mb-sm overflow-hidden rounded">
-<img class="w-full h-full object-cover " loading="lazy" decoding="async" alt="{{ $p->nama_produk }}" src="{{ $firstImage ? (photo_url($firstImage)) : ($isAd ? 'https://picsum.photos/seed/shopad/900/1200' : 'https://picsum.photos/seed/product/900/1200') }}"/>
+<img class="w-full h-full object-cover " loading="lazy" decoding="async" alt="{{ $p->nama_produk }}" src="{{ product_photo_url($firstImage, $isAd ? 'shopad-'.$p->product_id : $p->product_id) }}"/>
 @if ($isAd)
 <span class="absolute top-2 left-2 bg-secondary text-on-secondary text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full">{{ __('Iklan') }}</span>
 @endif
