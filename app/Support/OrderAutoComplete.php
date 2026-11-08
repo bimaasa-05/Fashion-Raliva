@@ -2,7 +2,6 @@
 
 namespace App\Support;
 
-use App\Models\Checkout;
 use App\Models\Complaint;
 use App\Models\Notification;
 use App\Models\Order;
@@ -114,17 +113,6 @@ class OrderAutoComplete
                 ]);
             }
 
-            $customerId = Checkout::whereKey($locked->checkout_id)->value('user_id');
-            if ($customerId) {
-                Notification::create([
-                    'user_id' => $customerId,
-                    'tipe' => Notification::TIPE_ORDER,
-                    'judul' => __('Pesanan Ditandai Selesai'),
-                    'pesan' => sprintf(__('Pesanan %s dianggap selesai karena sudah %s hari tidak diambil. Silakan cek detail pesanan Anda.'), $locked->nomor_order, $batasHari),
-                    'url' => route('customer.order-tracking', ['order' => $locked->order_id]),
-                ]);
-            }
-
             ActivityLogger::log(
                 'order.auto_picked_up',
                 Order::class,
@@ -169,17 +157,6 @@ class OrderAutoComplete
                     'tipe' => Notification::TIPE_ORDER,
                     'judul' => __('Pesanan Selesai Otomatis'),
                     'pesan' => sprintf(__('Pesanan %s diselesaikan otomatis karena melewati %s hari tanpa konfirmasi customer.'), $locked->nomor_order, $batasHari),
-                ]);
-            }
-
-            $customerId = Checkout::whereKey($locked->checkout_id)->value('user_id');
-            if ($customerId) {
-                Notification::create([
-                    'user_id' => $customerId,
-                    'tipe' => Notification::TIPE_ORDER,
-                    'judul' => __('Pesanan Diselesaikan Otomatis'),
-                    'pesan' => sprintf(__('Pesanan %s dianggap selesai karena tidak dikonfirmasi dalam %s hari. Silakan cek detail pesanan Anda.'), $locked->nomor_order, $batasHari),
-                    'url' => route('customer.order-tracking', ['order' => $locked->order_id]),
                 ]);
             }
 
