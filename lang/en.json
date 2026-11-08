@@ -4018,5 +4018,13 @@
     "Kode ini berlaku selama :minutes menit.": "This code is valid for :minutes minutes.",
     "Jika Anda tidak meminta reset password, abaikan email ini. Password Anda tidak akan berubah.": "If you did not request a password reset, ignore this email. Your password will not change.",
     "Demi keamanan, jangan bagikan kode ini kepada siapa pun.": "For security, do not share this code with anyone.",
-    "Semua hak dilindungi.": "All rights reserved."
+    "Semua hak dilindungi.": "All rights reserved.",
+    "Welcome to :brand!": "Welcome to :brand!",
+    "Your account is ready. Start exploring the latest collection from our ateliers.": "Your account is ready. Start exploring the latest collection from our ateliers.",
+    "Your business owner account is ready. Complete your store application from the dashboard.": "Your business owner account is ready. Complete your store application from the dashboard.",
+    "You have been added as :role at :store. Open your dashboard to get started.": "You have been added as :role at :store. Open your dashboard to get started.",
+    "Your account has been created with the :role role. Open your dashboard to get started.": "Your account has been created with the :role role. Open your dashboard to get started.",
+    "Your account has been created by :actor. Please change your password from Account Settings.": "Your account has been created by :actor. Please change your password from Account Settings.",
+    "Your account is ready. Open your dashboard to get started.": "Your account is ready. Open your dashboard to get started.",
+    "Satu staf dapat ditugaskan ke toko Anda. Akun baru langsung aktif; bagikan email dan password kepada karyawan. Notifikasi selamat datang akan muncul saat mereka login.": "One staff member can be assigned to your store. New accounts are active immediately; share the email and password with the employee. A welcome notification will appear when they sign in."
 }
