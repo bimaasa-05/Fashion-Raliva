@@ -65,16 +65,6 @@ class PengembalianDanaController extends Controller
 
         $refund->update($data);
 
-        if ($refund->requested_by) {
-            Notification::create([
-                'user_id' => $refund->requested_by,
-                'aktor_id' => Auth::id(),
-                'tipe' => Notification::TIPE_KOMPLAIN,
-                'judul' => 'Refund Disetujui Owner',
-                'pesan' => sprintf('Pengajuan refund %s disetujui Owner: dana dikembalikan ke saldo Anda.', $refund->kode),
-                'url' => route('customer.order-tracking'),
-            ]);
-        }
         Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Refund Disetujui', sprintf('Refund %s disetujui.', $refund->kode), route('owner.pengembalian-dana'));
 
         return back()->with('success',__('Refund :ph1 disetujui.', ['ph1' => $refund->kode]));
@@ -104,16 +94,6 @@ class PengembalianDanaController extends Controller
 
         $refund->update($update);
 
-        if ($refund->requested_by) {
-            Notification::create([
-                'user_id' => $refund->requested_by,
-                'aktor_id' => Auth::id(),
-                'tipe' => Notification::TIPE_KOMPLAIN,
-                'judul' => 'Refund Ditolak Owner',
-                'pesan' => sprintf('Pengajuan refund %s ditolak. Alasan: %s', $refund->kode, $data['alasan_penolakan'] ?: '-'),
-                'url' => route('customer.order-tracking'),
-            ]);
-        }
         Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Refund Ditolak', sprintf('Refund %s ditolak.', $refund->kode), route('owner.pengembalian-dana'));
 
         return back()->with('success',__('Refund :ph1 ditolak.', ['ph1' => $refund->kode]));
@@ -162,16 +142,6 @@ class PengembalianDanaController extends Controller
             throw $e;
         }
 
-        if ($refund->requested_by) {
-            Notification::create([
-                'user_id' => $refund->requested_by,
-                'aktor_id' => Auth::id(),
-                'tipe' => Notification::TIPE_KOMPLAIN,
-                'judul' => 'Refund Selesai',
-                'pesan' => sprintf('Pengajuan refund %s telah diselesaikan oleh Owner.', $refund->kode),
-                'url' => route('customer.order-tracking'),
-            ]);
-        }
         Notification::fireSelf(Notification::TIPE_KOMPLAIN, 'Refund Selesai', sprintf('Refund %s ditandai selesai.', $refund->kode), route('owner.pengembalian-dana'));
 
         return back()->with('success',__('Refund :ph1 ditandai selesai.', ['ph1' => $refund->kode]));
