@@ -144,8 +144,6 @@ class DataPesananController extends Controller
             sprintf('Memproses pesanan %s. Input bahan dilakukan oleh Produksi.', $pesanan->nomor_order)
         );
 
-        $this->notifyCustomer($pesanan, 'Pesanan Diproses', sprintf('Pesanan %s sedang diproses oleh toko.', $pesanan->nomor_order));
-
         Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Diproses', sprintf('Pesanan %s diteruskan ke produksi.', $pesanan->nomor_order), route('admin.pesanan'));
 
         NotificationService::sendToRole(
@@ -422,16 +420,6 @@ class DataPesananController extends Controller
             return $newOrder;
         });
 
-        if ($userId) {
-            Notification::create([
-                'user_id' => $userId,
-                'aktor_id' => ActivityLogger::resolveActorId(),
-                'tipe' => Notification::TIPE_ORDER,
-                'judul' => 'Pesanan Dibuat Admin',
-                'pesan' => sprintf('Admin membuat pesanan %s untuk Anda.', $newOrder->nomor_order),
-                'url' => route('customer.order-tracking'),
-            ]);
-        }
         Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Manual Dibuat', sprintf('Pesanan %s berhasil dibuat.', $newOrder->nomor_order), route('admin.pesanan'));
 
         $msg = $isOffline && $metodeBayar === 'tunai'
@@ -500,8 +488,6 @@ class DataPesananController extends Controller
             ['status' => Order::STATUS_SELESAI, 'diambil_pada' => now()->format('Y-m-d H:i:s'), 'catatan' => $data['catatan'] ?? null],
             sprintf('Pesanan %s ditandai selesai — diambil langsung oleh customer.', $pesanan->nomor_order)
         );
-
-        $this->notifyCustomer($pesanan, 'Pesanan Selesai', sprintf('Pesanan %s telah selesai dan diambil. Terima kasih sudah berbelanja!', $pesanan->nomor_order));
 
         Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Diselesaikan', sprintf('Pesanan %s ditandai selesai (diambil langsung).', $pesanan->nomor_order), route('admin.pesanan'));
 
@@ -612,18 +598,6 @@ class DataPesananController extends Controller
             ['metode_fulfillment' => $target, 'total_ongkir' => $target === Order::FULFILLMENT_AMBIL ? 0 : $lama['total_ongkir']],
             $pesanLog
         );
-
-        if ($target === Order::FULFILLMENT_AMBIL) {
-            $this->notifyCustomer($pesanan, 'Pesanan Diambil di Toko', sprintf(
-                'Pesanan %s dialihkan menjadi ambil di toko. Silakan ambil pesanan Anda di toko kami setelah dikonfirmasi siap.',
-                $pesanan->nomor_order
-            ));
-        } else {
-            $this->notifyCustomer($pesanan, 'Pesanan Dikirim', sprintf(
-                'Pesanan %s dialihkan menjadi dikirim ke alamat Anda.',
-                $pesanan->nomor_order
-            ));
-        }
 
         Notification::fireSelf(Notification::TIPE_ORDER, 'Fulfillment Diubah', $pesanLog, route('admin.pesanan'));
 
@@ -877,7 +851,6 @@ class DataPesananController extends Controller
         });
 
         ActivityLogger::log('admin.order.items.update', Order::class, $pesanan->order_id, ['items' => $lamaItems, 'total' => $lamaTotal], ['items' => $baruItems ?? [], 'total' => $baruTotal ?? []], sprintf('Mengubah item pesanan %s.', $pesanan->nomor_order));
-        $this->notifyCustomer($pesanan, 'Pesanan Diperbarui', sprintf('Pesanan %s diperbarui oleh toko.', $pesanan->nomor_order));
         Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Diperbarui', sprintf('Pesanan %s berhasil diperbarui.', $pesanan->nomor_order), route('admin.pesanan'));
 
         return back()->with('toast', [
@@ -902,21 +875,5 @@ class DataPesananController extends Controller
         ]);
 
         return view('Admin.pesanan.invoice', compact('pesanan'));
-    }
-
-    private function notifyCustomer(Order $pesanan, string $judul, string $pesan): void
-    {
-        $userId = $pesanan->checkout?->user_id;
-
-        if ($userId) {
-            Notification::create([
-                'user_id' => $userId,
-                'aktor_id' => ActivityLogger::resolveActorId(),
-                'tipe' => Notification::TIPE_ORDER,
-                'judul' => $judul,
-                'pesan' => $pesan,
-                'url' => route('customer.order-tracking'),
-            ]);
-        }
     }
 }
