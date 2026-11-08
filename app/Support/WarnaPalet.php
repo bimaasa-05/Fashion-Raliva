@@ -40,6 +40,27 @@ class WarnaPalet
         'Rust' => '#b7410e',
         'Violet' => '#7c3aed',
         'Sage' => '#9caf88',
+        'Khaki' => '#c3b091',
+        'Ivory' => '#f7f3e8',
+        'Sand' => '#d8c3a5',
+        'Charcoal' => '#36454f',
+        'Blush' => '#e8b4b8',
+        'Taupe' => '#8b7d6b',
+        'Muted Sand' => '#cbbba0',
+        'Warm Sand' => '#d9c3a5',
+        'Indigo' => '#4b5d92',
+        'Washed' => '#9a9a9a',
+    ];
+
+    /**
+     * Nama warna Inggris yang dinormalisasi ke nama Indonesia.
+     */
+    public const ALIASES = [
+        'white' => 'Putih',
+        'black' => 'Hitam',
+        'grey' => 'Abu-abu',
+        'gray' => 'Abu-abu',
+        'brown' => 'Cokelat',
     ];
 
     public static function all(): array
@@ -49,7 +70,7 @@ class WarnaPalet
 
     public static function hex(string $name): ?string
     {
-        $name = trim($name);
+        $name = self::canonicalName(trim($name));
 
         return self::ALL[$name] ?? null;
     }
@@ -133,6 +154,10 @@ class WarnaPalet
     {
         $key = mb_strtolower(trim($name));
 
+        if (isset(self::ALIASES[$key])) {
+            return self::ALIASES[$key];
+        }
+
         foreach (self::ALL as $label => $hex) {
             if (mb_strtolower($label) === $key) {
                 return $label;
@@ -149,7 +174,8 @@ class WarnaPalet
             return '#'.strtolower(ltrim($storedHex, '#'));
         }
 
-        $key = mb_strtolower(trim((string) $name));
+        $name = self::canonicalName((string) $name);
+        $key = mb_strtolower(trim($name));
         if ($key === '') {
             return null;
         }
