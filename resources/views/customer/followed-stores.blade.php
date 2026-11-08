@@ -368,7 +368,7 @@
 <div class="flex flex-col">
 @endif
 <div class="relative aspect-square mb-xs bg-surface-container overflow-hidden rounded-lg w-[94%] mx-auto">
-<img loading="lazy" decoding="async" alt="{{ $store->nama_toko }}" class="object-cover w-full h-full " src="{{ $store->logo ? (photo_url($store->logo)) : 'https://picsum.photos/seed/store'.$store->store_id.'/600/600' }}"/>
+<img loading="lazy" decoding="async" alt="{{ $store->nama_toko }}" class="object-cover w-full h-full " src="{{ product_photo_url($store->logo, 'store-'.$store->store_id) }}"/>
 @if (! $isActive)
 <span class="absolute top-2 left-2 bg-black/50 text-white text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full">{{ __('Tidak aktif') }}</span>
 @endif
