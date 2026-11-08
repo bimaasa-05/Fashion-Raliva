@@ -69,16 +69,6 @@ class PesananController extends Controller
 
         $order->update(['status' => Order::STATUS_DIPROSES]);
 
-        if ($order->checkout?->user_id) {
-            Notification::create([
-                'user_id' => $order->checkout->user_id,
-                'aktor_id' => auth()->id(),
-                'tipe' => Notification::TIPE_ORDER,
-                'judul' => 'Pesanan Diteruskan',
-                'pesan' => sprintf('Pesanan %s kini diproses oleh toko.', $order->nomor_order),
-                'url' => route('customer.order-tracking'),
-            ]);
-        }
         Notification::fireSelf(Notification::TIPE_ORDER, 'Pesanan Diteruskan', sprintf('Pesanan %s diteruskan ke Admin Produksi.', $order->nomor_order), route('owner.pesanan'));
 
         return back()->with('success',__('Pesanan :ph1 diteruskan ke Admin Produksi.', ['ph1' => $order->nomor_order]));
