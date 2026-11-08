@@ -28,7 +28,6 @@ use App\Http\Controllers\Customer\CheckoutController;
 use App\Http\Controllers\Customer\HelpController;
 use App\Http\Controllers\Customer\HomeController;
 use App\Http\Controllers\LandingController;
-use App\Http\Controllers\Customer\NotificationController;
 use App\Http\Controllers\Customer\OrderController;
 use App\Http\Controllers\Customer\OrderTrackingController;
 use App\Http\Controllers\Customer\ProfileController;
@@ -238,10 +237,6 @@ Route::prefix('customer')->name('customer.')->group(function () {
         Route::get('/reviews/{review}/edit', [ReviewController::class, 'edit'])->name('reviews.edit');
         Route::put('/reviews/{review}', [ReviewController::class, 'update'])->name('reviews.update');
         Route::delete('/reviews/{review}', [ReviewController::class, 'destroy'])->name('reviews.destroy');
-
-        Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
-        Route::post('/notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.mark-all-read');
-        Route::post('/notifications/{notification}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
 
         Route::get('/settings', function () {
             return view('customer.settings.index');
