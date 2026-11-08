@@ -124,16 +124,6 @@ class VerifikasiPembayaranController extends Controller
             $logPesan
         );
 
-        $pesanCustomer = $jumlahSaldo > 0
-            ? sprintf(
-                'Pembayaran campuran diverifikasi — saldo Rp %s + transfer Rp %s. Pesanan sedang diproses.',
-                number_format($jumlahSaldo, 0, ',', '.'),
-                number_format($sisaTransfer, 0, ',', '.'),
-            )
-            : sprintf('Pembayaran sebesar Rp %s telah diverifikasi dan pesanan sedang diproses.', number_format((float) $pembayaran->jumlah, 0, ',', '.'));
-
-        $this->notifyCustomer($pembayaran, 'Pembayaran Diverifikasi', $pesanCustomer);
-
         // Notifikasi ke Produksi
         NotificationService::sendToRole(
             Role::PRODUKSI,
@@ -196,12 +186,10 @@ class VerifikasiPembayaranController extends Controller
             sprintf('Menolak pembayaran checkout #%d dengan alasan: %s', $pembayaran->checkout_id, $data['alasan'])
         );
 
-        $this->notifyCustomer($pembayaran, 'Pembayaran Ditolak', sprintf('Bukti pembayaran Anda ditolak. Alasan: %s. Silakan unggah ulang bukti yang benar.', $data['alasan']));
-
         Notification::fireSelf(Notification::TIPE_PEMBAYARAN, 'Pembayaran Ditolak', sprintf('Pembayaran checkout #%d ditolak.', $pembayaran->checkout_id), route('admin.verifikasi-pembayaran'));
 
         return back()->with('toast', [
-            'message' => __('Pembayaran ditolak. Customer dinotifikasi untuk upload ulang.'),
+            'message' => __('Pembayaran ditolak.'),
             'icon' => 'block',
         ]);
     }
@@ -215,19 +203,4 @@ class VerifikasiPembayaranController extends Controller
             ->exists();
     }
 
-    private function notifyCustomer(Payment $pembayaran, string $judul, string $pesan): void
-    {
-        $userId = $pembayaran->checkout?->user_id;
-
-        if ($userId) {
-            Notification::create([
-                'user_id' => $userId,
-                'aktor_id' => ActivityLogger::resolveActorId(),
-                'tipe' => Notification::TIPE_PEMBAYARAN,
-                'judul' => $judul,
-                'pesan' => $pesan,
-                'url' => route('customer.order-tracking'),
-            ]);
-        }
-    }
 }
