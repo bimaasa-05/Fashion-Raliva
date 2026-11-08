@@ -7,6 +7,7 @@ use App\Models\Notification;
 use App\Models\Role;
 use App\Models\StoreStaff;
 use App\Models\User;
+use App\Services\NotificationService;
 use App\Support\OwnerContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -96,19 +97,7 @@ class KaryawanController extends Controller
             'status' => 'aktif',
         ]);
 
-        $urlStaff = match ($validated['role']) {
-            'admin' => route('admin.dashboard'),
-            'produksi' => route('produksi.dashboard'),
-            default => route('gudang.dashboard'),
-        };
-        Notification::create([
-            'user_id' => $user->user_id,
-            'aktor_id' => auth()->id(),
-            'tipe' => Notification::TIPE_SISTEM,
-            'judul' => 'Karyawan Ditambahkan',
-            'pesan' => sprintf('Anda ditugaskan sebagai %s di toko %s oleh Owner.', ucfirst($validated['role']), OwnerContext::currentStore()?->nama_toko ?? '-'),
-            'url' => $urlStaff,
-        ]);
+        NotificationService::sendWelcome($user, auth()->user(), OwnerContext::currentStore());
         Notification::fireSelf(Notification::TIPE_SISTEM, 'Karyawan Ditambahkan', sprintf('Karyawan "%s" (%s) berhasil ditambahkan.', $validated['nama_lengkap'], $validated['role']), route('owner.karyawan'));
 
         return redirect()->route('owner.karyawan')->with('success',__('Karyawan berhasil ditambahkan.'));
