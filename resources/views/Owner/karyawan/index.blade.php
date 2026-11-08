@@ -194,7 +194,7 @@
 
         <p class="text-xs text-on-surface-variant mt-6 pt-5 border-t border-muted-border flex items-start gap-2">
             <span class="material-symbols-outlined text-[16px] text-gold-accent mt-0.5 shrink-0">info</span>
-            {{ __('Satu staf dapat ditugaskan ke toko Anda. Akun baru akan menerima undangan aktivasi melalui email.') }}
+            {{ __('Satu staf dapat ditugaskan ke toko Anda. Akun baru langsung aktif; bagikan email dan password kepada karyawan. Notifikasi selamat datang akan muncul saat mereka login.') }}
         </p>
     </section>
 
