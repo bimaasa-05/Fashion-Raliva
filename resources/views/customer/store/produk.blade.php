@@ -349,7 +349,7 @@
 <div class="group relative flex flex-col cursor-pointer" data-store-product data-product-id="{{ $p->product_id }}">
 <a href="{{ route('customer.shop.produk-detail', $p->product_id) }}" class="flex flex-col w-full">
 <div class="relative w-full aspect-[3/4] mb-sm overflow-hidden bg-surface-container-low">
-<img alt="{{ $p->nama_produk }}" class="w-full h-full object-cover " src="{{ $pImg ? (photo_url($pImg)) : 'https://picsum.photos/seed/store'.$p->product_id.'/900/1200' }}"/>
+<img alt="{{ $p->nama_produk }}" class="w-full h-full object-cover " src="{{ product_photo_url($pImg, $p->product_id) }}"/>
 </div>
 <div class="flex flex-col gap-1">
 <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">{{ $store->nama_toko }}</span>
