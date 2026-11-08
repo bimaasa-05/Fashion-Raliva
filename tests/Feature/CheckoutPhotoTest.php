@@ -59,7 +59,7 @@ class CheckoutPhotoTest extends TestCase
         $response->assertSee('https://example.com/checkout-photo-test.jpg', false);
     }
 
-    public function test_checkout_without_photo_uses_placeholder(): void
+    public function test_checkout_without_photo_uses_local_fallback(): void
     {
         $customer = $this->customer();
         $variant = ProductVariant::whereHas('product.images')
@@ -71,7 +71,8 @@ class CheckoutPhotoTest extends TestCase
             ->get(route('customer.checkout', ['buy' => $variant->product_variant_id]));
 
         $response->assertOk();
-        $response->assertSee('https://picsum.photos/seed/checkout/600/800', false);
+        $response->assertSee('assets/seeders/', false);
+        $response->assertDontSee('picsum.photos', false);
     }
 
     private function customer(): User
