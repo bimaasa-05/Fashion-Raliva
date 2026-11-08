@@ -39,6 +39,7 @@ use App\Models\Warehouse;
 use App\Models\WarehouseStaff;
 use App\Models\WarehouseStock;
 use App\Models\Withdrawal;
+use App\Support\DemoProductCatalog;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -244,16 +245,16 @@ class RalivaDemoSeeder extends Seeder
         $cat = fn (string $name) => ($categories[$name] ?? $categories->first())->category_id;
 
         $productSeed = [
-            ['Trench Coat Signature', 'Jaket & Hoodie', 'KEM', ['Khaki', 'Black', 'Navy'], [['S', 8], ['M', 12], ['L', 6]], 420000, 750000],
-            ['Oversized Linen Shirt', 'Kemeja', 'KMS', ['White', 'Black', 'Beige'], [['S', 20], ['M', 24], ['L', 14]], 180000, 289000],
-            ['Wide Leg Trousers', 'Celana', 'CLT', ['Ivory', 'Black', 'Olive'], [['28', 10], ['30', 14], ['32', 8]], 175000, 295000],
-            ['Midi Dress Linen', 'Dress', 'DRS', ['Sand', 'Black', 'Sage'], [['S', 16], ['M', 18], ['L', 12]], 220000, 389000],
-            ['Knit Cardigan Rajut', 'Jaket & Hoodie', 'RDG', ['Cream', 'Grey', 'Camel'], [['S', 10], ['M', 14], ['L', 9]], 185000, 299000],
-            ['Silk Scarf Premium', 'Aksesoris', 'SYL', ['Ivory', 'Blush', 'Black'], [['One Size', 30]], 95000, 185000],
-            ['Basic T-Shirt Cotton', 'Kaos', 'KSL', ['White', 'Black', 'Grey'], [['S', 40], ['M', 50], ['L', 30]], 55000, 99000],
+            ['Trench Coat Signature', 'Jaket & Hoodie', 'KEM', ['Khaki', 'Hitam', 'Navy'], [['S', 8], ['M', 12], ['L', 6]], 420000, 750000],
+            ['Oversized Linen Shirt', 'Kemeja', 'KMS', ['Putih', 'Hitam', 'Beige'], [['S', 20], ['M', 24], ['L', 14]], 180000, 289000],
+            ['Wide Leg Trousers', 'Celana', 'CLT', ['Ivory', 'Hitam', 'Olive'], [['28', 10], ['30', 14], ['32', 8]], 175000, 295000],
+            ['Midi Dress Linen', 'Dress', 'DRS', ['Sand', 'Hitam', 'Sage'], [['S', 16], ['M', 18], ['L', 12]], 220000, 389000],
+            ['Knit Cardigan Rajut', 'Jaket & Hoodie', 'RDG', ['Cream', 'Abu-abu', 'Camel'], [['S', 10], ['M', 14], ['L', 9]], 185000, 299000],
+            ['Silk Scarf Premium', 'Aksesoris', 'SYL', ['Ivory', 'Blush', 'Hitam'], [['One Size', 30]], 95000, 185000],
+            ['Basic T-Shirt Cotton', 'Kaos', 'KSL', ['Putih', 'Hitam', 'Abu-abu'], [['S', 40], ['M', 50], ['L', 30]], 55000, 99000],
             ['Relaxed Blazer', 'Jaket & Hoodie', 'BLZ', ['Charcoal', 'Khaki'], [['M', 12], ['L', 10]], 320000, 549000],
-            ['Pleated Skirt', 'Rok', 'RKT', ['Black', 'Beige', 'Navy'], [['S', 12], ['M', 10], ['L', 6]], 165000, 275000],
-            ['Leather Belt', 'Ikat Pinggang', 'IKT', ['Black', 'Brown'], [['85-105 cm', 25], ['90-110 cm', 22]], 110000, 199000],
+            ['Pleated Skirt', 'Rok', 'RKT', ['Hitam', 'Beige', 'Navy'], [['S', 12], ['M', 10], ['L', 6]], 165000, 275000],
+            ['Leather Belt', 'Ikat Pinggang', 'IKT', ['Hitam', 'Cokelat'], [['85-105 cm', 25], ['90-110 cm', 22]], 110000, 199000],
         ];
 
         $products = [];
@@ -276,11 +277,18 @@ class RalivaDemoSeeder extends Seeder
 
             $vi = 0;
             foreach ($warnas as $warna) {
+                $warna = DemoProductCatalog::canonicalColor($warna);
                 foreach ($ukuranVariants as [$ukuran, $stokAwal]) {
                     $vi++;
                     $variant = ProductVariant::updateOrCreate(
                         ['product_id' => $product->product_id, 'sku' => $prefix.'-'.str_pad($idx + 1, 3, '0').'-'.str_pad($vi, 2, '0', STR_PAD_LEFT)],
-                        ['warna' => $warna, 'ukuran' => $ukuran, 'harga' => $harga, 'status' => 'aktif']
+                        [
+                            'warna' => $warna,
+                            'warna_hex' => DemoProductCatalog::colorHex($warna),
+                            'ukuran' => $ukuran,
+                            'harga' => $harga,
+                            'status' => 'aktif',
+                        ]
                     );
 
                 // Stok: 70% gudang 1, 30% gudang 2
@@ -328,24 +336,7 @@ class RalivaDemoSeeder extends Seeder
             $products[] = $product;
 
             // Foto produk dari aset lokal (2 foto beda per produk untuk hover-cycle di card).
-            // Trench=1,2 · Oversized=3,4 · Wide leg=5,6 · Basic T=7,8 · Midi=9,10
-            // Knit=11,12 · Blazer=13,14 · Scarf=15,16 · Pleated berbagi 9,10 · Belt berbagi 15,16.
-            $imagePairs = [
-                'Trench Coat Signature' => [1, 2],
-                'Oversized Linen Shirt' => [3, 4],
-                'Wide Leg Trousers' => [5, 6],
-                'Basic T-Shirt Cotton' => [7, 8],
-                'Midi Dress Linen' => [9, 10],
-                'Knit Cardigan Rajut' => [11, 12],
-                'Relaxed Blazer' => [13, 14],
-                'Silk Scarf Premium' => [15, 16],
-                'Pleated Skirt' => [9, 10],
-                'Leather Belt' => [15, 16],
-            ];
-            $pair = $imagePairs[$nama] ?? [1, 2];
-            $imgA = 'assets/seeders/'.$pair[0].'.jfif';
-            $imgB = 'assets/seeders/'.$pair[1].'.jfif';
-            foreach ([$imgA, $imgB] as $order => $path) {
+            foreach (DemoProductCatalog::imagePathsFor($nama) ?? [] as $order => $path) {
                 ProductImage::updateOrCreate(
                     ['product_id' => $product->product_id, 'urutan' => $order + 1],
                     ['file_gambar' => $path]
