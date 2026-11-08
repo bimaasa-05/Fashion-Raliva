@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Role;
 use App\Models\User;
-use App\Support\ActivityLogger;
+use App\Services\NotificationService;
 use App\Support\AdminContext;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -59,14 +59,7 @@ class DataCustomerController extends Controller
             'status' => User::STATUS_AKTIF,
         ]);
 
-        \App\Models\Notification::create([
-            'user_id' => $customer->user_id,
-            'aktor_id' => ActivityLogger::resolveActorId(),
-            'tipe' => \App\Models\Notification::TIPE_SISTEM,
-            'judul' => 'Akun Customer Dibuat',
-            'pesan' => sprintf('Akun dengan email %s telah dibuat oleh Admin toko. Password default: Raliva123 — segera ganti password di menu Ganti Password.', $customer->email),
-            'url' => route('customer.account'),
-        ]);
+        NotificationService::sendWelcome($customer, auth()->user());
         \App\Models\Notification::fireSelf(
             \App\Models\Notification::TIPE_SISTEM,
             'Customer Ditambahkan',
