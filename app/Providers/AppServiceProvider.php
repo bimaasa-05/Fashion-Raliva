@@ -80,9 +80,9 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Sediakan notifikasi terbaru + jumlah belum dibaca untuk semua layout
-        // (superadmin, admin, owner, gudang, produksi) lewat partial notification-panel.
+        // role lewat partial notification-panel, dan untuk drawer customer.
         \Illuminate\Support\Facades\View::composer(
-            ['partials.notification-panel'],
+            ['partials.notification-panel', 'customer._partials.drawer'],
             \App\View\Composers\NotificationComposer::class
         );
     }
