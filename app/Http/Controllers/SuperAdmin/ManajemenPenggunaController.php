@@ -157,7 +157,7 @@ class ManajemenPenggunaController extends Controller
 
         $roleAkhir = $roleName;
 
-        if ((int) $user->user_id !== (int) auth()->id()) {
+        if ((int) $user->user_id !== (int) auth()->id() && $roleName !== Role::CUSTOMER) {
             Notification::create([
                 'user_id' => $user->user_id,
                 'aktor_id' => ActivityLogger::resolveActorId(),
@@ -330,7 +330,7 @@ class ManajemenPenggunaController extends Controller
             sprintf('Mengubah peran "%s" menjadi "%s".', $user->nama_lengkap, $roleBaru->nama_role)
         );
 
-        if ((int) $user->user_id !== (int) auth()->id()) {
+        if ((int) $user->user_id !== (int) auth()->id() && $roleBaru->nama_role !== Role::CUSTOMER) {
             Notification::create([
                 'user_id' => $user->user_id,
                 'aktor_id' => ActivityLogger::resolveActorId(),
@@ -389,14 +389,14 @@ class ManajemenPenggunaController extends Controller
                 sprintf('Mengubah status "%s" dari %s menjadi %s.', $locked->nama_lengkap, $lama, $baru)
             );
 
-            if ((int) $locked->user_id !== (int) auth()->id()) {
+            if ((int) $locked->user_id !== (int) auth()->id() && $locked->role?->nama_role !== Role::CUSTOMER) {
                 Notification::create([
                     'user_id' => $locked->user_id,
                     'aktor_id' => ActivityLogger::resolveActorId(),
                     'tipe' => Notification::TIPE_SISTEM,
                     'judul' => 'Status Akun Diubah',
                     'pesan' => sprintf('Status akun Anda diubah menjadi %s.', $baru === User::STATUS_AKTIF ? 'aktif' : 'nonaktif'),
-                    'url' => route('customer.account'),
+                    'url' => $this->routeForRole($locked->role?->nama_role),
                 ]);
             }
 
