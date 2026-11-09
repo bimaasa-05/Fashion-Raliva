@@ -30,8 +30,12 @@
         <div class="flex flex-col sm:flex-row items-center gap-6">
             <div class="relative shrink-0">
                 <div class="w-24 h-24 rounded-xl overflow-hidden border border-outline-variant bg-surface-container-high flex items-center justify-center">
-                    @php $logoUrl = $store?->logo ? photo_url($store->logo) : asset('images/logo.svg'); @endphp
-                    <img src="{{ $logoUrl }}" alt="{{ __('Logo Toko') }}" class="w-full h-full object-cover" id="store-logo-preview" />
+                    @if ($store?->logo)
+                        <img src="{{ photo_url($store->logo) }}" alt="{{ __('Logo Toko') }}" class="w-full h-full object-cover" id="store-logo-preview" />
+                    @else
+                        <span id="store-logo-fallback" class="material-symbols-outlined text-[40px] text-gold-accent/70" aria-hidden="true">storefront</span>
+                        <img src="" alt="{{ __('Logo Toko') }}" class="hidden w-full h-full object-cover" id="store-logo-preview" />
+                    @endif
                 </div>
                 <input type="file" name="logo" id="store-logo-input" accept=".jpg,.jpeg,.png,.webp" class="hidden" form="form-data-toko" @if(!empty($updatePending)) disabled @endif />
                     <label for="store-logo-input" @if(!empty($updatePending)) aria-disabled="true" title="{{ __('Terkunci — menunggu verifikasi') }}" @else title="{{ __('Ubah Logo (JPG/PNG/WebP, maks 2 MB). Berlaku setelah diverifikasi Super Admin.') }}" @endif class="absolute -bottom-2 -right-2 w-9 h-9 rounded-full bg-deep-onyx text-on-primary flex items-center justify-center btn-premium shadow-md @if(empty($updatePending)) cursor-pointer @else opacity-60 cursor-not-allowed @endif" aria-label="{{ __('Ubah Logo') }}">
@@ -277,7 +281,12 @@ document.addEventListener('DOMContentLoaded', function(){
       }
       showChip(logoChipErr, false);
       var preview = document.getElementById('store-logo-preview');
-      if (preview) preview.src = URL.createObjectURL(file);
+      if (preview) {
+        preview.src = URL.createObjectURL(file);
+        preview.classList.remove('hidden');
+      }
+      var fallback = document.getElementById('store-logo-fallback');
+      if (fallback) fallback.classList.add('hidden');
       var nm = document.getElementById('store-logo-name');
       var sz = document.getElementById('store-logo-size');
       if (nm) nm.textContent = file.name;
