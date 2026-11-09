@@ -3,7 +3,7 @@
 @section('title', __('Dashboard Produksi'))
 
 @section('header-title', __('Dashboard Produksi'))
-@section('header-badge', __('Atelier Aktif'))
+@section('header-badge', ! $store ? __('Belum Ada Toko') : ($store->status === \App\Models\Store::STATUS_AKTIF ? __('Atelier Aktif') : \App\Support\StatusStyle::label($store->status)))
 @section('header-subtitle', __('Ringkasan proses produksi, kualitas dan hasil kerja harian Anda.'))
 
 @section('content')
@@ -27,16 +27,16 @@
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-5 card-premium">
         <div class="flex items-center gap-4">
             <div class="w-14 h-14 rounded-xl bg-deep-onyx text-on-primary flex items-center justify-center shrink-0">
-                <span class="material-symbols-outlined text-[28px]">precision_manufacturing</span>
+                <span class="material-symbols-outlined text-[28px]">{{ $store ? 'storefront' : 'precision_manufacturing' }}</span>
             </div>
             <div>
                 <div class="flex items-center gap-2 flex-wrap">
-                    <p class="raliva-figure raliva-figure-text text-xl text-on-surface">{{ __('Atelier Produksi Raliva') }}</p>
+                    <p class="raliva-figure raliva-figure-text text-xl text-on-surface">{{ $store?->nama_toko ?? __('Belum Ada Toko') }}</p>
                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-secondary-container/20 text-secondary text-[10px] font-bold uppercase border border-secondary/20">
-                        <span class="material-symbols-outlined fill text-[12px]">verified</span>Workshop Kemang
+                        <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === \App\Models\Store::STATUS_AKTIF ? 'verified' : 'schedule' }}</span>{{ $store ? \App\Support\StatusStyle::label($store->status) : __('Menunggu Penugasan') }}
                     </span>
                 </div>
-                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">{{ __('Kelola produksi, pemeriksaan kualitas, dan hasil kerja atelier.') }}</p>
+                <p class="text-on-surface-variant font-body-md text-sm mt-0.5">{{ $store ? ($store->kota ?: $store->alamat) : __('Belum ditugaskan ke toko aktif.') }}</p>
             </div>
         </div>
         <div class="flex flex-wrap items-center gap-gutter self-start md:self-auto">
