@@ -464,9 +464,25 @@
         const center = document.createElement('div');
         center.className = 'absolute inset-0 flex flex-col items-center justify-center text-center pointer-events-none';
         const sfx = el.getAttribute('data-donut-suffix') || '';
-        center.innerHTML =
-            '<span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-none">' + total.toLocaleString('id-ID') + sfx + '</span>' +
-            '<span class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mt-1.5">' + (el.getAttribute('data-donut-label') || '{{ __('Total') }}') + '</span>';
+        const centerValueAttr = el.getAttribute('data-donut-center-value');
+        const centerTextAttr = el.getAttribute('data-donut-center-text');
+        const centerValue = centerValueAttr !== null
+            ? centerValueAttr
+            : total.toLocaleString('id-ID') + sfx;
+        const centerText = centerTextAttr !== null
+            ? centerTextAttr
+            : (el.getAttribute('data-donut-label') || '{{ __('Total') }}');
+
+        const valueEl = document.createElement('span');
+        valueEl.className = 'font-headline-lg-mobile text-headline-lg-mobile text-on-surface leading-none';
+        valueEl.textContent = centerValue;
+
+        const labelEl = document.createElement('span');
+        labelEl.className = 'font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant mt-1.5';
+        labelEl.textContent = centerText;
+
+        center.appendChild(valueEl);
+        center.appendChild(labelEl);
         wrap.appendChild(center);
         el.appendChild(wrap);
 
