@@ -3,7 +3,7 @@
 @section('title', __('Dashboard Toko'))
 
 @section('header-title', __('Dashboard Toko'))
-@section('header-badge', __('Terverifikasi'))
+@section('header-badge', ! $store ? __('Belum Punya Toko') : ($store->status === \App\Models\Store::STATUS_AKTIF ? __('Terverifikasi') : \App\Support\StatusStyle::label($store->status)))
 @section('header-subtitle', __('Ringkasan performa penjualan dan aktivitas toko Anda.'))
 
 @section('content')
@@ -36,7 +36,11 @@
     <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-5 card-premium {{ ! $store ? 'opacity-60 pointer-events-none' : '' }}">
         <div class="flex items-center gap-4">
             <div class="w-14 h-14 rounded-xl overflow-hidden border border-outline-variant shrink-0 bg-surface-container-high flex items-center justify-center {{ ! $store ? 'grayscale' : '' }}">
-                <img src="{{ asset('images/logo.svg') }}" alt="Logo {{ $store?->nama_toko ?? __('Toko') }}" class="w-full h-full object-cover" />
+                @if ($store?->logo)
+                    <img src="{{ photo_url($store->logo) }}" alt="Logo {{ $store->nama_toko }}" class="w-full h-full object-cover" />
+                @else
+                    <span class="material-symbols-outlined text-[28px] text-gold-accent/70" aria-hidden="true">storefront</span>
+                @endif
             </div>
             <div>
                 <div class="flex items-center gap-2 flex-wrap">
@@ -159,10 +163,17 @@
                                     <p class="text-on-surface-variant text-xs mt-0.5">{{ $a['subtitle'] }}</p>
                                 </div>
                             </div>
-                            <span class="font-label-sm text-[11px] font-bold text-secondary shrink-0">{{ $a['progress'] }}%</span>
-                        </div>
-                        <div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden">
-                            <div class="progress-fill h-full bg-gold-accent rounded-full" data-progress="{{ $a['progress'] }}"></div>
+                            @php($badge = \App\Support\StatusStyle::badge($a['status']))
+                            @if (isset($a['progress']))
+                                <div class="text-right shrink-0 w-20">
+                                    <span class="font-label-sm text-[11px] font-bold text-secondary">{{ $a['progress'] }}%</span>
+                                    <div class="h-1.5 bg-surface-container-high rounded-full overflow-hidden mt-1">
+                                        <div class="progress-fill h-full bg-gold-accent rounded-full" data-progress="{{ $a['progress'] }}"></div>
+                                    </div>
+                                </div>
+                            @else
+                                <span class="{{ \App\Support\StatusStyle::PILL }} {{ $badge['class'] }} shrink-0">{{ $badge['label'] }}</span>
+                            @endif
                         </div>
                     </li>
                 @empty
