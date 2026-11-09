@@ -52,7 +52,7 @@ class DashboardOperasionalController extends Controller
             ->limit(5)
             ->get();
 
-        $stores = Store::whereIn('store_id', $storeIds)->get(['store_id', 'nama_toko', 'logo', 'alamat', 'created_at']);
+        $stores = Store::whereIn('store_id', $storeIds)->get(['store_id', 'nama_toko', 'logo', 'alamat', 'status', 'created_at']);
         $firstStore = $stores->first();
         $rating = $stores->isNotEmpty() ? (float) Review::whereIn('store_id', $storeIds)->avg('rating') : 0;
         $ratingCount = $stores->isNotEmpty() ? Review::whereIn('store_id', $storeIds)->count() : 0;
