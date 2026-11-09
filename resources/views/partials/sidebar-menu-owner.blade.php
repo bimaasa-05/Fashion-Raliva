@@ -58,23 +58,23 @@
     @foreach ($menuGroups as $group)
         @php
             $collapsible = count($group['items']) >= 3;
-            $isActive = collect($group['items'])->contains(fn ($item) => request()->routeIs($item['route'], ...($item['aliases'] ?? [])));
+            $groupOpen = true;
             $groupBadgeKeys = collect($group['items'])->filter(fn ($item) => ! empty($item['badge']))->pluck('badge')->values();
             $groupHasBadges = $groupBadgeKeys->contains(fn ($key) => ($sidebarBadges[$key] ?? 0) > 0);
         @endphp
         <div class="space-y-1 {{ $loop->first ? '' : 'pt-4' }}">
             @if ($collapsible)
-                <button type="button" data-sidebar-group-button aria-expanded="{{ $isActive ? 'true' : 'false' }}" class="w-full flex items-center justify-between px-2 py-2 text-[10px] font-label-sm uppercase tracking-widest text-gold-accent/70 hover:text-gold-accent transition-colors">
+                <button type="button" data-sidebar-group-button aria-expanded="{{ $groupOpen ? 'true' : 'false' }}" class="w-full flex items-center justify-between px-2 py-2 text-[10px] font-label-sm uppercase tracking-widest text-gold-accent/70 hover:text-gold-accent transition-colors">
                     <span class="flex items-center gap-2 min-w-0">
                         <span data-group-label>{{ __($group['label']) }}</span>
                         <span data-sidebar-group-dot data-group-badges="{{ $groupBadgeKeys->implode(',') }}" class="sa-notif-dot w-2 h-2 rounded-full bg-error shrink-0 {{ $groupHasBadges ? '' : 'hidden' }}"></span>
                     </span>
-                    <span class="material-symbols-outlined text-[18px] transition-transform duration-200 {{ $isActive ? 'rotate-180' : '' }}">keyboard_arrow_down</span>
+                    <span class="material-symbols-outlined text-[18px] transition-transform duration-200 {{ $groupOpen ? 'rotate-180' : '' }}">keyboard_arrow_down</span>
                 </button>
             @else
                 <div class="px-2 py-2 text-[10px] font-label-sm uppercase tracking-widest text-gold-accent/70"><span data-group-label>{{ __($group['label']) }}</span></div>
             @endif
-            <div class="{{ $collapsible ? 'grid transition-[grid-template-rows] duration-300 ease-out ' . ($isActive ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]') : 'space-y-1' }}" @if ($collapsible) data-sidebar-group @endif>
+            <div class="{{ $collapsible ? 'grid transition-[grid-template-rows] duration-300 ease-out ' . ($groupOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]') : 'space-y-1' }}" @if ($collapsible) data-sidebar-group @endif>
                 <div class="{{ $collapsible ? 'min-h-0 overflow-hidden' : '' }}">
                     <div class="{{ $collapsible ? 'space-y-1' : '' }}">
                 @foreach ($group['items'] as $item)
