@@ -53,75 +53,65 @@
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Produk') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $stats->total_produk ?? 0 }}">{{ $stats->total_produk ?? 0 }}</span></span>
                 <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">inventory_2</span>SKU aktif</span>
-                <div class="flex items-end gap-[3px] h-6 mt-auto">
-                    <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:30%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:38%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:34%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:44%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:48%"></i>
-                </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">checkroom</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Total Stok') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface"><span data-count="{{ $stats->total_stok ?? 0 }}">{{ number_format($stats->total_stok ?? 0, 0, ',', '.') }}</span></span>
                 <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">inventory_2</span>unit tersedia</span>
-                <div class="flex items-end gap-[3px] h-6 mt-auto">
-                    <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:35%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:38%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:46%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:44%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:54%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:50%"></i>
-                </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">inventory_2</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Barang Masuk Hari Ini') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary"><span data-count="{{ $stats->masuk_hari_ini ?? 0 }}">{{ $stats->masuk_hari_ini ?? 0 }}</span></span>
                 <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">archive</span>unit masuk</span>
-                <div class="flex items-end gap-[3px] h-6 mt-auto">
-                    <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:40%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:55%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:60%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:72%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:66%"></i>
-                </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">archive</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-muted-border rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Barang Keluar Hari Ini') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-secondary"><span data-count="{{ $stats->keluar_hari_ini ?? 0 }}">{{ $stats->keluar_hari_ini ?? 0 }}</span></span>
                 <span class="inline-flex items-center gap-1 text-xs text-error"><span class="material-symbols-outlined text-[14px]">unarchive</span>unit keluar</span>
-                <div class="flex items-end gap-[3px] h-6 mt-auto">
-                    <i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:48%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:44%"></i><i class="w-1.5 rounded-sm bg-gold-accent/50" style="height:52%"></i><i class="w-1.5 rounded-sm bg-gold-accent/70" style="height:46%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:58%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:50%"></i><i class="w-1.5 rounded-sm bg-gold-accent" style="height:62%"></i>
-                </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">unarchive</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-gold-accent/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Stok Menipis & Kritis') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-gold-accent"><span data-count="{{ ($stats->menipis ?? 0) + ($stats->kritis ?? 0) }}">{{ ($stats->menipis ?? 0) + ($stats->kritis ?? 0) }}</span></span>
                 <span class="inline-flex items-center gap-1 text-xs text-error"><span class="material-symbols-outlined text-[14px]">north</span>perlu restock</span>
-                <div class="flex items-end gap-[3px] h-6 mt-auto">
-                    <i class="w-1.5 rounded-sm bg-error/40" style="height:25%"></i><i class="w-1.5 rounded-sm bg-error/40" style="height:32%"></i><i class="w-1.5 rounded-sm bg-error/60" style="height:28%"></i><i class="w-1.5 rounded-sm bg-error/60" style="height:40%"></i><i class="w-1.5 rounded-sm bg-error/80" style="height:36%"></i><i class="w-1.5 rounded-sm bg-error" style="height:48%"></i><i class="w-1.5 rounded-sm bg-error" style="height:55%"></i>
-                </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">warning</span>
             </div>
             <div class="bg-surface-container-lowest p-4 border border-error/25 rounded-lg flex flex-col gap-2 relative overflow-hidden card-premium">
                 <span class="text-on-surface-variant font-label-sm text-label-sm uppercase">{{ __('Stok Habis') }}</span>
                 <span class="font-headline-lg-mobile text-headline-lg-mobile text-error"><span data-count="{{ $stats->habis ?? 0 }}">{{ $stats->habis ?? 0 }}</span></span>
                 <span class="inline-flex items-center gap-1 text-xs text-secondary"><span class="material-symbols-outlined text-[14px]">report</span>varian habis</span>
-                <div class="flex items-end gap-[3px] h-6 mt-auto">
-                    <i class="w-1.5 rounded-sm bg-error/30" style="height:30%"></i><i class="w-1.5 rounded-sm bg-error/30" style="height:26%"></i><i class="w-1.5 rounded-sm bg-error/50" style="height:34%"></i><i class="w-1.5 rounded-sm bg-error/50" style="height:28%"></i><i class="w-1.5 rounded-sm bg-error/70" style="height:38%"></i><i class="w-1.5 rounded-sm bg-error" style="height:30%"></i><i class="w-1.5 rounded-sm bg-error" style="height:42%"></i>
-                </div>
                 <span class="material-symbols-outlined absolute -right-2 -bottom-4 text-[72px] text-gold-accent/15 fill pointer-events-none select-none" aria-hidden="true">report</span>
             </div>
         </div>
     </section>
 
+    @php
+        $targetAda = $targetPenerimaan['ada_data'] ?? false;
+        $targetPct = $targetAda ? ($targetPenerimaan['pct'] ?? 0) : 0;
+        $akurasiAda = $akurasi['ada_data'] ?? false;
+        $akurasiPct = $akurasiAda ? ($akurasi['pct'] ?? 0) : 0;
+        $slaAda = $sla['ada_data'] ?? false;
+        $slaPct = $slaAda ? ($sla['pct'] ?? 0) : 0;
+    @endphp
     <section class="rise">
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
                 <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">{{ __('Target Penerimaan Hari Ini') }}</p>
-                <div data-donut='[{"value":{{ $targetPenerimaan["pct"] ?? 0 }},"color":"#8B1E3F","label":"{{ __('Tercapai') }}"},{"value":{{ 100 - ($targetPenerimaan["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="{{ __('dari Target') }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-                <p class="text-[11px] text-on-surface-variant mt-1">{{ $targetPenerimaan["masuk"] ?? 0 }} dari {{ $targetPenerimaan["target"] ?? 0 }} unit hari ini</p>
+                <div data-donut='[{"value":{{ $targetPct }},"color":"#8B1E3F","label":"{{ __('Tercapai') }}"},{"value":{{ 100 - $targetPct }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-center-value="{{ $targetAda ? $targetPct.'%' : '—' }}" data-donut-center-text="{{ $targetAda ? __('dari Target') : __('Belum Ada Data') }}" data-donut-label="{{ $targetAda ? __('dari Target') : __('Belum Ada Data') }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <p class="text-[11px] text-on-surface-variant mt-1">{{ $targetAda ? ($targetPenerimaan["masuk"] ?? 0).' dari '.($targetPenerimaan["target"] ?? 0).' unit hari ini' : __('Belum ada gudang aktif.') }}</p>
             </div>
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
                 <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">{{ __('Akurasi Stok') }}</p>
-                <div data-donut='[{"value":{{ $akurasi["pct"] ?? 0 }},"color":"#8B1E3F","label":"{{ __('Akurat') }}"},{"value":{{ 100 - ($akurasi["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="{{ __('Akurasi') }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-                <p class="text-[11px] text-on-surface-variant mt-1">{{ $akurasi["tersedia"] ?? 0 }} dari {{ $akurasi["total"] ?? 0 }} varian stok tersedia</p>
+                <div data-donut='[{"value":{{ $akurasiPct }},"color":"#8B1E3F","label":"{{ __('Akurat') }}"},{"value":{{ 100 - $akurasiPct }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-center-value="{{ $akurasiAda ? $akurasiPct.'%' : '—' }}" data-donut-center-text="{{ $akurasiAda ? __('Akurasi') : __('Belum Ada Data') }}" data-donut-label="{{ $akurasiAda ? __('Akurasi') : __('Belum Ada Data') }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <p class="text-[11px] text-on-surface-variant mt-1">{{ $akurasiAda ? ($akurasi["tersedia"] ?? 0).' dari '.($akurasi["total"] ?? 0).' varian stok tersedia' : __('Belum ada varian stok di gudang ini.') }}</p>
             </div>
             <div class="bg-surface-container-lowest border border-muted-border rounded-lg p-4 flex flex-col items-center text-center card-premium">
                 <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant self-start">{{ __('SLA Pemenuhan Pesanan') }}</p>
-                <div data-donut='[{"value":{{ $sla["pct"] ?? 0 }},"color":"#c03a5a","label":"{{ __('Tepat SLA') }}"},{"value":{{ 100 - ($sla["pct"] ?? 0) }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="{{ __('Stok Tersedia') }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-                <p class="text-[11px] text-on-surface-variant mt-1">{{ $sla["tersedia"] ?? 0 }} dari {{ $sla["total"] ?? 0 }} pesanan stok tersedia</p>
+                <div data-donut='[{"value":{{ $slaPct }},"color":"#c03a5a","label":"{{ __('Tepat SLA') }}"},{"value":{{ 100 - $slaPct }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-center-value="{{ $slaAda ? $slaPct.'%' : '—' }}" data-donut-center-text="{{ $slaAda ? __('Stok Tersedia') : __('Belum Ada Data') }}" data-donut-label="{{ $slaAda ? __('Stok Tersedia') : __('Belum Ada Data') }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="100" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+                <p class="text-[11px] text-on-surface-variant mt-1">{{ $slaAda ? ($sla["tersedia"] ?? 0).' dari '.($sla["total"] ?? 0).' pesanan stok tersedia' : __('Belum ada pesanan yang menunggu stok.') }}</p>
             </div>
         </div>
     </section>
@@ -157,7 +147,7 @@
                 <span class="material-symbols-outlined text-gold-accent text-[20px]">donut_small</span>
             </div>
             <p class="text-on-surface-variant font-body-md text-xs mb-4">Sebaran kondisi {{ $stats->total_produk ?? 0 }} produk.</p>
-            <div data-donut='[{"value":{{ $statusDist['aman'] ?? 0 }},"color":"#8B1E3F","label":"{{ __('Aman') }}"},{"value":{{ $statusDist['menipis'] ?? 0 }},"color":"#c03a5a","label":"{{ __('Menipis') }}"},{"value":{{ $statusDist['kritis'] ?? 0 }},"color":"#BA1A26","label":"{{ __('Kritis') }}"},{"value":{{ $statusDist['habis'] ?? 0 }},"color":"#7f1010","label":"{{ __('Habis') }}"}]' data-donut-label="{{ __('Produk') }}"></div>
+            <div data-donut='[{"value":{{ $statusDist['aman'] ?? 0 }},"color":"#8B1E3F","label":"{{ __('Aman') }}"},{"value":{{ $statusDist['menipis'] ?? 0 }},"color":"#c03a5a","label":"{{ __('Menipis') }}"},{"value":{{ $statusDist['kritis'] ?? 0 }},"color":"#BA1A26","label":"{{ __('Kritis') }}"},{"value":{{ $statusDist['habis'] ?? 0 }},"color":"#7f1010","label":"{{ __('Habis') }}"}]' @if (($stats->total_produk ?? 0) === 0) data-donut-center-value="—" data-donut-center-text="{{ __('Belum Ada Data') }}" @endif data-donut-label="{{ __('Produk') }}"></div>
             <a href="{{ route('gudang.stok') }}" class="block text-center mt-5 pt-4 border-t border-muted-border font-label-sm text-[11px] text-gold-accent uppercase tracking-widest hover:underline">{{ __('Lihat Data Stok') }}</a>
         </section>
     </div>
