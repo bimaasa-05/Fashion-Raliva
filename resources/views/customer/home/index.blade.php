@@ -476,13 +476,16 @@
 <h3 class="premium-heading font-headline-md text-headline-md text-on-surface mb-xs">{{ __('Maisions We Love') }}</h3>
 <div class="flex overflow-x-auto no-scrollbar lg:grid lg:grid-cols-4 lg:overflow-visible gap-md pb-xs mt-md snap-x snap-mandatory">
 @forelse ($stores as $s)
-@php
-    $storeImg = $s->logo;
-    $storeImgUrl = product_photo_url($storeImg, 'store-'.$s->store_id);
-@endphp
+@php($storeImgUrl = $s->logo ? photo_url($s->logo) : null)
 <a href="{{ route('customer.shop.store', $s->store_id) }}" class="shrink-0 w-64 lg:w-auto cursor-pointer group snap-center">
 <div class="aspect-video mb-xs bg-surface-container overflow-hidden">
+@if ($storeImgUrl)
 <img loading="lazy" decoding="async" class="object-cover w-full h-full " alt="{{ $s->nama_toko }}" src="{{ $storeImgUrl }}"/>
+@else
+<div class="w-full h-full flex items-center justify-center bg-surface-container-high">
+<span class="material-symbols-outlined text-5xl text-outline-variant" data-icon="storefront">storefront</span>
+</div>
+@endif
 </div>
 <h4 class="font-title-md text-title-md text-on-surface group-hover:text-secondary transition-colors">{{ $s->nama_toko }}</h4>
 <p class="font-body-sm text-body-sm text-on-surface-variant">{{ \Illuminate\Support\Str::limit($s->deskripsi ?? __('Boutique :brand', ['brand' => brand()]), 60) }}</p>
