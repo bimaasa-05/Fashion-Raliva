@@ -46,9 +46,9 @@ class DashboardController extends Controller
                     '90' => $emptyChart,
                 ],
                 'statusDist' => ['aman' => 0, 'menipis' => 0, 'kritis' => 0, 'habis' => 0],
-                'targetPenerimaan' => ['pct' => 0, 'masuk' => 0, 'target' => 0],
-                'akurasi' => ['pct' => 100, 'tersedia' => 0, 'total' => 0],
-                'sla' => ['pct' => 100, 'tersedia' => 0, 'total' => 0],
+                'targetPenerimaan' => ['pct' => 0, 'masuk' => 0, 'target' => 0, 'ada_data' => false],
+                'akurasi' => ['pct' => 0, 'tersedia' => 0, 'total' => 0, 'ada_data' => false],
+                'sla' => ['pct' => 0, 'tersedia' => 0, 'total' => 0, 'ada_data' => false],
                 'kategoriTerbesar' => collect(),
                 'leaderboardData' => [],
                 'barsData' => [],
@@ -128,7 +128,7 @@ class DashboardController extends Controller
         // Akurasi stok = persentase varian stok yang masih tersedia (>0).
         $totalVarian = $stocks->count();
         $varianTersedia = $stocks->where('jumlah_stok', '>', 0)->count();
-        $akurasiPct = $totalVarian > 0 ? (int) round($varianTersedia / $totalVarian * 100) : 100;
+        $akurasiPct = $totalVarian > 0 ? (int) round($varianTersedia / $totalVarian * 100) : 0;
 
         // SLA pemenuhan = persentase pesanan menunggu yang stoknya tersedia di gudang ini.
         $orderRequests = Order::where('store_id', $warehouse->store_id)
@@ -144,7 +144,8 @@ class DashboardController extends Controller
                 $reqTersedia++;
             }
         }
-        $slaPct = $orderRequests->count() > 0 ? (int) round($reqTersedia / $orderRequests->count() * 100) : 100;
+        $orderRequestCount = $orderRequests->count();
+        $slaPct = $orderRequestCount > 0 ? (int) round($reqTersedia / $orderRequestCount * 100) : 0;
 
         // Kategori stok terbesar (top 4 by total unit).
         $produkPerKategori = Product::where('store_id', $warehouse->store_id)
@@ -208,16 +209,19 @@ class DashboardController extends Controller
                 'pct' => $targetPenerimaanPct,
                 'masuk' => $masukHariIni,
                 'target' => $targetHarian,
+                'ada_data' => $targetHarian > 0,
             ],
             'akurasi' => [
                 'pct' => $akurasiPct,
                 'tersedia' => $varianTersedia,
                 'total' => $totalVarian,
+                'ada_data' => $totalVarian > 0,
             ],
             'sla' => [
                 'pct' => $slaPct,
                 'tersedia' => $reqTersedia,
-                'total' => $orderRequests->count(),
+                'total' => $orderRequestCount,
+                'ada_data' => $orderRequestCount > 0,
             ],
             'kategoriTerbesar' => $kategoriTerbesar,
             'leaderboardData' => $leaderboardData,
