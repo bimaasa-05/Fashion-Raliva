@@ -140,7 +140,9 @@ class DashboardController extends Controller
             ->where('created_at', '>=', now()->startOfMonth())->sum('grand_total');
         $omzetBulanLalu = (float) Order::whereIn('status', Order::STATUS_PENDAPATAN)
             ->whereBetween('created_at', [now()->subMonth()->startOfMonth(), now()->startOfMonth()])->sum('grand_total');
-        $targetOmzetPct = (int) round(($omzetBulanLalu > 0 ? $omzetBulanIni / $omzetBulanLalu : ($omzetBulanIni > 0 ? 1 : 0)) * 100);
+        $targetOmzetPct = $omzetBulanLalu > 0
+            ? (int) round(($omzetBulanIni / $omzetBulanLalu) * 100)
+            : null;
 
         // Kepuasan pelanggan dari review aktif
         $totalUlasan = Review::where('status', Review::STATUS_AKTIF)->count();
@@ -204,18 +206,22 @@ class DashboardController extends Controller
             'targetOmzet' => [
                 'bulanIni' => $omzetBulanIni,
                 'bulanLalu' => $omzetBulanLalu,
-                'persen' => min(max($targetOmzetPct, 0), 100),
+                'persen' => $targetOmzetPct === null ? 0 : min(max($targetOmzetPct, 0), 100),
+                'tersedia' => $targetOmzetPct !== null,
+                'pembanding' => $omzetBulanLalu > 0,
             ],
             'kepuasan' => [
                 'rata' => $rataRating,
                 'persen' => $kepuasanPct,
                 'total' => $totalUlasan,
+                'tersedia' => $totalUlasan > 0,
             ],
             'sla' => [
                 'persen' => $slaPct,
                 'rataJam' => $slaRataJam,
                 'total' => $slaTotal,
                 'tepat' => $slaTepat,
+                'tersedia' => $slaTotal > 0,
             ],
         ]);
     }
