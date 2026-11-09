@@ -10,6 +10,15 @@
 @php
     // Data real dari DashboardOperasionalController (AdminContext scoped)
     $omzetJuta = isset($omzetMingguan['total']) ? number_format($omzetMingguan['total'] / 1000000, 1, ',', '.') : '0,0';
+    $storeCount = $stores->count();
+    $multiStore = $storeCount > 1;
+    $scopeLabel = $multiStore
+        ? __(':count toko', ['count' => $storeCount])
+        : ($storeCount === 1 ? $stores->first()->nama_toko : __('Belum ada toko'));
+    $storeTitle = $multiStore ? __(':count Toko', ['count' => $storeCount]) : ($store?->nama_toko ?? __('Toko'));
+    $storeSubtitle = $multiStore
+        ? __('Data digabung dari :count toko dalam scope Anda.', ['count' => $storeCount])
+        : (($store?->alamat ?? __('Alamat toko')).' • '.($store ? __('Aktif sejak').' '.optional($store->created_at)->translatedFormat('M Y') : __('Toko')));
 @endphp
 
 @section('content')
@@ -22,7 +31,7 @@
     </span>
     <span class="font-label-sm text-[11px] uppercase tracking-widest text-on-surface-variant inline-flex items-center gap-1.5">
         <span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
-        {{ __('Scope') }}: {{ \Illuminate\Support\Str::limit($stores->pluck('nama_toko')->implode(', '), 50) }}
+        {{ __('Scope') }}: {{ $scopeLabel }}
     </span>
 </div>
 
@@ -32,16 +41,26 @@
 <section data-reveal class="bg-surface-container-lowest border border-muted-border rounded-lg px-6 py-5 flex flex-col md:flex-row md:items-center justify-between gap-5 card-premium {{ ! $store ? 'opacity-60 pointer-events-none' : '' }}">
     <div class="flex items-center gap-4">
         <div class="w-14 h-14 rounded-xl overflow-hidden border border-outline-variant shrink-0 bg-surface-container-high flex items-center justify-center {{ ! $store ? 'grayscale' : '' }}">
-            <img src="{{ asset('images/logo.svg') }}" alt="Logo {{ $store?->nama_toko ?? 'Toko' }}" class="w-full h-full object-cover" />
+            @if (! $multiStore && $store?->logo)
+                <img src="{{ photo_url($store->logo) }}" alt="Logo {{ $store->nama_toko }}" class="w-full h-full object-cover" />
+            @else
+                <span class="material-symbols-outlined text-[28px] text-gold-accent/70" aria-hidden="true">storefront</span>
+            @endif
         </div>
         <div>
             <div class="flex items-center gap-2 flex-wrap">
-                <p class="raliva-figure raliva-figure-text text-xl {{ ! $store ? 'text-on-surface-variant' : 'text-on-surface' }}">{{ $store?->nama_toko ?? 'Toko' }}</p>
-                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full {{ $store?->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' }} text-[10px] font-bold uppercase border">
-                    <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === 'aktif' ? 'verified' : 'schedule' }}</span>{{ $store ? \App\Support\StatusStyle::label($store->status) : __('Menunggu') }}
-                </span>
+                <p class="raliva-figure raliva-figure-text text-xl {{ ! $store ? 'text-on-surface-variant' : 'text-on-surface' }}">{{ $storeTitle }}</p>
+                @if ($multiStore)
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-gold-accent/10 text-gold-accent border border-gold-accent/30 text-[10px] font-bold uppercase">
+                        <span class="material-symbols-outlined text-[12px]">storefront</span>{{ __('Multi-toko') }}
+                    </span>
+                @else
+                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full {{ $store?->status === 'aktif' ? 'bg-success/10 text-success border-success/20' : 'bg-gold-accent/10 text-gold-accent border-gold-accent/30' }} text-[10px] font-bold uppercase border">
+                        <span class="material-symbols-outlined fill text-[12px]">{{ $store?->status === 'aktif' ? 'verified' : 'schedule' }}</span>{{ $store ? \App\Support\StatusStyle::label($store->status) : __('Menunggu') }}
+                    </span>
+                @endif
             </div>
-            <p class="text-on-surface-variant font-body-md text-sm mt-0.5">{{ $store?->alamat ?? __('Alamat toko') }} • {{ $store ? __('Aktif sejak').' '.optional($store->created_at)->translatedFormat('M Y') : __('Toko') }}</p>
+            <p class="text-on-surface-variant font-body-md text-sm mt-0.5">{{ $storeSubtitle }}</p>
         </div>
     </div>
     <div class="flex flex-wrap items-center gap-gutter self-start md:self-auto">
@@ -138,7 +157,7 @@
                     <span class="material-symbols-outlined text-outline-variant group-hover:text-gold-accent group-hover:translate-x-0.5 transition-all">chevron_right</span>
                 </div>
                 <div class="h-1.5 w-full bg-surface-container-high rounded-full overflow-hidden">
-                    <div class="h-full bg-gradient-to-r {{ $tugas['error'] ? 'from-error/60 to-error' : 'from-gold-accent/70 to-gold-accent' }} rounded-full transition-all duration-500" style="width: {{ max(4, $tugas['pct']) }}%"></div>
+                    <div class="h-full bg-gradient-to-r {{ $tugas['error'] ? 'from-error/60 to-error' : 'from-gold-accent/70 to-gold-accent' }} rounded-full transition-all duration-500" style="width: {{ max(0, min(100, (int) $tugas['pct'])) }}%"></div>
                 </div>
             </a>
         @endforeach
