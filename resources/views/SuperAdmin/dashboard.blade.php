@@ -146,21 +146,42 @@
         </div>
         <span class="material-symbols-outlined text-gold-accent text-[20px]">monitor_heart</span>
     </div>
+    @php
+        $omzetTersedia = $targetOmzet['tersedia'] ?? false;
+        $omzetPct = $omzetTersedia ? $targetOmzet['persen'] : 0;
+        $omzetCenterText = $omzetTersedia
+            ? __('dari Bulan Lalu')
+            : ($targetOmzet['bulanIni'] > 0 ? __('Belum Ada Pembanding') : __('Belum Ada Data'));
+        $kepuasanTersedia = $kepuasan['tersedia'] ?? false;
+        $kepuasanPct = $kepuasanTersedia ? $kepuasan['persen'] : 0;
+        $kepuasanLabel = $kepuasanTersedia
+            ? __('Rating :rating / 5', ['rating' => \App\Support\NumberDisplay::decimal($kepuasan['rata'])])
+            : __('Belum Ada Data');
+        $slaTersedia = $sla['tersedia'] ?? false;
+        $slaPct = $slaTersedia ? $sla['persen'] : 0;
+        $slaLabel = $slaTersedia ? __('Target 24 Jam') : __('Belum Ada Data');
+    @endphp
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-gutter">
         <div class="flex flex-col items-center text-center p-3 rounded-xl bg-surface-container-low border border-muted-border">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Omzet Bulan Ini vs Bulan Lalu</p>
-            <div data-donut='[{"value":{{ $targetOmzet['persen'] }},"color":"#8B1E3F","label":"Tercapai"},{"value":{{ 100 - $targetOmzet['persen'] }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="dari Bulan Lalu" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-            <p class="text-[11px] text-on-surface-variant mt-1">{{ \App\Support\NumberDisplay::compactRupiah($targetOmzet['bulanIni']) }} dari {{ \App\Support\NumberDisplay::compactRupiah($targetOmzet['bulanLalu']) }} bulan lalu</p>
+            <div data-donut='[{"value":{{ $omzetPct }},"color":"#8B1E3F","label":"Tercapai"},{"value":{{ 100 - $omzetPct }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-center-value="{{ $omzetTersedia ? $omzetPct.'%' : '—' }}" data-donut-center-text="{{ $omzetCenterText }}" data-donut-label="{{ $omzetCenterText }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+            @if ($omzetTersedia)
+                <p class="text-[11px] text-on-surface-variant mt-1">{{ \App\Support\NumberDisplay::compactRupiah($targetOmzet['bulanIni']) }} dari {{ \App\Support\NumberDisplay::compactRupiah($targetOmzet['bulanLalu']) }} bulan lalu</p>
+            @elseif ($targetOmzet['bulanIni'] > 0)
+                <p class="text-[11px] text-on-surface-variant mt-1">{{ \App\Support\NumberDisplay::compactRupiah($targetOmzet['bulanIni']) }} bulan ini — belum ada omzet bulan lalu sebagai pembanding.</p>
+            @else
+                <p class="text-[11px] text-on-surface-variant mt-1">Belum ada omzet pada bulan ini maupun bulan lalu.</p>
+            @endif
         </div>
         <div class="flex flex-col items-center text-center p-3 rounded-xl bg-surface-container-low border border-muted-border">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">Kepuasan Pelanggan</p>
-            <div data-donut='[{"value":{{ $kepuasan['persen'] }},"color":"#8B1E3F","label":"Puas"},{"value":{{ 100 - $kepuasan['persen'] }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="Rating {{ $kepuasan['rata'] > 0 ? \App\Support\NumberDisplay::decimal($kepuasan['rata']) : '-' }} / 5" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-            <p class="text-[11px] text-on-surface-variant mt-1">{{ sprintf(__('Dari %s ulasan'), \App\Support\NumberDisplay::count($kepuasan['total'])) }}</p>
+            <div data-donut='[{"value":{{ $kepuasanPct }},"color":"#8B1E3F","label":"Puas"},{"value":{{ 100 - $kepuasanPct }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-center-value="{{ $kepuasanTersedia ? $kepuasanPct.'%' : '—' }}" data-donut-center-text="{{ $kepuasanLabel }}" data-donut-label="{{ $kepuasanLabel }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+            <p class="text-[11px] text-on-surface-variant mt-1">{{ $kepuasanTersedia ? sprintf(__('Dari %s ulasan'), \App\Support\NumberDisplay::count($kepuasan['total'])) : __('Belum ada ulasan.') }}</p>
         </div>
         <div class="flex flex-col items-center text-center p-3 rounded-xl bg-surface-container-low border border-muted-border">
             <p class="font-label-sm text-[10px] uppercase tracking-widest text-on-surface-variant">SLA Respons Komplain</p>
-            <div data-donut='[{"value":{{ $sla['total'] > 0 ? $sla['persen'] : 0 }},"color":"#c03a5a","label":"Tepat SLA"},{"value":{{ $sla['total'] > 0 ? 100 - $sla['persen'] : 100 }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-label="{{ $sla['total'] > 0 ? 'Target 24 Jam' : 'Belum Ada Data' }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
-            <p class="text-[11px] text-on-surface-variant mt-1">{{ $sla['total'] > 0 ? 'Rata-rata balasan dalam '.$sla['rataJam'].' jam • '.\App\Support\NumberDisplay::count($sla['total']).' komplain' : 'Belum ada komplain yang dibalas — tidak dihitung.' }}</p>
+            <div data-donut='[{"value":{{ $slaPct }},"color":"#c03a5a","label":"Tepat SLA"},{"value":{{ 100 - $slaPct }},"color":"rgba(127,127,127,0.14)","label":""}]' data-donut-center-value="{{ $slaTersedia ? $slaPct.'%' : '—' }}" data-donut-center-text="{{ $slaLabel }}" data-donut-label="{{ $slaLabel }}" data-donut-size="130" data-donut-stroke="13" data-donut-max="150" data-donut-suffix="%" data-donut-nolegend="1" class="w-full"></div>
+            <p class="text-[11px] text-on-surface-variant mt-1">{{ $slaTersedia ? 'Rata-rata balasan dalam '.$sla['rataJam'].' jam • '.\App\Support\NumberDisplay::count($sla['total']).' komplain' : 'Belum ada komplain yang dibalas — tidak dihitung.' }}</p>
         </div>
     </div>
     <p class="text-on-surface-variant font-body-md text-[11px] mt-5 pt-4 border-t border-muted-border flex items-center gap-1.5">
