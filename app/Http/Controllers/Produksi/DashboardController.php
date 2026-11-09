@@ -6,21 +6,31 @@ use App\Http\Controllers\Controller;
 use App\Models\ProductionMaterial;
 use App\Models\ProductionOrder;
 use App\Models\QualityCheck;
+use App\Models\StoreStaff;
+use App\Support\SidebarContext;
 
 class DashboardController extends Controller
 {
     public function index()
     {
+        $storeIds = StoreStaff::where('user_id', auth()->id())
+            ->where('status', 'aktif')
+            ->pluck('store_id')
+            ->all();
+        $store = SidebarContext::currentStore();
+        $qcStoreScope = fn ($query) => $query->whereIn('store_id', $storeIds);
+
         $stats = [
-            'diproses' => ProductionOrder::where('status', ProductionOrder::STATUS_DIPROSES)->count(),
-            'menunggu_qc' => ProductionOrder::where('status', ProductionOrder::STATUS_MENUNGGU_QC)->count(),
-            'selesai_bulan' => ProductionOrder::where('status', ProductionOrder::STATUS_SELESAI)->where('selesai_pada', '>=', now()->startOfMonth())->count(),
-            'layak_bulan' => (int) QualityCheck::where('diperiksa_pada', '>=', now()->startOfMonth())->sum('jumlah_lulus'),
-            'rusak_bulan' => (int) QualityCheck::where('diperiksa_pada', '>=', now()->startOfMonth())->sum('jumlah_gagal'),
-            'bahan_menipis' => ProductionMaterial::whereColumn('stok_sekarang', '<=', 'minimal_stok')->count(),
+            'diproses' => ProductionOrder::whereIn('store_id', $storeIds)->where('status', ProductionOrder::STATUS_DIPROSES)->count(),
+            'menunggu_qc' => ProductionOrder::whereIn('store_id', $storeIds)->where('status', ProductionOrder::STATUS_MENUNGGU_QC)->count(),
+            'selesai_bulan' => ProductionOrder::whereIn('store_id', $storeIds)->where('status', ProductionOrder::STATUS_SELESAI)->where('selesai_pada', '>=', now()->startOfMonth())->count(),
+            'layak_bulan' => (int) QualityCheck::whereHas('productionOrder', $qcStoreScope)->where('diperiksa_pada', '>=', now()->startOfMonth())->sum('jumlah_lulus'),
+            'rusak_bulan' => (int) QualityCheck::whereHas('productionOrder', $qcStoreScope)->where('diperiksa_pada', '>=', now()->startOfMonth())->sum('jumlah_gagal'),
+            'bahan_menipis' => ProductionMaterial::whereIn('store_id', $storeIds)->whereColumn('stok_sekarang', '<=', 'minimal_stok')->count(),
         ];
 
-        $prioritas = ProductionOrder::whereIn('status', [ProductionOrder::STATUS_DIPROSES, ProductionOrder::STATUS_MENUNGGU_QC])
+        $prioritas = ProductionOrder::whereIn('store_id', $storeIds)
+            ->whereIn('status', [ProductionOrder::STATUS_DIPROSES, ProductionOrder::STATUS_MENUNGGU_QC])
             ->with(['items.productVariant.product', 'qualityChecks'])
             ->orderByDesc('prioritas')
             ->orderBy('dimulai_pada')
@@ -42,13 +52,15 @@ class DashboardController extends Controller
                 ];
             });
 
-        $bahanMenipis = ProductionMaterial::whereColumn('stok_sekarang', '<=', 'minimal_stok')
+        $bahanMenipis = ProductionMaterial::whereIn('store_id', $storeIds)
+            ->whereColumn('stok_sekarang', '<=', 'minimal_stok')
             ->orderBy('stok_sekarang')
             ->first();
 
         $events = collect();
 
         QualityCheck::with('productionOrder')
+            ->whereHas('productionOrder', $qcStoreScope)
             ->latest('diperiksa_pada')
             ->limit(4)
             ->get()
@@ -62,7 +74,8 @@ class DashboardController extends Controller
                 ]);
             });
 
-        ProductionOrder::where('status', ProductionOrder::STATUS_SELESAI)
+        ProductionOrder::whereIn('store_id', $storeIds)
+            ->where('status', ProductionOrder::STATUS_SELESAI)
             ->whereNotNull('selesai_pada')
             ->latest('selesai_pada')
             ->take(3)
@@ -76,7 +89,8 @@ class DashboardController extends Controller
                 ]);
             });
 
-        ProductionOrder::where('status', ProductionOrder::STATUS_DIPROSES)
+        ProductionOrder::whereIn('store_id', $storeIds)
+            ->where('status', ProductionOrder::STATUS_DIPROSES)
             ->whereNotNull('dimulai_pada')
             ->latest('dimulai_pada')
             ->take(3)
@@ -96,17 +110,21 @@ class DashboardController extends Controller
             'storeSuspended' => \App\Support\StoreGate::isLocked(),
             'suspendedStores' => \App\Support\StoreGate::suspendedStoreNames(),
             'stats' => $stats,
-            'chart' => $this->chartData(),
+            'store' => $store,
+            'chart' => $this->chartData($storeIds),
             'prioritas' => $prioritas,
             'bahanMenipis' => $bahanMenipis,
             'events' => $events,
         ]);
     }
 
-    private function chartData(): array
+    private function chartData(array $storeIds): array
     {
+        $qcStoreScope = fn ($query) => $query->whereIn('store_id', $storeIds);
+
         $range7 = ['labels' => [], 'output' => [], 'target' => []];
-        $rows = QualityCheck::where('diperiksa_pada', '>=', today()->subDays(6)->startOfDay())
+        $rows = QualityCheck::whereHas('productionOrder', $qcStoreScope)
+            ->where('diperiksa_pada', '>=', today()->subDays(6)->startOfDay())
             ->selectRaw('DATE(diperiksa_pada) as tgl, SUM(jumlah_lulus) as total')
             ->groupBy('tgl')
             ->pluck('total', 'tgl');
@@ -123,14 +141,14 @@ class DashboardController extends Controller
             $ws = today()->subWeeks(3 - $i)->startOfWeek();
             $we = $ws->copy()->endOfWeek();
             $range30['labels'][] = 'Minggu '.($i + 1);
-            $range30['output'][] = (int) QualityCheck::whereBetween('diperiksa_pada', [$ws, $we])->sum('jumlah_lulus');
+            $range30['output'][] = (int) QualityCheck::whereHas('productionOrder', $qcStoreScope)->whereBetween('diperiksa_pada', [$ws, $we])->sum('jumlah_lulus');
         }
 
         $range90 = ['labels' => [], 'output' => [], 'target' => array_fill(0, 3, 720)];
         for ($i = 2; $i >= 0; $i--) {
             $month = now()->subMonths($i);
             $range90['labels'][] = $month->translatedFormat('M');
-            $range90['output'][] = (int) QualityCheck::whereBetween('diperiksa_pada', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])->sum('jumlah_lulus');
+            $range90['output'][] = (int) QualityCheck::whereHas('productionOrder', $qcStoreScope)->whereBetween('diperiksa_pada', [$month->copy()->startOfMonth(), $month->copy()->endOfMonth()])->sum('jumlah_lulus');
         }
 
         return ['7' => $range7, '30' => $range30, '90' => $range90];
