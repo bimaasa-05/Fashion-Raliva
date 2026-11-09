@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Complaint;
 use App\Models\Order;
 use App\Models\Payment;
+use App\Models\Review;
 use App\Models\Shipment;
 use App\Models\Store;
 use App\Support\AdminContext;
@@ -51,15 +52,16 @@ class DashboardOperasionalController extends Controller
             ->limit(5)
             ->get();
 
-        $firstStore = Store::whereIn('store_id', $storeIds)->first();
-        $rating = $firstStore ? (float) \App\Models\Review::where('store_id', $firstStore->store_id)->avg('rating') : 0;
-        $ratingCount = $firstStore ? \App\Models\Review::where('store_id', $firstStore->store_id)->count() : 0;
+        $stores = Store::whereIn('store_id', $storeIds)->get(['store_id', 'nama_toko', 'logo', 'alamat', 'created_at']);
+        $firstStore = $stores->first();
+        $rating = $stores->isNotEmpty() ? (float) Review::whereIn('store_id', $storeIds)->avg('rating') : 0;
+        $ratingCount = $stores->isNotEmpty() ? Review::whereIn('store_id', $storeIds)->count() : 0;
 
         return view('Admin.dashboard-operasional.index', [
             'store' => $firstStore,
             'rating' => $rating,
             'ratingCount' => $ratingCount,
-            'stores' => Store::whereIn('store_id', $storeIds)->get(['store_id', 'nama_toko']),
+            'stores' => $stores,
             'stats' => $stats,
             'pesananTerbaru' => $pesananTerbaru,
             'komplainTerbaru' => $komplainTerbaru,
