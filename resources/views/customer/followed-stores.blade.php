@@ -368,7 +368,13 @@
 <div class="flex flex-col">
 @endif
 <div class="relative aspect-square mb-xs bg-surface-container overflow-hidden rounded-lg w-[94%] mx-auto">
-<img loading="lazy" decoding="async" alt="{{ $store->nama_toko }}" class="object-cover w-full h-full " src="{{ product_photo_url($store->logo, 'store-'.$store->store_id) }}"/>
+@if ($store->logo)
+<img loading="lazy" decoding="async" alt="{{ $store->nama_toko }}" class="object-cover w-full h-full " src="{{ photo_url($store->logo) }}"/>
+@else
+<div class="w-full h-full flex items-center justify-center bg-surface-container-high">
+<span class="material-symbols-outlined text-[72px] text-on-surface-variant/40" data-icon="storefront">storefront</span>
+</div>
+@endif
 @if (! $isActive)
 <span class="absolute top-2 left-2 bg-black/50 text-white text-[10px] uppercase tracking-wider px-2 py-0.5 rounded-full">{{ __('Tidak aktif') }}</span>
 @endif
