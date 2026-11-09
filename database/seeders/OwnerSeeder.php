@@ -23,6 +23,7 @@ use App\Models\User;
 use App\Models\Wallet;
 use App\Models\WalletTransaction;
 use App\Models\Warehouse;
+use App\Models\WarehouseStaff;
 use App\Models\WarehouseStock;
 use App\Support\DemoProductCatalog;
 use Illuminate\Database\Seeder;
@@ -95,27 +96,35 @@ class OwnerSeeder extends Seeder
         );
 
         // ---- ADMIN & STAFF TOKO ----
-        $admin = User::where('email', 'admin@raliva.test')->first();
-        if ($admin) {
-            StoreStaff::updateOrCreate(
-                ['user_id' => $admin->user_id, 'store_id' => $store->store_id],
-                ['tanggal_penugasan' => now()->subMonths(4), 'status' => 'aktif']
+        // Enam karyawan demo (local/demo). Password sengaja lemah untuk demo;
+        // jangan jalankan seeder ini di production.
+        $staffUsers = [
+            ['email' => 'admin@raliva.test', 'nama' => 'Sinta Maharani', 'telepon' => '081234567891', 'role' => 'Admin'],
+            ['email' => 'produksi@raliva.test', 'nama' => 'Rini Kusuma', 'telepon' => '081234567893', 'role' => 'Produksi'],
+            ['email' => 'produksi2@raliva.test', 'nama' => 'Siti Rahayu', 'telepon' => '081234567897', 'role' => 'Produksi'],
+            ['email' => 'gudang@raliva.test', 'nama' => 'Andi Pratama', 'telepon' => '081234567892', 'role' => 'Gudang'],
+            ['email' => 'gudang2@raliva.test', 'nama' => 'Doni Santoso', 'telepon' => '081234567895', 'role' => 'Gudang'],
+            ['email' => 'gudang3@raliva.test', 'nama' => 'Eka Prasetyo', 'telepon' => '081234567896', 'role' => 'Gudang'],
+        ];
+        $staffModels = [];
+        foreach ($staffUsers as $s) {
+            $staffModels[$s['email']] = User::updateOrCreate(
+                ['email' => $s['email']],
+                [
+                    'nama_lengkap' => $s['nama'],
+                    'password' => Hash::make('password'),
+                    'role_id' => Role::where('nama_role', $s['role'])->value('role_id'),
+                    'nomor_telepon' => $s['telepon'],
+                    'email_verified_at' => now(),
+                    'status' => User::STATUS_AKTIF,
+                ]
             );
         }
-        // staff tambahan (produksi & gudang) untuk halaman Karyawan
-        $extraStaff = [
-            ['email' => 'produksi@raliva.test', 'role' => 'produksi'],
-            ['email' => 'gudang@raliva.test', 'role' => 'gudang'],
-            ['email' => 'gudang2@raliva.test', 'role' => 'gudang'],
-        ];
-        foreach ($extraStaff as $s) {
-            $u = User::where('email', $s['email'])->first();
-            if ($u) {
-                StoreStaff::updateOrCreate(
-                    ['user_id' => $u->user_id, 'store_id' => $store->store_id],
-                    ['tanggal_penugasan' => now()->subMonths(2), 'status' => 'aktif']
-                );
-            }
+        foreach ($staffModels as $u) {
+            StoreStaff::updateOrCreate(
+                ['user_id' => $u->user_id, 'store_id' => $store->store_id],
+                ['tanggal_penugasan' => now()->subMonths(2), 'status' => 'aktif']
+            );
         }
 
         // ---- GUDANG ----
@@ -127,6 +136,15 @@ class OwnerSeeder extends Seeder
                 'status' => Warehouse::STATUS_AKTIF,
             ]
         );
+
+        foreach (['gudang@raliva.test', 'gudang2@raliva.test', 'gudang3@raliva.test'] as $email) {
+            if (isset($staffModels[$email])) {
+                WarehouseStaff::updateOrCreate(
+                    ['warehouse_id' => $warehouse->warehouse_id, 'user_id' => $staffModels[$email]->user_id],
+                    ['tanggal_penugasan' => now()->subMonths(2), 'status' => WarehouseStaff::STATUS_AKTIF]
+                );
+            }
+        }
 
         // ---- KATEGORI (anak) ----
         $categories = Category::whereNotNull('parent_id')->where('status', 'aktif')->get()->keyBy('nama_kategori');
