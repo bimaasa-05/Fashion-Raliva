@@ -127,7 +127,7 @@ class DashboardController extends Controller
                 'icon' => 'precision_manufacturing',
                 'title' => 'Pesanan #'.($diproses->nomor_order ?? $diproses->order_id).' diproses',
                 'subtitle' => 'Sedang disiapkan di gudang',
-                'progress' => 50,
+                'status' => Order::STATUS_DIPROSES,
             ];
         }
 
@@ -141,7 +141,7 @@ class DashboardController extends Controller
                 'icon' => 'local_shipping',
                 'title' => 'Pengiriman #'.($dikirim->nomor_order ?? $dikirim->order_id),
                 'subtitle' => 'Dalam perjalanan ke pelanggan',
-                'progress' => 85,
+                'status' => Order::STATUS_DIKIRIM,
             ];
         }
 
@@ -154,13 +154,6 @@ class DashboardController extends Controller
             ->latest()
             ->first();
         if ($produksi) {
-            $p = match ($produksi->status) {
-                ProductionOrder::STATUS_DIPROSES => 55,
-                ProductionOrder::STATUS_REQUESTED => 15,
-                ProductionOrder::STATUS_MENUNGGU_QC => 80,
-                default => 30,
-            };
-
             $subtitle = match ($produksi->status) {
                 ProductionOrder::STATUS_REQUESTED => 'Menunggu persetujuan',
                 ProductionOrder::STATUS_MENUNGGU_QC => 'Menunggu pemeriksaan QC',
@@ -171,7 +164,7 @@ class DashboardController extends Controller
                 'icon' => 'inventory_2',
                 'title' => 'Produksi '.($produksi->nomor_produksi ?? 'PRQ-'.$produksi->production_order_id),
                 'subtitle' => $subtitle,
-                'progress' => $p,
+                'status' => $produksi->status,
             ];
         }
 
@@ -197,6 +190,7 @@ class DashboardController extends Controller
                 'icon' => 'local_offer',
                 'title' => 'Promo '.$promo->nama_promo.' berjalan',
                 'subtitle' => 'Diskon '.$diskon.' — sisa '.max(0, $sisa).' hari',
+                'status' => Promotion::STATUS_AKTIF,
                 'progress' => $progress,
             ];
         }
