@@ -41,7 +41,7 @@
     @foreach ($menuGroups as $group)
         @php
             $collapsible = count($group['items']) >= 3;
-            $groupOpen = true;
+            $groupOpen = false;
             $groupBadgeKeys = collect($group['items'])->filter(fn ($item) => ! empty($item['badge']))->pluck('badge')->values();
             $groupHasBadges = $groupBadgeKeys->contains(fn ($key) => ($sidebarBadges[$key] ?? 0) > 0);
         @endphp
