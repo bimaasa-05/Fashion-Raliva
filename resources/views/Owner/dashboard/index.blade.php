@@ -163,7 +163,9 @@
                                     <p class="text-on-surface-variant text-xs mt-0.5">{{ $a['subtitle'] }}</p>
                                 </div>
                             </div>
-                            @php($badge = \App\Support\StatusStyle::badge($a['status']))
+                            @php
+                                $badge = \App\Support\StatusStyle::badge($a['status']);
+                            @endphp
                             @if (isset($a['progress']))
                                 <div class="text-right shrink-0 w-20">
                                     <span class="font-label-sm text-[11px] font-bold text-secondary">{{ $a['progress'] }}%</span>
