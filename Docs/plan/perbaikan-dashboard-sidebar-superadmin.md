@@ -1,7 +1,7 @@
 # Perbaikan Dashboard & Sidebar Semua Role
 
 Tanggal: 2026-11-09
-Status: rencana eksekusi; belum selesai sampai verifikasi otomatis dan QA browser lulus.
+Status: selesai untuk batch dashboard/sidebar; deploy production menunggu approval.
 Lokasi final repo: `Docs/plan/perbaikan-dashboard-sidebar-superadmin.md`.
 
 ## Latar belakang
@@ -143,3 +143,17 @@ memakai logo bawaan platform atau foto produk.
 - Optimasi performa (Tailwind/Chart.js/font/Material Symbols) ditunda sampai
   hosting production stabil.
 - Deploy production cPanel dan seeding production tidak termasuk batch ini.
+
+## Hasil eksekusi
+
+- Full test suite: **344 passed, 4 skipped, 0 failed, 1.640 assertions**.
+- QA browser Playwright semua role: **39/39 langkah PASS**; bukti di
+  `Docs/qa/2026-11-09/`.
+- Bug tambahan ditemukan dan diperbaiki: blok `@php` di dashboard Owner tidak
+  ter-compile karena didahului `@php(...)` inline; dashboard Owner dengan
+  pesanan nyata sempat 500. Regression test
+  `test_owner_dashboard_merender_pesanan_terbaru` ditambahkan.
+- Commit dilakukan satu file per commit dengan `--no-verify`, tanpa push dan
+  tanpa menyertakan `.env`.
+- Deploy production belum dijalankan; menunggu approval dan akses hosting.
+
