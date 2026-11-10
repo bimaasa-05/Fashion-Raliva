@@ -15,7 +15,7 @@ class LandingPageTest extends TestCase
         parent::setUp();
 
         app()->setLocale('id');
-        Setting::set(Setting::NAMA_PLATFORM, 'NexPrint');
+        Setting::set(Setting::NAMA_PLATFORM, 'NEXPRINT');
     }
 
     public function test_landing_satu_halaman_dapat_diakses_guest(): void
@@ -23,7 +23,7 @@ class LandingPageTest extends TestCase
         $response = $this->get(route('landing'));
 
         $response->assertOk()
-            ->assertSee('NexPrint')
+            ->assertSee('NEXPRINT')
             ->assertSee('Satu platform', false)
             ->assertSee('id="beranda"', false)
             ->assertSee('id="tentang"', false)
