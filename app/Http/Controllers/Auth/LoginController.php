@@ -33,9 +33,7 @@ class LoginController extends Controller
         $remember = $request->boolean('remember') && ! SessionArea::isEnabled();
 
         if (! Auth::attempt($credentials, $remember)) {
-            return back()
-                ->withInput($request->only('email'))
-                ->withErrors(['email' => __('Email atau password salah.')]);
+            return $this->failedLogin($request, __('Email atau password salah.'));
         }
 
         $user = Auth::user();
@@ -43,12 +41,27 @@ class LoginController extends Controller
         if ($user->status !== User::STATUS_AKTIF) {
             Auth::logout();
 
-            return back()
-                ->withInput($request->only('email'))
-                ->withErrors(['email' => __('Akun tidak aktif. Hubungi administrator.')]);
+            return $this->failedLogin($request, __('Akun tidak aktif. Hubungi administrator.'));
         }
 
         return PostLoginRedirector::redirect($request, $user);
+    }
+
+    /**
+     * Kembalikan user ke halaman login setelah kredensial gagal.
+     * Jangan memakai back() karena halaman sebelumnya bisa berupa area
+     * terproteksi yang langsung memantulkan user kembali ke login.
+     */
+    private function failedLogin(Request $request, string $message): RedirectResponse
+    {
+        $redirect = $request->input('redirect');
+        $loginUrl = PostLoginRedirector::isSafeRedirect($redirect)
+            ? route('login', ['redirect' => $redirect])
+            : route('login');
+
+        return redirect($loginUrl)
+            ->withInput($request->only('email'))
+            ->withErrors(['email' => $message]);
     }
 
     public function destroy(Request $request): RedirectResponse
