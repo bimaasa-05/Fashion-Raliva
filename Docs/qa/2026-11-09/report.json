@@ -1,0 +1,344 @@
+{
+  "runId": "local-20261110092116",
+  "mode": "local",
+  "target": {
+    "branch": "main",
+    "headSha": "cc398756cd2e03565d290c4c146e7594e40a27a9"
+  },
+  "verdict": "PASS",
+  "environment": {
+    "baseUrl": "http://localhost:8000",
+    "role": "SuperAdmin, Admin, Owner, Produksi, Gudang, Customer",
+    "startedByThisRepo": false,
+    "browserProvider": "playwright"
+  },
+  "scenario": [
+    {
+      "step": 1,
+      "priority": "P0",
+      "action": "Login SuperAdmin dan buka /superadmin/dashboard",
+      "expected": "Halaman dashboard tampil tanpa error",
+      "observed": "URL=http://localhost:8000/superadmin/dashboard; judul=NEXPRINT - Dashboard Admin Utama",
+      "result": "PASS"
+    },
+    {
+      "step": 2,
+      "priority": "P1",
+      "action": "Buka sidebar SuperAdmin",
+      "expected": "Semua grup sidebar default terbuka dan item aktif ter-highlight",
+      "observed": "6/6 grup terbuka; 1 item aktif; label: MANAJEMEN, TRANSAKSI, KEUANGAN, OPERASIONAL, PLATFORM, MONITORING",
+      "result": "PASS"
+    },
+    {
+      "step": 3,
+      "priority": "P1",
+      "action": "Tutup grup sidebar SuperAdmin",
+      "expected": "Klik grup menutup submenu (aria-expanded=false)",
+      "observed": "aria-expanded=false; kelas=grid-rows-[0fr]",
+      "result": "PASS"
+    },
+    {
+      "step": 4,
+      "priority": "P1",
+      "action": "Buka kembali grup sidebar SuperAdmin",
+      "expected": "Klik grup membuka submenu kembali",
+      "observed": "aria-expanded=true",
+      "result": "PASS"
+    },
+    {
+      "step": 5,
+      "priority": "P1",
+      "action": "Periksa gauge SuperAdmin",
+      "expected": "Gauge omzet/kepuasan/SLA tampil dengan capaian 0-100% atau — + label status yang benar",
+      "observed": "[{\"value\":\"100%\",\"center\":\"dari Bulan Lalu\",\"label\":\"dari Bulan Lalu\"},{\"value\":\"100%\",\"center\":\"Rating 4,5 / 5\",\"label\":\"Rating 4,5 / 5\"},{\"value\":\"100%\",\"center\":\"Target 24 Jam\",\"label\":\"Target 24 Jam\"},{\"value\":null,\"center\":null,\"label\":\"Toko Terdaftar\"}]",
+      "result": "PASS"
+    },
+    {
+      "step": 6,
+      "priority": "P1",
+      "action": "Periksa teks dashboard SuperAdmin",
+      "expected": "Ringkasan omzet, kepuasan, dan SLA terlihat",
+      "observed": "omzet, kepuasan, sla",
+      "result": "PASS",
+      "screenshot": "step-07-superadmin-dashboard.png"
+    },
+    {
+      "step": 7,
+      "priority": "P1",
+      "action": "Console SuperAdmin",
+      "expected": "Tidak ada error JavaScript di console",
+      "observed": "Tidak ada error console/page",
+      "result": "PASS"
+    },
+    {
+      "step": 8,
+      "priority": "P0",
+      "action": "Login Admin dan buka /admin/dashboard",
+      "expected": "Halaman dashboard tampil tanpa error",
+      "observed": "URL=http://localhost:8000/admin/dashboard; judul=NEXPRINT - Dashboard Operasional",
+      "result": "PASS"
+    },
+    {
+      "step": 9,
+      "priority": "P1",
+      "action": "Buka sidebar Admin",
+      "expected": "Semua grup sidebar default terbuka dan item aktif ter-highlight",
+      "observed": "3/3 grup terbuka; 1 item aktif; label: TRANSAKSI, KATALOG, LOGISTIK",
+      "result": "PASS"
+    },
+    {
+      "step": 10,
+      "priority": "P1",
+      "action": "Tutup grup sidebar Admin",
+      "expected": "Klik grup menutup submenu (aria-expanded=false)",
+      "observed": "aria-expanded=false; kelas=grid-rows-[0fr]",
+      "result": "PASS"
+    },
+    {
+      "step": 11,
+      "priority": "P1",
+      "action": "Buka kembali grup sidebar Admin",
+      "expected": "Klik grup membuka submenu kembali",
+      "observed": "aria-expanded=true",
+      "result": "PASS"
+    },
+    {
+      "step": 12,
+      "priority": "P1",
+      "action": "Periksa identitas toko Admin",
+      "expected": "Nama toko nyata dan fallback ikon storefront tampil",
+      "observed": "nama toko=true; ikon storefront pada kartu identitas=1",
+      "result": "PASS"
+    },
+    {
+      "step": 13,
+      "priority": "P1",
+      "action": "Periksa progress tugas Admin",
+      "expected": "Progress tugas berupa angka 0-100% tanpa pembulatan palsu",
+      "observed": "width: 60% | width: 60% | width: 25% | width: 100%; | width: 33%;",
+      "result": "PASS",
+      "screenshot": "step-14-admin-dashboard.png"
+    },
+    {
+      "step": 14,
+      "priority": "P1",
+      "action": "Console Admin",
+      "expected": "Tidak ada error JavaScript di console",
+      "observed": "Tidak ada error console/page",
+      "result": "PASS"
+    },
+    {
+      "step": 15,
+      "priority": "P0",
+      "action": "Login Owner dan buka /owner/dashboard",
+      "expected": "Halaman dashboard tampil tanpa error",
+      "observed": "URL=http://localhost:8000/owner/dashboard; judul=NEXPRINT - Dashboard Toko",
+      "result": "PASS"
+    },
+    {
+      "step": 16,
+      "priority": "P1",
+      "action": "Buka sidebar Owner",
+      "expected": "Semua grup sidebar default terbuka dan item aktif ter-highlight",
+      "observed": "3/3 grup terbuka; 1 item aktif; label: OPERASIONAL, PENJUALAN, TIM & LAPORAN",
+      "result": "PASS"
+    },
+    {
+      "step": 17,
+      "priority": "P1",
+      "action": "Tutup grup sidebar Owner",
+      "expected": "Klik grup menutup submenu (aria-expanded=false)",
+      "observed": "aria-expanded=false; kelas=grid-rows-[0fr]",
+      "result": "PASS"
+    },
+    {
+      "step": 18,
+      "priority": "P1",
+      "action": "Buka kembali grup sidebar Owner",
+      "expected": "Klik grup membuka submenu kembali",
+      "observed": "aria-expanded=true",
+      "result": "PASS"
+    },
+    {
+      "step": 19,
+      "priority": "P1",
+      "action": "Periksa header dan identitas Owner",
+      "expected": "Badge Terverifikasi, nama toko, dan ikon storefront tampil",
+      "observed": "badge=true; nama=true; storefront=1",
+      "result": "PASS"
+    },
+    {
+      "step": 20,
+      "priority": "P1",
+      "action": "Periksa aktivitas Owner",
+      "expected": "Daftar aktivitas memakai status/progress nyata tanpa error",
+      "observed": "item aktivitas terdeteksi=4; error teks=false",
+      "result": "PASS",
+      "screenshot": "step-21-owner-dashboard.png"
+    },
+    {
+      "step": 21,
+      "priority": "P1",
+      "action": "Console Owner",
+      "expected": "Tidak ada error JavaScript di console",
+      "observed": "Tidak ada error console/page",
+      "result": "PASS"
+    },
+    {
+      "step": 22,
+      "priority": "P0",
+      "action": "Login Produksi dan buka /produksi/dashboard",
+      "expected": "Halaman dashboard tampil tanpa error",
+      "observed": "URL=http://localhost:8000/produksi/dashboard; judul=NEXPRINT - Dashboard Produksi",
+      "result": "PASS"
+    },
+    {
+      "step": 23,
+      "priority": "P1",
+      "action": "Buka sidebar Produksi",
+      "expected": "Semua grup sidebar default terbuka dan item aktif ter-highlight",
+      "observed": "2/2 grup terbuka; 1 item aktif; label: PROSES PRODUKSI, BAHAN & TRANSAKSI",
+      "result": "PASS"
+    },
+    {
+      "step": 24,
+      "priority": "P1",
+      "action": "Tutup grup sidebar Produksi",
+      "expected": "Klik grup menutup submenu (aria-expanded=false)",
+      "observed": "aria-expanded=false; kelas=grid-rows-[0fr]",
+      "result": "PASS"
+    },
+    {
+      "step": 25,
+      "priority": "P1",
+      "action": "Buka kembali grup sidebar Produksi",
+      "expected": "Klik grup membuka submenu kembali",
+      "observed": "aria-expanded=true",
+      "result": "PASS"
+    },
+    {
+      "step": 26,
+      "priority": "P1",
+      "action": "Periksa identitas Produksi",
+      "expected": "Nama toko yang ditugaskan tampil, label atelier hardcoded hilang",
+      "observed": "nama toko=true; hardcoded=false; storefront=1",
+      "result": "PASS",
+      "screenshot": "step-27-produksi-dashboard.png"
+    },
+    {
+      "step": 27,
+      "priority": "P1",
+      "action": "Console Produksi",
+      "expected": "Tidak ada error JavaScript di console",
+      "observed": "Tidak ada error console/page",
+      "result": "PASS"
+    },
+    {
+      "step": 28,
+      "priority": "P0",
+      "action": "Login Gudang dan buka /gudang/dashboard",
+      "expected": "Halaman dashboard tampil tanpa error",
+      "observed": "URL=http://localhost:8000/gudang/dashboard; judul=NEXPRINT - Dashboard Gudang",
+      "result": "PASS"
+    },
+    {
+      "step": 29,
+      "priority": "P1",
+      "action": "Buka sidebar Gudang",
+      "expected": "Semua grup sidebar default terbuka dan item aktif ter-highlight",
+      "observed": "1/1 grup terbuka; 1 item aktif; label: PERSEDIAAN",
+      "result": "PASS"
+    },
+    {
+      "step": 30,
+      "priority": "P1",
+      "action": "Tutup grup sidebar Gudang",
+      "expected": "Klik grup menutup submenu (aria-expanded=false)",
+      "observed": "aria-expanded=false; kelas=grid-rows-[0fr]",
+      "result": "PASS"
+    },
+    {
+      "step": 31,
+      "priority": "P1",
+      "action": "Buka kembali grup sidebar Gudang",
+      "expected": "Klik grup membuka submenu kembali",
+      "observed": "aria-expanded=true",
+      "result": "PASS"
+    },
+    {
+      "step": 32,
+      "priority": "P1",
+      "action": "Periksa konteks gudang",
+      "expected": "Gudang aktif dan gudang lain yang ditugaskan tampil",
+      "observed": "gudang terdeteksi=Gudang Utama Jakarta, Gudang Cabang Bandung",
+      "result": "PASS"
+    },
+    {
+      "step": 33,
+      "priority": "P1",
+      "action": "Periksa gauge Gudang",
+      "expected": "Gauge stok/akurasi/SLA menampilkan capaian 0-100% atau — + Belum Ada Data",
+      "observed": "[{\"value\":\"0%\",\"center\":\"dari Target\"},{\"value\":\"100%\",\"center\":\"Akurasi\"},{\"value\":\"100%\",\"center\":\"Stok Tersedia\"},{\"value\":null,\"center\":null}]",
+      "result": "PASS",
+      "screenshot": "step-34-gudang-dashboard.png"
+    },
+    {
+      "step": 34,
+      "priority": "P1",
+      "action": "Console Gudang",
+      "expected": "Tidak ada error JavaScript di console",
+      "observed": "Tidak ada error console/page",
+      "result": "PASS"
+    },
+    {
+      "step": 35,
+      "priority": "P1",
+      "action": "Buka Data Toko Owner",
+      "expected": "Logo kosong menampilkan ikon storefront dan preview gambar tersembunyi",
+      "observed": "fallback terlihat=true; preview tersembunyi=true",
+      "result": "PASS",
+      "screenshot": "step-35-owner-data-toko.png"
+    },
+    {
+      "step": 36,
+      "priority": "P1",
+      "action": "Buka beranda customer",
+      "expected": "Kartu toko tanpa logo memakai ikon storefront",
+      "observed": "ikon storefront pada kartu toko=1",
+      "result": "PASS",
+      "screenshot": "step-36-customer-home.png"
+    },
+    {
+      "step": 37,
+      "priority": "P1",
+      "action": "Ikuti toko dari halaman toko",
+      "expected": "Tombol follow berubah menjadi Diikuti",
+      "observed": "tombol follow=true; status diikuti=true; HTTP 200",
+      "result": "PASS"
+    },
+    {
+      "step": 38,
+      "priority": "P1",
+      "action": "Buka halaman toko diikuti",
+      "expected": "Toko tanpa logo memakai ikon storefront dan nama toko tampil",
+      "observed": "nama toko=true; storefront=1",
+      "result": "PASS",
+      "screenshot": "step-38-customer-followed-stores.png"
+    },
+    {
+      "step": 39,
+      "priority": "P1",
+      "action": "Smoke dashboard Admin mobile 390x844",
+      "expected": "Tidak ada overflow horizontal dan tombol sidebar mobile dapat dibuka",
+      "observed": "overflow=0px; tombol sidebar terlihat=true",
+      "result": "PASS",
+      "screenshot": "step-39-admin-mobile.png"
+    }
+  ],
+  "hasUiTest": false,
+  "notes": [
+    "Browser QA memakai data demo lokal hasil RalivaDemoSeeder (6 staff, 2 gudang, 18 pesanan).",
+    "Empty-state gauge (— + Belum Ada Data) diverifikasi lewat feature test DashboardSidebarRegressionTest, bukan dengan menghapus data demo di browser.",
+    "Tidak ada E2E browser test permanen di repo; skenario follow-up dicatat di report.md."
+  ]
+}
