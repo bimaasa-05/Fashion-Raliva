@@ -16,7 +16,7 @@ class DashboardSidebarRegressionTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function test_semua_grup_sidebar_terbuka_secara_default_untuk_semua_role(): void
+    public function test_semua_grup_sidebar_tertutup_secara_default_untuk_semua_role(): void
     {
         $owner = $this->makeUser(Role::OWNER, 'owner-sidebar');
         $store = $this->makeStore($owner);
@@ -43,12 +43,28 @@ class DashboardSidebarRegressionTest extends TestCase
             $response = $this->actingAs($user)->get(route($route));
 
             $this->assertSame(200, $response->getStatusCode(), "Route {$route} tidak mengembalikan 200. Redirect: ".$response->headers->get('Location'));
-            $response->assertSee('data-sidebar-group-button aria-expanded="true"', false);
+            $response->assertSee('data-sidebar-group-button aria-expanded="false"', false);
+            $response->assertDontSee('data-sidebar-group-button aria-expanded="true"', false);
 
             if ($route === 'superadmin.dashboard') {
-                $response->assertSee('sa-group-open', false);
+                $response->assertSee('class="sa-sidebar-group "', false);
+                $response->assertDontSee('class="sa-sidebar-group sa-group-open"', false);
+            } else {
+                $response->assertSee('duration-300 ease-out grid-rows-[0fr]', false);
+                $response->assertDontSee('duration-300 ease-out grid-rows-[1fr]', false);
             }
         }
+    }
+
+    public function test_label_sidebar_superadmin_memakai_dashboard(): void
+    {
+        $superAdmin = $this->makeUser(Role::SUPER_ADMIN, 'super-label');
+
+        $response = $this->actingAs($superAdmin)->get(route('superadmin.dashboard'));
+
+        $response->assertOk();
+        $response->assertSee('title="Dashboard">Dashboard</span>', false);
+        $response->assertDontSee('Dasboard', false);
     }
 
     public function test_gauge_superadmin_tanpa_data_tidak_menampilkan_100_persen(): void
