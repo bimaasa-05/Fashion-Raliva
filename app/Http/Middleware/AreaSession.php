@@ -28,9 +28,16 @@ class AreaSession
 
     private function resolveArea(Request $request): ?string
     {
-        // Handshake OAuth harus memakai cookie sesi default yang sama dengan
-        // callback. Jangan pindah ke cookie area berdasarkan parameter redirect.
-        if ($request->is('auth/google/*')) {
+        // Handshake OAuth dan halaman auth publik harus memakai cookie sesi
+        // default yang sama antara GET dan POST. Jika cookie area ikut dipilih
+        // dari Referer, token CSRF bisa berbeda dan memicu 419 saat login.
+        if ($request->is(
+            'login',
+            'register',
+            'forgot-password',
+            'forgot-password/*',
+            'auth/google/*',
+        )) {
             return null;
         }
 
