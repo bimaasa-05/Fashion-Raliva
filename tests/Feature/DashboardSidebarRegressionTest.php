@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use App\Models\Checkout;
+use App\Models\Order;
 use App\Models\Role;
 use App\Models\Store;
 use App\Models\StoreStaff;
@@ -113,6 +115,34 @@ class DashboardSidebarRegressionTest extends TestCase
             $response->getContent()
         );
         $response->assertDontSee('images/logo.svg" alt="Logo', false);
+    }
+
+    public function test_owner_dashboard_merender_pesanan_terbaru(): void
+    {
+        $owner = $this->makeUser(Role::OWNER, 'owner-order');
+        $store = $this->makeStore($owner);
+        $customer = $this->makeUser(Role::CUSTOMER, 'customer-order');
+
+        $checkout = Checkout::create([
+            'user_id' => $customer->user_id,
+            'subtotal' => 100000,
+            'grand_total' => 100000,
+            'status' => Checkout::STATUS_SELESAI,
+        ]);
+
+        $order = Order::create([
+            'checkout_id' => $checkout->checkout_id,
+            'store_id' => $store->store_id,
+            'nomor_order' => 'INV-OWNER-'.uniqid(),
+            'subtotal' => 100000,
+            'grand_total' => 100000,
+            'status' => Order::STATUS_SELESAI,
+        ]);
+
+        $response = $this->actingAs($owner)->get(route('owner.dashboard'));
+
+        $response->assertOk();
+        $response->assertSee($order->nomor_order);
     }
 
     private function makeUser(string $roleName, string $prefix): User
