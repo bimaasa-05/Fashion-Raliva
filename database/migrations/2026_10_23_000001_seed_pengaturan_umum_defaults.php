@@ -10,7 +10,7 @@ return new class extends Migration
         $now = now();
 
         $defaults = [
-            'nama_platform' => 'NexPrint',
+            'nama_platform' => 'NEXPRINT',
             'email_support' => 'support@nexprint.com',
             'whatsapp_support' => '',
             'instagram_support' => '',
