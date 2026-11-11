@@ -16,7 +16,7 @@ class DashboardSidebarRegressionTest extends TestCase
 {
     use DatabaseTransactions;
 
-    public function test_semua_grup_sidebar_tertutup_secara_default_untuk_semua_role(): void
+    public function test_semua_grup_sidebar_tertutup_di_dashboard_untuk_semua_role(): void
     {
         $owner = $this->makeUser(Role::OWNER, 'owner-sidebar');
         $store = $this->makeStore($owner);
@@ -53,6 +53,85 @@ class DashboardSidebarRegressionTest extends TestCase
                 $response->assertSee('duration-300 ease-out grid-rows-[0fr]', false);
                 $response->assertDontSee('duration-300 ease-out grid-rows-[1fr]', false);
             }
+        }
+    }
+
+    public function test_grup_sidebar_berisi_menu_aktif_terbuka_untuk_semua_role(): void
+    {
+        $owner = $this->makeUser(Role::OWNER, 'owner-active-group');
+        $store = $this->makeStore($owner);
+
+        $superAdmin = $this->makeUser(Role::SUPER_ADMIN, 'super-active-group');
+        $admin = $this->makeUser(Role::ADMIN, 'admin-active-group');
+        $produksi = $this->makeUser(Role::PRODUKSI, 'produksi-active-group');
+        $gudang = $this->makeUser(Role::GUDANG, 'gudang-active-group');
+
+        $this->assignStore($admin, $store);
+        $this->assignStore($produksi, $store);
+        $this->assignStore($gudang, $store);
+
+        $cases = [
+            'superadmin.manajemen-pengguna' => [
+                'user' => $superAdmin,
+                'group' => 'Manajemen',
+                'item' => 'Data Pengguna',
+                'open_class' => 'class="sa-sidebar-group sa-group-open"',
+                'active_class' => 'pl-3 pr-[28px] mr-[-16px] rounded-l-lg sa-sidebar-active border-l-[3px]',
+            ],
+            'admin.pesanan' => [
+                'user' => $admin,
+                'group' => 'Transaksi',
+                'item' => 'Data Pesanan',
+                'open_class' => 'duration-300 ease-out grid-rows-[1fr]',
+                'active_class' => 'sa-sidebar-active pl-3 pr-[28px] mr-[-16px] rounded-l-lg bg-gold-accent/10 text-gold-accent border-l-[3px] border-gold-accent',
+            ],
+            'owner.produk' => [
+                'user' => $owner,
+                'group' => 'Operasional',
+                'item' => 'Data Produk',
+                'open_class' => 'duration-300 ease-out grid-rows-[1fr]',
+                'active_class' => 'sa-sidebar-active pl-3 pr-[28px] mr-[-16px] rounded-l-lg bg-gold-accent/10 text-gold-accent border-l-[3px] border-gold-accent',
+            ],
+            'gudang.stok' => [
+                'user' => $gudang,
+                'group' => 'Persediaan',
+                'item' => 'Data Stok',
+                'open_class' => 'duration-300 ease-out grid-rows-[1fr]',
+                'active_class' => 'sa-sidebar-active pl-3 pr-[28px] mr-[-16px] rounded-l-lg bg-gold-accent/10 text-gold-accent border-l-[3px] border-gold-accent',
+            ],
+            'produksi.data-produksi' => [
+                'user' => $produksi,
+                'group' => 'Proses Produksi',
+                'item' => 'Data Produksi',
+                'open_class' => 'duration-300 ease-out grid-rows-[1fr]',
+                'active_class' => 'sa-sidebar-active pl-3 pr-[28px] mr-[-16px] rounded-l-lg bg-gold-accent/10 text-gold-accent border-l-[3px] border-gold-accent',
+            ],
+        ];
+
+        foreach ($cases as $route => $case) {
+            $this->flushSession();
+            $response = $this->actingAs($case['user'])->get(route($route));
+
+            $this->assertSame(200, $response->getStatusCode(), "Route {$route} tidak mengembalikan 200. Redirect: ".$response->headers->get('Location'));
+
+            $html = $response->getContent();
+            $groupLabel = __($case['group']);
+            $itemLabel = __($case['item']);
+
+            $this->assertSame(
+                1,
+                substr_count($html, 'data-sidebar-group-button aria-expanded="true"'),
+                "Route {$route} harus membuka tepat satu grup sidebar."
+            );
+            $this->assertMatchesRegularExpression(
+                '/data-sidebar-group-button aria-expanded="true"[^>]*>.*?data-group-label>'.preg_quote($groupLabel, '/').'<\/span>/s',
+                $html,
+                "Grup {$groupLabel} tidak terbuka pada route {$route}."
+            );
+
+            $response->assertSee($case['open_class'], false);
+            $response->assertSee($case['active_class'], false);
+            $response->assertSee('title="'.$itemLabel.'"', false);
         }
     }
 
