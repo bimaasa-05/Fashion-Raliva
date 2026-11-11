@@ -1,6 +1,18 @@
 @php
     $storeLocked = \App\Support\StoreGate::isLocked();
     $sidebarBadges = \App\Support\ProduksiBadgeCounter::counts();
+
+    $itemIsActive = static function (array $item): bool {
+        $patterns = [$item['route'], $item['route'].'.*'];
+
+        foreach ($item['aliases'] ?? [] as $alias) {
+            $patterns[] = $alias;
+            $patterns[] = $alias.'.*';
+        }
+
+        return request()->routeIs(...$patterns);
+    };
+
     $menuGroups = [
         [
             'label' => 'Utama',
@@ -38,7 +50,8 @@
     @foreach ($menuGroups as $group)
         @php
             $collapsible = count($group['items']) >= 3;
-            $groupOpen = false;
+            $groupOpen = $collapsible
+                && collect($group['items'])->contains(fn ($item) => $itemIsActive($item));
             $groupBadgeKeys = collect($group['items'])->filter(fn ($item) => ! empty($item['badge']))->pluck('badge')->values();
             $groupHasBadges = $groupBadgeKeys->contains(fn ($key) => ($sidebarBadges[$key] ?? 0) > 0);
         @endphp
@@ -60,7 +73,7 @@
                 @foreach ($group['items'] as $item)
                     @php
                         $locked = $storeLocked && ! in_array($item['route'], ['produksi.dashboard', 'produksi.profil'], true);
-                        $isActive = request()->routeIs($item['route']);
+                        $isActive = $itemIsActive($item);
                     @endphp
                     @if ($locked)
                         <div class="group flex items-center gap-2.5 py-2.5 px-3 rounded-lg text-on-sidebar/35 border-l-[3px] border-transparent cursor-not-allowed" title="{{ __('Menu terkunci — toko sedang ditangguhkan') }}">
