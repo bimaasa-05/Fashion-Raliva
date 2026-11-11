@@ -1,6 +1,17 @@
 @php
     $sidebarBadges = \App\Support\SuperAdminBadgeCounter::counts();
 
+    $itemIsActive = static function (array $item): bool {
+        $patterns = [$item['route'], $item['route'].'.*'];
+
+        foreach ($item['aliases'] ?? [] as $alias) {
+            $patterns[] = $alias;
+            $patterns[] = $alias.'.*';
+        }
+
+        return request()->routeIs(...$patterns);
+    };
+
     $menuGroups = [
         [
             'label' => 'Utama',
@@ -76,7 +87,8 @@
     @foreach ($menuGroups as $group)
         @php
             $collapsible = count($group['items']) >= 3;
-            $groupOpen = false;
+            $groupOpen = $collapsible
+                && collect($group['items'])->contains(fn ($item) => $itemIsActive($item));
             $groupBadgeKeys = collect($group['items'])->filter(fn ($item) => ! empty($item['badge']))->pluck('badge')->values();
             $groupHasBadges = $groupBadgeKeys->contains(fn ($key) => ($sidebarBadges[$key] ?? 0) > 0);
         @endphp
@@ -96,14 +108,17 @@
                 <div class="{{ $collapsible ? 'sa-sidebar-group-inner' : '' }}">
                     <div class="{{ $collapsible ? 'space-y-1' : '' }}">
                 @foreach ($group['items'] as $item)
+                    @php
+                        $isActive = $itemIsActive($item);
+                    @endphp
                     <a class="group flex items-center gap-2.5 py-2.5 transition-all duration-200
-                        @if(request()->routeIs($item['route']))
+                        @if($isActive)
                             pl-3 pr-[28px] mr-[-16px] rounded-l-lg sa-sidebar-active border-l-[3px]
                         @else
                             px-3 rounded-lg text-on-sidebar/80 hover:bg-sidebar-hover hover:text-on-sidebar border-l-[3px] border-transparent
                         @endif"
                         href="{{ route($item['route']) }}">
-                        <span class="material-symbols-outlined text-[20px] @if(request()->routeIs($item['route'])) fill text-gold-accent @else text-on-sidebar/60 @endif transition-colors">
+                        <span class="material-symbols-outlined text-[20px] @if($isActive) fill text-gold-accent @else text-on-sidebar/60 @endif transition-colors">
                             {{ $item['icon'] }}
                         </span>
                         <span class="sidebar-tip">{{ str_replace(':brand', brand(), __($item['text'])) }}</span>
